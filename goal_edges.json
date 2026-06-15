@@ -1,0 +1,24 @@
+{
+  "goal_edges": [
+    {"nutrient": "proteins", "goal": "recovery", "weight": 0.9},
+    {"nutrient": "proteins", "goal": "energy", "weight": 0.7},
+    {"nutrient": "fat", "goal": "energy", "weight": 0.6},
+    {"nutrient": "carbohydrates", "goal": "energy", "weight": 0.8},
+    {"nutrient": "fiber", "goal": "digestive_health", "weight": 0.9},
+    {"nutrient": "iron", "goal": "iron_support", "weight": 0.95},
+    {"nutrient": "vitamin-c", "goal": "iron_support", "weight": 0.7},
+    {"nutrient": "vitamin-c", "goal": "immune_support", "weight": 0.9},
+    {"nutrient": "vitamin-e", "goal": "immune_support", "weight": 0.7},
+    {"nutrient": "calcium", "goal": "bone_health", "weight": 0.95},
+    {"nutrient": "vitamin-d", "goal": "bone_health", "weight": 0.9},
+    {"nutrient": "magnesium", "goal": "recovery", "weight": 0.8},
+    {"nutrient": "magnesium", "goal": "bone_health", "weight": 0.7},
+    {"nutrient": "omega-3-fat", "goal": "recovery", "weight": 0.85},
+    {"nutrient": "omega-3-fat", "goal": "heart_health", "weight": 0.9},
+    {"nutrient": "saturated-fat", "goal": "heart_health", "weight": 0.9, "type": "negative"},
+    {"nutrient": "sodium", "goal": "heart_health", "weight": 0.8, "type": "negative"},
+    {"nutrient": "zinc", "goal": "immune_support", "weight": 0.8},
+    {"nutrient": "zinc", "goal": "recovery", "weight": 0.75},
+    {"nutrient": "phosphorus", "goal": "bone_health", "weight": 0.8}
+  ]
+}

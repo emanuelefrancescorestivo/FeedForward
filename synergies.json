@@ -1,0 +1,6 @@
+{
+  "synergies": [
+    {"a": "vitamin_c", "b": "iron", "effect": "improves non-heme iron absorption"},
+    {"a": "piperine", "b": "curcumin", "effect": "improves curcumin bioavailability"}
+  ]
+}

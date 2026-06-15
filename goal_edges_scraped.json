@@ -1,0 +1,298 @@
+{
+  "goal_edges": [
+    {
+      "nutrient": "iron",
+      "goal": "iron_support",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "iron",
+      "goal": "bone_health",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "iron",
+      "goal": "energy",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "iron",
+      "goal": "recovery",
+      "weight": 0.8,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "iron",
+      "goal": "digestive_health",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "zinc",
+      "goal": "immune_support",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "zinc",
+      "goal": "iron_support",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "zinc",
+      "goal": "bone_health",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "zinc",
+      "goal": "recovery",
+      "weight": 0.8,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "zinc",
+      "goal": "digestive_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "calcium",
+      "goal": "bone_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "calcium",
+      "goal": "recovery",
+      "weight": 0.8,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "calcium",
+      "goal": "digestive_health",
+      "weight": 0.9,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "magnesium",
+      "goal": "bone_health",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "magnesium",
+      "goal": "recovery",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "magnesium",
+      "goal": "heart_health",
+      "weight": 0.8,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "magnesium",
+      "goal": "digestive_health",
+      "weight": 0.7,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-c",
+      "goal": "immune_support",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-c",
+      "goal": "iron_support",
+      "weight": 0.9,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-c",
+      "goal": "bone_health",
+      "weight": 0.7,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-c",
+      "goal": "recovery",
+      "weight": 0.8,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-c",
+      "goal": "heart_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-c",
+      "goal": "digestive_health",
+      "weight": 0.8,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-d",
+      "goal": "immune_support",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-d",
+      "goal": "iron_support",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-d",
+      "goal": "bone_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-d",
+      "goal": "energy",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-d",
+      "goal": "recovery",
+      "weight": 0.9,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-d",
+      "goal": "heart_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-d",
+      "goal": "digestive_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-e",
+      "goal": "immune_support",
+      "weight": 0.9,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-e",
+      "goal": "iron_support",
+      "weight": 0.8,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-e",
+      "goal": "bone_health",
+      "weight": 0.7,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-e",
+      "goal": "recovery",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-e",
+      "goal": "heart_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-e",
+      "goal": "digestive_health",
+      "weight": 0.9,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-a",
+      "goal": "immune_support",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-a",
+      "goal": "iron_support",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-a",
+      "goal": "bone_health",
+      "weight": 0.9,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-a",
+      "goal": "energy",
+      "weight": 0.7,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-a",
+      "goal": "recovery",
+      "weight": 0.7,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-a",
+      "goal": "heart_health",
+      "weight": 0.7,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-a",
+      "goal": "digestive_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-k",
+      "goal": "immune_support",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-k",
+      "goal": "iron_support",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-k",
+      "goal": "bone_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-k",
+      "goal": "energy",
+      "weight": 0.6,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-k",
+      "goal": "heart_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    },
+    {
+      "nutrient": "vitamin-k",
+      "goal": "digestive_health",
+      "weight": 0.95,
+      "source": "wikipedia"
+    }
+  ]
+}
