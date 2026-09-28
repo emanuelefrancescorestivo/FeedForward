@@ -74,6 +74,11 @@ _META = {"alim_grp_code", "alim_ssgrp_code", "alim_ssssgrp_code", "alim_grp_nom_
 # CIQUAL sub-groups whose foods contain heme iron (animal flesh).
 _FLESH_WORDS = ("meat", "poultry", "fish", "offal", "charcuterie", "seafood", "game",
                 "crustacean", "mollusc", "cooked meats", "sausage")
+# CIQUAL files some plant foods next to meat: tofu, seitan and textured soy in
+# "meat substitute", plant-based sausages in "delicatessen meat and similar".
+# They are not flesh: their iron is non-heme.
+_PLANT_BASED_SUBGROUPS = ("meat substitute",)
+_PLANT_BASED_NAMES = ("plant-based", "vegan", "vegetarian")
 
 
 def column_map(columns) -> dict[str, tuple[str, str]]:
@@ -141,7 +146,10 @@ def records(eng_path: Path | None = None, fr_path: Path | None = None) -> list[d
         if ala + epa + dha > 0:
             nutrients["omega-3-fat"] = round(ala + epa + dha, 4)
         group = f"{row['alim_grp_nom_eng']} | {row['alim_ssgrp_nom_eng']}"
-        is_flesh = any(w in str(row["alim_ssgrp_nom_eng"]).lower() for w in _FLESH_WORDS)
+        subgroup, name_lower = str(row["alim_ssgrp_nom_eng"]).lower(), str(row["alim_nom_eng"]).lower()
+        is_flesh = (any(w in subgroup for w in _FLESH_WORDS)
+                    and not any(w in subgroup for w in _PLANT_BASED_SUBGROUPS)
+                    and not any(w in name_lower for w in _PLANT_BASED_NAMES))
         if code in seen:
             # CIQUAL 2020 lists a few codes twice (e.g. 9621 wheat bran, once
             # with no values); keep the row with more nutrients

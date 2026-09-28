@@ -108,7 +108,7 @@ def _target_form(nutrient_id: str, food: Food) -> str:
     """Resolve the absorption 'target' key (form-aware for iron/vit A)."""
     if nutrient_id == "iron":
         return iron_form_for_food(food).value
-    if nutrient_id == "vitamin-a" and not food.is_animal_source:
+    if nutrient_id == "vitamin-a" and not food.has_preformed_vitamin_a:
         return "beta_carotene"      # plant provitamin A
     return nutrient_id
 

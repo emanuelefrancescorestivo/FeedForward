@@ -103,7 +103,8 @@ class Food:
     nutri_score: str = ""
     nova: int = 0
     # Optional richer fields used by the bioavailability layer
-    is_animal_source: bool | None = None      # meat/fish/dairy/egg presence
+    is_animal_source: bool | None = None      # animal flesh (meat, fish, seafood): heme iron, meat factor
+    is_animal_derived: bool | None = None     # flesh, dairy or egg: preformed vitamin A (retinol)
     contains_vitamin_c: bool = False          # computed at ingest for iron synergy
     contains_fat: bool = False                # for fat-soluble vitamin absorption
     anti_nutrients: set = field(default_factory=set)  # {phytate, oxalate, tannin}
@@ -112,6 +113,11 @@ class Food:
     source: str = ""                          # curated | usda | openfoodfacts | ...
     familiarity: float = 1.0                  # engine/familiarity.py, orders results only
     source_id: str = ""                       # data/sources.json row
+
+    @property
+    def has_preformed_vitamin_a(self) -> bool:
+        """Retinol, not carotenoids: animal-derived foods (flesh is always animal-derived)."""
+        return bool(self.is_animal_derived or self.is_animal_source)
 
     def nutrient_vector(self) -> dict[str, float]:
         """Return the nutrient dict for cosine-similarity comparisons."""

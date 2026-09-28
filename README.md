@@ -2,10 +2,93 @@
 
 [![tests](https://github.com/emanuelefrancescorestivo/FeedForward/actions/workflows/tests.yml/badge.svg)](https://github.com/emanuelefrancescorestivo/FeedForward/actions/workflows/tests.yml)
 
-**An explainable nutritional knowledge graph.** Most nutrition apps tell you
-*what* you ate. FeedForward tells you *why* a food helps — tracing an explicit,
-evidence-graded chain from **food → nutrient → health goal**, adjusted for how
-much of each nutrient your body can actually absorb.
+**A weekly meal plan that fits a student budget at your own supermarket,
+and shows the science behind every food on it.**
+
+You give your age, height, weight, how active you are, one goal (energy,
+focus, sleep, iron…), where you shop and what you can spend. FeedForward plans
+seven days of breakfasts, lunches and dinners that cover your needs, prices the
+shopping list at that shop from real receipts, and can explain every choice as
+a path: *food → nutrient → goal*, backed by EU-authorised health claims.
+
+> Example: 24-year-old man, 178 cm, 72 kg, light activity, goal "focus",
+> €50 at Lidl → a week for **€39.56**, 2,361 kcal a day, every tracked vitamin
+> and mineral at 100 % or more except vitamin D (81 %). The same week is not
+> possible for €20 at Naturalia, and the app says so, with the minimum budget
+> it would take, instead of planning less food.
+
+---
+
+## Why I built this
+
+I'm a student interested in sports science, neuroscience and what people call
+biohacking. For me that mostly means the unglamorous basics (food, training and
+sleep) and how they work *together* to keep energy high and the mind sharp, in
+lectures, in training and everywhere else. I use these ideas on my own
+"hardware" every day, and I want to make them simple, practical and affordable
+for the people around me: hybrid student-athletes, or anyone who is simply
+curious.
+
+The idea came while studying graph algorithms (TAOCP2 at PSL): a food reaches a
+goal through the nutrients it carries, and that is a path in a graph. Make the
+path explicit, and an app can show *why* a food helps instead of just asserting
+it. FeedForward started there, and grew into the question students actually ask
+on a Sunday evening: *what do I buy and cook this week, with this budget, at my
+supermarket?*
+
+This repository is the nutrition part of that picture. Training enters through
+activity level (energy and protein needs); sleep is one of the goals, although
+the evidence linking specific nutrients to sleep is still thin, and the app
+says so.
+
+---
+
+## What's inside
+
+| Area | What it shows | Where |
+|---|---|---|
+| **Data engineering** | Five public sources (ANSES-CIQUAL, USDA FoodData Central, Open Food Facts, Open Prices, the EU health-claims register) merged through one nutrient ontology: 36 nutrients, INFOODS tags, IT/EN/FR aliases, unit conversion that refuses to guess (IU for vitamins A and E), provenance on every value | [`ontology/`](backend/feedforward/ontology/), [`data/ingest/`](backend/feedforward/data/ingest/) |
+| **Graph algorithms** | Food → Nutrient → Goal graph with edge cost −log(strength), so Dijkstra's shortest path is the strongest evidence chain; Yen for the next routes; reverse Dijkstra from each goal: **587 ms → 0.7 ms** per query | [`engine/graph.py`](backend/feedforward/engine/graph.py), [`engine/algorithms.py`](backend/feedforward/engine/algorithms.py) |
+| **Optimisation** | Two mixed-integer programs (PuLP/CBC): one meal that covers a goal, and a whole week under a budget, with energy as a hard constraint and WHO limits on salt, saturated fat and free sugars | [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py), [`engine/meal_optimizer.py`](backend/feedforward/engine/meal_optimizer.py) |
+| **Statistics on messy data** | Crowdsourced receipts → median €/kg per chain, outliers dropped, chains with few receipts shrunk towards national median × chain price index; the index comes out of the data (Lidl 0.67, Carrefour 1.06, Biocoop 1.49) | [`data/ingest/prices.py`](backend/feedforward/data/ingest/prices.py) |
+| **Scientific judgement** | Scoring per realistic portion against reference intakes; heme vs non-heme iron; the EU register as evidence layer (118 authorised links, 62 EFSA rejections removed); no medical conditions collected, on purpose (EU medical-device rules) | [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) |
+| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 189 tests on GitHub Actions | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
+
+Two bugs the tests caught, as examples of how the project is checked:
+
+- **A library upgrade.** Running the suite from a fresh clone installed PuLP 4,
+  which no longer bundles the CBC solver and reports "stopped within the
+  optimality gap" as its own status. Valid plans came back as "impossible".
+  All solver calls now go through one adapter ([`engine/milp.py`](backend/feedforward/engine/milp.py))
+  that works with PuLP 3 and 4, with a test of its own.
+- **A diet filter checked against ground truth.** A test that runs the
+  vegetarian filter over every food CIQUAL files under meat, fish and seafood
+  found five seafoods passing as vegetarian, and showed that tofu and seitan
+  (CIQUAL's "meat substitute" group) were being treated as meat, so their iron
+  counted as the better-absorbed heme iron. Both are fixed, and "animal flesh"
+  (heme iron) and "animal-derived" (preformed vitamin A) are now two separate
+  properties.
+
+---
+
+## Try it
+
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn feedforward.api.main:app --reload
+# → the app:            http://localhost:8000/app
+# → interactive API:    http://localhost:8000/docs
+pytest -q               # the test suite
+```
+
+The first start builds the engine (a few seconds). Your answers in "My week"
+stay in your browser; the server uses them to compute the plan and stores
+nothing.
+
+---
+
+## How it works
 
 > A calorie counter says "spinach contains 2.7 mg of iron." That number is
 > almost meaningless on its own: plant (non-heme) iron is absorbed at 2–20%, and
@@ -13,34 +96,7 @@ much of each nutrient your body can actually absorb.
 > exactly this — the interactions, the bioavailability, and the strength of the
 > underlying science.
 
----
-
-## Why this is different
-
-Three ideas this project combines:
-
-1. **Explicit reasoning chains.** Recommendations are paths through a graph, not
-   opaque scores. Every suggestion comes with its route: *this food → this
-   nutrient → your goal*, and you can see it.
-
-2. **Bioavailability modelling.** Edge weights reflect *absorbable* nutrient
-   delivery, not just raw content. Heme vs non-heme iron, fat-soluble vitamins
-   needing dietary fat, vitamin C boosting iron uptake, calcium competing with
-   it — all encoded as an auditable rule base ([`engine/bioavailability.py`](backend/feedforward/engine/bioavailability.py)).
-
-3. **Evidence grading.** Each nutrient→goal link carries a grade (A–D) derived
-   from the literature — optionally live from PubMed — so a Grade A meta-analytic
-   association outranks a Grade C observational one ([`engine/evidence.py`](backend/feedforward/engine/evidence.py)).
-
-On top of the engine sits a **web app** (`/app`): a budgeted weekly meal
-plan for a chosen supermarket in France, plus food search, a meal builder and a
-sourced dictionary. The API can show a professional view (evidence grades,
-citations, ICD-10 codes on goals) to accounts with that tier; there is no
-payment system or partner API.
-
----
-
-## Architecture
+### Architecture
 
 ```
 User surfaces      Web app (/app) · Expo mobile prototype
@@ -53,7 +109,8 @@ Data               CIQUAL · USDA FoodData · Open Food Facts · Open Prices ·
                    EU health-claims register · PubMed · curated ontology
 ```
 
-The engine is the crown jewel; the backend and app are scaffolding around it.
+The engine is plain Python with no web or database dependency; the API and the
+web app are thin layers on top of it.
 
 ### The graph
 A tripartite weighted graph: **Food → Nutrient → Goal**. Every edge has a
@@ -94,7 +151,7 @@ associations EFSA found unsubstantiated, which no longer count (e.g. vitamin E �
 heart health). B vitamins, choline, iodine and EPA+DHA were added to the corpus
 so that energy, mood and cognition claims reach foods. See
 [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md#eu-health-claims-v14--the-knowledge-layer).
-Sanity benchmark on the EU-grounded engine: 0.73 (v2 lists, everyday foods first), 0 implausible results.
+Sanity benchmark on the EU-grounded engine: 0.68 mean top-20 hit rate (v2 lists, everyday foods first), 0 implausible results.
 
 ### Dictionary and explorer UI
 `http://localhost:8000/app` is a progressive-disclosure explorer: 8 main goals,
@@ -136,8 +193,8 @@ in the browser (localStorage) and are sent only to compute the plan.
 - API: `GET /plan/options`, `POST /plan/week`, `GET /plan/recipes/{id}`.
 
 Example (man, 24, 178 cm, 72 kg, light activity, goal "focus"): Lidl €50 →
-€39.65, 2,361 kcal/day, all needs ≥ 100 % except vitamin D (81 %); Naturalia
-€50 → €50.01, fewer fish meals, so iodine and EPA+DHA fall to ~20 %.
+€39.56, 2,361 kcal/day, all needs ≥ 100 % except vitamin D (81 %); Naturalia
+€50 → €49.91, fewer fish meals, so vitamin D, iodine and EPA+DHA fall to 27–37 %.
 
 ### The latency fix
 The original prototype ran Dijkstra from all ~1,800 food nodes per query (587 ms).
@@ -182,24 +239,7 @@ feedforward/
 
 ---
 
-## Quickstart
-
-### Backend
-
-```bash
-cd backend
-pip install -r requirements.txt
-
-# Run the API
-uvicorn feedforward.api.main:app --reload
-# → interactive docs at http://localhost:8000/docs
-# → exploration UI at   http://localhost:8000/app
-
-# Run the tests
-pytest -q
-```
-
-Try the engine directly:
+## Using the engine from Python
 
 ```python
 from feedforward.engine import build_engine
@@ -212,12 +252,12 @@ for r in rec.foods_for_goal("iron_support", constraints=["vegetarian"], k=3):
 ```
 
 ```
- 86.2  Cereals, QUAKER, Quick Oats with Iron, Dry
-       110% of daily iron in 40 g  (evidence A)
- 83.9  Cereals, MALT-O-MEAL, Farina Hot Wheat Cereal, dry
-       91% of daily iron in 40 g  (evidence A)
- 72.2  Mushrooms, morel, raw
-       54% of daily iron in 80 g  (evidence A)
+ 74.7  Soybean, whole grain
+       131% of daily iron in 150 g  (evidence A)
+ 79.6  Cereals ready-to-eat, wheat, puffed, fortified
+       70% of daily iron in 40 g  (evidence A)
+ 78.7  Cereals ready-to-eat, rice, puffed, fortified
+       70% of daily iron in 40 g  (evidence A)
 ```
 
 Each explanation also lists every route's contribution, the penalties applied
@@ -225,7 +265,7 @@ and, for plant iron, a pairing note ("pair with a vitamin C source"): vitamin C
 raises non-heme iron absorption, but it is not itself an iron source, so it is a
 pairing rather than a route.
 
-### Mobile
+### Mobile prototype
 
 ```bash
 cd mobile
@@ -241,7 +281,7 @@ This is a personal project and a working prototype, not a product in use.
 Nothing here has been reviewed by a dietitian or tested with users yet.
 What exists today:
 
-- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 187 tests (pytest, run on every push by GitHub Actions).
+- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 189 tests (pytest, run on every push by GitHub Actions).
 - ✅ FastAPI backend: recommend / explain / meal-plan / week plan / food detail / dictionary / auth with tiered access.
 - ✅ Web app (`/app`): My week, food search, meal builder, dictionary, shopping list; works on phones.
 - 🟡 Expo mobile prototype (`mobile/`): early screens against the recommend API; it does not have My week.

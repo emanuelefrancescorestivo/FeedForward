@@ -63,6 +63,10 @@ _MEAT_FISH = (
     "chiton", "gumboots", "limpet", "animal", "steak", "sirloin", "mutton",
     "brisket", "tenderloin", "meatball", "meatloaf", "burger", "cheeseburger",
     "nugget", "gyro", "kebab", "carne", "pollo", "jamon", "veal", "oxtail",
+    # CIQUAL names and sub-groups (English and French)
+    "seafood", "fruits de mer", "crustacean*", "crayfish", "ecrevisse", "langoustine",
+    "scampi", "winkle", "bulot", "whelk", "cuttlefish", "seiche", "offal", "abats",
+    "charcuterie", "andouille*", "boudin", "merguez", "chipolata",
 )
 _ANIMAL_NOT_VEGAN = (
     "dairy", "milk", "cheese", "yogurt", "yoghurt", "lait", "fromage", "yaourt",

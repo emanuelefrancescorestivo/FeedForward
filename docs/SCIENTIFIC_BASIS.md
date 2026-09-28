@@ -49,7 +49,11 @@ meal composition.
 Encoded mechanisms include:
 
 - **Iron form.** Heme iron (animal flesh) ~25% absorbed; non-heme iron (plants)
-  ~10% baseline and highly modifiable.
+  ~10% baseline and highly modifiable. Eggs and dairy carry non-heme iron:
+  "flesh" (meat, fish, seafood: heme iron, the meat factor) and
+  "animal-derived" (flesh, dairy, eggs: preformed vitamin A, whose upper limit
+  applies) are two separate food properties (`engine/build.py`). Tofu, seitan
+  and plant-based "sausages", which CIQUAL files next to meat, are neither.
 - **Vitamin C × non-heme iron.** Vitamin C reduces Fe³⁺ to absorbable Fe²⁺,
   raising non-heme iron absorption substantially (modelled ×2.5 at meal level).
 - **Calcium × iron competition.** High calcium in a meal inhibits iron

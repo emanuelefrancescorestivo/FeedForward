@@ -39,21 +39,17 @@ from .schema import Food, EvidenceGrade
 from .graph import FeedForwardGraph
 from .evidence import grade_for
 from ..ontology.nutrients import display_meta
+from .recommender import _ANIMAL_NOT_VEGAN, _MEAT_FISH, _mentions, _norm
 
 DATA = Path(__file__).resolve().parent.parent / "data"
 
 # Nutrient display names / units. Defined once, in ontology/nutrients.json.
 NUTRIENT_META: dict[str, tuple[str, str]] = display_meta()
 
-# Animal-source detection for iron form (heme vs non-heme)
-_ANIMAL_KEYWORDS = [
-    "meat", "fish", "beef", "pork", "chicken", "viande", "poisson", "boeuf",
-    "porc", "thon", "tuna", "atun", "saumon", "salmon", "sardine", "maquereau",
-    "anchois", "morue", "cod", "cabillaud", "colin", "merlu", "hareng", "crabe",
-    "crevette", "surimi", "jambon", "ham", "poulet", "dinde", "turkey", "lamb",
-    "agneau", "veau", "veal", "egg", "oeuf", "milk", "cheese", "lait", "fromage",
-    "yogurt", "yaourt",
-]
+# Dairy and egg words (the non-flesh animal foods), matched as whole words with
+# the same lists as the diet filters, so "veggie" is not an egg and "coconut
+# milk" is not dairy.
+_DAIRY_EGG = tuple(k for k in _ANIMAL_NOT_VEGAN if k not in ("honey", "miel"))
 
 
 def _detect_anti_nutrients(text: str) -> set:
@@ -81,12 +77,15 @@ def _detect_enhancer_props(text: str) -> set:
 def _enrich_food(raw: dict) -> Food:
     """Turn a raw JSON record into a Food, computing bioavailability flags."""
     text = (raw.get("name", "") + " " + raw.get("category", "")).lower()
-    # Curated whole-foods records carry an explicit animal-source flag; otherwise
-    # fall back to keyword detection over name + category.
-    if "_is_animal" in raw:
-        is_animal = bool(raw["_is_animal"])
-    else:
-        is_animal = any(k in text for k in _ANIMAL_KEYWORDS)
+    # Two different questions. Flesh (heme iron, the meat factor): the source's
+    # animal flag, where it has one (CIQUAL and USDA flag flesh groups; the
+    # curated list also flags dairy and eggs), confirmed by a meat or fish word;
+    # a flag of False (tofu in CIQUAL's "meat substitute") wins. Animal-derived
+    # (preformed vitamin A): flesh, or a dairy or egg word.
+    words = _norm(text)
+    flag = raw.get("_is_animal")          # None: the source has no flag (Open Food Facts)
+    is_flesh = (flag is None or bool(flag)) and _mentions(words, _MEAT_FISH)
+    is_derived = is_flesh or _mentions(words, _DAIRY_EGG)
     nutrients = raw.get("nutrients", {})
     food = Food(
         id=str(raw["id"]),
@@ -95,7 +94,8 @@ def _enrich_food(raw: dict) -> Food:
         nutrients=nutrients,
         nutri_score=raw.get("nutri_score", ""),
         nova=raw.get("nova", 0),
-        is_animal_source=is_animal,
+        is_animal_source=is_flesh,
+        is_animal_derived=is_derived,
         contains_vitamin_c=nutrients.get("vitamin-c", 0) > 5,
         contains_fat=nutrients.get("fat", 0) > 3,
         anti_nutrients=_detect_anti_nutrients(text),

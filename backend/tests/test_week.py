@@ -39,6 +39,31 @@ def test_ciqual_corpus_is_complete_and_sourced():
     assert lentils["nutrients"]["iron"] > 4          # dry green lentils, mg/100 g
 
 
+def test_ciqual_flesh_groups_never_pass_as_vegetarian(engine):
+    """CIQUAL's meat / fish / seafood / delicatessen sub-groups are ground truth."""
+    from feedforward.engine.recommender import satisfies
+
+    flesh = [f for f in engine.food_by_id.values() if f.id.startswith("ciqual-") and f.is_animal_source]
+    assert len(flesh) > 700
+    leaks = [f.name for f in flesh if satisfies(f, "vegetarian") or satisfies(f, "vegan")]
+    assert not leaks, leaks[:10]
+
+
+def test_ciqual_meat_substitutes_are_plant_foods(engine):
+    """Tofu and seitan sit in CIQUAL's "meat substitute" group: not flesh, non-heme iron."""
+    from feedforward.engine.bioavailability import iron_form_for_food as iron_form
+    from feedforward.engine.recommender import satisfies
+    from feedforward.engine.schema import NutrientForm
+
+    subs = [f for f in engine.food_by_id.values() if f.id.startswith("ciqual-") and f.category == "meat substitute"]
+    assert subs
+    for f in subs:
+        assert not f.is_animal_source, f.name
+        assert iron_form(f) == NutrientForm.NON_HEME_IRON, f.name
+    tofu = next(f for f in subs if f.name == "Tofu, plain")
+    assert satisfies(tofu, "vegetarian") and satisfies(tofu, "vegan")
+
+
 def test_ciqual_column_map_refuses_unknown_columns():
     with pytest.raises(ValueError):
         column_map(["alim_code", "Mystery nutrient (g/100 g)"])

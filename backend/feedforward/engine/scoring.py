@@ -240,7 +240,7 @@ class GoalScorer:
         exceeds = False
         if ref.ul and nutrient in UL_APPLIES_TO_FOOD and amount > ref.ul:
             # Vitamin A's UL is for preformed retinol; plant RAE does not count.
-            if nutrient != "vitamin-a" or food.is_animal_source:
+            if nutrient != "vitamin-a" or food.has_preformed_vitamin_a:
                 exceeds = True
                 strength *= UL_PENALTY
         return Delivery(nutrient, portion.grams, portion.group, round(amount, 4),
