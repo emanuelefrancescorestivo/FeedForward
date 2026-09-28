@@ -34,6 +34,7 @@ from dataclasses import dataclass, field
 
 import pulp
 
+from .milp import solver
 from .portions import portion_for
 from .recommender import Recommender, food_family
 from .schema import Food
@@ -127,8 +128,8 @@ def optimize_meal(rec: Recommender, goal: str, max_calories: float, k: int = 3,
     nutrients, cover = _coverage_terms(rec, goal, foods, demo)
 
     prob = pulp.LpProblem("Optimal_Meal", pulp.LpMaximize)
-    x = pulp.LpVariable.dicts("food", range(len(foods)), cat="Binary")
-    y = pulp.LpVariable.dicts("cover", range(len(nutrients)), lowBound=0, upBound=1)
+    x = prob.add_variable_dicts("food", range(len(foods)), cat="Binary")
+    y = prob.add_variable_dicts("cover", range(len(nutrients)), lowBound=0, upBound=1)
     prob += (pulp.lpSum(a * y[j] for j, (_n, a) in enumerate(nutrients))
              + _EPS * pulp.lpSum(rec.goal_score(f.id, goal, demo) * x[i]
                                  for i, f in enumerate(foods))), "Coverage"
@@ -144,7 +145,7 @@ def optimize_meal(rec: Recommender, goal: str, max_calories: float, k: int = 3,
     for c, idx in enumerate(groups.values()):
         if len(idx) > 1:
             prob += pulp.lpSum(x[i] for i in idx) <= 1, f"OnePerGroup_{c}"
-    prob.solve(pulp.PULP_CBC_CMD(msg=False))
+    prob.solve(solver())
 
     if pulp.LpStatus[prob.status] != "Optimal":
         return MealPlan(goal, [], 0.0, 0.0, False,

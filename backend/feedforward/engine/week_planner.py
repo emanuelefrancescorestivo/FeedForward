@@ -40,6 +40,7 @@ from pathlib import Path
 
 import pulp
 
+from .milp import solver
 from .needs import Profile, daily_needs, energy_kcal
 from .reference import LIMIT_NUTRIENTS
 
@@ -164,8 +165,8 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
     for r in meals:
         for m in MEALS:
             if m in r.meals:
-                x[r.id, m] = pulp.LpVariable(f"x_{r.id}_{m}", 0, days, cat="Integer")
-    s = {r.id: pulp.LpVariable(f"s_{r.id}", 0, SNACK_REPEAT, cat="Integer") for r in snacks}
+                x[r.id, m] = prob.add_variable(f"x_{r.id}_{m}", 0, days, cat="Integer")
+    s = {r.id: prob.add_variable(f"s_{r.id}", 0, SNACK_REPEAT, cat="Integer") for r in snacks}
     by_id = {r.id: r for r in recipes}
     servings = list(x.items()) + [((rid, "snack"), v) for rid, v in s.items()]
 
@@ -181,20 +182,20 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
     repeats = {}
     for r in meals:
         vs = [v for (rid, _m), v in x.items() if rid == r.id]
-        once = pulp.LpVariable(f"rep1_{r.id}", 0, 1, cat="Integer")
-        more = pulp.LpVariable(f"rep2_{r.id}", 0, cat="Integer")
+        once = prob.add_variable(f"rep1_{r.id}", 0, 1, cat="Integer")
+        more = prob.add_variable(f"rep2_{r.id}", 0, cat="Integer")
         repeats[r.id] = (once, more)
         prob += pulp.lpSum(vs) <= (3 if r.batch else 2) + once + more, f"variety_{r.id}"
     extra = pulp.lpSum(once + 3 * more for once, more in repeats.values())
-    y = {n: pulp.LpVariable(f"y_{n}", 0, 1) for n in weekly}
+    y = {n: prob.add_variable(f"y_{n}", 0, 1) for n in weekly}
     for n in weekly:
         prob += y[n] * weekly[n] <= intake(n), f"cover_{n}"
     prob += pulp.lpSum(s.values()) <= 2 * days, "snacks_per_day"
-    e_over, e_under = pulp.LpVariable("e_over", 0), pulp.LpVariable("e_under", 0)
+    e_over, e_under = prob.add_variable("e_over", 0), prob.add_variable("e_under", 0)
     prob += intake("energy-kcal") - kcal_target == e_over - e_under, "energy"
     prob += intake("energy-kcal") >= ENERGY_BAND[0] * kcal_target, "energy_min"
     prob += intake("energy-kcal") <= ENERGY_BAND[1] * kcal_target, "energy_max"
-    slack = {n: pulp.LpVariable(f"slack_{n}", 0) for n in limits}
+    slack = {n: prob.add_variable(f"slack_{n}", 0) for n in limits}
     for n, lim in limits.items():
         prob += intake(n) <= lim + slack[n], f"limit_{n}"
 
@@ -208,7 +209,7 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
         eur_kg, pack_g, _est = _price(iid, chain)
         grams = pulp.lpSum(g * v for g, v in uses)
         if ingredients[iid]["storage"] in PACKED and pack_g:
-            packs[iid] = pulp.LpVariable(f"p_{iid}", 0, cat="Integer")
+            packs[iid] = prob.add_variable(f"p_{iid}", 0, cat="Integer")
             prob += packs[iid] * pack_g >= grams, f"pack_{iid}"
             cost_terms.append(packs[iid] * pack_g * eur_kg / 1000)
         else:
@@ -217,7 +218,7 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
     if _cheapest:
         # Cheapest week that still feeds enough and stays under the limits.
         prob += -cost - 5 * pulp.lpSum(slack[n] / limits[n] for n in limits) - REPEAT_EUR * extra, "objective"
-        prob.solve(pulp.PULP_CBC_CMD(msg=False, timeLimit=20))
+        prob.solve(solver(time_limit=20))
         ok = pulp.LpStatus[prob.status] == "Optimal"
         return {"feasible": ok, "total_cost": round(pulp.value(cost), 2) if ok else None}
     prob += cost <= budget, "budget"
@@ -228,7 +229,7 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
              - 5 * pulp.lpSum(slack[n] / limits[n] for n in limits)
              - REPEAT_PENALTY * extra
              - 0.01 * cost / max(budget, 1)), "objective"
-    prob.solve(pulp.PULP_CBC_CMD(msg=False, timeLimit=20))
+    prob.solve(solver(time_limit=20))
     status = pulp.LpStatus[prob.status]
     if status != "Optimal":
         return {"feasible": False, "status": status,

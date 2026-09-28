@@ -1,7 +1,7 @@
 # FeedForward backend dependencies
 
 # --- Scientific engine (core, no network) ---
-pulp>=2.8              # ILP meal optimisation (bundles CBC solver)
+pulp[cbc]>=3.3         # MILP: meal + week planner (engine/milp.py); the cbc extra supplies CBC on PuLP 4
 
 # --- API layer ---
 fastapi>=0.111
