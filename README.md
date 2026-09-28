@@ -239,7 +239,7 @@ This is a personal project and a working prototype, not a product in use.
 Nothing here has been reviewed by a dietitian or tested with users yet.
 What exists today:
 
-- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 186 tests (pytest, run on every push by GitHub Actions).
+- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 187 tests (pytest, run on every push by GitHub Actions).
 - ✅ FastAPI backend: recommend / explain / meal-plan / week plan / food detail / dictionary / auth with tiered access.
 - ✅ Web app (`/app`): My week, food search, meal builder, dictionary, shopping list; works on phones.
 - 🟡 Expo mobile prototype (`mobile/`): early screens against the recommend API; it does not have My week.

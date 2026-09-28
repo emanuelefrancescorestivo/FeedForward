@@ -40,7 +40,7 @@ from pathlib import Path
 
 import pulp
 
-from .milp import solver
+from .milp import solve
 from .needs import Profile, daily_needs, energy_kcal
 from .reference import LIMIT_NUTRIENTS
 
@@ -218,8 +218,7 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
     if _cheapest:
         # Cheapest week that still feeds enough and stays under the limits.
         prob += -cost - 5 * pulp.lpSum(slack[n] / limits[n] for n in limits) - REPEAT_EUR * extra, "objective"
-        prob.solve(solver(time_limit=20))
-        ok = pulp.LpStatus[prob.status] == "Optimal"
+        ok, _status = solve(prob, time_limit=20)
         return {"feasible": ok, "total_cost": round(pulp.value(cost), 2) if ok else None}
     prob += cost <= budget, "budget"
 
@@ -229,9 +228,8 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
              - 5 * pulp.lpSum(slack[n] / limits[n] for n in limits)
              - REPEAT_PENALTY * extra
              - 0.01 * cost / max(budget, 1)), "objective"
-    prob.solve(solver(time_limit=20))
-    status = pulp.LpStatus[prob.status]
-    if status != "Optimal":
+    ok, status = solve(prob, time_limit=20)
+    if not ok:
         return {"feasible": False, "status": status,
                 "chain": {"id": chain, "label": prices["chains"][chain]["label"]}, "budget": budget,
                 "note": "Enough food for the week does not fit this budget at this shop.",

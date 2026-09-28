@@ -101,6 +101,26 @@ def test_profile_validation():
 
 
 # --------------------------------------------------------------- planner
+def test_milp_adapter_reports_optimal_and_infeasible():
+    """engine/milp.py hides the PuLP 3 / PuLP 4 differences."""
+    import pulp
+    from feedforward.engine.milp import solve
+
+    prob = pulp.LpProblem("ok", pulp.LpMaximize)
+    x = prob.add_variable("x", 0, 3, cat="Integer")
+    prob += x
+    prob += x <= 2.5
+    ok, status = solve(prob, time_limit=10)
+    assert ok and x.value() == 2, status
+
+    prob = pulp.LpProblem("impossible", pulp.LpMaximize)
+    y = prob.add_variable("y", 0, 3)
+    prob += y
+    prob += y >= 5
+    ok, _status = solve(prob)
+    assert not ok
+
+
 def test_recipes_reference_known_ingredients_and_foods(engine):
     ingredients, recipes, _p = wp._load()
     for r in recipes:

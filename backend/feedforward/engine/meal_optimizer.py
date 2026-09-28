@@ -34,7 +34,7 @@ from dataclasses import dataclass, field
 
 import pulp
 
-from .milp import solver
+from .milp import solve
 from .portions import portion_for
 from .recommender import Recommender, food_family
 from .schema import Food
@@ -145,9 +145,9 @@ def optimize_meal(rec: Recommender, goal: str, max_calories: float, k: int = 3,
     for c, idx in enumerate(groups.values()):
         if len(idx) > 1:
             prob += pulp.lpSum(x[i] for i in idx) <= 1, f"OnePerGroup_{c}"
-    prob.solve(solver())
+    ok, _status = solve(prob)
 
-    if pulp.LpStatus[prob.status] != "Optimal":
+    if not ok:
         return MealPlan(goal, [], 0.0, 0.0, False,
                         "No feasible meal within the calorie budget.")
     picked = [i for i in range(len(foods)) if (x[i].value() or 0) > 0.5]
