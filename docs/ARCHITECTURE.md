@@ -23,7 +23,7 @@ This note records the load-bearing engineering decisions.
 - **cost = -log(strength).** Path strength is the product of edge strengths,
   so Dijkstra's shortest path is exactly the strongest chain and Yen gives the
   next-strongest. Ranking combines all routes (noisy-OR, strongest route in
-  full, others at half weight) with per-portion penalties — see
+  full, the next 3 at weight 0.3) with per-portion penalties — see
   `engine/scoring.py`. (Until v1.2 the cost was 1 / strength over a dataset-max
   normalisation, which let fortified powders and 100 g of dried herbs win.)
 - **Portions, not 100 g.** Delivery is per reference portion

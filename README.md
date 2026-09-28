@@ -52,6 +52,7 @@ says so.
 | **Optimisation** | Two mixed-integer programs (PuLP/CBC): one meal that covers a goal, and a whole week under a budget, with energy as a hard constraint and WHO limits on salt, saturated fat and free sugars | [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py), [`engine/meal_optimizer.py`](backend/feedforward/engine/meal_optimizer.py) |
 | **Statistics on messy data** | Crowdsourced receipts → median €/kg per chain, outliers dropped, chains with few receipts shrunk towards national median × chain price index; the index comes out of the data (Lidl 0.67, Carrefour 1.06, Biocoop 1.49) | [`data/ingest/prices.py`](backend/feedforward/data/ingest/prices.py) |
 | **Scientific judgement** | Scoring per realistic portion against reference intakes; heme vs non-heme iron; the EU register as evidence layer (118 authorised links, 62 EFSA rejections removed); no medical conditions collected, on purpose (EU medical-device rules) | [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) |
+| **Design choices** | Sixteen decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
 | **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 189 tests on GitHub Actions | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
 
 Two bugs the tests caught, as examples of how the project is checked:
@@ -128,8 +129,8 @@ only for offline analytics.
   2 g of baking powder, 30 g of nuts, 150 g of cooked lentils. A portion over a
   Tolerable Upper Intake Level is discounted.
 - **Nutrient → Goal** = association weight × evidence grade.
-- **Food → Goal** = strongest route in full plus every other route at half
-  weight (noisy-OR), times penalties for sodium / saturated fat / sugars per
+- **Food → Goal** = strongest route in full plus the next 3 routes at weight
+  0.3 (noisy-OR), times penalties for sodium / saturated fat / sugars per
   portion (stronger where the goal has a negative edge, e.g. sodium → blood
   pressure) and for exceeding a UL.
 - **Enhancers are not routes.** Vitamin C helps iron *absorption*; it is applied
@@ -295,7 +296,8 @@ Known limitations, stated plainly:
 - Not deployed anywhere; it runs locally. Nothing has been submitted to an app store.
 
 See [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) for the evidence
-approach.
+approach and [`DECISIONS.md`](DECISIONS.md) for the design choices, the
+alternatives considered and what each one costs.
 
 ---
 
