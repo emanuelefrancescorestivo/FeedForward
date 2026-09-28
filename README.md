@@ -1,5 +1,7 @@
 # FeedForward
 
+[![tests](https://github.com/emanuelefrancescorestivo/FeedForward/actions/workflows/tests.yml/badge.svg)](https://github.com/emanuelefrancescorestivo/FeedForward/actions/workflows/tests.yml)
+
 **An explainable nutritional knowledge graph.** Most nutrition apps tell you
 *what* you ate. FeedForward tells you *why* a food helps — tracing an explicit,
 evidence-graded chain from **food → nutrient → health goal**, adjusted for how
@@ -259,8 +261,11 @@ approach.
 
 ## Provenance
 
-Originally developed as a university project at PSL University; substantially
-rebuilt and extended independently: new scientific engine (bioavailability,
+FeedForward started as the final project of TAOCP2 (PSL University, Bachelor
+in AI, June 2026) by **Emanuele Restivo and Marcos Almodovar**: Open Food Facts
+and Wikipedia scrapers, the Food → Nutrient → Goal graph, graph-based
+recommendations and an ILP vs greedy meal comparison. Since then it has been
+rebuilt and extended by Emanuele Restivo: new scientific engine (bioavailability,
 evidence grading, EU claims), the French data and price pipeline, the weekly
 planner, an API, a web app and a mobile prototype. Built with AI coding
 assistants (Claude Code) as tools; design decisions and their trade-offs are
