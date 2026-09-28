@@ -1,0 +1,17 @@
+# Production database. The API reads FEEDFORWARD_DATABASE_URL.
+# This environment had no Docker daemon when the schema was written; the
+# compose file is the way to run the PostgreSQL the migrations target.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: feedforward
+      POSTGRES_PASSWORD: feedforward
+      POSTGRES_DB: feedforward
+    ports:
+      - "5432:5432"
+    volumes:
+      - feedforward_pg:/var/lib/postgresql/data
+
+volumes:
+  feedforward_pg:

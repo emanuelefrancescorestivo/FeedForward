@@ -1,0 +1,50 @@
+{
+  "_note": "Provenance registry. Every food row points at one of these. licence is what governs redistribution of the derived data; check it before adding a source.",
+  "sources": [
+    {
+      "id": "ciqual-2020",
+      "kind": "ciqual",
+      "name": "ANSES-CIQUAL French food composition table 2020",
+      "version": "2020-07-07",
+      "licence": "Licence Ouverte / Etalab 2.0",
+      "url": "https://ciqual.anses.fr/",
+      "country": "FR"
+    },
+    {
+      "id": "feedforward-curated",
+      "kind": "curated",
+      "name": "FeedForward curated whole-foods reference",
+      "version": "1.2",
+      "licence": "MIT (values transcribed from USDA FoodData Central, public domain)",
+      "url": null,
+      "country": null
+    },
+    {
+      "id": "usda-fdc-foundation",
+      "kind": "usda",
+      "name": "USDA FoodData Central Foundation Foods",
+      "version": "2026-04-30",
+      "licence": "Public domain (CC0 1.0)",
+      "url": "https://fdc.nal.usda.gov/download-datasets",
+      "country": "US"
+    },
+    {
+      "id": "usda-fdc-sr-legacy",
+      "kind": "usda",
+      "name": "USDA FoodData Central SR Legacy",
+      "version": "2018-04",
+      "licence": "Public domain (CC0 1.0)",
+      "url": "https://fdc.nal.usda.gov/download-datasets",
+      "country": "US"
+    },
+    {
+      "id": "openfoodfacts",
+      "kind": "openfoodfacts",
+      "name": "Open Food Facts",
+      "version": "university crawl",
+      "licence": "ODbL 1.0 (database), DbCL 1.0 (contents) — share-alike",
+      "url": "https://world.openfoodfacts.org/data",
+      "country": null
+    }
+  ]
+}

@@ -1,0 +1,278 @@
+{
+  "_note": [
+    "Reference portions by food group, in grams. A recommendation compares what ONE realistic portion delivers against daily need, so 100 g of baking powder or dried sage can no longer outrank 150 g of lentils.",
+    "Values are approximate everyday portions informed by the FDA Reference Amounts Customarily Consumed (21 CFR 101.12) and common EU portion guidance (e.g. 80 g of fruit or vegetables). They are for ranking, not for labelling, and should be reviewed by a dietitian.",
+    "Rules are regular expressions matched against the lowercase, accent-free 'name | category' text. The FIRST matching rule wins, so specific rules come before general ones.",
+    "category_regex, when present, must also match the category alone.",
+    "A rule with \"on\": \"name\" is matched against the name only (default: name and category).",
+    "OpenFoodFacts products are packaged as sold: cereals, pasta and legumes without a cooked/canned word are weighed dry (engine/portions.py)."
+  ],
+  "default_grams": 100,
+  "rules": [
+    {
+      "group": "leavening",
+      "grams": 2,
+      "regex": "leavening|baking powder|baking soda|cream of tartar|levure chimique|bicarbonate|\\byeast\\b|levure"
+    },
+    {
+      "group": "salt",
+      "grams": 1,
+      "regex": "^salt\\b|^sel\\b|bouillon cube|stock cube|\\bcube\\b"
+    },
+    {
+      "group": "spices_herbs",
+      "grams": 2,
+      "regex": "\\bspices?\\b|\\bepices?\\b|herbes|spices and herbs|\\bherbs?\\b|condiments|\\bsavory\\b|\\bsarriette\\b|\\bdried (thyme|oregano|basil|rosemary|sage|mint)"
+    },
+    {
+      "group": "fresh_herbs",
+      "grams": 5,
+      "regex": "lemon ?grass|citronelle|\\bparsley\\b|\\bpersil\\b|\\bbasil\\b|basilic|coriander|cilantro|\\bdill\\b|\\baneth\\b|\\bmint\\b|\\bmenthe\\b|chives|ciboulette|rosemary|romarin|\\bthyme\\b|\\bthym\\b|\\bsage\\b|\\bsauge\\b|tarragon|estragon|oregano|origan|chervil|cerfeuil"
+    },
+    {
+      "group": "dried_seaweed",
+      "grams": 5,
+      "regex": "(seaweed|algue|agar|kelp|spirulina|nori|wakame).*(dried|dry|sec|seche)|(dried|dry|sec|seche).*(seaweed|algue|agar|kelp|spirulina)|spirulina|agar"
+    },
+    {
+      "group": "powders",
+      "grams": 5,
+      "regex": "\\bpowder\\b|\\bpoudre\\b|\\binstant\\b|drink mix|\\bdry mix\\b|cocoa, dry"
+    },
+    {
+      "group": "freeze_dried",
+      "grams": 5,
+      "regex": "freeze-dried|freeze dried|dehydrated|lyophilis"
+    },
+    {
+      "group": "dried_vegetables",
+      "grams": 10,
+      "regex": "(peppers?|chil(i|e|ies)|piment|tomato|tomate|mushroom|champignon|onion|oignon|parsley|persil|garlic|\\bail\\b).*(\\bdried\\b|\\bdry\\b|\\bsecs?\\b|\\bseches?\\b|sun-dried)"
+    },
+    {
+      "group": "dried_fruit_any",
+      "grams": 40,
+      "regex": "\\b(dried|dehydrated)\\b.*\\| fruits and fruit juices"
+    },
+    {
+      "group": "dried_vegetables_any",
+      "grams": 10,
+      "regex": "\\b(dried|dehydrated)\\b.*\\| vegetables and vegetable products"
+    },
+    {
+      "group": "textured_protein",
+      "grams": 30,
+      "regex": "meat extender|textured (soy|vegetable) protein|proteines? de soja texturees?"
+    },
+    {
+      "group": "milk_powder",
+      "grams": 25,
+      "regex": "milk, dry|dry milk|lait en poudre"
+    },
+    {
+      "group": "protein_isolate",
+      "grams": 30,
+      "regex": "protein isolate|protein concentrate|isolat"
+    },
+    {
+      "group": "nut_butter",
+      "grams": 30,
+      "regex": "(peanut|almond|cashew|hazelnut|nut|sesame|seed) butter|tahini|beurre de cacahuete|puree d.amande|pate a tartiner"
+    },
+    {
+      "group": "fish_oil",
+      "grams": 5,
+      "regex": "fish oil|cod liver oil|huile de foie"
+    },
+    {
+      "group": "oils_fats",
+      "grams": 10,
+      "regex": "\\boils?\\b|\\bhuile\\b|\\bbutter\\b|\\bbeurre\\b|margarine|\\blard\\b|shortening|\\bghee\\b|tallow|\\bsuet\\b|fats and oils"
+    },
+    {
+      "group": "caviar_roe",
+      "grams": 15,
+      "regex": "caviar|\\broe\\b|oeufs de lump"
+    },
+    {
+      "group": "bran_germ",
+      "grams": 15,
+      "regex": "\\bbran\\b|\\bgerm\\b|son de ble|germe de ble"
+    },
+    {
+      "group": "crispbread",
+      "grams": 20,
+      "regex": "rice cakes?|rice crackers?|galettes? de riz|tartines? craquantes?|crispbread|knackebrod|pain des fleurs|\\bcrackers?\\b"
+    },
+    {
+      "group": "espresso",
+      "grams": 30,
+      "on": "name",
+      "regex": "espresso|ristretto"
+    },
+    {
+      "group": "breakfast_cereal",
+      "grams": 40,
+      "regex": "breakfast cereals?|corn ?flakes|^cereals?\\b|muesli|granola|flocons|porridge oats|rolled oats|cereales? (du )?petit.dejeuner"
+    },
+    {
+      "group": "flour",
+      "grams": 50,
+      "regex": "flour|farine|semolina|semoule|starch|amidon|\\bmeal\\b(?! replacement)"
+    },
+    {
+      "group": "peanuts",
+      "grams": 30,
+      "regex": "peanut|cacahuete|arachide"
+    },
+    {
+      "group": "legumes_dry",
+      "grams": 50,
+      "regex": "(lentil|lentille|\\bbeans?\\b|haricot|chickpea|pois chiche|\\bpeas?\\b|\\bpois\\b|soybean|lupin|fava|\\bfeve|flageolet).*(mature seeds, raw|\\braw\\b|\\bcrues?\\b|\\bsecs?\\b|\\bseches?\\b|\\bdry\\b|\\bdried\\b)|mature seeds, raw|\\(0% moisture\\)"
+    },
+    {
+      "group": "legumes",
+      "grams": 150,
+      "regex": "lentil|lentille|\\bbeans?\\b|haricot|chickpea|pois chiche|\\bpeas?\\b|\\bpois\\b|soybean|edamame|lupin|fava|\\bfeve|flageolet|hummus|houmous|legumes and legume products"
+    },
+    {
+      "group": "nuts_seeds",
+      "grams": 30,
+      "regex": "\\bnuts?\\b|\\bnoix\\b|almond|amande|cashew|cajou|hazelnut|noisette|pistach|walnut|pecan|macadamia|brazilnut|brazil nut|\\bseeds?\\b|graines|\\bflax|linseed|\\bchia\\b|sesame|pignon|pine nut|nut and seed products"
+    },
+    {
+      "group": "soft_cheese",
+      "grams": 100,
+      "regex": "cottage|ricotta|fromage blanc|quark|\\bskyr\\b|petit.suisse"
+    },
+    {
+      "group": "cheese",
+      "grams": 30,
+      "regex": "cheese|fromage|parmesan|emmental|gruyere|comte|mozzarella|cheddar|\\bfeta\\b|\\bbrie\\b|camembert|roquefort|reblochon|raclette"
+    },
+    {
+      "group": "dairy",
+      "grams": 200,
+      "regex": "\\bmilk\\b|\\blait\\b|yogurt|yoghurt|yaourt|kefir|buttermilk|fermented milk"
+    },
+    {
+      "group": "eggs",
+      "grams": 50,
+      "regex": "\\beggs?\\b|\\boeufs?\\b"
+    },
+    {
+      "group": "pate_spread",
+      "grams": 30,
+      "regex": "\\bpate\\b|rillettes|terrine|liverwurst|braunschweiger|foie gras"
+    },
+    {
+      "group": "cured_meats",
+      "grams": 50,
+      "regex": "sausage|saucisse|saucisson|salami|chorizo|bacon|\\bham\\b|jambon|luncheon|bologna|frankfurter|hot dog|pepperoni|prosciutto|lardons|sausages and luncheon meats"
+    },
+    {
+      "group": "organ_meats",
+      "grams": 100,
+      "regex": "liver|\\bfoie\\b|kidney|rognon|giblets|variety meats"
+    },
+    {
+      "group": "fish_seafood",
+      "grams": 100,
+      "regex": "\\bfish\\b|poisson|salmon|saumon|tuna|\\bthon\\b|sardine|mackerel|maquereau|herring|hareng|\\bcod\\b|cabillaud|morue|trout|truite|anchov|anchois|shrimp|crevette|\\bcrab|lobster|homard|oyster|huitre|mussel|moule|\\bclam|palourde|scallop|squid|calamar|octopus|poulpe|sprat|\\beel\\b|halibut|pollock|haddock|tilapia|finfish and shellfish"
+    },
+    {
+      "group": "meat",
+      "grams": 100,
+      "regex": "beef|boeuf|\\bpork\\b|\\bporc\\b|chicken|poulet|turkey|dinde|\\blamb\\b|agneau|\\bveal\\b|\\bveau\\b|venison|\\bduck\\b|canard|rabbit|lapin|\\bgoat\\b|bison|\\belk\\b|caribou|moose|poultry products|pork products|beef products|lamb, veal, and game"
+    },
+    {
+      "group": "tofu_tempeh",
+      "grams": 100,
+      "regex": "\\btofu\\b|tempeh|seitan"
+    },
+    {
+      "group": "grains_dry",
+      "grams": 70,
+      "regex": "(\\brice\\b|\\briz\\b|pasta|\\bpates\\b|spaghetti|macaroni|noodle|quinoa|\\boats?\\b|avoine|barley|\\borge\\b|millet|buckwheat|sarrasin|couscous|bulgur|amaranth|teff|spelt|epeautre).*(\\braw\\b|\\bdry\\b|uncooked|\\bcru\\b)|rices\\b|basmati|arroz|\\breis\\b"
+    },
+    {
+      "group": "grains_cooked",
+      "grams": 180,
+      "regex": "\\brice\\b|\\briz\\b|pasta|\\bpates\\b|spaghetti|macaroni|noodle|quinoa|\\boats?\\b|avoine|barley|\\borge\\b|millet|buckwheat|sarrasin|couscous|bulgur|amaranth|teff|spelt|epeautre|cereal grains and pasta"
+    },
+    {
+      "group": "bread_baked",
+      "grams": 50,
+      "regex": "bread|\\bpain\\b|toast|biscuit|cracker|cookie|\\bcake|gateau|muffin|croissant|brioche|pastry|\\bpie\\b|tart|baked products"
+    },
+    {
+      "group": "spreads_sweeteners",
+      "grams": 20,
+      "regex": "\\bjam\\b|confiture|marmalade|honey|\\bmiel\\b|syrup|sirop|molasses|\\bsugars?\\b|\\bsucre\\b"
+    },
+    {
+      "group": "sweets_snacks",
+      "grams": 30,
+      "regex": "cand(y|ies)|chocolate|chocolat|bonbon|confectioner|\\bchips\\b|crisps|pretzel|popcorn|snacks|sweets"
+    },
+    {
+      "group": "beverage_concentrate",
+      "grams": 60,
+      "on": "name",
+      "regex": "concentrate(?!.*prepared)|\\bsirop\\b|\\bsyrup\\b.*(drink|beverage)",
+      "why": "frozen or liquid concentrates are diluted about 1:4 before drinking"
+    },
+    {
+      "group": "soups",
+      "grams": 250,
+      "regex": "\\bsoup|soupe|veloute|potage|broth|bouillon|gazpacho",
+      "on": "name"
+    },
+    {
+      "group": "sauces",
+      "grams": 20,
+      "regex": "sauce|ketchup|mustard|moutarde|mayonnaise|dressing|vinaigrette|pesto|condiment|gravy|soups, sauces, and gravies"
+    },
+    {
+      "group": "beverages",
+      "grams": 250,
+      "regex": "juice|\\bjus\\b|beverage|boisson|\\bdrinks?\\b|\\bsoda\\b|nectar|smoothie|\\btea\\b|^the\\b|\\bthe (vert|noir|glace|infusion)|coffee|\\bcafe\\b|\\bbeer\\b|biere|\\bwine\\b|\\bvin\\b|lemonade|^waters?(,|$)|^eaux?(,| |$)|\\bwater, (bottled|tap|municipal)|\\beau (minerale|de source)",
+      "on": "name"
+    },
+    {
+      "group": "dried_fruit",
+      "grams": 40,
+      "regex": "(apricot|abricot|fig|figue|prune|plum|date|datte|raisin|grape|cranberr|apple|pomme|mango|mangue|banana|banane|goji).*(dried|dehydrated|\\bsecs?\\b|\\bseches?\\b|moelleux)|\\braisins\\b|\\bprunes\\b|\\bdates\\b|\\bdattes\\b"
+    },
+    {
+      "group": "olives",
+      "grams": 30,
+      "regex": "\\bolives?\\b(?!.*\\boil)"
+    },
+    {
+      "group": "fruits",
+      "grams": 120,
+      "regex": "apple|\\bpomme\\b|banana|banane|orange|kiwi|strawberr|fraise|berr|\\bbaies?\\b|grape|\\bpear|poire|peach|\\bpeche|apricot|abricot|mango|mangue|melon|cherr|cerise|\\bplum|pineapple|ananas|citrus|lemon|citron|grapefruit|pamplemousse|guava|goyave|papaya|acerola|\\bfig|figue|avocado|avocat|pomegranate|grenade|currant|cassis|clementine|mandarin|nectarine|lychee|passion fruit|fruits and fruit juices"
+    },
+    {
+      "group": "potato_skin",
+      "grams": 60,
+      "regex": "potato.*\\bskin\\b"
+    },
+    {
+      "group": "starchy_veg",
+      "grams": 150,
+      "regex": "potato|pomme de terre|patate|\\byams?\\b|cassava|manioc|plantain|taro"
+    },
+    {
+      "group": "vegetables",
+      "grams": 80,
+      "regex": "vegetable|legume|spinach|epinard|kale|\\bchou|cabbage|broccoli|brocoli|carrot|carotte|tomato|tomate|pepper|poivron|lettuce|salade|onion|oignon|squash|courge|courgette|zucchini|pumpkin|potiron|eggplant|aubergine|cucumber|concombre|celery|celeri|asparagus|asperge|beet|betterave|mushroom|champignon|\\bleek|poireau|artichoke|artichaut|chard|blette|greens|collard|cauliflower|chou-fleur|brussels|radish|radis|turnip|navet|fennel|fenouil|okra|parsnip|panais|sprouts|seaweed|algue|vegetables and vegetable products|\\bmais\\b|sweet corn|\\bcorn\\b"
+    },
+    {
+      "group": "mixed_dishes",
+      "grams": 250,
+      "regex": "fast foods|restaurant foods|meals, entrees|microwave meals|plats prepares|\\bmeals?\\b|\\bpizza|lasagn|sandwich|burger|burrito|\\bplat\\b|paupiette|poelee|macedoine"
+    }
+  ]
+}

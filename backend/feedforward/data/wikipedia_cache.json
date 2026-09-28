@@ -1,0 +1,27 @@
+{
+ "emu": {
+  "title": "Emu",
+  "extract": "The emu is a species of flightless bird endemic to Australia, where it is the tallest native bird. It is the only extant member of the genus Dromaius and the third-tallest living bird after its African ratite relatives, the common ostrich and Somali ostrich. The emu's native ranges cover most of the Australian mainland. The Tasmanian, Kangaroo Island and King Island subspecies became extinct after the European settlement of Australia in 1788.",
+  "url": "https://en.wikipedia.org/wiki/Emu",
+  "thumbnail": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9d/Emu_1_-_Tidbinbilla.jpg/330px-Emu_1_-_Tidbinbilla.jpg",
+  "image_page": "https://commons.wikimedia.org/wiki/File:Emu_1_-_Tidbinbilla.jpg",
+  "search_term": "Emu"
+ },
+ "chrysanthemum leaves": null,
+ "chrysanthemum": {
+  "title": "Chrysanthemum",
+  "extract": "Chrysanthemums, sometimes abbreviated to mums or chrysanths, are perennial herbaceous flowering plants in the family Asteraceae that bloom in the autumn. They are native to East Asia and northeastern Europe. Most species originate from East Asia, and the center of diversity is in China. Many thousands of horticultural varieties and cultivars exist.",
+  "url": "https://en.wikipedia.org/wiki/Chrysanthemum",
+  "thumbnail": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d9/Chrysanthemum_%28Chinese_characters%29.svg/330px-Chrysanthemum_%28Chinese_characters%29.svg.png",
+  "image_page": "https://commons.wikimedia.org/wiki/File:Chrysanthemum_%28Chinese_characters%29.svg.png",
+  "search_term": "Chrysanthemum"
+ },
+ "salmon oil": {
+  "title": "Salmonella",
+  "extract": "Salmonella is a genus of rod-shaped (bacillus), gram-negative bacteria of the family Enterobacteriaceae. The two known species of Salmonella are Salmonella enterica and Salmonella bongori. S. enterica is the type species and is further divided into six subspecies that include over 2,650 serotypes. Salmonella was named after Daniel Elmer Salmon (1850–1914), an American veterinary surgeon.",
+  "url": "https://en.wikipedia.org/wiki/Salmonella",
+  "thumbnail": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/SalmonellaNIAID.jpg/330px-SalmonellaNIAID.jpg",
+  "image_page": "https://commons.wikimedia.org/wiki/File:SalmonellaNIAID.jpg",
+  "search_term": "Salmon oil"
+ }
+}

@@ -1,0 +1,7950 @@
+{
+ "provenance": {
+  "sources": [
+   "Open Prices (Open Food Facts), ODbL — https://prices.openfoodfacts.org",
+   "Open Food Facts product pack sizes, ODbL — https://world.openfoodfacts.org"
+  ],
+  "built": "2026-09-27",
+  "since": "2024-03-26",
+  "method": "median EUR/kg per chain, outliers beyond 3x the national median dropped, shrunk towards national median x chain index with weight 5; gaps = national median x chain index (estimated)"
+ },
+ "chains": {
+  "lidl": {
+   "label": "Lidl",
+   "tier": "discount",
+   "index": 0.665,
+   "ingredients_observed": 47
+  },
+  "aldi": {
+   "label": "Aldi",
+   "tier": "discount",
+   "index": 0.699,
+   "ingredients_observed": 24
+  },
+  "netto": {
+   "label": "Netto",
+   "tier": "discount",
+   "index": 0.572,
+   "ingredients_observed": 32
+  },
+  "leclerc": {
+   "label": "E.Leclerc",
+   "tier": "hypermarket",
+   "index": 0.926,
+   "ingredients_observed": 57
+  },
+  "auchan": {
+   "label": "Auchan",
+   "tier": "hypermarket",
+   "index": 1.051,
+   "ingredients_observed": 54
+  },
+  "intermarche": {
+   "label": "Intermarché",
+   "tier": "supermarket",
+   "index": 0.994,
+   "ingredients_observed": 55
+  },
+  "carrefour": {
+   "label": "Carrefour",
+   "tier": "supermarket",
+   "index": 1.055,
+   "ingredients_observed": 55
+  },
+  "super-u": {
+   "label": "Super U / U Express",
+   "tier": "supermarket",
+   "index": 1.0,
+   "ingredients_observed": 56
+  },
+  "casino": {
+   "label": "Casino",
+   "tier": "supermarket",
+   "index": 1.006,
+   "ingredients_observed": 20
+  },
+  "monoprix": {
+   "label": "Monoprix",
+   "tier": "city",
+   "index": 1.168,
+   "ingredients_observed": 44
+  },
+  "franprix": {
+   "label": "Franprix",
+   "tier": "city",
+   "index": 1.267,
+   "ingredients_observed": 52
+  },
+  "g20": {
+   "label": "G20",
+   "tier": "city",
+   "index": 0.991,
+   "ingredients_observed": 32
+  },
+  "picard": {
+   "label": "Picard",
+   "tier": "frozen",
+   "index": 1.394,
+   "ingredients_observed": 8
+  },
+  "naturalia": {
+   "label": "Naturalia",
+   "tier": "organic",
+   "index": 1.386,
+   "ingredients_observed": 45
+  },
+  "biocoop": {
+   "label": "Biocoop",
+   "tier": "organic",
+   "index": 1.485,
+   "ingredients_observed": 43
+  },
+  "bio-c-bon": {
+   "label": "Bio c' Bon",
+   "tier": "organic",
+   "index": 1.287,
+   "ingredients_observed": 39
+  },
+  "la-vie-claire": {
+   "label": "La Vie Claire",
+   "tier": "organic",
+   "index": 1.34,
+   "ingredients_observed": 32
+  }
+ },
+ "coverage": {
+  "oats": {
+   "packs_known": 176,
+   "chains": 13,
+   "observations": 100
+  },
+  "rice": {
+   "packs_known": 420,
+   "chains": 13,
+   "observations": 552
+  },
+  "pasta": {
+   "packs_known": 990,
+   "chains": 16,
+   "observations": 1780
+  },
+  "wholemeal-pasta": {
+   "packs_known": 7,
+   "chains": 7,
+   "observations": 17
+  },
+  "couscous": {
+   "packs_known": 166,
+   "chains": 12,
+   "observations": 404
+  },
+  "quinoa": {
+   "packs_known": 60,
+   "chains": 12,
+   "observations": 96
+  },
+  "baguette": {
+   "packs_known": 100,
+   "chains": 7,
+   "observations": 190
+  },
+  "wholemeal-bread": {
+   "packs_known": 176,
+   "chains": 12,
+   "observations": 382
+  },
+  "potato": {
+   "packs_known": 226,
+   "chains": 15,
+   "observations": 398
+  },
+  "green-lentils": {
+   "packs_known": 284,
+   "chains": 15,
+   "observations": 710
+  },
+  "red-lentils": {
+   "packs_known": 53,
+   "chains": 11,
+   "observations": 51
+  },
+  "chickpeas": {
+   "packs_known": 178,
+   "chains": 15,
+   "observations": 302
+  },
+  "kidney-beans": {
+   "packs_known": 71,
+   "chains": 12,
+   "observations": 169
+  },
+  "tofu": {
+   "packs_known": 104,
+   "chains": 10,
+   "observations": 67
+  },
+  "egg": {
+   "packs_known": 156,
+   "chains": 7,
+   "observations": 169
+  },
+  "sardines": {
+   "packs_known": 261,
+   "chains": 16,
+   "observations": 325
+  },
+  "tuna": {
+   "packs_known": 389,
+   "chains": 14,
+   "observations": 639
+  },
+  "mackerel": {
+   "packs_known": 167,
+   "chains": 14,
+   "observations": 197
+  },
+  "salmon": {
+   "packs_known": 286,
+   "chains": 13,
+   "observations": 282
+  },
+  "chicken": {
+   "packs_known": 64,
+   "chains": 8,
+   "observations": 38
+  },
+  "minced-beef": {
+   "packs_known": 131,
+   "chains": 9,
+   "observations": 267
+  },
+  "ham": {
+   "packs_known": 306,
+   "chains": 13,
+   "observations": 562
+  },
+  "yogurt": {
+   "packs_known": 283,
+   "chains": 13,
+   "observations": 358
+  },
+  "fromage-blanc": {
+   "packs_known": 112,
+   "chains": 5,
+   "observations": 19
+  },
+  "milk": {
+   "packs_known": 397,
+   "chains": 15,
+   "observations": 1093
+  },
+  "soy-drink": {
+   "packs_known": 148,
+   "chains": 14,
+   "observations": 486
+  },
+  "emmental": {
+   "packs_known": 225,
+   "chains": 13,
+   "observations": 507
+  },
+  "butter": {
+   "packs_known": 537,
+   "chains": 14,
+   "observations": 1057
+  },
+  "olive-oil": {
+   "packs_known": 369,
+   "chains": 13,
+   "observations": 548
+  },
+  "rapeseed-oil": {
+   "packs_known": 75,
+   "chains": 10,
+   "observations": 95
+  },
+  "carrot": {
+   "packs_known": 191,
+   "chains": 16,
+   "observations": 446
+  },
+  "onion": {
+   "packs_known": 109,
+   "chains": 14,
+   "observations": 202
+  },
+  "tomato": {
+   "packs_known": 465,
+   "chains": 16,
+   "observations": 649
+  },
+  "canned-tomato": {
+   "packs_known": 247,
+   "chains": 13,
+   "observations": 336
+  },
+  "spinach": {
+   "packs_known": 96,
+   "chains": 12,
+   "observations": 124
+  },
+  "broccoli": {
+   "packs_known": 45,
+   "chains": 16,
+   "observations": 126
+  },
+  "zucchini": {
+   "packs_known": 33,
+   "chains": 15,
+   "observations": 193
+  },
+  "bell-pepper": {
+   "packs_known": 23,
+   "chains": 14,
+   "observations": 72
+  },
+  "peas": {
+   "packs_known": 70,
+   "chains": 10,
+   "observations": 125
+  },
+  "green-beans": {
+   "packs_known": 33,
+   "chains": 7,
+   "observations": 48
+  },
+  "cabbage": {
+   "packs_known": 36,
+   "chains": 14,
+   "observations": 57
+  },
+  "leek": {
+   "packs_known": 13,
+   "chains": 16,
+   "observations": 104
+  },
+  "mushroom": {
+   "packs_known": 257,
+   "chains": 15,
+   "observations": 483
+  },
+  "lettuce": {
+   "packs_known": 142,
+   "chains": 13,
+   "observations": 427
+  },
+  "garlic": {
+   "packs_known": 87,
+   "chains": 12,
+   "observations": 146
+  },
+  "lemon": {
+   "packs_known": 34,
+   "chains": 15,
+   "observations": 124
+  },
+  "banana": {
+   "packs_known": 14,
+   "chains": 14,
+   "observations": 201
+  },
+  "apple": {
+   "packs_known": 123,
+   "chains": 15,
+   "observations": 460
+  },
+  "orange": {
+   "packs_known": 48,
+   "chains": 15,
+   "observations": 187
+  },
+  "kiwi": {
+   "packs_known": 10,
+   "chains": 14,
+   "observations": 74
+  },
+  "blueberries": {
+   "packs_known": 22,
+   "chains": 3,
+   "observations": 5
+  },
+  "raisins": {
+   "packs_known": 83,
+   "chains": 6,
+   "observations": 73
+  },
+  "walnuts": {
+   "packs_known": 86,
+   "chains": 9,
+   "observations": 65
+  },
+  "sunflower-seeds": {
+   "packs_known": 47,
+   "chains": 8,
+   "observations": 13
+  },
+  "peanut-butter": {
+   "packs_known": 323,
+   "chains": 16,
+   "observations": 846
+  },
+  "honey": {
+   "packs_known": 397,
+   "chains": 14,
+   "observations": 397
+  },
+  "dark-chocolate": {
+   "packs_known": 910,
+   "chains": 16,
+   "observations": 1969
+  }
+ },
+ "prices": {
+  "oats": {
+   "national_eur_kg": 3.6,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.01,
+     "observed_eur_kg": 1.74,
+     "n": 7,
+     "last": "2026-03-01",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "aldi": {
+     "eur_kg": 2.65,
+     "observed_eur_kg": 3.32,
+     "n": 1,
+     "last": "2025-07-26",
+     "estimated": false,
+     "pack_g": 900
+    },
+    "netto": {
+     "eur_kg": 2.19,
+     "observed_eur_kg": 2.36,
+     "n": 4,
+     "last": "2025-10-09",
+     "estimated": false,
+     "pack_g": 525
+    },
+    "leclerc": {
+     "eur_kg": 3.11,
+     "observed_eur_kg": 3.02,
+     "n": 13,
+     "last": "2026-07-18",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "auchan": {
+     "eur_kg": 3.79,
+     "observed_eur_kg": 3.79,
+     "n": 12,
+     "last": "2026-07-31",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "intermarche": {
+     "eur_kg": 3.31,
+     "observed_eur_kg": 3.11,
+     "n": 7,
+     "last": "2026-08-24",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "carrefour": {
+     "eur_kg": 3.89,
+     "observed_eur_kg": 3.9,
+     "n": 31,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "super-u": {
+     "eur_kg": 3.37,
+     "observed_eur_kg": 3.23,
+     "n": 8,
+     "last": "2025-03-29",
+     "estimated": false,
+     "pack_g": 525
+    },
+    "casino": {
+     "eur_kg": 3.63,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 4.11,
+     "observed_eur_kg": 3.86,
+     "n": 2,
+     "last": "2024-12-19",
+     "estimated": false,
+     "pack_g": 675
+    },
+    "franprix": {
+     "eur_kg": 5.34,
+     "observed_eur_kg": 6.3,
+     "n": 4,
+     "last": "2026-02-19",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "g20": {
+     "eur_kg": 3.57,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 5.02,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 4.79,
+     "observed_eur_kg": 3.78,
+     "n": 1,
+     "last": "2024-09-30",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "biocoop": {
+     "eur_kg": 5.67,
+     "observed_eur_kg": 5.9,
+     "n": 7,
+     "last": "2026-02-21",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "bio-c-bon": {
+     "eur_kg": 4.95,
+     "observed_eur_kg": 5.74,
+     "n": 2,
+     "last": "2025-11-03",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "la-vie-claire": {
+     "eur_kg": 4.83,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "rice": {
+   "national_eur_kg": 3.7,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.72,
+     "observed_eur_kg": 3.05,
+     "n": 4,
+     "last": "2026-09-12",
+     "estimated": false,
+     "pack_g": 575
+    },
+    "aldi": {
+     "eur_kg": 2.78,
+     "observed_eur_kg": 2.98,
+     "n": 5,
+     "last": "2026-02-25",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "netto": {
+     "eur_kg": 2.11,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 4.0,
+     "observed_eur_kg": 4.02,
+     "n": 100,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "auchan": {
+     "eur_kg": 3.64,
+     "observed_eur_kg": 3.62,
+     "n": 63,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "intermarche": {
+     "eur_kg": 3.04,
+     "observed_eur_kg": 2.99,
+     "n": 59,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 900
+    },
+    "carrefour": {
+     "eur_kg": 3.89,
+     "observed_eur_kg": 3.89,
+     "n": 108,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "super-u": {
+     "eur_kg": 4.89,
+     "observed_eur_kg": 5.0,
+     "n": 54,
+     "last": "2026-09-08",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 3.72,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 4.32,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 5.12,
+     "observed_eur_kg": 5.2,
+     "n": 29,
+     "last": "2026-08-25",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "g20": {
+     "eur_kg": 3.66,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 5.1,
+     "observed_eur_kg": 4.83,
+     "n": 1,
+     "last": "2026-03-09",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "naturalia": {
+     "eur_kg": 6.96,
+     "observed_eur_kg": 8.49,
+     "n": 6,
+     "last": "2026-06-26",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "biocoop": {
+     "eur_kg": 5.9,
+     "observed_eur_kg": 6.2,
+     "n": 7,
+     "last": "2026-09-21",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "bio-c-bon": {
+     "eur_kg": 6.39,
+     "observed_eur_kg": 6.98,
+     "n": 14,
+     "last": "2025-10-10",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "la-vie-claire": {
+     "eur_kg": 6.28,
+     "observed_eur_kg": 7.38,
+     "n": 6,
+     "last": "2025-05-26",
+     "estimated": false,
+     "pack_g": 500
+    }
+   }
+  },
+  "pasta": {
+   "national_eur_kg": 2.64,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.65,
+     "observed_eur_kg": 1.61,
+     "n": 12,
+     "last": "2026-05-28",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "aldi": {
+     "eur_kg": 1.72,
+     "observed_eur_kg": 1.65,
+     "n": 8,
+     "last": "2025-08-17",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "netto": {
+     "eur_kg": 1.39,
+     "observed_eur_kg": 1.2,
+     "n": 3,
+     "last": "2025-10-20",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 2.04,
+     "observed_eur_kg": 2.04,
+     "n": 608,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "auchan": {
+     "eur_kg": 2.78,
+     "observed_eur_kg": 2.78,
+     "n": 277,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "intermarche": {
+     "eur_kg": 2.46,
+     "observed_eur_kg": 2.45,
+     "n": 146,
+     "last": "2026-09-05",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "carrefour": {
+     "eur_kg": 2.98,
+     "observed_eur_kg": 2.98,
+     "n": 362,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "super-u": {
+     "eur_kg": 2.6,
+     "observed_eur_kg": 2.6,
+     "n": 163,
+     "last": "2026-09-08",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 3.93,
+     "observed_eur_kg": 4.18,
+     "n": 26,
+     "last": "2024-12-28",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "monoprix": {
+     "eur_kg": 3.76,
+     "observed_eur_kg": 3.98,
+     "n": 15,
+     "last": "2026-08-21",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "franprix": {
+     "eur_kg": 3.8,
+     "observed_eur_kg": 3.9,
+     "n": 24,
+     "last": "2026-06-13",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "g20": {
+     "eur_kg": 2.85,
+     "observed_eur_kg": 4.04,
+     "n": 1,
+     "last": "2024-05-19",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "picard": {
+     "eur_kg": 3.68,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 3.61,
+     "observed_eur_kg": 3.6,
+     "n": 26,
+     "last": "2026-04-18",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "biocoop": {
+     "eur_kg": 3.92,
+     "observed_eur_kg": 3.92,
+     "n": 12,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "bio-c-bon": {
+     "eur_kg": 3.94,
+     "observed_eur_kg": 4.08,
+     "n": 20,
+     "last": "2025-11-03",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "la-vie-claire": {
+     "eur_kg": 3.75,
+     "observed_eur_kg": 3.88,
+     "n": 8,
+     "last": "2025-11-06",
+     "estimated": false,
+     "pack_g": 500
+    }
+   }
+  },
+  "wholemeal-pasta": {
+   "national_eur_kg": 1.9,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.26,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "aldi": {
+     "eur_kg": 1.33,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.09,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 1.85,
+     "observed_eur_kg": 1.9,
+     "n": 9,
+     "last": "2026-08-18",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "auchan": {
+     "eur_kg": 2.0,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "intermarche": {
+     "eur_kg": 1.88,
+     "observed_eur_kg": 1.87,
+     "n": 2,
+     "last": "2025-11-23",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "carrefour": {
+     "eur_kg": 2.0,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "super-u": {
+     "eur_kg": 1.9,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "casino": {
+     "eur_kg": 1.91,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 2.22,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 2.55,
+     "observed_eur_kg": 2.9,
+     "n": 2,
+     "last": "2025-09-06",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "g20": {
+     "eur_kg": 1.88,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 2.65,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 2.94,
+     "observed_eur_kg": 4.5,
+     "n": 1,
+     "last": "2025-06-09",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "biocoop": {
+     "eur_kg": 2.85,
+     "observed_eur_kg": 3.0,
+     "n": 1,
+     "last": "2024-12-14",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "bio-c-bon": {
+     "eur_kg": 2.92,
+     "observed_eur_kg": 5.3,
+     "n": 1,
+     "last": "2024-12-13",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "la-vie-claire": {
+     "eur_kg": 2.55,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "couscous": {
+   "national_eur_kg": 3.66,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.45,
+     "observed_eur_kg": 2.56,
+     "n": 1,
+     "last": "2025-07-10",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "aldi": {
+     "eur_kg": 2.43,
+     "observed_eur_kg": 1.78,
+     "n": 1,
+     "last": "2024-03-30",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "netto": {
+     "eur_kg": 2.09,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 2.55,
+     "observed_eur_kg": 2.52,
+     "n": 142,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "auchan": {
+     "eur_kg": 3.53,
+     "observed_eur_kg": 3.5,
+     "n": 48,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "intermarche": {
+     "eur_kg": 3.11,
+     "observed_eur_kg": 3.02,
+     "n": 31,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "carrefour": {
+     "eur_kg": 3.93,
+     "observed_eur_kg": 3.94,
+     "n": 66,
+     "last": "2026-09-13",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "super-u": {
+     "eur_kg": 4.37,
+     "observed_eur_kg": 4.48,
+     "n": 31,
+     "last": "2026-09-09",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 3.68,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 4.59,
+     "observed_eur_kg": 6.18,
+     "n": 1,
+     "last": "2026-05-26",
+     "estimated": false,
+     "pack_g": 475
+    },
+    "franprix": {
+     "eur_kg": 4.33,
+     "observed_eur_kg": 4.25,
+     "n": 18,
+     "last": "2026-06-13",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "g20": {
+     "eur_kg": 3.63,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 5.1,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 4.74,
+     "observed_eur_kg": 3.9,
+     "n": 2,
+     "last": "2025-04-14",
+     "estimated": false,
+     "pack_g": 300
+    },
+    "biocoop": {
+     "eur_kg": 5.44,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 4.71,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 5.92,
+     "observed_eur_kg": 10.98,
+     "n": 1,
+     "last": "2024-08-27",
+     "estimated": false,
+     "pack_g": 450
+    }
+   }
+  },
+  "quinoa": {
+   "national_eur_kg": 9.74,
+   "pack_g": 400,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 6.25,
+     "observed_eur_kg": 5.12,
+     "n": 1,
+     "last": "2026-02-06",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "aldi": {
+     "eur_kg": 6.81,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 5.69,
+     "observed_eur_kg": 5.9,
+     "n": 3,
+     "last": "2024-11-16",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "leclerc": {
+     "eur_kg": 9.34,
+     "observed_eur_kg": 9.41,
+     "n": 25,
+     "last": "2026-09-02",
+     "estimated": false,
+     "pack_g": 220
+    },
+    "auchan": {
+     "eur_kg": 8.53,
+     "observed_eur_kg": 7.92,
+     "n": 14,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "intermarche": {
+     "eur_kg": 9.68,
+     "observed_eur_kg": 9.68,
+     "n": 7,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 220
+    },
+    "carrefour": {
+     "eur_kg": 9.97,
+     "observed_eur_kg": 9.9,
+     "n": 20,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 275
+    },
+    "super-u": {
+     "eur_kg": 9.26,
+     "observed_eur_kg": 9.04,
+     "n": 11,
+     "last": "2026-08-25",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "casino": {
+     "eur_kg": 9.8,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 11.27,
+     "observed_eur_kg": 11.02,
+     "n": 2,
+     "last": "2026-07-27",
+     "estimated": false,
+     "pack_g": 310
+    },
+    "franprix": {
+     "eur_kg": 14.49,
+     "observed_eur_kg": 15.68,
+     "n": 9,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 220
+    },
+    "g20": {
+     "eur_kg": 9.65,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 13.58,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 13.5,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 13.69,
+     "observed_eur_kg": 9.8,
+     "n": 1,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "bio-c-bon": {
+     "eur_kg": 12.54,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 13.07,
+     "observed_eur_kg": 13.18,
+     "n": 1,
+     "last": "2024-08-27",
+     "estimated": false,
+     "pack_g": 500
+    }
+   }
+  },
+  "baguette": {
+   "national_eur_kg": 3.3,
+   "pack_g": 250,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.19,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "aldi": {
+     "eur_kg": 2.31,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.76,
+     "observed_eur_kg": 1.56,
+     "n": 3,
+     "last": "2025-08-23",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "leclerc": {
+     "eur_kg": 1.47,
+     "observed_eur_kg": 1.4,
+     "n": 112,
+     "last": "2026-09-01",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "auchan": {
+     "eur_kg": 4.73,
+     "observed_eur_kg": 5.51,
+     "n": 8,
+     "last": "2026-05-21",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "intermarche": {
+     "eur_kg": 4.02,
+     "observed_eur_kg": 4.36,
+     "n": 11,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "carrefour": {
+     "eur_kg": 4.29,
+     "observed_eur_kg": 4.4,
+     "n": 38,
+     "last": "2026-09-22",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "super-u": {
+     "eur_kg": 4.64,
+     "observed_eur_kg": 5.6,
+     "n": 7,
+     "last": "2026-09-19",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "casino": {
+     "eur_kg": 3.32,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 3.85,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 4.42,
+     "observed_eur_kg": 4.58,
+     "n": 7,
+     "last": "2026-03-21",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "g20": {
+     "eur_kg": 3.27,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 4.6,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 4.57,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 4.9,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 4.25,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 4.42,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "wholemeal-bread": {
+   "national_eur_kg": 3.96,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.43,
+     "observed_eur_kg": 2.17,
+     "n": 4,
+     "last": "2026-05-07",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "aldi": {
+     "eur_kg": 2.77,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 2.27,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 3.77,
+     "observed_eur_kg": 3.78,
+     "n": 97,
+     "last": "2026-09-01",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "auchan": {
+     "eur_kg": 4.15,
+     "observed_eur_kg": 4.15,
+     "n": 38,
+     "last": "2026-05-25",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "intermarche": {
+     "eur_kg": 2.94,
+     "observed_eur_kg": 2.88,
+     "n": 87,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 550
+    },
+    "carrefour": {
+     "eur_kg": 4.75,
+     "observed_eur_kg": 4.78,
+     "n": 87,
+     "last": "2026-08-14",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "super-u": {
+     "eur_kg": 4.67,
+     "observed_eur_kg": 4.8,
+     "n": 27,
+     "last": "2026-05-16",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 3.98,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 5.26,
+     "observed_eur_kg": 5.5,
+     "n": 13,
+     "last": "2026-09-08",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "franprix": {
+     "eur_kg": 6.05,
+     "observed_eur_kg": 6.4,
+     "n": 15,
+     "last": "2026-09-09",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "g20": {
+     "eur_kg": 3.82,
+     "observed_eur_kg": 3.28,
+     "n": 1,
+     "last": "2026-02-09",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "picard": {
+     "eur_kg": 5.52,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 5.57,
+     "observed_eur_kg": 5.98,
+     "n": 1,
+     "last": "2026-04-30",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "biocoop": {
+     "eur_kg": 5.72,
+     "observed_eur_kg": 4.9,
+     "n": 1,
+     "last": "2025-07-15",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "bio-c-bon": {
+     "eur_kg": 5.1,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 5.31,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "potato": {
+   "national_eur_kg": 2.81,
+   "pack_g": 655,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.95,
+     "observed_eur_kg": 1.98,
+     "n": 10,
+     "last": "2026-05-23",
+     "estimated": false,
+     "pack_g": 75
+    },
+    "aldi": {
+     "eur_kg": 1.96,
+     "observed_eur_kg": 1.95,
+     "n": 2,
+     "last": "2025-03-08",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "netto": {
+     "eur_kg": 1.61,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 3.99,
+     "observed_eur_kg": 4.05,
+     "n": 121,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "auchan": {
+     "eur_kg": 3.14,
+     "observed_eur_kg": 3.2,
+     "n": 17,
+     "last": "2026-05-17",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "intermarche": {
+     "eur_kg": 2.8,
+     "observed_eur_kg": 2.8,
+     "n": 28,
+     "last": "2026-09-14",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "carrefour": {
+     "eur_kg": 2.89,
+     "observed_eur_kg": 2.89,
+     "n": 81,
+     "last": "2026-09-12",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "super-u": {
+     "eur_kg": 2.56,
+     "observed_eur_kg": 2.5,
+     "n": 20,
+     "last": "2026-09-08",
+     "estimated": false,
+     "pack_g": 1100
+    },
+    "casino": {
+     "eur_kg": 2.73,
+     "observed_eur_kg": 2.49,
+     "n": 2,
+     "last": "2026-04-07",
+     "estimated": false,
+     "pack_g": 1500
+    },
+    "monoprix": {
+     "eur_kg": 1.96,
+     "observed_eur_kg": 1.75,
+     "n": 32,
+     "last": "2026-05-11",
+     "estimated": false,
+     "pack_g": 1500
+    },
+    "franprix": {
+     "eur_kg": 2.48,
+     "observed_eur_kg": 1.99,
+     "n": 11,
+     "last": "2025-10-17",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "g20": {
+     "eur_kg": 2.24,
+     "observed_eur_kg": 1.99,
+     "n": 11,
+     "last": "2026-04-08",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "picard": {
+     "eur_kg": 3.91,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 2.78,
+     "observed_eur_kg": 1.99,
+     "n": 7,
+     "last": "2026-06-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "biocoop": {
+     "eur_kg": 3.2,
+     "observed_eur_kg": 2.6,
+     "n": 8,
+     "last": "2026-08-04",
+     "estimated": false,
+     "pack_g": 2500
+    },
+    "bio-c-bon": {
+     "eur_kg": 2.47,
+     "observed_eur_kg": 1.99,
+     "n": 12,
+     "last": "2025-11-14",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 3.11,
+     "observed_eur_kg": 2.79,
+     "n": 10,
+     "last": "2026-07-15",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "green-lentils": {
+   "national_eur_kg": 4.44,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 3.66,
+     "observed_eur_kg": 3.98,
+     "n": 11,
+     "last": "2026-04-04",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "aldi": {
+     "eur_kg": 2.98,
+     "observed_eur_kg": 2.68,
+     "n": 2,
+     "last": "2025-09-03",
+     "estimated": false,
+     "pack_g": 515
+    },
+    "netto": {
+     "eur_kg": 2.73,
+     "observed_eur_kg": 2.78,
+     "n": 21,
+     "last": "2025-11-03",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "leclerc": {
+     "eur_kg": 3.35,
+     "observed_eur_kg": 3.34,
+     "n": 289,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "auchan": {
+     "eur_kg": 7.03,
+     "observed_eur_kg": 7.32,
+     "n": 41,
+     "last": "2026-09-10",
+     "estimated": false,
+     "pack_g": 265
+    },
+    "intermarche": {
+     "eur_kg": 4.33,
+     "observed_eur_kg": 4.32,
+     "n": 81,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "carrefour": {
+     "eur_kg": 6.18,
+     "observed_eur_kg": 6.26,
+     "n": 98,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "super-u": {
+     "eur_kg": 5.68,
+     "observed_eur_kg": 5.78,
+     "n": 60,
+     "last": "2026-09-09",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 4.46,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 6.35,
+     "observed_eur_kg": 7.51,
+     "n": 5,
+     "last": "2026-08-19",
+     "estimated": false,
+     "pack_g": 265
+    },
+    "franprix": {
+     "eur_kg": 7.52,
+     "observed_eur_kg": 7.78,
+     "n": 37,
+     "last": "2026-09-01",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "g20": {
+     "eur_kg": 5.4,
+     "observed_eur_kg": 5.96,
+     "n": 9,
+     "last": "2026-02-11",
+     "estimated": false,
+     "pack_g": 265
+    },
+    "picard": {
+     "eur_kg": 6.19,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 6.58,
+     "observed_eur_kg": 7.12,
+     "n": 4,
+     "last": "2026-04-18",
+     "estimated": false,
+     "pack_g": 580
+    },
+    "biocoop": {
+     "eur_kg": 7.31,
+     "observed_eur_kg": 8.5,
+     "n": 3,
+     "last": "2025-08-25",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "bio-c-bon": {
+     "eur_kg": 8.17,
+     "observed_eur_kg": 9.2,
+     "n": 12,
+     "last": "2025-11-14",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "la-vie-claire": {
+     "eur_kg": 7.16,
+     "observed_eur_kg": 8.38,
+     "n": 5,
+     "last": "2025-02-22",
+     "estimated": false,
+     "pack_g": 500
+    }
+   }
+  },
+  "red-lentils": {
+   "national_eur_kg": 5.18,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 3.44,
+     "observed_eur_kg": 3.44,
+     "n": 3,
+     "last": "2026-02-06",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "aldi": {
+     "eur_kg": 3.62,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 2.81,
+     "observed_eur_kg": 2.42,
+     "n": 2,
+     "last": "2024-11-16",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 4.06,
+     "observed_eur_kg": 3.44,
+     "n": 6,
+     "last": "2026-03-28",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "auchan": {
+     "eur_kg": 6.65,
+     "observed_eur_kg": 7.66,
+     "n": 6,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "intermarche": {
+     "eur_kg": 5.57,
+     "observed_eur_kg": 6.09,
+     "n": 4,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 475
+    },
+    "carrefour": {
+     "eur_kg": 5.65,
+     "observed_eur_kg": 5.76,
+     "n": 9,
+     "last": "2026-06-07",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "super-u": {
+     "eur_kg": 5.15,
+     "observed_eur_kg": 5.14,
+     "n": 12,
+     "last": "2025-09-04",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 5.21,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 6.52,
+     "observed_eur_kg": 8.87,
+     "n": 1,
+     "last": "2026-04-30",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "franprix": {
+     "eur_kg": 5.73,
+     "observed_eur_kg": 4.89,
+     "n": 5,
+     "last": "2026-04-02",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "g20": {
+     "eur_kg": 5.13,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 7.22,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 7.18,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 7.83,
+     "observed_eur_kg": 8.5,
+     "n": 1,
+     "last": "2025-08-25",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "bio-c-bon": {
+     "eur_kg": 6.42,
+     "observed_eur_kg": 5.18,
+     "n": 1,
+     "last": "2025-06-02",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "la-vie-claire": {
+     "eur_kg": 6.94,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "chickpeas": {
+   "national_eur_kg": 4.23,
+   "pack_g": 400,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.32,
+     "observed_eur_kg": 1.7,
+     "n": 4,
+     "last": "2025-07-10",
+     "estimated": false,
+     "pack_g": 410
+    },
+    "aldi": {
+     "eur_kg": 2.96,
+     "observed_eur_kg": 2.97,
+     "n": 3,
+     "last": "2026-03-25",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "netto": {
+     "eur_kg": 2.78,
+     "observed_eur_kg": 3.15,
+     "n": 5,
+     "last": "2024-11-16",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 3.87,
+     "observed_eur_kg": 3.86,
+     "n": 86,
+     "last": "2026-09-02",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "auchan": {
+     "eur_kg": 4.45,
+     "observed_eur_kg": 4.45,
+     "n": 28,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 415
+    },
+    "intermarche": {
+     "eur_kg": 2.95,
+     "observed_eur_kg": 2.79,
+     "n": 39,
+     "last": "2026-08-28",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "carrefour": {
+     "eur_kg": 4.48,
+     "observed_eur_kg": 4.49,
+     "n": 63,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "super-u": {
+     "eur_kg": 3.7,
+     "observed_eur_kg": 3.62,
+     "n": 33,
+     "last": "2026-09-24",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 4.25,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 4.75,
+     "observed_eur_kg": 4.3,
+     "n": 2,
+     "last": "2026-02-10",
+     "estimated": false,
+     "pack_g": 415
+    },
+    "franprix": {
+     "eur_kg": 6.71,
+     "observed_eur_kg": 7.67,
+     "n": 7,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 302
+    },
+    "g20": {
+     "eur_kg": 3.56,
+     "observed_eur_kg": 2.5,
+     "n": 3,
+     "last": "2026-02-09",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "picard": {
+     "eur_kg": 5.89,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 5.51,
+     "observed_eur_kg": 5.07,
+     "n": 4,
+     "last": "2026-07-09",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "biocoop": {
+     "eur_kg": 8.66,
+     "observed_eur_kg": 9.66,
+     "n": 12,
+     "last": "2026-05-18",
+     "estimated": false,
+     "pack_g": 360
+    },
+    "bio-c-bon": {
+     "eur_kg": 5.42,
+     "observed_eur_kg": 5.4,
+     "n": 4,
+     "last": "2025-10-07",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "la-vie-claire": {
+     "eur_kg": 5.82,
+     "observed_eur_kg": 6.58,
+     "n": 1,
+     "last": "2025-02-22",
+     "estimated": false,
+     "pack_g": 500
+    }
+   }
+  },
+  "kidney-beans": {
+   "national_eur_kg": 5.28,
+   "pack_g": 400,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 3.46,
+     "observed_eur_kg": 3.18,
+     "n": 1,
+     "last": "2025-12-09",
+     "estimated": false,
+     "pack_g": 255
+    },
+    "aldi": {
+     "eur_kg": 3.69,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 3.02,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 5.27,
+     "observed_eur_kg": 5.3,
+     "n": 62,
+     "last": "2026-08-04",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "auchan": {
+     "eur_kg": 6.04,
+     "observed_eur_kg": 6.16,
+     "n": 21,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "intermarche": {
+     "eur_kg": 5.33,
+     "observed_eur_kg": 5.36,
+     "n": 11,
+     "last": "2026-08-28",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "carrefour": {
+     "eur_kg": 4.61,
+     "observed_eur_kg": 4.48,
+     "n": 36,
+     "last": "2026-08-19",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "super-u": {
+     "eur_kg": 4.14,
+     "observed_eur_kg": 3.32,
+     "n": 7,
+     "last": "2026-09-24",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "casino": {
+     "eur_kg": 4.69,
+     "observed_eur_kg": 3.15,
+     "n": 2,
+     "last": "2025-11-19",
+     "estimated": false,
+     "pack_g": 825
+    },
+    "monoprix": {
+     "eur_kg": 6.4,
+     "observed_eur_kg": 6.8,
+     "n": 3,
+     "last": "2026-02-12",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "franprix": {
+     "eur_kg": 6.56,
+     "observed_eur_kg": 6.47,
+     "n": 8,
+     "last": "2026-04-26",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "g20": {
+     "eur_kg": 5.23,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 7.36,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 7.36,
+     "observed_eur_kg": 7.58,
+     "n": 1,
+     "last": "2024-09-14",
+     "estimated": false,
+     "pack_g": 240
+    },
+    "biocoop": {
+     "eur_kg": 10.39,
+     "observed_eur_kg": 12.94,
+     "n": 5,
+     "last": "2026-04-20",
+     "estimated": false,
+     "pack_g": 340
+    },
+    "bio-c-bon": {
+     "eur_kg": 7.11,
+     "observed_eur_kg": 7.5,
+     "n": 4,
+     "last": "2025-10-07",
+     "estimated": false,
+     "pack_g": 240
+    },
+    "la-vie-claire": {
+     "eur_kg": 7.08,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "tofu": {
+   "national_eur_kg": 10.32,
+   "pack_g": 280,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 7.19,
+     "observed_eur_kg": 8.83,
+     "n": 1,
+     "last": "2025-10-03",
+     "estimated": false,
+     "pack_g": 180
+    },
+    "aldi": {
+     "eur_kg": 7.21,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 5.9,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 10.0,
+     "observed_eur_kg": 10.32,
+     "n": 7,
+     "last": "2026-07-30",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "auchan": {
+     "eur_kg": 10.57,
+     "observed_eur_kg": 10.34,
+     "n": 6,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "intermarche": {
+     "eur_kg": 10.48,
+     "observed_eur_kg": 10.66,
+     "n": 6,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "carrefour": {
+     "eur_kg": 9.88,
+     "observed_eur_kg": 9.61,
+     "n": 18,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "super-u": {
+     "eur_kg": 9.22,
+     "observed_eur_kg": 7.38,
+     "n": 3,
+     "last": "2026-09-08",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "casino": {
+     "eur_kg": 10.38,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 12.05,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 13.08,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "g20": {
+     "eur_kg": 10.23,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 14.39,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 10.51,
+     "observed_eur_kg": 7.34,
+     "n": 6,
+     "last": "2026-06-27",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "biocoop": {
+     "eur_kg": 11.11,
+     "observed_eur_kg": 9.2,
+     "n": 11,
+     "last": "2026-09-12",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "bio-c-bon": {
+     "eur_kg": 12.63,
+     "observed_eur_kg": 12.08,
+     "n": 6,
+     "last": "2026-07-02",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "la-vie-claire": {
+     "eur_kg": 14.39,
+     "observed_eur_kg": 15.32,
+     "n": 3,
+     "last": "2026-09-05",
+     "estimated": false,
+     "pack_g": 280
+    }
+   }
+  },
+  "egg": {
+   "national_eur_kg": 4.94,
+   "pack_g": 374,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 3.29,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "aldi": {
+     "eur_kg": 3.46,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 2.83,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 4.93,
+     "observed_eur_kg": 4.94,
+     "n": 110,
+     "last": "2026-09-19",
+     "estimated": false,
+     "pack_g": 374
+    },
+    "auchan": {
+     "eur_kg": 4.78,
+     "observed_eur_kg": 4.72,
+     "n": 37,
+     "last": "2026-09-11",
+     "estimated": false,
+     "pack_g": 760
+    },
+    "intermarche": {
+     "eur_kg": 4.96,
+     "observed_eur_kg": 5.03,
+     "n": 4,
+     "last": "2025-10-04",
+     "estimated": false,
+     "pack_g": 360
+    },
+    "carrefour": {
+     "eur_kg": 5.28,
+     "observed_eur_kg": 5.33,
+     "n": 6,
+     "last": "2026-05-28",
+     "estimated": false,
+     "pack_g": 360
+    },
+    "super-u": {
+     "eur_kg": 5.08,
+     "observed_eur_kg": 5.75,
+     "n": 1,
+     "last": "2026-01-20",
+     "estimated": false,
+     "pack_g": 180
+    },
+    "casino": {
+     "eur_kg": 4.97,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 5.68,
+     "observed_eur_kg": 5.53,
+     "n": 3,
+     "last": "2026-08-09",
+     "estimated": false,
+     "pack_g": 360
+    },
+    "franprix": {
+     "eur_kg": 6.48,
+     "observed_eur_kg": 7.01,
+     "n": 2,
+     "last": "2026-04-15",
+     "estimated": false,
+     "pack_g": 360
+    },
+    "g20": {
+     "eur_kg": 4.9,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 6.89,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 6.85,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 7.34,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 6.36,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 6.63,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "sardines": {
+   "national_eur_kg": 18.5,
+   "pack_g": 125,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 11.94,
+     "observed_eur_kg": 11.33,
+     "n": 3,
+     "last": "2025-03-21",
+     "estimated": false,
+     "pack_g": 125
+    },
+    "aldi": {
+     "eur_kg": 14.18,
+     "observed_eur_kg": 20.43,
+     "n": 1,
+     "last": "2026-02-08",
+     "estimated": false,
+     "pack_g": 115
+    },
+    "netto": {
+     "eur_kg": 10.79,
+     "observed_eur_kg": 11.0,
+     "n": 5,
+     "last": "2025-10-04",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "leclerc": {
+     "eur_kg": 17.13,
+     "observed_eur_kg": 17.13,
+     "n": 95,
+     "last": "2026-05-16",
+     "estimated": false,
+     "pack_g": 135
+    },
+    "auchan": {
+     "eur_kg": 19.1,
+     "observed_eur_kg": 19.06,
+     "n": 56,
+     "last": "2026-08-18",
+     "estimated": false,
+     "pack_g": 115
+    },
+    "intermarche": {
+     "eur_kg": 18.89,
+     "observed_eur_kg": 19.04,
+     "n": 17,
+     "last": "2026-03-20",
+     "estimated": false,
+     "pack_g": 115
+    },
+    "carrefour": {
+     "eur_kg": 17.07,
+     "observed_eur_kg": 16.9,
+     "n": 73,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 135
+    },
+    "super-u": {
+     "eur_kg": 18.08,
+     "observed_eur_kg": 18.0,
+     "n": 27,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 125
+    },
+    "casino": {
+     "eur_kg": 18.26,
+     "observed_eur_kg": 16.52,
+     "n": 1,
+     "last": "2025-11-19",
+     "estimated": false,
+     "pack_g": 115
+    },
+    "monoprix": {
+     "eur_kg": 20.3,
+     "observed_eur_kg": 19.0,
+     "n": 5,
+     "last": "2026-03-11",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "franprix": {
+     "eur_kg": 21.88,
+     "observed_eur_kg": 18.0,
+     "n": 2,
+     "last": "2025-11-20",
+     "estimated": false,
+     "pack_g": 128
+    },
+    "g20": {
+     "eur_kg": 17.87,
+     "observed_eur_kg": 15.56,
+     "n": 1,
+     "last": "2026-02-17",
+     "estimated": false,
+     "pack_g": 135
+    },
+    "picard": {
+     "eur_kg": 25.79,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 34.35,
+     "observed_eur_kg": 36.52,
+     "n": 20,
+     "last": "2026-04-18",
+     "estimated": false,
+     "pack_g": 115
+    },
+    "biocoop": {
+     "eur_kg": 27.07,
+     "observed_eur_kg": 26.67,
+     "n": 5,
+     "last": "2026-03-24",
+     "estimated": false,
+     "pack_g": 135
+    },
+    "bio-c-bon": {
+     "eur_kg": 32.73,
+     "observed_eur_kg": 41.65,
+     "n": 5,
+     "last": "2025-11-03",
+     "estimated": false,
+     "pack_g": 115
+    },
+    "la-vie-claire": {
+     "eur_kg": 30.94,
+     "observed_eur_kg": 34.78,
+     "n": 8,
+     "last": "2025-02-22",
+     "estimated": false,
+     "pack_g": 125
+    }
+   }
+  },
+  "tuna": {
+   "national_eur_kg": 16.08,
+   "pack_g": 156,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 10.72,
+     "observed_eur_kg": 10.75,
+     "n": 5,
+     "last": "2026-02-04",
+     "estimated": false,
+     "pack_g": 265
+    },
+    "aldi": {
+     "eur_kg": 10.85,
+     "observed_eur_kg": 10.2,
+     "n": 3,
+     "last": "2026-02-07",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "netto": {
+     "eur_kg": 7.42,
+     "observed_eur_kg": 5.65,
+     "n": 5,
+     "last": "2025-10-04",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "leclerc": {
+     "eur_kg": 13.59,
+     "observed_eur_kg": 13.57,
+     "n": 304,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 140
+    },
+    "auchan": {
+     "eur_kg": 20.6,
+     "observed_eur_kg": 21.0,
+     "n": 46,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 120
+    },
+    "intermarche": {
+     "eur_kg": 17.04,
+     "observed_eur_kg": 17.12,
+     "n": 70,
+     "last": "2026-09-05",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "carrefour": {
+     "eur_kg": 18.98,
+     "observed_eur_kg": 19.15,
+     "n": 60,
+     "last": "2026-09-16",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "super-u": {
+     "eur_kg": 19.07,
+     "observed_eur_kg": 19.31,
+     "n": 62,
+     "last": "2026-09-24",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "casino": {
+     "eur_kg": 16.25,
+     "observed_eur_kg": 16.29,
+     "n": 11,
+     "last": "2025-09-08",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "monoprix": {
+     "eur_kg": 21.33,
+     "observed_eur_kg": 22.61,
+     "n": 10,
+     "last": "2026-08-19",
+     "estimated": false,
+     "pack_g": 136
+    },
+    "franprix": {
+     "eur_kg": 27.38,
+     "observed_eur_kg": 30.56,
+     "n": 11,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "g20": {
+     "eur_kg": 15.94,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 22.42,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 28.05,
+     "observed_eur_kg": 30.27,
+     "n": 13,
+     "last": "2026-04-18",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "biocoop": {
+     "eur_kg": 25.82,
+     "observed_eur_kg": 26.7,
+     "n": 11,
+     "last": "2026-03-14",
+     "estimated": false,
+     "pack_g": 112
+    },
+    "bio-c-bon": {
+     "eur_kg": 23.22,
+     "observed_eur_kg": 27.44,
+     "n": 3,
+     "last": "2024-12-21",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "la-vie-claire": {
+     "eur_kg": 21.55,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "mackerel": {
+   "national_eur_kg": 13.14,
+   "pack_g": 169,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 8.74,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "aldi": {
+     "eur_kg": 8.36,
+     "observed_eur_kg": 7.33,
+     "n": 4,
+     "last": "2026-02-07",
+     "estimated": false,
+     "pack_g": 176
+    },
+    "netto": {
+     "eur_kg": 7.06,
+     "observed_eur_kg": 6.69,
+     "n": 6,
+     "last": "2025-04-14",
+     "estimated": false,
+     "pack_g": 169
+    },
+    "leclerc": {
+     "eur_kg": 13.08,
+     "observed_eur_kg": 13.14,
+     "n": 69,
+     "last": "2026-09-01",
+     "estimated": false,
+     "pack_g": 169
+    },
+    "auchan": {
+     "eur_kg": 11.46,
+     "observed_eur_kg": 10.97,
+     "n": 24,
+     "last": "2026-06-17",
+     "estimated": false,
+     "pack_g": 169
+    },
+    "intermarche": {
+     "eur_kg": 15.79,
+     "observed_eur_kg": 16.83,
+     "n": 13,
+     "last": "2026-08-14",
+     "estimated": false,
+     "pack_g": 176
+    },
+    "carrefour": {
+     "eur_kg": 12.66,
+     "observed_eur_kg": 12.5,
+     "n": 39,
+     "last": "2026-09-01",
+     "estimated": false,
+     "pack_g": 169
+    },
+    "super-u": {
+     "eur_kg": 11.93,
+     "observed_eur_kg": 11.53,
+     "n": 15,
+     "last": "2026-09-10",
+     "estimated": false,
+     "pack_g": 169
+    },
+    "casino": {
+     "eur_kg": 13.01,
+     "observed_eur_kg": 12.47,
+     "n": 2,
+     "last": "2025-11-19",
+     "estimated": false,
+     "pack_g": 172
+    },
+    "monoprix": {
+     "eur_kg": 15.35,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 19.37,
+     "observed_eur_kg": 23.89,
+     "n": 3,
+     "last": "2025-11-20",
+     "estimated": false,
+     "pack_g": 90
+    },
+    "g20": {
+     "eur_kg": 13.02,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 18.32,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 26.9,
+     "observed_eur_kg": 32.32,
+     "n": 8,
+     "last": "2026-04-18",
+     "estimated": false,
+     "pack_g": 151
+    },
+    "biocoop": {
+     "eur_kg": 25.32,
+     "observed_eur_kg": 29.47,
+     "n": 7,
+     "last": "2026-08-27",
+     "estimated": false,
+     "pack_g": 151
+    },
+    "bio-c-bon": {
+     "eur_kg": 19.48,
+     "observed_eur_kg": 32.29,
+     "n": 1,
+     "last": "2024-12-21",
+     "estimated": false,
+     "pack_g": 144
+    },
+    "la-vie-claire": {
+     "eur_kg": 20.41,
+     "observed_eur_kg": 27.42,
+     "n": 2,
+     "last": "2025-02-22",
+     "estimated": false,
+     "pack_g": 151
+    }
+   }
+  },
+  "salmon": {
+   "national_eur_kg": 34.64,
+   "pack_g": 200,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 21.9,
+     "observed_eur_kg": 20.48,
+     "n": 4,
+     "last": "2026-05-23",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "aldi": {
+     "eur_kg": 22.16,
+     "observed_eur_kg": 11.9,
+     "n": 1,
+     "last": "2025-03-08",
+     "estimated": false,
+     "pack_g": 290
+    },
+    "netto": {
+     "eur_kg": 18.55,
+     "observed_eur_kg": 15.4,
+     "n": 2,
+     "last": "2024-11-16",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "leclerc": {
+     "eur_kg": 35.87,
+     "observed_eur_kg": 36.0,
+     "n": 148,
+     "last": "2026-08-10",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "auchan": {
+     "eur_kg": 42.78,
+     "observed_eur_kg": 44.46,
+     "n": 19,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 130
+    },
+    "intermarche": {
+     "eur_kg": 45.95,
+     "observed_eur_kg": 48.35,
+     "n": 24,
+     "last": "2026-08-28",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "carrefour": {
+     "eur_kg": 27.82,
+     "observed_eur_kg": 26.14,
+     "n": 26,
+     "last": "2026-06-20",
+     "estimated": false,
+     "pack_g": 210
+    },
+    "super-u": {
+     "eur_kg": 32.8,
+     "observed_eur_kg": 32.44,
+     "n": 26,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "casino": {
+     "eur_kg": 34.85,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 44.67,
+     "observed_eur_kg": 46.58,
+     "n": 11,
+     "last": "2026-07-28",
+     "estimated": false,
+     "pack_g": 140
+    },
+    "franprix": {
+     "eur_kg": 39.42,
+     "observed_eur_kg": 36.62,
+     "n": 8,
+     "last": "2026-02-09",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "g20": {
+     "eur_kg": 34.33,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 48.29,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 44.75,
+     "observed_eur_kg": 28.44,
+     "n": 1,
+     "last": "2026-04-18",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "biocoop": {
+     "eur_kg": 55.77,
+     "observed_eur_kg": 77.42,
+     "n": 1,
+     "last": "2026-08-27",
+     "estimated": false,
+     "pack_g": 93
+    },
+    "bio-c-bon": {
+     "eur_kg": 44.58,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 55.56,
+     "observed_eur_kg": 78.43,
+     "n": 2,
+     "last": "2026-09-05",
+     "estimated": false,
+     "pack_g": 70
+    }
+   }
+  },
+  "chicken": {
+   "national_eur_kg": 13.65,
+   "pack_g": 300,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 9.78,
+     "observed_eur_kg": 11.54,
+     "n": 2,
+     "last": "2026-06-05",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "aldi": {
+     "eur_kg": 9.54,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 8.12,
+     "observed_eur_kg": 9.69,
+     "n": 1,
+     "last": "2024-10-20",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 12.44,
+     "observed_eur_kg": 12.4,
+     "n": 26,
+     "last": "2026-08-04",
+     "estimated": false,
+     "pack_g": 300
+    },
+    "auchan": {
+     "eur_kg": 16.02,
+     "observed_eur_kg": 20.23,
+     "n": 2,
+     "last": "2026-07-31",
+     "estimated": false,
+     "pack_g": 175
+    },
+    "intermarche": {
+     "eur_kg": 14.71,
+     "observed_eur_kg": 20.44,
+     "n": 1,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "carrefour": {
+     "eur_kg": 15.14,
+     "observed_eur_kg": 16.99,
+     "n": 2,
+     "last": "2026-04-16",
+     "estimated": false,
+     "pack_g": 1340
+    },
+    "super-u": {
+     "eur_kg": 15.82,
+     "observed_eur_kg": 21.26,
+     "n": 2,
+     "last": "2026-08-09",
+     "estimated": false,
+     "pack_g": 230
+    },
+    "casino": {
+     "eur_kg": 13.73,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 15.94,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 18.37,
+     "observed_eur_kg": 21.06,
+     "n": 2,
+     "last": "2026-02-09",
+     "estimated": false,
+     "pack_g": 265
+    },
+    "g20": {
+     "eur_kg": 13.52,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 19.02,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 18.91,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 20.27,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 17.56,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 18.29,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "minced-beef": {
+   "national_eur_kg": 18.47,
+   "pack_g": 400,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 12.57,
+     "observed_eur_kg": 13.28,
+     "n": 2,
+     "last": "2025-06-28",
+     "estimated": false,
+     "pack_g": 225
+    },
+    "aldi": {
+     "eur_kg": 12.91,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 10.57,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 17.46,
+     "observed_eur_kg": 17.48,
+     "n": 139,
+     "last": "2026-09-02",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "auchan": {
+     "eur_kg": 19.78,
+     "observed_eur_kg": 19.89,
+     "n": 16,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "intermarche": {
+     "eur_kg": 17.25,
+     "observed_eur_kg": 17.11,
+     "n": 40,
+     "last": "2026-05-16",
+     "estimated": false,
+     "pack_g": 660
+    },
+    "carrefour": {
+     "eur_kg": 20.34,
+     "observed_eur_kg": 20.45,
+     "n": 41,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "super-u": {
+     "eur_kg": 22.06,
+     "observed_eur_kg": 23.0,
+     "n": 19,
+     "last": "2026-08-24",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "casino": {
+     "eur_kg": 18.59,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 20.2,
+     "observed_eur_kg": 18.49,
+     "n": 4,
+     "last": "2026-02-10",
+     "estimated": false,
+     "pack_g": 700
+    },
+    "franprix": {
+     "eur_kg": 21.6,
+     "observed_eur_kg": 19.34,
+     "n": 4,
+     "last": "2026-08-25",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "g20": {
+     "eur_kg": 18.31,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 25.75,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 25.78,
+     "observed_eur_kg": 26.2,
+     "n": 2,
+     "last": "2026-01-11",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "biocoop": {
+     "eur_kg": 27.44,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 23.78,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 24.76,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "ham": {
+   "national_eur_kg": 18.63,
+   "pack_g": 140,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 12.53,
+     "observed_eur_kg": 13.21,
+     "n": 1,
+     "last": "2026-03-16",
+     "estimated": false,
+     "pack_g": 140
+    },
+    "aldi": {
+     "eur_kg": 13.02,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 10.66,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 17.85,
+     "observed_eur_kg": 17.86,
+     "n": 249,
+     "last": "2026-09-02",
+     "estimated": false,
+     "pack_g": 140
+    },
+    "auchan": {
+     "eur_kg": 17.23,
+     "observed_eur_kg": 16.96,
+     "n": 43,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 140
+    },
+    "intermarche": {
+     "eur_kg": 14.85,
+     "observed_eur_kg": 14.51,
+     "n": 54,
+     "last": "2026-07-13",
+     "estimated": false,
+     "pack_g": 150
+    },
+    "carrefour": {
+     "eur_kg": 21.92,
+     "observed_eur_kg": 22.06,
+     "n": 81,
+     "last": "2026-09-01",
+     "estimated": false,
+     "pack_g": 150
+    },
+    "super-u": {
+     "eur_kg": 21.64,
+     "observed_eur_kg": 21.89,
+     "n": 60,
+     "last": "2026-09-10",
+     "estimated": false,
+     "pack_g": 140
+    },
+    "casino": {
+     "eur_kg": 17.09,
+     "observed_eur_kg": 12.96,
+     "n": 2,
+     "last": "2025-01-21",
+     "estimated": false,
+     "pack_g": 135
+    },
+    "monoprix": {
+     "eur_kg": 21.77,
+     "observed_eur_kg": 21.78,
+     "n": 10,
+     "last": "2026-09-08",
+     "estimated": false,
+     "pack_g": 148
+    },
+    "franprix": {
+     "eur_kg": 23.9,
+     "observed_eur_kg": 23.93,
+     "n": 49,
+     "last": "2026-04-15",
+     "estimated": false,
+     "pack_g": 140
+    },
+    "g20": {
+     "eur_kg": 19.92,
+     "observed_eur_kg": 21.38,
+     "n": 5,
+     "last": "2026-02-09",
+     "estimated": false,
+     "pack_g": 140
+    },
+    "picard": {
+     "eur_kg": 24.09,
+     "observed_eur_kg": 14.67,
+     "n": 1,
+     "last": "2025-11-26",
+     "estimated": false,
+     "pack_g": 150
+    },
+    "naturalia": {
+     "eur_kg": 29.54,
+     "observed_eur_kg": 48.12,
+     "n": 1,
+     "last": "2026-06-19",
+     "estimated": false,
+     "pack_g": 80
+    },
+    "biocoop": {
+     "eur_kg": 31.0,
+     "observed_eur_kg": 36.56,
+     "n": 3,
+     "last": "2026-03-14",
+     "estimated": false,
+     "pack_g": 160
+    },
+    "bio-c-bon": {
+     "eur_kg": 23.98,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 24.96,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "yogurt": {
+   "national_eur_kg": 2.68,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.43,
+     "observed_eur_kg": 2.97,
+     "n": 6,
+     "last": "2026-06-01",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "aldi": {
+     "eur_kg": 1.87,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.55,
+     "observed_eur_kg": 1.65,
+     "n": 1,
+     "last": "2025-04-02",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 2.29,
+     "observed_eur_kg": 2.28,
+     "n": 111,
+     "last": "2026-07-21",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "auchan": {
+     "eur_kg": 2.61,
+     "observed_eur_kg": 2.6,
+     "n": 72,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "intermarche": {
+     "eur_kg": 2.28,
+     "observed_eur_kg": 2.22,
+     "n": 28,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "carrefour": {
+     "eur_kg": 4.14,
+     "observed_eur_kg": 4.3,
+     "n": 42,
+     "last": "2026-08-19",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "super-u": {
+     "eur_kg": 2.38,
+     "observed_eur_kg": 2.34,
+     "n": 35,
+     "last": "2026-09-09",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 3.58,
+     "observed_eur_kg": 8.0,
+     "n": 1,
+     "last": "2024-12-28",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "monoprix": {
+     "eur_kg": 3.76,
+     "observed_eur_kg": 4.28,
+     "n": 6,
+     "last": "2025-10-13",
+     "estimated": false,
+     "pack_g": 465
+    },
+    "franprix": {
+     "eur_kg": 3.41,
+     "observed_eur_kg": 3.41,
+     "n": 16,
+     "last": "2026-05-13",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "g20": {
+     "eur_kg": 2.93,
+     "observed_eur_kg": 3.16,
+     "n": 6,
+     "last": "2026-02-09",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "picard": {
+     "eur_kg": 3.74,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 4.27,
+     "observed_eur_kg": 7.06,
+     "n": 1,
+     "last": "2024-09-30",
+     "estimated": false,
+     "pack_g": 480
+    },
+    "biocoop": {
+     "eur_kg": 4.68,
+     "observed_eur_kg": 4.88,
+     "n": 18,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "bio-c-bon": {
+     "eur_kg": 3.45,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 3.59,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "fromage-blanc": {
+   "national_eur_kg": 5.1,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 3.39,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "aldi": {
+     "eur_kg": 3.56,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 2.92,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 4.95,
+     "observed_eur_kg": 5.03,
+     "n": 14,
+     "last": "2026-03-27",
+     "estimated": false,
+     "pack_g": 550
+    },
+    "auchan": {
+     "eur_kg": 5.57,
+     "observed_eur_kg": 6.6,
+     "n": 1,
+     "last": "2026-02-07",
+     "estimated": false,
+     "pack_g": 300
+    },
+    "intermarche": {
+     "eur_kg": 5.07,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "carrefour": {
+     "eur_kg": 5.48,
+     "observed_eur_kg": 5.98,
+     "n": 1,
+     "last": "2025-10-13",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "super-u": {
+     "eur_kg": 4.45,
+     "observed_eur_kg": 2.81,
+     "n": 2,
+     "last": "2026-04-02",
+     "estimated": false,
+     "pack_g": 550
+    },
+    "casino": {
+     "eur_kg": 5.13,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 5.96,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 6.46,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "g20": {
+     "eur_kg": 5.32,
+     "observed_eur_kg": 6.62,
+     "n": 1,
+     "last": "2026-02-09",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "picard": {
+     "eur_kg": 7.11,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 7.07,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 7.57,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 6.56,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 6.83,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "milk": {
+   "national_eur_kg": 1.49,
+   "pack_g": 1000,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.03,
+     "observed_eur_kg": 1.25,
+     "n": 1,
+     "last": "2025-03-03",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "aldi": {
+     "eur_kg": 1.04,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 0.9,
+     "observed_eur_kg": 1.02,
+     "n": 2,
+     "last": "2025-10-09",
+     "estimated": false,
+     "pack_g": 3500
+    },
+    "leclerc": {
+     "eur_kg": 1.19,
+     "observed_eur_kg": 1.18,
+     "n": 172,
+     "last": "2026-08-27",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "auchan": {
+     "eur_kg": 1.28,
+     "observed_eur_kg": 1.27,
+     "n": 157,
+     "last": "2026-07-31",
+     "estimated": false,
+     "pack_g": 1266
+    },
+    "intermarche": {
+     "eur_kg": 1.55,
+     "observed_eur_kg": 1.55,
+     "n": 180,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 1033
+    },
+    "carrefour": {
+     "eur_kg": 1.44,
+     "observed_eur_kg": 1.44,
+     "n": 262,
+     "last": "2026-08-15",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "super-u": {
+     "eur_kg": 1.55,
+     "observed_eur_kg": 1.55,
+     "n": 105,
+     "last": "2026-09-24",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "casino": {
+     "eur_kg": 1.46,
+     "observed_eur_kg": 1.39,
+     "n": 3,
+     "last": "2025-01-21",
+     "estimated": false,
+     "pack_g": 3000
+    },
+    "monoprix": {
+     "eur_kg": 1.55,
+     "observed_eur_kg": 1.54,
+     "n": 76,
+     "last": "2026-06-14",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "franprix": {
+     "eur_kg": 2.31,
+     "observed_eur_kg": 2.35,
+     "n": 48,
+     "last": "2026-06-13",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "g20": {
+     "eur_kg": 1.76,
+     "observed_eur_kg": 2.12,
+     "n": 4,
+     "last": "2026-04-08",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "picard": {
+     "eur_kg": 2.08,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 2.07,
+     "observed_eur_kg": 2.09,
+     "n": 2,
+     "last": "2025-05-12",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "biocoop": {
+     "eur_kg": 2.14,
+     "observed_eur_kg": 2.1,
+     "n": 9,
+     "last": "2026-03-24",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "bio-c-bon": {
+     "eur_kg": 2.0,
+     "observed_eur_kg": 2.2,
+     "n": 2,
+     "last": "2025-05-28",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "la-vie-claire": {
+     "eur_kg": 1.99,
+     "observed_eur_kg": 1.98,
+     "n": 9,
+     "last": "2025-01-21",
+     "estimated": false,
+     "pack_g": 1000
+    }
+   }
+  },
+  "soy-drink": {
+   "national_eur_kg": 1.59,
+   "pack_g": 1000,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.01,
+     "observed_eur_kg": 0.88,
+     "n": 2,
+     "last": "2026-09-18",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "aldi": {
+     "eur_kg": 1.11,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 0.9,
+     "observed_eur_kg": 0.88,
+     "n": 1,
+     "last": "2026-04-03",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 1.51,
+     "observed_eur_kg": 1.51,
+     "n": 95,
+     "last": "2026-09-14",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "auchan": {
+     "eur_kg": 1.77,
+     "observed_eur_kg": 1.79,
+     "n": 28,
+     "last": "2026-09-10",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "intermarche": {
+     "eur_kg": 1.98,
+     "observed_eur_kg": 2.02,
+     "n": 48,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "carrefour": {
+     "eur_kg": 1.01,
+     "observed_eur_kg": 0.99,
+     "n": 155,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "super-u": {
+     "eur_kg": 0.92,
+     "observed_eur_kg": 0.88,
+     "n": 81,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "casino": {
+     "eur_kg": 1.74,
+     "observed_eur_kg": 2.09,
+     "n": 2,
+     "last": "2025-03-19",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "monoprix": {
+     "eur_kg": 2.84,
+     "observed_eur_kg": 3.19,
+     "n": 14,
+     "last": "2026-06-14",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "franprix": {
+     "eur_kg": 1.88,
+     "observed_eur_kg": 1.8,
+     "n": 8,
+     "last": "2026-09-09",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "g20": {
+     "eur_kg": 1.58,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 2.22,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 2.01,
+     "observed_eur_kg": 1.85,
+     "n": 6,
+     "last": "2026-06-27",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "biocoop": {
+     "eur_kg": 2.35,
+     "observed_eur_kg": 2.35,
+     "n": 9,
+     "last": "2026-09-12",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "bio-c-bon": {
+     "eur_kg": 1.97,
+     "observed_eur_kg": 1.95,
+     "n": 21,
+     "last": "2026-07-02",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "la-vie-claire": {
+     "eur_kg": 1.93,
+     "observed_eur_kg": 1.79,
+     "n": 7,
+     "last": "2025-09-15",
+     "estimated": false,
+     "pack_g": 1000
+    }
+   }
+  },
+  "emmental": {
+   "national_eur_kg": 9.0,
+   "pack_g": 210,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 7.32,
+     "observed_eur_kg": 8.98,
+     "n": 4,
+     "last": "2026-03-23",
+     "estimated": false,
+     "pack_g": 230
+    },
+    "aldi": {
+     "eur_kg": 6.29,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 5.15,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 8.59,
+     "observed_eur_kg": 8.59,
+     "n": 248,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 210
+    },
+    "auchan": {
+     "eur_kg": 8.89,
+     "observed_eur_kg": 8.86,
+     "n": 97,
+     "last": "2026-09-12",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "intermarche": {
+     "eur_kg": 9.04,
+     "observed_eur_kg": 9.05,
+     "n": 56,
+     "last": "2026-07-25",
+     "estimated": false,
+     "pack_g": 210
+    },
+    "carrefour": {
+     "eur_kg": 10.99,
+     "observed_eur_kg": 11.18,
+     "n": 39,
+     "last": "2026-09-24",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "super-u": {
+     "eur_kg": 10.9,
+     "observed_eur_kg": 11.25,
+     "n": 27,
+     "last": "2026-08-20",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "casino": {
+     "eur_kg": 9.55,
+     "observed_eur_kg": 10.05,
+     "n": 5,
+     "last": "2025-01-21",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "monoprix": {
+     "eur_kg": 12.29,
+     "observed_eur_kg": 13.04,
+     "n": 12,
+     "last": "2026-09-08",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "franprix": {
+     "eur_kg": 12.67,
+     "observed_eur_kg": 19.0,
+     "n": 1,
+     "last": "2025-03-15",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "g20": {
+     "eur_kg": 9.03,
+     "observed_eur_kg": 9.56,
+     "n": 1,
+     "last": "2026-08-10",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "picard": {
+     "eur_kg": 12.55,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 12.7,
+     "observed_eur_kg": 13.26,
+     "n": 2,
+     "last": "2024-11-14",
+     "estimated": false,
+     "pack_g": 325
+    },
+    "biocoop": {
+     "eur_kg": 15.48,
+     "observed_eur_kg": 17.25,
+     "n": 6,
+     "last": "2026-01-22",
+     "estimated": false,
+     "pack_g": 175
+    },
+    "bio-c-bon": {
+     "eur_kg": 11.89,
+     "observed_eur_kg": 13.45,
+     "n": 1,
+     "last": "2024-10-05",
+     "estimated": false,
+     "pack_g": 135
+    },
+    "la-vie-claire": {
+     "eur_kg": 12.06,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "butter": {
+   "national_eur_kg": 11.52,
+   "pack_g": 250,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 8.88,
+     "observed_eur_kg": 9.56,
+     "n": 9,
+     "last": "2026-03-27",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "aldi": {
+     "eur_kg": 8.3,
+     "observed_eur_kg": 9.56,
+     "n": 1,
+     "last": "2024-10-05",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "netto": {
+     "eur_kg": 6.59,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 10.64,
+     "observed_eur_kg": 10.64,
+     "n": 567,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "auchan": {
+     "eur_kg": 11.63,
+     "observed_eur_kg": 11.6,
+     "n": 73,
+     "last": "2026-08-18",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "intermarche": {
+     "eur_kg": 12.28,
+     "observed_eur_kg": 12.32,
+     "n": 101,
+     "last": "2026-07-20",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "carrefour": {
+     "eur_kg": 12.97,
+     "observed_eur_kg": 13.0,
+     "n": 141,
+     "last": "2026-09-01",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "super-u": {
+     "eur_kg": 11.67,
+     "observed_eur_kg": 11.68,
+     "n": 86,
+     "last": "2026-09-08",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "casino": {
+     "eur_kg": 11.83,
+     "observed_eur_kg": 11.86,
+     "n": 36,
+     "last": "2025-01-21",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "monoprix": {
+     "eur_kg": 13.42,
+     "observed_eur_kg": 13.4,
+     "n": 9,
+     "last": "2026-04-18",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "franprix": {
+     "eur_kg": 15.88,
+     "observed_eur_kg": 16.8,
+     "n": 7,
+     "last": "2026-08-25",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "g20": {
+     "eur_kg": 13.47,
+     "observed_eur_kg": 15.18,
+     "n": 6,
+     "last": "2026-02-09",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "picard": {
+     "eur_kg": 16.06,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 14.46,
+     "observed_eur_kg": 11.96,
+     "n": 3,
+     "last": "2025-03-21",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "biocoop": {
+     "eur_kg": 14.24,
+     "observed_eur_kg": 13.35,
+     "n": 16,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "bio-c-bon": {
+     "eur_kg": 14.35,
+     "observed_eur_kg": 13.16,
+     "n": 2,
+     "last": "2026-06-09",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "la-vie-claire": {
+     "eur_kg": 15.44,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "olive-oil": {
+   "national_eur_kg": 13.99,
+   "pack_g": 750,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 10.16,
+     "observed_eur_kg": 10.59,
+     "n": 10,
+     "last": "2026-05-22",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "aldi": {
+     "eur_kg": 10.18,
+     "observed_eur_kg": 10.58,
+     "n": 5,
+     "last": "2026-09-22",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "netto": {
+     "eur_kg": 9.57,
+     "observed_eur_kg": 11.53,
+     "n": 4,
+     "last": "2024-11-06",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "leclerc": {
+     "eur_kg": 9.85,
+     "observed_eur_kg": 9.71,
+     "n": 111,
+     "last": "2026-09-02",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "auchan": {
+     "eur_kg": 15.23,
+     "observed_eur_kg": 15.26,
+     "n": 91,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "intermarche": {
+     "eur_kg": 13.81,
+     "observed_eur_kg": 13.79,
+     "n": 33,
+     "last": "2026-08-28",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "carrefour": {
+     "eur_kg": 14.12,
+     "observed_eur_kg": 14.09,
+     "n": 101,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "super-u": {
+     "eur_kg": 13.68,
+     "observed_eur_kg": 13.66,
+     "n": 74,
+     "last": "2026-08-27",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "casino": {
+     "eur_kg": 14.07,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 16.33,
+     "observed_eur_kg": 16.33,
+     "n": 25,
+     "last": "2026-08-21",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "franprix": {
+     "eur_kg": 15.75,
+     "observed_eur_kg": 15.05,
+     "n": 14,
+     "last": "2026-08-25",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "g20": {
+     "eur_kg": 13.86,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 19.5,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 17.78,
+     "observed_eur_kg": 17.24,
+     "n": 15,
+     "last": "2026-01-11",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "biocoop": {
+     "eur_kg": 18.55,
+     "observed_eur_kg": 17.53,
+     "n": 11,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "bio-c-bon": {
+     "eur_kg": 18.89,
+     "observed_eur_kg": 18.98,
+     "n": 50,
+     "last": "2025-10-07",
+     "estimated": false,
+     "pack_g": 875
+    },
+    "la-vie-claire": {
+     "eur_kg": 18.75,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "rapeseed-oil": {
+   "national_eur_kg": 1.99,
+   "pack_g": 1000,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.36,
+     "observed_eur_kg": 1.44,
+     "n": 2,
+     "last": "2025-11-22",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "aldi": {
+     "eur_kg": 1.39,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.14,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 1.53,
+     "observed_eur_kg": 1.49,
+     "n": 35,
+     "last": "2026-09-02",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "auchan": {
+     "eur_kg": 2.39,
+     "observed_eur_kg": 2.48,
+     "n": 16,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "intermarche": {
+     "eur_kg": 3.78,
+     "observed_eur_kg": 5.28,
+     "n": 6,
+     "last": "2026-08-28",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "carrefour": {
+     "eur_kg": 2.12,
+     "observed_eur_kg": 2.14,
+     "n": 7,
+     "last": "2026-08-27",
+     "estimated": false,
+     "pack_g": 875
+    },
+    "super-u": {
+     "eur_kg": 1.71,
+     "observed_eur_kg": 1.51,
+     "n": 7,
+     "last": "2026-08-25",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "casino": {
+     "eur_kg": 2.0,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 2.54,
+     "observed_eur_kg": 3.59,
+     "n": 1,
+     "last": "2025-02-16",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "franprix": {
+     "eur_kg": 2.73,
+     "observed_eur_kg": 3.75,
+     "n": 1,
+     "last": "2024-12-30",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "g20": {
+     "eur_kg": 1.97,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 2.77,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 2.76,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 2.96,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 2.56,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 2.67,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "carrot": {
+   "national_eur_kg": 2.66,
+   "pack_g": 300,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.93,
+     "observed_eur_kg": 1.98,
+     "n": 17,
+     "last": "2026-08-11",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "aldi": {
+     "eur_kg": 1.92,
+     "observed_eur_kg": 1.99,
+     "n": 5,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "netto": {
+     "eur_kg": 1.28,
+     "observed_eur_kg": 1.08,
+     "n": 6,
+     "last": "2025-10-14",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 3.31,
+     "observed_eur_kg": 3.36,
+     "n": 83,
+     "last": "2026-09-02",
+     "estimated": false,
+     "pack_g": 300
+    },
+    "auchan": {
+     "eur_kg": 4.36,
+     "observed_eur_kg": 4.62,
+     "n": 29,
+     "last": "2026-09-12",
+     "estimated": false,
+     "pack_g": 300
+    },
+    "intermarche": {
+     "eur_kg": 2.06,
+     "observed_eur_kg": 2.0,
+     "n": 46,
+     "last": "2026-09-01",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "carrefour": {
+     "eur_kg": 2.61,
+     "observed_eur_kg": 2.6,
+     "n": 86,
+     "last": "2026-09-12",
+     "estimated": false,
+     "pack_g": 300
+    },
+    "super-u": {
+     "eur_kg": 2.52,
+     "observed_eur_kg": 2.5,
+     "n": 33,
+     "last": "2026-09-08",
+     "estimated": false,
+     "pack_g": 300
+    },
+    "casino": {
+     "eur_kg": 3.04,
+     "observed_eur_kg": 4.88,
+     "n": 1,
+     "last": "2024-12-28",
+     "estimated": false,
+     "pack_g": 320
+    },
+    "monoprix": {
+     "eur_kg": 2.27,
+     "observed_eur_kg": 1.99,
+     "n": 15,
+     "last": "2026-07-08",
+     "estimated": false,
+     "pack_g": 1500
+    },
+    "franprix": {
+     "eur_kg": 2.6,
+     "observed_eur_kg": 2.38,
+     "n": 17,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "g20": {
+     "eur_kg": 2.55,
+     "observed_eur_kg": 2.44,
+     "n": 4,
+     "last": "2026-04-08",
+     "estimated": false,
+     "pack_g": 300
+    },
+    "picard": {
+     "eur_kg": 3.71,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 2.87,
+     "observed_eur_kg": 2.29,
+     "n": 7,
+     "last": "2026-04-18",
+     "estimated": false,
+     "pack_g": 180
+    },
+    "biocoop": {
+     "eur_kg": 2.97,
+     "observed_eur_kg": 2.7,
+     "n": 18,
+     "last": "2026-09-18",
+     "estimated": false,
+     "pack_g": 275
+    },
+    "bio-c-bon": {
+     "eur_kg": 2.68,
+     "observed_eur_kg": 2.4,
+     "n": 13,
+     "last": "2025-09-09",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 2.5,
+     "observed_eur_kg": 1.84,
+     "n": 8,
+     "last": "2026-07-15",
+     "estimated": false,
+     "pack_g": 275
+    }
+   }
+  },
+  "onion": {
+   "national_eur_kg": 3.31,
+   "pack_g": 190,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.01,
+     "observed_eur_kg": 1.69,
+     "n": 3,
+     "last": "2026-04-20",
+     "estimated": false,
+     "pack_g": null
+    },
+    "aldi": {
+     "eur_kg": 2.43,
+     "observed_eur_kg": 2.98,
+     "n": 1,
+     "last": "2025-10-18",
+     "estimated": false,
+     "pack_g": null
+    },
+    "netto": {
+     "eur_kg": 1.89,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 2.56,
+     "observed_eur_kg": 2.31,
+     "n": 10,
+     "last": "2026-08-24",
+     "estimated": false,
+     "pack_g": 310
+    },
+    "auchan": {
+     "eur_kg": 3.49,
+     "observed_eur_kg": 3.49,
+     "n": 11,
+     "last": "2026-02-24",
+     "estimated": false,
+     "pack_g": 145
+    },
+    "intermarche": {
+     "eur_kg": 2.99,
+     "observed_eur_kg": 2.89,
+     "n": 15,
+     "last": "2026-07-18",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "carrefour": {
+     "eur_kg": 2.98,
+     "observed_eur_kg": 2.89,
+     "n": 30,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 225
+    },
+    "super-u": {
+     "eur_kg": 3.82,
+     "observed_eur_kg": 3.99,
+     "n": 15,
+     "last": "2026-09-10",
+     "estimated": false,
+     "pack_g": 190
+    },
+    "casino": {
+     "eur_kg": 3.33,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 3.28,
+     "observed_eur_kg": 2.99,
+     "n": 10,
+     "last": "2026-06-21",
+     "estimated": false,
+     "pack_g": 170
+    },
+    "franprix": {
+     "eur_kg": 3.1,
+     "observed_eur_kg": 2.49,
+     "n": 9,
+     "last": "2025-10-17",
+     "estimated": false,
+     "pack_g": null
+    },
+    "g20": {
+     "eur_kg": 3.01,
+     "observed_eur_kg": 2.79,
+     "n": 6,
+     "last": "2026-04-08",
+     "estimated": false,
+     "pack_g": 40
+    },
+    "picard": {
+     "eur_kg": 4.62,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 4.1,
+     "observed_eur_kg": 3.69,
+     "n": 6,
+     "last": "2025-07-22",
+     "estimated": false,
+     "pack_g": null
+    },
+    "biocoop": {
+     "eur_kg": 4.39,
+     "observed_eur_kg": 4.12,
+     "n": 10,
+     "last": "2026-07-29",
+     "estimated": false,
+     "pack_g": null
+    },
+    "bio-c-bon": {
+     "eur_kg": 3.04,
+     "observed_eur_kg": 2.75,
+     "n": 21,
+     "last": "2026-07-02",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 3.91,
+     "observed_eur_kg": 3.64,
+     "n": 10,
+     "last": "2026-07-15",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "tomato": {
+   "national_eur_kg": 3.96,
+   "pack_g": 400,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.17,
+     "observed_eur_kg": 1.99,
+     "n": 13,
+     "last": "2026-08-07",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "aldi": {
+     "eur_kg": 2.53,
+     "observed_eur_kg": 1.92,
+     "n": 2,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": null
+    },
+    "netto": {
+     "eur_kg": 1.99,
+     "observed_eur_kg": 1.66,
+     "n": 4,
+     "last": "2025-05-25",
+     "estimated": false,
+     "pack_g": 386
+    },
+    "leclerc": {
+     "eur_kg": 2.84,
+     "observed_eur_kg": 2.81,
+     "n": 120,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 480
+    },
+    "auchan": {
+     "eur_kg": 3.95,
+     "observed_eur_kg": 3.94,
+     "n": 86,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "intermarche": {
+     "eur_kg": 4.01,
+     "observed_eur_kg": 4.02,
+     "n": 64,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 390
+    },
+    "carrefour": {
+     "eur_kg": 4.54,
+     "observed_eur_kg": 4.56,
+     "n": 138,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "super-u": {
+     "eur_kg": 4.38,
+     "observed_eur_kg": 4.42,
+     "n": 53,
+     "last": "2026-09-12",
+     "estimated": false,
+     "pack_g": 438
+    },
+    "casino": {
+     "eur_kg": 3.98,
+     "observed_eur_kg": 3.96,
+     "n": 1,
+     "last": "2025-11-19",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "monoprix": {
+     "eur_kg": 4.03,
+     "observed_eur_kg": 3.94,
+     "n": 32,
+     "last": "2026-08-28",
+     "estimated": false,
+     "pack_g": 745
+    },
+    "franprix": {
+     "eur_kg": 4.14,
+     "observed_eur_kg": 3.96,
+     "n": 25,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "g20": {
+     "eur_kg": 3.65,
+     "observed_eur_kg": 3.45,
+     "n": 7,
+     "last": "2025-10-18",
+     "estimated": false,
+     "pack_g": 1200
+    },
+    "picard": {
+     "eur_kg": 5.52,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 5.49,
+     "observed_eur_kg": 5.49,
+     "n": 14,
+     "last": "2026-06-27",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "biocoop": {
+     "eur_kg": 6.25,
+     "observed_eur_kg": 6.35,
+     "n": 19,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "bio-c-bon": {
+     "eur_kg": 3.45,
+     "observed_eur_kg": 3.12,
+     "n": 25,
+     "last": "2026-06-23",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "la-vie-claire": {
+     "eur_kg": 6.45,
+     "observed_eur_kg": 6.86,
+     "n": 14,
+     "last": "2025-09-15",
+     "estimated": false,
+     "pack_g": 395
+    }
+   }
+  },
+  "canned-tomato": {
+   "national_eur_kg": 3.55,
+   "pack_g": 400,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.36,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "aldi": {
+     "eur_kg": 2.48,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.86,
+     "observed_eur_kg": 1.66,
+     "n": 4,
+     "last": "2025-05-25",
+     "estimated": false,
+     "pack_g": 386
+    },
+    "leclerc": {
+     "eur_kg": 1.84,
+     "observed_eur_kg": 1.77,
+     "n": 102,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 480
+    },
+    "auchan": {
+     "eur_kg": 4.52,
+     "observed_eur_kg": 4.6,
+     "n": 48,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "intermarche": {
+     "eur_kg": 4.05,
+     "observed_eur_kg": 4.11,
+     "n": 40,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "carrefour": {
+     "eur_kg": 3.58,
+     "observed_eur_kg": 3.56,
+     "n": 46,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "super-u": {
+     "eur_kg": 4.2,
+     "observed_eur_kg": 4.31,
+     "n": 31,
+     "last": "2026-08-28",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 3.57,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 3.99,
+     "observed_eur_kg": 3.94,
+     "n": 15,
+     "last": "2026-08-19",
+     "estimated": false,
+     "pack_g": 800
+    },
+    "franprix": {
+     "eur_kg": 5.24,
+     "observed_eur_kg": 6.47,
+     "n": 3,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "g20": {
+     "eur_kg": 3.51,
+     "observed_eur_kg": 3.45,
+     "n": 1,
+     "last": "2024-05-19",
+     "estimated": false,
+     "pack_g": 1200
+    },
+    "picard": {
+     "eur_kg": 4.95,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 4.46,
+     "observed_eur_kg": 3.7,
+     "n": 3,
+     "last": "2025-06-09",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "biocoop": {
+     "eur_kg": 6.0,
+     "observed_eur_kg": 6.3,
+     "n": 12,
+     "last": "2026-09-07",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "bio-c-bon": {
+     "eur_kg": 3.32,
+     "observed_eur_kg": 2.97,
+     "n": 18,
+     "last": "2026-02-20",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "la-vie-claire": {
+     "eur_kg": 5.6,
+     "observed_eur_kg": 7.71,
+     "n": 2,
+     "last": "2025-03-22",
+     "estimated": false,
+     "pack_g": 395
+    }
+   }
+  },
+  "spinach": {
+   "national_eur_kg": 3.0,
+   "pack_g": 600,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.0,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "aldi": {
+     "eur_kg": 2.1,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.23,
+     "observed_eur_kg": 1.01,
+     "n": 11,
+     "last": "2025-10-04",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 2.33,
+     "observed_eur_kg": 2.25,
+     "n": 27,
+     "last": "2026-09-14",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "auchan": {
+     "eur_kg": 3.14,
+     "observed_eur_kg": 3.13,
+     "n": 5,
+     "last": "2026-03-02",
+     "estimated": false,
+     "pack_g": 530
+    },
+    "intermarche": {
+     "eur_kg": 2.86,
+     "observed_eur_kg": 2.84,
+     "n": 24,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "carrefour": {
+     "eur_kg": 3.16,
+     "observed_eur_kg": 3.16,
+     "n": 30,
+     "last": "2026-06-24",
+     "estimated": false,
+     "pack_g": 395
+    },
+    "super-u": {
+     "eur_kg": 2.6,
+     "observed_eur_kg": 2.09,
+     "n": 4,
+     "last": "2025-02-16",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "casino": {
+     "eur_kg": 3.02,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 3.81,
+     "observed_eur_kg": 4.19,
+     "n": 4,
+     "last": "2026-03-26",
+     "estimated": false,
+     "pack_g": 265
+    },
+    "franprix": {
+     "eur_kg": 3.55,
+     "observed_eur_kg": 2.92,
+     "n": 2,
+     "last": "2026-02-19",
+     "estimated": false,
+     "pack_g": 795
+    },
+    "g20": {
+     "eur_kg": 3.22,
+     "observed_eur_kg": 4.47,
+     "n": 1,
+     "last": "2024-05-19",
+     "estimated": false,
+     "pack_g": 380
+    },
+    "picard": {
+     "eur_kg": 4.29,
+     "observed_eur_kg": 4.83,
+     "n": 1,
+     "last": "2024-09-14",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "naturalia": {
+     "eur_kg": 4.16,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 4.46,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 3.86,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 4.02,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "broccoli": {
+   "national_eur_kg": 3.8,
+   "pack_g": 900,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.5,
+     "observed_eur_kg": 2.43,
+     "n": 2,
+     "last": "2026-03-06",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "aldi": {
+     "eur_kg": 2.66,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 2.18,
+     "observed_eur_kg": 2.18,
+     "n": 7,
+     "last": "2025-08-23",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 2.37,
+     "observed_eur_kg": 2.21,
+     "n": 36,
+     "last": "2026-09-14",
+     "estimated": false,
+     "pack_g": 900
+    },
+    "auchan": {
+     "eur_kg": 4.25,
+     "observed_eur_kg": 4.58,
+     "n": 4,
+     "last": "2025-12-17",
+     "estimated": false,
+     "pack_g": 520
+    },
+    "intermarche": {
+     "eur_kg": 3.6,
+     "observed_eur_kg": 3.49,
+     "n": 8,
+     "last": "2026-05-29",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "carrefour": {
+     "eur_kg": 3.77,
+     "observed_eur_kg": 3.73,
+     "n": 25,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 900
+    },
+    "super-u": {
+     "eur_kg": 3.87,
+     "observed_eur_kg": 3.9,
+     "n": 9,
+     "last": "2026-08-09",
+     "estimated": false,
+     "pack_g": 900
+    },
+    "casino": {
+     "eur_kg": 3.82,
+     "observed_eur_kg": 3.79,
+     "n": 1,
+     "last": "2025-01-21",
+     "estimated": false,
+     "pack_g": null
+    },
+    "monoprix": {
+     "eur_kg": 4.46,
+     "observed_eur_kg": 4.49,
+     "n": 4,
+     "last": "2025-10-16",
+     "estimated": false,
+     "pack_g": null
+    },
+    "franprix": {
+     "eur_kg": 6.28,
+     "observed_eur_kg": 8.72,
+     "n": 3,
+     "last": "2025-10-17",
+     "estimated": false,
+     "pack_g": null
+    },
+    "g20": {
+     "eur_kg": 3.55,
+     "observed_eur_kg": 2.99,
+     "n": 2,
+     "last": "2024-11-01",
+     "estimated": false,
+     "pack_g": null
+    },
+    "picard": {
+     "eur_kg": 5.49,
+     "observed_eur_kg": 5.8,
+     "n": 3,
+     "last": "2026-06-13",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "naturalia": {
+     "eur_kg": 5.54,
+     "observed_eur_kg": 5.99,
+     "n": 3,
+     "last": "2026-06-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "biocoop": {
+     "eur_kg": 5.81,
+     "observed_eur_kg": 5.95,
+     "n": 6,
+     "last": "2026-02-12",
+     "estimated": false,
+     "pack_g": null
+    },
+    "bio-c-bon": {
+     "eur_kg": 5.31,
+     "observed_eur_kg": 5.65,
+     "n": 6,
+     "last": "2025-06-14",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 4.45,
+     "observed_eur_kg": 3.99,
+     "n": 7,
+     "last": "2025-02-22",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "zucchini": {
+   "national_eur_kg": 3.51,
+   "pack_g": 625,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.23,
+     "observed_eur_kg": 2.14,
+     "n": 6,
+     "last": "2026-08-07",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "aldi": {
+     "eur_kg": 2.45,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.68,
+     "observed_eur_kg": 1.28,
+     "n": 4,
+     "last": "2025-08-23",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 6.49,
+     "observed_eur_kg": 7.14,
+     "n": 25,
+     "last": "2026-07-30",
+     "estimated": false,
+     "pack_g": 660
+    },
+    "auchan": {
+     "eur_kg": 3.69,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "intermarche": {
+     "eur_kg": 2.74,
+     "observed_eur_kg": 2.59,
+     "n": 24,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 660
+    },
+    "carrefour": {
+     "eur_kg": 3.52,
+     "observed_eur_kg": 3.49,
+     "n": 31,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 565
+    },
+    "super-u": {
+     "eur_kg": 2.75,
+     "observed_eur_kg": 2.49,
+     "n": 15,
+     "last": "2025-04-08",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "casino": {
+     "eur_kg": 3.53,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 3.3,
+     "observed_eur_kg": 2.99,
+     "n": 13,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 342
+    },
+    "franprix": {
+     "eur_kg": 4.47,
+     "observed_eur_kg": 4.49,
+     "n": 7,
+     "last": "2025-12-31",
+     "estimated": false,
+     "pack_g": 185
+    },
+    "g20": {
+     "eur_kg": 4.03,
+     "observed_eur_kg": 4.49,
+     "n": 6,
+     "last": "2026-04-08",
+     "estimated": false,
+     "pack_g": 380
+    },
+    "picard": {
+     "eur_kg": 4.73,
+     "observed_eur_kg": 3.9,
+     "n": 1,
+     "last": "2026-03-23",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "naturalia": {
+     "eur_kg": 4.65,
+     "observed_eur_kg": 4.49,
+     "n": 7,
+     "last": "2026-06-27",
+     "estimated": false,
+     "pack_g": null
+    },
+    "biocoop": {
+     "eur_kg": 3.58,
+     "observed_eur_kg": 2.95,
+     "n": 13,
+     "last": "2026-08-31",
+     "estimated": false,
+     "pack_g": 650
+    },
+    "bio-c-bon": {
+     "eur_kg": 3.49,
+     "observed_eur_kg": 3.1,
+     "n": 13,
+     "last": "2026-07-02",
+     "estimated": false,
+     "pack_g": 650
+    },
+    "la-vie-claire": {
+     "eur_kg": 4.72,
+     "observed_eur_kg": 4.74,
+     "n": 6,
+     "last": "2025-06-05",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "bell-pepper": {
+   "national_eur_kg": 4.99,
+   "pack_g": 180,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 3.26,
+     "observed_eur_kg": 3.1,
+     "n": 2,
+     "last": "2024-10-29",
+     "estimated": false,
+     "pack_g": 650
+    },
+    "aldi": {
+     "eur_kg": 3.49,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 2.85,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 4.43,
+     "observed_eur_kg": 3.49,
+     "n": 1,
+     "last": "2025-10-18",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "auchan": {
+     "eur_kg": 5.12,
+     "observed_eur_kg": 4.99,
+     "n": 5,
+     "last": "2026-04-04",
+     "estimated": false,
+     "pack_g": 180
+    },
+    "intermarche": {
+     "eur_kg": 4.92,
+     "observed_eur_kg": 4.89,
+     "n": 9,
+     "last": "2026-07-10",
+     "estimated": false,
+     "pack_g": null
+    },
+    "carrefour": {
+     "eur_kg": 4.67,
+     "observed_eur_kg": 4.49,
+     "n": 16,
+     "last": "2026-08-08",
+     "estimated": false,
+     "pack_g": null
+    },
+    "super-u": {
+     "eur_kg": 4.63,
+     "observed_eur_kg": 4.5,
+     "n": 14,
+     "last": "2026-05-26",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 5.02,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 5.46,
+     "observed_eur_kg": 4.99,
+     "n": 4,
+     "last": "2026-07-08",
+     "estimated": false,
+     "pack_g": null
+    },
+    "franprix": {
+     "eur_kg": 5.87,
+     "observed_eur_kg": 4.74,
+     "n": 2,
+     "last": "2025-10-17",
+     "estimated": false,
+     "pack_g": null
+    },
+    "g20": {
+     "eur_kg": 4.67,
+     "observed_eur_kg": 3.99,
+     "n": 2,
+     "last": "2024-11-01",
+     "estimated": false,
+     "pack_g": null
+    },
+    "picard": {
+     "eur_kg": 6.96,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 6.76,
+     "observed_eur_kg": 6.49,
+     "n": 3,
+     "last": "2026-06-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "biocoop": {
+     "eur_kg": 6.93,
+     "observed_eur_kg": 5.72,
+     "n": 2,
+     "last": "2026-07-20",
+     "estimated": false,
+     "pack_g": null
+    },
+    "bio-c-bon": {
+     "eur_kg": 6.71,
+     "observed_eur_kg": 6.99,
+     "n": 5,
+     "last": "2026-06-09",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 6.63,
+     "observed_eur_kg": 6.49,
+     "n": 2,
+     "last": "2026-07-15",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "peas": {
+   "national_eur_kg": 3.09,
+   "pack_g": 500,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.05,
+     "observed_eur_kg": 2.03,
+     "n": 2,
+     "last": "2025-08-12",
+     "estimated": false,
+     "pack_g": 340
+    },
+    "aldi": {
+     "eur_kg": 2.16,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.95,
+     "observed_eur_kg": 2.07,
+     "n": 8,
+     "last": "2025-10-20",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "leclerc": {
+     "eur_kg": 2.92,
+     "observed_eur_kg": 2.93,
+     "n": 33,
+     "last": "2026-07-30",
+     "estimated": false,
+     "pack_g": 560
+    },
+    "auchan": {
+     "eur_kg": 3.32,
+     "observed_eur_kg": 3.43,
+     "n": 3,
+     "last": "2026-04-04",
+     "estimated": false,
+     "pack_g": 560
+    },
+    "intermarche": {
+     "eur_kg": 4.03,
+     "observed_eur_kg": 4.33,
+     "n": 16,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 515
+    },
+    "carrefour": {
+     "eur_kg": 3.81,
+     "observed_eur_kg": 3.89,
+     "n": 31,
+     "last": "2026-02-18",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "super-u": {
+     "eur_kg": 2.62,
+     "observed_eur_kg": 2.46,
+     "n": 15,
+     "last": "2026-03-18",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 3.11,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 3.61,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 4.24,
+     "observed_eur_kg": 4.5,
+     "n": 6,
+     "last": "2026-03-03",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "g20": {
+     "eur_kg": 3.07,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 4.31,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 4.29,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 4.6,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 4.51,
+     "observed_eur_kg": 5.38,
+     "n": 3,
+     "last": "2025-06-02",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "la-vie-claire": {
+     "eur_kg": 4.15,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "green-beans": {
+   "national_eur_kg": 2.08,
+   "pack_g": 1000,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.39,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "aldi": {
+     "eur_kg": 1.46,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.57,
+     "observed_eur_kg": 1.84,
+     "n": 7,
+     "last": "2025-08-23",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 2.04,
+     "observed_eur_kg": 2.07,
+     "n": 22,
+     "last": "2026-07-30",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "auchan": {
+     "eur_kg": 2.27,
+     "observed_eur_kg": 2.65,
+     "n": 1,
+     "last": "2025-07-26",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "intermarche": {
+     "eur_kg": 1.97,
+     "observed_eur_kg": 1.85,
+     "n": 4,
+     "last": "2026-05-17",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "carrefour": {
+     "eur_kg": 2.94,
+     "observed_eur_kg": 3.4,
+     "n": 8,
+     "last": "2026-05-09",
+     "estimated": false,
+     "pack_g": 675
+    },
+    "super-u": {
+     "eur_kg": 2.08,
+     "observed_eur_kg": 2.08,
+     "n": 2,
+     "last": "2025-01-03",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "casino": {
+     "eur_kg": 2.1,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 2.44,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 2.64,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "g20": {
+     "eur_kg": 2.07,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 3.23,
+     "observed_eur_kg": 4.84,
+     "n": 1,
+     "last": "2026-05-17",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "naturalia": {
+     "eur_kg": 2.89,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 3.1,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 2.68,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 2.79,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "cabbage": {
+   "national_eur_kg": 3.95,
+   "pack_g": 300,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.35,
+     "observed_eur_kg": 1.89,
+     "n": 3,
+     "last": "2026-01-30",
+     "estimated": false,
+     "pack_g": null
+    },
+    "aldi": {
+     "eur_kg": 2.63,
+     "observed_eur_kg": 1.99,
+     "n": 1,
+     "last": "2025-10-18",
+     "estimated": false,
+     "pack_g": null
+    },
+    "netto": {
+     "eur_kg": 2.26,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 5.14,
+     "observed_eur_kg": 5.97,
+     "n": 9,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "auchan": {
+     "eur_kg": 4.52,
+     "observed_eur_kg": 6.36,
+     "n": 1,
+     "last": "2026-04-27",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "intermarche": {
+     "eur_kg": 4.84,
+     "observed_eur_kg": 7.13,
+     "n": 2,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 300
+    },
+    "carrefour": {
+     "eur_kg": 3.64,
+     "observed_eur_kg": 3.49,
+     "n": 17,
+     "last": "2026-09-12",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "super-u": {
+     "eur_kg": 5.14,
+     "observed_eur_kg": 6.62,
+     "n": 4,
+     "last": "2026-09-03",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "casino": {
+     "eur_kg": 3.97,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 3.89,
+     "observed_eur_kg": 2.99,
+     "n": 4,
+     "last": "2026-04-18",
+     "estimated": false,
+     "pack_g": null
+    },
+    "franprix": {
+     "eur_kg": 4.36,
+     "observed_eur_kg": 3.29,
+     "n": 3,
+     "last": "2025-09-12",
+     "estimated": false,
+     "pack_g": null
+    },
+    "g20": {
+     "eur_kg": 3.64,
+     "observed_eur_kg": 2.94,
+     "n": 2,
+     "last": "2024-11-01",
+     "estimated": false,
+     "pack_g": null
+    },
+    "picard": {
+     "eur_kg": 5.51,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 6.37,
+     "observed_eur_kg": 10.85,
+     "n": 1,
+     "last": "2026-04-03",
+     "estimated": false,
+     "pack_g": 320
+    },
+    "biocoop": {
+     "eur_kg": 5.18,
+     "observed_eur_kg": 4.5,
+     "n": 5,
+     "last": "2026-08-24",
+     "estimated": false,
+     "pack_g": 320
+    },
+    "bio-c-bon": {
+     "eur_kg": 5.04,
+     "observed_eur_kg": 4.8,
+     "n": 1,
+     "last": "2025-05-20",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 4.91,
+     "observed_eur_kg": 2.99,
+     "n": 1,
+     "last": "2025-02-22",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "leek": {
+   "national_eur_kg": 3.49,
+   "pack_g": 900,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.11,
+     "observed_eur_kg": 1.75,
+     "n": 3,
+     "last": "2026-01-10",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "aldi": {
+     "eur_kg": 2.44,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.72,
+     "observed_eur_kg": 1.27,
+     "n": 3,
+     "last": "2025-08-23",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 2.58,
+     "observed_eur_kg": 1.49,
+     "n": 3,
+     "last": "2026-02-20",
+     "estimated": false,
+     "pack_g": 900
+    },
+    "auchan": {
+     "eur_kg": 3.47,
+     "observed_eur_kg": 2.49,
+     "n": 1,
+     "last": "2024-11-04",
+     "estimated": false,
+     "pack_g": null
+    },
+    "intermarche": {
+     "eur_kg": 2.86,
+     "observed_eur_kg": 2.64,
+     "n": 14,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 750
+    },
+    "carrefour": {
+     "eur_kg": 3.12,
+     "observed_eur_kg": 2.99,
+     "n": 22,
+     "last": "2026-09-12",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "super-u": {
+     "eur_kg": 4.37,
+     "observed_eur_kg": 5.11,
+     "n": 6,
+     "last": "2026-09-24",
+     "estimated": false,
+     "pack_g": 425
+    },
+    "casino": {
+     "eur_kg": 3.32,
+     "observed_eur_kg": 2.39,
+     "n": 1,
+     "last": "2025-01-21",
+     "estimated": false,
+     "pack_g": null
+    },
+    "monoprix": {
+     "eur_kg": 3.59,
+     "observed_eur_kg": 2.79,
+     "n": 3,
+     "last": "2025-04-25",
+     "estimated": false,
+     "pack_g": null
+    },
+    "franprix": {
+     "eur_kg": 3.59,
+     "observed_eur_kg": 2.9,
+     "n": 6,
+     "last": "2025-12-31",
+     "estimated": false,
+     "pack_g": null
+    },
+    "g20": {
+     "eur_kg": 2.96,
+     "observed_eur_kg": 2.35,
+     "n": 4,
+     "last": "2026-04-08",
+     "estimated": false,
+     "pack_g": null
+    },
+    "picard": {
+     "eur_kg": 4.55,
+     "observed_eur_kg": 2.99,
+     "n": 1,
+     "last": "2025-12-31",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "naturalia": {
+     "eur_kg": 4.94,
+     "observed_eur_kg": 4.99,
+     "n": 9,
+     "last": "2026-06-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "biocoop": {
+     "eur_kg": 5.21,
+     "observed_eur_kg": 5.22,
+     "n": 6,
+     "last": "2026-08-10",
+     "estimated": false,
+     "pack_g": null
+    },
+    "bio-c-bon": {
+     "eur_kg": 4.49,
+     "observed_eur_kg": 4.49,
+     "n": 9,
+     "last": "2025-06-14",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 4.37,
+     "observed_eur_kg": 3.99,
+     "n": 4,
+     "last": "2025-09-12",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "mushroom": {
+   "national_eur_kg": 5.99,
+   "pack_g": 300,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 5.26,
+     "observed_eur_kg": 5.98,
+     "n": 9,
+     "last": "2026-03-07",
+     "estimated": false,
+     "pack_g": 230
+    },
+    "aldi": {
+     "eur_kg": 4.19,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 4.44,
+     "observed_eur_kg": 5.16,
+     "n": 7,
+     "last": "2025-11-03",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "leclerc": {
+     "eur_kg": 4.68,
+     "observed_eur_kg": 4.65,
+     "n": 146,
+     "last": "2026-09-02",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "auchan": {
+     "eur_kg": 6.17,
+     "observed_eur_kg": 6.15,
+     "n": 38,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 230
+    },
+    "intermarche": {
+     "eur_kg": 6.46,
+     "observed_eur_kg": 6.5,
+     "n": 68,
+     "last": "2026-09-06",
+     "estimated": false,
+     "pack_g": 345
+    },
+    "carrefour": {
+     "eur_kg": 5.78,
+     "observed_eur_kg": 5.75,
+     "n": 88,
+     "last": "2026-09-16",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "super-u": {
+     "eur_kg": 6.79,
+     "observed_eur_kg": 6.96,
+     "n": 24,
+     "last": "2026-08-26",
+     "estimated": false,
+     "pack_g": 230
+    },
+    "casino": {
+     "eur_kg": 6.03,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 7.2,
+     "observed_eur_kg": 7.37,
+     "n": 6,
+     "last": "2026-02-10",
+     "estimated": false,
+     "pack_g": 345
+    },
+    "franprix": {
+     "eur_kg": 8.31,
+     "observed_eur_kg": 8.5,
+     "n": 19,
+     "last": "2026-08-25",
+     "estimated": false,
+     "pack_g": 230
+    },
+    "g20": {
+     "eur_kg": 7.9,
+     "observed_eur_kg": 9.3,
+     "n": 7,
+     "last": "2026-02-09",
+     "estimated": false,
+     "pack_g": 310
+    },
+    "picard": {
+     "eur_kg": 8.44,
+     "observed_eur_kg": 8.87,
+     "n": 1,
+     "last": "2024-09-14",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "naturalia": {
+     "eur_kg": 10.31,
+     "observed_eur_kg": 11.99,
+     "n": 6,
+     "last": "2026-06-26",
+     "estimated": false,
+     "pack_g": 345
+    },
+    "biocoop": {
+     "eur_kg": 11.85,
+     "observed_eur_kg": 13.2,
+     "n": 11,
+     "last": "2026-08-31",
+     "estimated": false,
+     "pack_g": 180
+    },
+    "bio-c-bon": {
+     "eur_kg": 8.92,
+     "observed_eur_kg": 11.94,
+     "n": 2,
+     "last": "2025-05-20",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 11.34,
+     "observed_eur_kg": 12.99,
+     "n": 10,
+     "last": "2025-09-12",
+     "estimated": false,
+     "pack_g": 330
+    }
+   }
+  },
+  "lettuce": {
+   "national_eur_kg": 3.86,
+   "pack_g": 175,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.73,
+     "observed_eur_kg": 2.83,
+     "n": 9,
+     "last": "2026-03-19",
+     "estimated": false,
+     "pack_g": 162
+    },
+    "aldi": {
+     "eur_kg": 2.77,
+     "observed_eur_kg": 3.11,
+     "n": 1,
+     "last": "2025-10-18",
+     "estimated": false,
+     "pack_g": null
+    },
+    "netto": {
+     "eur_kg": 2.21,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 4.83,
+     "observed_eur_kg": 4.95,
+     "n": 54,
+     "last": "2026-08-31",
+     "estimated": false,
+     "pack_g": 150
+    },
+    "auchan": {
+     "eur_kg": 3.71,
+     "observed_eur_kg": 3.69,
+     "n": 68,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "intermarche": {
+     "eur_kg": 3.61,
+     "observed_eur_kg": 3.56,
+     "n": 24,
+     "last": "2026-07-10",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "carrefour": {
+     "eur_kg": 3.7,
+     "observed_eur_kg": 3.69,
+     "n": 154,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 175
+    },
+    "super-u": {
+     "eur_kg": 4.17,
+     "observed_eur_kg": 4.26,
+     "n": 17,
+     "last": "2026-09-19",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "casino": {
+     "eur_kg": 3.88,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 5.1,
+     "observed_eur_kg": 5.53,
+     "n": 7,
+     "last": "2025-10-16",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "franprix": {
+     "eur_kg": 4.54,
+     "observed_eur_kg": 4.26,
+     "n": 6,
+     "last": "2026-01-27",
+     "estimated": false,
+     "pack_g": 150
+    },
+    "g20": {
+     "eur_kg": 3.82,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 5.38,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 4.25,
+     "observed_eur_kg": 2.87,
+     "n": 4,
+     "last": "2026-06-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "biocoop": {
+     "eur_kg": 5.0,
+     "observed_eur_kg": 4.4,
+     "n": 6,
+     "last": "2026-08-18",
+     "estimated": false,
+     "pack_g": null
+    },
+    "bio-c-bon": {
+     "eur_kg": 4.59,
+     "observed_eur_kg": 3.97,
+     "n": 3,
+     "last": "2025-10-24",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 4.71,
+     "observed_eur_kg": 4.26,
+     "n": 5,
+     "last": "2025-09-12",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "garlic": {
+   "national_eur_kg": 19.08,
+   "pack_g": 110,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 13.53,
+     "observed_eur_kg": 15.63,
+     "n": 2,
+     "last": "2026-02-13",
+     "estimated": false,
+     "pack_g": 65
+    },
+    "aldi": {
+     "eur_kg": 13.34,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 10.91,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 13.4,
+     "observed_eur_kg": 12.91,
+     "n": 43,
+     "last": "2026-09-02",
+     "estimated": false,
+     "pack_g": 110
+    },
+    "auchan": {
+     "eur_kg": 20.39,
+     "observed_eur_kg": 20.51,
+     "n": 14,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 158
+    },
+    "intermarche": {
+     "eur_kg": 19.36,
+     "observed_eur_kg": 19.55,
+     "n": 11,
+     "last": "2026-08-28",
+     "estimated": false,
+     "pack_g": 140
+    },
+    "carrefour": {
+     "eur_kg": 21.9,
+     "observed_eur_kg": 22.3,
+     "n": 22,
+     "last": "2026-08-26",
+     "estimated": false,
+     "pack_g": 60
+    },
+    "super-u": {
+     "eur_kg": 23.17,
+     "observed_eur_kg": 24.75,
+     "n": 13,
+     "last": "2026-08-28",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "casino": {
+     "eur_kg": 19.19,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 27.12,
+     "observed_eur_kg": 31.95,
+     "n": 5,
+     "last": "2026-06-14",
+     "estimated": false,
+     "pack_g": 120
+    },
+    "franprix": {
+     "eur_kg": 23.26,
+     "observed_eur_kg": 22.34,
+     "n": 5,
+     "last": "2026-08-25",
+     "estimated": false,
+     "pack_g": 120
+    },
+    "g20": {
+     "eur_kg": 16.22,
+     "observed_eur_kg": 9.49,
+     "n": 2,
+     "last": "2025-10-18",
+     "estimated": false,
+     "pack_g": null
+    },
+    "picard": {
+     "eur_kg": 26.6,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 25.98,
+     "observed_eur_kg": 25.52,
+     "n": 5,
+     "last": "2026-06-27",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "biocoop": {
+     "eur_kg": 26.01,
+     "observed_eur_kg": 23.68,
+     "n": 5,
+     "last": "2026-08-27",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "bio-c-bon": {
+     "eur_kg": 24.56,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 17.78,
+     "observed_eur_kg": 9.99,
+     "n": 5,
+     "last": "2026-07-15",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "lemon": {
+   "national_eur_kg": 4.5,
+   "pack_g": 200,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 2.69,
+     "observed_eur_kg": 2.58,
+     "n": 13,
+     "last": "2026-08-11",
+     "estimated": false,
+     "pack_g": null
+    },
+    "aldi": {
+     "eur_kg": 3.77,
+     "observed_eur_kg": 5.34,
+     "n": 2,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": null
+    },
+    "netto": {
+     "eur_kg": 2.45,
+     "observed_eur_kg": 2.14,
+     "n": 2,
+     "last": "2025-01-04",
+     "estimated": false,
+     "pack_g": null
+    },
+    "leclerc": {
+     "eur_kg": 4.14,
+     "observed_eur_kg": 3.99,
+     "n": 1,
+     "last": "2026-07-07",
+     "estimated": false,
+     "pack_g": null
+    },
+    "auchan": {
+     "eur_kg": 4.78,
+     "observed_eur_kg": 4.84,
+     "n": 4,
+     "last": "2026-05-09",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "intermarche": {
+     "eur_kg": 4.1,
+     "observed_eur_kg": 3.87,
+     "n": 8,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 200
+    },
+    "carrefour": {
+     "eur_kg": 6.59,
+     "observed_eur_kg": 6.9,
+     "n": 30,
+     "last": "2026-08-14",
+     "estimated": false,
+     "pack_g": 425
+    },
+    "super-u": {
+     "eur_kg": 4.7,
+     "observed_eur_kg": 4.9,
+     "n": 5,
+     "last": "2026-07-31",
+     "estimated": false,
+     "pack_g": null
+    },
+    "casino": {
+     "eur_kg": 4.53,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 5.16,
+     "observed_eur_kg": 4.99,
+     "n": 3,
+     "last": "2026-05-21",
+     "estimated": false,
+     "pack_g": null
+    },
+    "franprix": {
+     "eur_kg": 5.06,
+     "observed_eur_kg": 4.75,
+     "n": 10,
+     "last": "2026-04-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "g20": {
+     "eur_kg": 4.45,
+     "observed_eur_kg": 4.45,
+     "n": 4,
+     "last": "2026-07-14",
+     "estimated": false,
+     "pack_g": null
+    },
+    "picard": {
+     "eur_kg": 6.27,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 5.68,
+     "observed_eur_kg": 4.99,
+     "n": 4,
+     "last": "2026-07-09",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "biocoop": {
+     "eur_kg": 4.47,
+     "observed_eur_kg": 3.55,
+     "n": 12,
+     "last": "2026-08-31",
+     "estimated": false,
+     "pack_g": null
+    },
+    "bio-c-bon": {
+     "eur_kg": 3.96,
+     "observed_eur_kg": 2.65,
+     "n": 7,
+     "last": "2025-05-20",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 5.42,
+     "observed_eur_kg": 4.99,
+     "n": 7,
+     "last": "2026-07-15",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "banana": {
+   "national_eur_kg": 1.99,
+   "pack_g": 600,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.73,
+     "observed_eur_kg": 1.99,
+     "n": 8,
+     "last": "2026-08-11",
+     "estimated": false,
+     "pack_g": null
+    },
+    "aldi": {
+     "eur_kg": 1.39,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.18,
+     "observed_eur_kg": 1.39,
+     "n": 1,
+     "last": "2025-01-04",
+     "estimated": false,
+     "pack_g": null
+    },
+    "leclerc": {
+     "eur_kg": 2.28,
+     "observed_eur_kg": 4.49,
+     "n": 1,
+     "last": "2026-03-28",
+     "estimated": false,
+     "pack_g": null
+    },
+    "auchan": {
+     "eur_kg": 2.0,
+     "observed_eur_kg": 1.99,
+     "n": 41,
+     "last": "2026-08-29",
+     "estimated": false,
+     "pack_g": null
+    },
+    "intermarche": {
+     "eur_kg": 1.99,
+     "observed_eur_kg": 1.99,
+     "n": 31,
+     "last": "2026-07-10",
+     "estimated": false,
+     "pack_g": null
+    },
+    "carrefour": {
+     "eur_kg": 2.06,
+     "observed_eur_kg": 2.04,
+     "n": 14,
+     "last": "2026-07-21",
+     "estimated": false,
+     "pack_g": null
+    },
+    "super-u": {
+     "eur_kg": 1.99,
+     "observed_eur_kg": 1.99,
+     "n": 15,
+     "last": "2026-05-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "casino": {
+     "eur_kg": 2.0,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 2.05,
+     "observed_eur_kg": 1.89,
+     "n": 9,
+     "last": "2026-04-23",
+     "estimated": false,
+     "pack_g": null
+    },
+    "franprix": {
+     "eur_kg": 2.1,
+     "observed_eur_kg": 1.89,
+     "n": 10,
+     "last": "2026-09-01",
+     "estimated": false,
+     "pack_g": null
+    },
+    "g20": {
+     "eur_kg": 2.17,
+     "observed_eur_kg": 2.49,
+     "n": 3,
+     "last": "2025-04-18",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "picard": {
+     "eur_kg": 2.77,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 2.29,
+     "observed_eur_kg": 1.99,
+     "n": 8,
+     "last": "2026-04-18",
+     "estimated": false,
+     "pack_g": null
+    },
+    "biocoop": {
+     "eur_kg": 2.24,
+     "observed_eur_kg": 2.09,
+     "n": 23,
+     "last": "2026-09-18",
+     "estimated": false,
+     "pack_g": null
+    },
+    "bio-c-bon": {
+     "eur_kg": 2.19,
+     "observed_eur_kg": 1.99,
+     "n": 9,
+     "last": "2026-06-29",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 2.3,
+     "observed_eur_kg": 1.99,
+     "n": 6,
+     "last": "2026-07-15",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "apple": {
+   "national_eur_kg": 2.99,
+   "pack_g": 710,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.99,
+     "observed_eur_kg": 1.99,
+     "n": 24,
+     "last": "2026-08-11",
+     "estimated": false,
+     "pack_g": 2000
+    },
+    "aldi": {
+     "eur_kg": 2.25,
+     "observed_eur_kg": 2.66,
+     "n": 2,
+     "last": "2026-08-26",
+     "estimated": false,
+     "pack_g": 900
+    },
+    "netto": {
+     "eur_kg": 1.71,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 3.14,
+     "observed_eur_kg": 3.2,
+     "n": 31,
+     "last": "2026-07-07",
+     "estimated": false,
+     "pack_g": 388
+    },
+    "auchan": {
+     "eur_kg": 1.73,
+     "observed_eur_kg": 1.49,
+     "n": 29,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 720
+    },
+    "intermarche": {
+     "eur_kg": 2.85,
+     "observed_eur_kg": 2.83,
+     "n": 30,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 705
+    },
+    "carrefour": {
+     "eur_kg": 2.78,
+     "observed_eur_kg": 2.76,
+     "n": 108,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 710
+    },
+    "super-u": {
+     "eur_kg": 2.99,
+     "observed_eur_kg": 2.99,
+     "n": 25,
+     "last": "2026-08-27",
+     "estimated": false,
+     "pack_g": 1080
+    },
+    "casino": {
+     "eur_kg": 2.83,
+     "observed_eur_kg": 2.39,
+     "n": 2,
+     "last": "2025-04-12",
+     "estimated": false,
+     "pack_g": 730
+    },
+    "monoprix": {
+     "eur_kg": 3.06,
+     "observed_eur_kg": 2.99,
+     "n": 32,
+     "last": "2026-07-08",
+     "estimated": false,
+     "pack_g": 600
+    },
+    "franprix": {
+     "eur_kg": 3.66,
+     "observed_eur_kg": 3.64,
+     "n": 36,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 730
+    },
+    "g20": {
+     "eur_kg": 3.48,
+     "observed_eur_kg": 3.64,
+     "n": 16,
+     "last": "2026-07-14",
+     "estimated": false,
+     "pack_g": null
+    },
+    "picard": {
+     "eur_kg": 4.17,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 3.57,
+     "observed_eur_kg": 3.29,
+     "n": 10,
+     "last": "2026-06-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "biocoop": {
+     "eur_kg": 3.82,
+     "observed_eur_kg": 3.7,
+     "n": 26,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": 2000
+    },
+    "bio-c-bon": {
+     "eur_kg": 2.88,
+     "observed_eur_kg": 2.69,
+     "n": 26,
+     "last": "2025-10-24",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 3.61,
+     "observed_eur_kg": 3.49,
+     "n": 17,
+     "last": "2025-09-12",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "orange": {
+   "national_eur_kg": 2.79,
+   "pack_g": 2000,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 1.76,
+     "observed_eur_kg": 1.73,
+     "n": 13,
+     "last": "2026-08-11",
+     "estimated": false,
+     "pack_g": 2000
+    },
+    "aldi": {
+     "eur_kg": 1.95,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 1.59,
+     "observed_eur_kg": 1.59,
+     "n": 1,
+     "last": "2025-01-04",
+     "estimated": false,
+     "pack_g": null
+    },
+    "leclerc": {
+     "eur_kg": 2.31,
+     "observed_eur_kg": 1.62,
+     "n": 2,
+     "last": "2026-03-19",
+     "estimated": false,
+     "pack_g": 1500
+    },
+    "auchan": {
+     "eur_kg": 2.46,
+     "observed_eur_kg": 2.28,
+     "n": 13,
+     "last": "2026-05-09",
+     "estimated": false,
+     "pack_g": 2500
+    },
+    "intermarche": {
+     "eur_kg": 3.15,
+     "observed_eur_kg": 3.31,
+     "n": 12,
+     "last": "2026-07-18",
+     "estimated": false,
+     "pack_g": 850
+    },
+    "carrefour": {
+     "eur_kg": 2.71,
+     "observed_eur_kg": 2.69,
+     "n": 63,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 2000
+    },
+    "super-u": {
+     "eur_kg": 2.59,
+     "observed_eur_kg": 2.5,
+     "n": 11,
+     "last": "2025-06-03",
+     "estimated": false,
+     "pack_g": 2000
+    },
+    "casino": {
+     "eur_kg": 2.81,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 3.17,
+     "observed_eur_kg": 3.14,
+     "n": 12,
+     "last": "2026-05-21",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "franprix": {
+     "eur_kg": 3.17,
+     "observed_eur_kg": 2.99,
+     "n": 10,
+     "last": "2026-04-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "g20": {
+     "eur_kg": 2.85,
+     "observed_eur_kg": 2.99,
+     "n": 3,
+     "last": "2024-11-01",
+     "estimated": false,
+     "pack_g": null
+    },
+    "picard": {
+     "eur_kg": 3.89,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 3.63,
+     "observed_eur_kg": 3.49,
+     "n": 8,
+     "last": "2026-07-14",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "biocoop": {
+     "eur_kg": 3.26,
+     "observed_eur_kg": 2.7,
+     "n": 8,
+     "last": "2026-03-17",
+     "estimated": false,
+     "pack_g": null
+    },
+    "bio-c-bon": {
+     "eur_kg": 2.74,
+     "observed_eur_kg": 2.39,
+     "n": 12,
+     "last": "2026-06-29",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 3.26,
+     "observed_eur_kg": 2.99,
+     "n": 9,
+     "last": "2026-07-15",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "kiwi": {
+   "national_eur_kg": 9.4,
+   "pack_g": 550,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 7.27,
+     "observed_eur_kg": 7.73,
+     "n": 11,
+     "last": "2026-08-11",
+     "estimated": false,
+     "pack_g": null
+    },
+    "aldi": {
+     "eur_kg": 7.02,
+     "observed_eur_kg": 8.13,
+     "n": 2,
+     "last": "2026-08-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "netto": {
+     "eur_kg": 5.38,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 9.55,
+     "observed_eur_kg": 11.67,
+     "n": 2,
+     "last": "2026-07-04",
+     "estimated": false,
+     "pack_g": null
+    },
+    "auchan": {
+     "eur_kg": 9.8,
+     "observed_eur_kg": 9.6,
+     "n": 2,
+     "last": "2025-04-07",
+     "estimated": false,
+     "pack_g": null
+    },
+    "intermarche": {
+     "eur_kg": 7.11,
+     "observed_eur_kg": 6.0,
+     "n": 10,
+     "last": "2026-09-05",
+     "estimated": false,
+     "pack_g": 1000
+    },
+    "carrefour": {
+     "eur_kg": 11.26,
+     "observed_eur_kg": 11.87,
+     "n": 11,
+     "last": "2026-08-14",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "super-u": {
+     "eur_kg": 9.7,
+     "observed_eur_kg": 10.07,
+     "n": 4,
+     "last": "2024-05-07",
+     "estimated": false,
+     "pack_g": null
+    },
+    "casino": {
+     "eur_kg": 9.46,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 12.62,
+     "observed_eur_kg": 14.67,
+     "n": 4,
+     "last": "2026-05-28",
+     "estimated": false,
+     "pack_g": null
+    },
+    "franprix": {
+     "eur_kg": 11.88,
+     "observed_eur_kg": 11.87,
+     "n": 7,
+     "last": "2026-04-26",
+     "estimated": false,
+     "pack_g": null
+    },
+    "g20": {
+     "eur_kg": 10.77,
+     "observed_eur_kg": 13.2,
+     "n": 3,
+     "last": "2024-11-01",
+     "estimated": false,
+     "pack_g": null
+    },
+    "picard": {
+     "eur_kg": 13.1,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 13.1,
+     "observed_eur_kg": 13.2,
+     "n": 4,
+     "last": "2026-06-17",
+     "estimated": false,
+     "pack_g": null
+    },
+    "biocoop": {
+     "eur_kg": 12.92,
+     "observed_eur_kg": 7.73,
+     "n": 1,
+     "last": "2026-03-30",
+     "estimated": false,
+     "pack_g": null
+    },
+    "bio-c-bon": {
+     "eur_kg": 10.56,
+     "observed_eur_kg": 7.99,
+     "n": 3,
+     "last": "2025-02-15",
+     "estimated": false,
+     "pack_g": null
+    },
+    "la-vie-claire": {
+     "eur_kg": 9.67,
+     "observed_eur_kg": 7.24,
+     "n": 6,
+     "last": "2025-01-06",
+     "estimated": false,
+     "pack_g": null
+    }
+   }
+  },
+  "blueberries": {
+   "national_eur_kg": 13.24,
+   "pack_g": 450,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 8.8,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "aldi": {
+     "eur_kg": 9.25,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 7.57,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 12.54,
+     "observed_eur_kg": 13.24,
+     "n": 2,
+     "last": "2026-02-08",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "auchan": {
+     "eur_kg": 13.92,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "intermarche": {
+     "eur_kg": 12.95,
+     "observed_eur_kg": 11.89,
+     "n": 1,
+     "last": "2026-02-01",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "carrefour": {
+     "eur_kg": 13.97,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "super-u": {
+     "eur_kg": 13.22,
+     "observed_eur_kg": 13.17,
+     "n": 2,
+     "last": "2026-04-02",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "casino": {
+     "eur_kg": 13.32,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 15.46,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 16.78,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "g20": {
+     "eur_kg": 13.12,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 18.46,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 18.35,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 19.66,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 17.04,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 17.74,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "raisins": {
+   "national_eur_kg": 8.76,
+   "pack_g": 250,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 5.58,
+     "observed_eur_kg": 4.36,
+     "n": 1,
+     "last": "2024-12-03",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "aldi": {
+     "eur_kg": 6.12,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 5.01,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 8.69,
+     "observed_eur_kg": 8.82,
+     "n": 22,
+     "last": "2026-08-26",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "auchan": {
+     "eur_kg": 9.75,
+     "observed_eur_kg": 10.05,
+     "n": 9,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 175
+    },
+    "intermarche": {
+     "eur_kg": 10.0,
+     "observed_eur_kg": 10.8,
+     "n": 8,
+     "last": "2026-08-14",
+     "estimated": false,
+     "pack_g": 125
+    },
+    "carrefour": {
+     "eur_kg": 8.8,
+     "observed_eur_kg": 8.48,
+     "n": 7,
+     "last": "2026-06-29",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "super-u": {
+     "eur_kg": 8.19,
+     "observed_eur_kg": 8.08,
+     "n": 26,
+     "last": "2026-02-10",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "casino": {
+     "eur_kg": 8.81,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 10.23,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 11.1,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "g20": {
+     "eur_kg": 8.68,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 12.21,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 12.14,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "biocoop": {
+     "eur_kg": 13.01,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 11.27,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 11.74,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "walnuts": {
+   "national_eur_kg": 27.28,
+   "pack_g": 125,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 16.81,
+     "observed_eur_kg": 13.46,
+     "n": 2,
+     "last": "2025-06-24",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "aldi": {
+     "eur_kg": 17.55,
+     "observed_eur_kg": 9.98,
+     "n": 1,
+     "last": "2026-08-26",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "netto": {
+     "eur_kg": 15.6,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 31.17,
+     "observed_eur_kg": 36.1,
+     "n": 6,
+     "last": "2026-03-19",
+     "estimated": false,
+     "pack_g": 150
+    },
+    "auchan": {
+     "eur_kg": 28.47,
+     "observed_eur_kg": 28.3,
+     "n": 6,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 108
+    },
+    "intermarche": {
+     "eur_kg": 28.34,
+     "observed_eur_kg": 29.1,
+     "n": 8,
+     "last": "2026-08-28",
+     "estimated": false,
+     "pack_g": 150
+    },
+    "carrefour": {
+     "eur_kg": 26.72,
+     "observed_eur_kg": 25.93,
+     "n": 13,
+     "last": "2026-08-21",
+     "estimated": false,
+     "pack_g": 138
+    },
+    "super-u": {
+     "eur_kg": 27.28,
+     "observed_eur_kg": 27.28,
+     "n": 21,
+     "last": "2026-05-13",
+     "estimated": false,
+     "pack_g": 125
+    },
+    "casino": {
+     "eur_kg": 27.44,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 31.86,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 35.62,
+     "observed_eur_kg": 37.38,
+     "n": 3,
+     "last": "2026-08-25",
+     "estimated": false,
+     "pack_g": 138
+    },
+    "g20": {
+     "eur_kg": 27.03,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 38.03,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 37.99,
+     "observed_eur_kg": 38.9,
+     "n": 1,
+     "last": "2026-03-07",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "biocoop": {
+     "eur_kg": 40.51,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 35.11,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "la-vie-claire": {
+     "eur_kg": 36.56,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "sunflower-seeds": {
+   "national_eur_kg": 11.56,
+   "pack_g": 250,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 7.69,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "aldi": {
+     "eur_kg": 8.08,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 6.61,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "leclerc": {
+     "eur_kg": 10.85,
+     "observed_eur_kg": 11.56,
+     "n": 1,
+     "last": "2026-06-22",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "auchan": {
+     "eur_kg": 12.34,
+     "observed_eur_kg": 13.28,
+     "n": 1,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "intermarche": {
+     "eur_kg": 11.49,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "carrefour": {
+     "eur_kg": 12.69,
+     "observed_eur_kg": 13.3,
+     "n": 4,
+     "last": "2026-03-25",
+     "estimated": false,
+     "pack_g": 225
+    },
+    "super-u": {
+     "eur_kg": 11.75,
+     "observed_eur_kg": 12.24,
+     "n": 2,
+     "last": "2026-08-09",
+     "estimated": false,
+     "pack_g": 325
+    },
+    "casino": {
+     "eur_kg": 11.63,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "monoprix": {
+     "eur_kg": 13.5,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "franprix": {
+     "eur_kg": 13.87,
+     "observed_eur_kg": 11.93,
+     "n": 2,
+     "last": "2026-08-25",
+     "estimated": false,
+     "pack_g": 150
+    },
+    "g20": {
+     "eur_kg": 11.46,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "picard": {
+     "eur_kg": 16.11,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 14.35,
+     "observed_eur_kg": 5.98,
+     "n": 1,
+     "last": "2025-08-20",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "biocoop": {
+     "eur_kg": 17.17,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "bio-c-bon": {
+     "eur_kg": 13.63,
+     "observed_eur_kg": 7.4,
+     "n": 1,
+     "last": "2025-05-19",
+     "estimated": false,
+     "pack_g": 250
+    },
+    "la-vie-claire": {
+     "eur_kg": 15.49,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "peanut-butter": {
+   "national_eur_kg": 11.06,
+   "pack_g": 350,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 6.58,
+     "observed_eur_kg": 5.93,
+     "n": 6,
+     "last": "2026-01-17",
+     "estimated": false,
+     "pack_g": 454
+    },
+    "aldi": {
+     "eur_kg": 7.08,
+     "observed_eur_kg": 5.98,
+     "n": 3,
+     "last": "2025-09-20",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "netto": {
+     "eur_kg": 9.37,
+     "observed_eur_kg": 11.91,
+     "n": 6,
+     "last": "2025-08-02",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "leclerc": {
+     "eur_kg": 9.12,
+     "observed_eur_kg": 9.1,
+     "n": 300,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 454
+    },
+    "auchan": {
+     "eur_kg": 11.36,
+     "observed_eur_kg": 11.34,
+     "n": 101,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 340
+    },
+    "intermarche": {
+     "eur_kg": 11.95,
+     "observed_eur_kg": 12.0,
+     "n": 83,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "carrefour": {
+     "eur_kg": 11.78,
+     "observed_eur_kg": 11.78,
+     "n": 135,
+     "last": "2026-09-16",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "super-u": {
+     "eur_kg": 11.86,
+     "observed_eur_kg": 11.91,
+     "n": 94,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "casino": {
+     "eur_kg": 12.84,
+     "observed_eur_kg": 14.06,
+     "n": 7,
+     "last": "2025-01-20",
+     "estimated": false,
+     "pack_g": 340
+    },
+    "monoprix": {
+     "eur_kg": 16.68,
+     "observed_eur_kg": 17.16,
+     "n": 39,
+     "last": "2026-08-19",
+     "estimated": false,
+     "pack_g": 340
+    },
+    "franprix": {
+     "eur_kg": 14.19,
+     "observed_eur_kg": 14.26,
+     "n": 13,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "g20": {
+     "eur_kg": 10.97,
+     "observed_eur_kg": 11.0,
+     "n": 1,
+     "last": "2025-04-16",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "picard": {
+     "eur_kg": 15.42,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 17.43,
+     "observed_eur_kg": 17.98,
+     "n": 19,
+     "last": "2026-04-03",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "biocoop": {
+     "eur_kg": 16.44,
+     "observed_eur_kg": 16.45,
+     "n": 8,
+     "last": "2025-11-06",
+     "estimated": false,
+     "pack_g": 425
+    },
+    "bio-c-bon": {
+     "eur_kg": 15.7,
+     "observed_eur_kg": 16.36,
+     "n": 11,
+     "last": "2025-06-02",
+     "estimated": false,
+     "pack_g": 350
+    },
+    "la-vie-claire": {
+     "eur_kg": 16.8,
+     "observed_eur_kg": 17.38,
+     "n": 17,
+     "last": "2025-02-22",
+     "estimated": false,
+     "pack_g": 280
+    }
+   }
+  },
+  "honey": {
+   "national_eur_kg": 17.33,
+   "pack_g": 375,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 11.82,
+     "observed_eur_kg": 13.31,
+     "n": 1,
+     "last": "2025-04-05",
+     "estimated": false,
+     "pack_g": 375
+    },
+    "aldi": {
+     "eur_kg": 12.12,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "netto": {
+     "eur_kg": 10.49,
+     "observed_eur_kg": 11.92,
+     "n": 2,
+     "last": "2025-01-29",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "leclerc": {
+     "eur_kg": 13.42,
+     "observed_eur_kg": 12.79,
+     "n": 21,
+     "last": "2026-08-26",
+     "estimated": false,
+     "pack_g": 375
+    },
+    "auchan": {
+     "eur_kg": 18.52,
+     "observed_eur_kg": 18.54,
+     "n": 69,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 375
+    },
+    "intermarche": {
+     "eur_kg": 15.72,
+     "observed_eur_kg": 15.63,
+     "n": 83,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 400
+    },
+    "carrefour": {
+     "eur_kg": 16.91,
+     "observed_eur_kg": 16.83,
+     "n": 88,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 375
+    },
+    "super-u": {
+     "eur_kg": 17.11,
+     "observed_eur_kg": 17.1,
+     "n": 74,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 375
+    },
+    "casino": {
+     "eur_kg": 18.08,
+     "observed_eur_kg": 21.31,
+     "n": 1,
+     "last": "2024-11-24",
+     "estimated": false,
+     "pack_g": 375
+    },
+    "monoprix": {
+     "eur_kg": 21.27,
+     "observed_eur_kg": 21.57,
+     "n": 17,
+     "last": "2026-06-14",
+     "estimated": false,
+     "pack_g": 375
+    },
+    "franprix": {
+     "eur_kg": 18.07,
+     "observed_eur_kg": 16.86,
+     "n": 16,
+     "last": "2026-02-09",
+     "estimated": false,
+     "pack_g": 340
+    },
+    "g20": {
+     "eur_kg": 16.75,
+     "observed_eur_kg": 16.32,
+     "n": 5,
+     "last": "2025-04-17",
+     "estimated": false,
+     "pack_g": 375
+    },
+    "picard": {
+     "eur_kg": 24.16,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 25.89,
+     "observed_eur_kg": 29.0,
+     "n": 3,
+     "last": "2025-03-21",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "biocoop": {
+     "eur_kg": 25.84,
+     "observed_eur_kg": 25.9,
+     "n": 9,
+     "last": "2026-08-27",
+     "estimated": false,
+     "pack_g": 500
+    },
+    "bio-c-bon": {
+     "eur_kg": 26.32,
+     "observed_eur_kg": 28.82,
+     "n": 8,
+     "last": "2025-03-31",
+     "estimated": false,
+     "pack_g": 450
+    },
+    "la-vie-claire": {
+     "eur_kg": 23.23,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    }
+   }
+  },
+  "dark-chocolate": {
+   "national_eur_kg": 23.0,
+   "pack_g": 100,
+   "by_chain": {
+    "lidl": {
+     "eur_kg": 12.73,
+     "observed_eur_kg": 12.17,
+     "n": 23,
+     "last": "2026-09-11",
+     "estimated": false,
+     "pack_g": 125
+    },
+    "aldi": {
+     "eur_kg": 13.9,
+     "observed_eur_kg": 11.18,
+     "n": 4,
+     "last": "2025-01-20",
+     "estimated": false,
+     "pack_g": 220
+    },
+    "netto": {
+     "eur_kg": 12.54,
+     "observed_eur_kg": 12.2,
+     "n": 9,
+     "last": "2026-09-10",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "leclerc": {
+     "eur_kg": 20.27,
+     "observed_eur_kg": 20.26,
+     "n": 519,
+     "last": "2026-09-15",
+     "estimated": false,
+     "pack_g": 170
+    },
+    "auchan": {
+     "eur_kg": 23.91,
+     "observed_eur_kg": 23.9,
+     "n": 248,
+     "last": "2026-09-04",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "intermarche": {
+     "eur_kg": 22.67,
+     "observed_eur_kg": 22.67,
+     "n": 309,
+     "last": "2026-09-23",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "carrefour": {
+     "eur_kg": 24.99,
+     "observed_eur_kg": 25.0,
+     "n": 332,
+     "last": "2026-08-21",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "super-u": {
+     "eur_kg": 24.24,
+     "observed_eur_kg": 24.27,
+     "n": 224,
+     "last": "2026-09-20",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "casino": {
+     "eur_kg": 24.59,
+     "observed_eur_kg": 24.9,
+     "n": 23,
+     "last": "2026-04-07",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "monoprix": {
+     "eur_kg": 27.66,
+     "observed_eur_kg": 27.7,
+     "n": 92,
+     "last": "2026-08-23",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "franprix": {
+     "eur_kg": 23.7,
+     "observed_eur_kg": 21.75,
+     "n": 14,
+     "last": "2026-07-23",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "g20": {
+     "eur_kg": 21.46,
+     "observed_eur_kg": 21.08,
+     "n": 18,
+     "last": "2026-02-22",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "picard": {
+     "eur_kg": 32.06,
+     "n": 0,
+     "last": null,
+     "estimated": true
+    },
+    "naturalia": {
+     "eur_kg": 38.39,
+     "observed_eur_kg": 39.44,
+     "n": 31,
+     "last": "2026-04-23",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "biocoop": {
+     "eur_kg": 35.36,
+     "observed_eur_kg": 35.5,
+     "n": 43,
+     "last": "2026-08-26",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "bio-c-bon": {
+     "eur_kg": 39.98,
+     "observed_eur_kg": 41.9,
+     "n": 27,
+     "last": "2026-03-09",
+     "estimated": false,
+     "pack_g": 100
+    },
+    "la-vie-claire": {
+     "eur_kg": 33.88,
+     "observed_eur_kg": 34.9,
+     "n": 15,
+     "last": "2025-09-15",
+     "estimated": false,
+     "pack_g": 100
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "FeedForward",
+    "slug": "feedforward",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "feedforward",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#0F6E56"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.feedforward.app",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "FeedForward does not access Health data in v1.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.feedforward.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0F6E56"
+      }
+    },
+    "extra": {
+      "apiBaseUrl": "https://api.feedforward.app"
+    },
+    "plugins": ["expo-secure-store"]
+  }
+}

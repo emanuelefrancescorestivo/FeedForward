@@ -1,0 +1,3121 @@
+{
+ "provenance": {
+  "source": "EU Register of nutrition and health claims (Regulation (EC) No 1924/2006)",
+  "url": "https://ec.europa.eu/food/food-feed-portal/screen/health-claims/eu-register",
+  "api": "https://ec.europa.eu/food/food-feed-portal/backend/api/policy-items?foodDomain=nut&authorisationType=nut_auth",
+  "retrieved_at": "2026-09-26",
+  "licence": "European Commission content, reuse authorised with acknowledgement of the source (Commission Decision 2011/833/EU)"
+ },
+ "goal_edges": [
+  {
+   "nutrient": "ala",
+   "goal": "cholesterol_management",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "ALA contributes to the maintenance of normal blood cholesterol levels"
+   ],
+   "claim_ids": [
+    "POL-HC-6327"
+   ],
+   "citations": [
+    "EFSA Journal 2011;9(6):2203"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of ALA as referred to in the claim SOURCE OF OMEGA 3 FATTY ACIDS as listed in the Annex to Regulation (EC) No 1924/2006. Information shall be given to the consumer that the beneficial effect is obtained with a daily intake of 2 g of ALA.",
+   "explanation": "ALA contributes to the maintenance of normal blood cholesterol levels."
+  },
+  {
+   "nutrient": "biotin",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Biotin contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6334"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1209"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of biotin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Biotin contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "biotin",
+   "goal": "energy_metabolism",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Biotin contributes to normal energy-yielding metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6333"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1209"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of biotin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Biotin contributes to normal energy-yielding metabolism."
+  },
+  {
+   "nutrient": "biotin",
+   "goal": "hair_health",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Biotin contributes to the maintenance of normal hair"
+   ],
+   "claim_ids": [
+    "POL-HC-6337"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1209"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of biotin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Biotin contributes to the maintenance of normal hair."
+  },
+  {
+   "nutrient": "biotin",
+   "goal": "metabolic_support",
+   "weight": 0.6,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Biotin contributes to normal macronutrient metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6335"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1209"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of biotin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Biotin contributes to normal macronutrient metabolism."
+  },
+  {
+   "nutrient": "biotin",
+   "goal": "mood_support",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Biotin contributes to normal psychological function"
+   ],
+   "claim_ids": [
+    "POL-HC-6336"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1728"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of biotin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Biotin contributes to normal psychological function."
+  },
+  {
+   "nutrient": "biotin",
+   "goal": "skin_health",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Biotin contributes to the maintenance of normal skin"
+   ],
+   "claim_ids": [
+    "POL-HC-6339"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1209"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of biotin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Biotin contributes to the maintenance of normal skin."
+  },
+  {
+   "nutrient": "calcium",
+   "goal": "bone_health",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Calcium is needed for the maintenance of normal bones",
+    "Calcium and vitamin D help to reduce the loss of bone mineral in post-menopausal women. Low bone mineral density is a risk factor for osteoporotic bone fractures",
+    "Calcium helps to reduce the loss of bone mineral in post-menopausal women. Low bone mineral density is a risk factor for osteoporotic bone fractures"
+   ],
+   "claim_ids": [
+    "POL-HC-6346",
+    "POL-HC-6202",
+    "POL-HC-8472"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1210",
+    "EFSA Journal Q-2008-721",
+    "EFSA Journal Q-2009-00940"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of calcium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Calcium is needed for the maintenance of normal bones. Calcium and vitamin D help to reduce the loss of bone mineral in post-menopausal women. Low bone mineral density is a risk factor for osteoporotic bone fractures."
+  },
+  {
+   "nutrient": "calcium",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Calcium contributes to normal neurotransmission"
+   ],
+   "claim_ids": [
+    "POL-HC-6343"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1210"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of calcium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Calcium contributes to normal neurotransmission."
+  },
+  {
+   "nutrient": "calcium",
+   "goal": "energy_metabolism",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Calcium contributes to normal energy-yielding metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6341"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1210"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of calcium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Calcium contributes to normal energy-yielding metabolism."
+  },
+  {
+   "nutrient": "calcium",
+   "goal": "healthy_blood",
+   "weight": 0.6,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Calcium contributes to normal blood clotting"
+   ],
+   "claim_ids": [
+    "POL-HC-6340"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1210"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of calcium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Calcium contributes to normal blood clotting."
+  },
+  {
+   "nutrient": "calcium",
+   "goal": "muscle_recovery",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Calcium contributes to normal muscle function"
+   ],
+   "claim_ids": [
+    "POL-HC-6342"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1210"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of calcium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Calcium contributes to normal muscle function."
+  },
+  {
+   "nutrient": "carbohydrates",
+   "goal": "cognitive_function",
+   "weight": 0.3,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Carbohydrates contribute to the maintenance of normal brain function"
+   ],
+   "claim_ids": [
+    "POL-HC-8438"
+   ],
+   "citations": [
+    "EFSA Journal 2011;9(6):2226"
+   ],
+   "conditions_of_use": "In order to bear the claim, information shall be given to the consumer that the beneficial effect is obtained with a daily intake of 130 g of carbohydrates from all sources. The claim may be used for food which contains at least 20 g carbohydrates which are metabolised by humans, excluding polyols, per quantified portion and complies with the nutrition claim LOW SUGARS or WITH NO ADDED SUGARS as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Carbohydrates contribute to the maintenance of normal brain function."
+  },
+  {
+   "nutrient": "carbohydrates",
+   "goal": "muscle_recovery",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Carbohydrates contribute to the recovery of normal muscle function (contraction) after highly intensive and/or long-lasting physical exercise leading to muscle fatigue and the depletion of glycogen stores in skeletal muscle"
+   ],
+   "claim_ids": [
+    "POL-HC-8439"
+   ],
+   "citations": [
+    "EFSA Journal Q-2013-00234"
+   ],
+   "conditions_of_use": "The claim may be used only for food which provides carbohydrates which are metabolised by humans (excluding polyols). Information shall be given to the consumer that the beneficial effect is obtained with the consumption of carbohydrates, from all sources, at a total intake of 4 g per kg body weight, at doses, within the first 4 hours and no later than 6 hours, following highly intensive and/or long-lasting physical exercise leading to muscle fatigue and the depletion of glycogen stores in skeletal muscle. The claim may be used only for foods intended for adults who have performed highly intensive and/or long-lasting physical exercise leading to muscle fatigue and the depletion of glycogen stores in skeletal muscle.",
+   "explanation": "Carbohydrates contribute to the recovery of normal muscle function (contraction) after highly intensive and/or long-lasting physical exercise leading to muscle fatigue and the depletion of glycogen stores in skeletal muscle."
+  },
+  {
+   "nutrient": "carbohydrates",
+   "goal": "recovery",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Carbohydrates contribute to the recovery of normal muscle function (contraction) after highly intensive and/or long-lasting physical exercise leading to muscle fatigue and the depletion of glycogen stores in skeletal muscle"
+   ],
+   "claim_ids": [
+    "POL-HC-8439"
+   ],
+   "citations": [
+    "EFSA Journal Q-2013-00234"
+   ],
+   "conditions_of_use": "The claim may be used only for food which provides carbohydrates which are metabolised by humans (excluding polyols). Information shall be given to the consumer that the beneficial effect is obtained with the consumption of carbohydrates, from all sources, at a total intake of 4 g per kg body weight, at doses, within the first 4 hours and no later than 6 hours, following highly intensive and/or long-lasting physical exercise leading to muscle fatigue and the depletion of glycogen stores in skeletal muscle. The claim may be used only for foods intended for adults who have performed highly intensive and/or long-lasting physical exercise leading to muscle fatigue and the depletion of glycogen stores in skeletal muscle.",
+   "explanation": "Carbohydrates contribute to the recovery of normal muscle function (contraction) after highly intensive and/or long-lasting physical exercise leading to muscle fatigue and the depletion of glycogen stores in skeletal muscle."
+  },
+  {
+   "nutrient": "choline",
+   "goal": "metabolic_support",
+   "weight": 0.6,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Choline contributes to normal lipid metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6353"
+   ],
+   "citations": [
+    "EFSA Journal 2011;9(4):2056"
+   ],
+   "conditions_of_use": "The claim may be used only for food which contains at least 82,5 mg of choline per 100 g or 100 ml or per single portion of food.",
+   "explanation": "Choline contributes to normal lipid metabolism."
+  },
+  {
+   "nutrient": "copper",
+   "goal": "antioxidant_support",
+   "weight": 0.8,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Copper contributes to the protection of cells from oxidative stress"
+   ],
+   "claim_ids": [
+    "POL-HC-6364"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1211"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of copper as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Copper contributes to the protection of cells from oxidative stress."
+  },
+  {
+   "nutrient": "copper",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Copper contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6359"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1211"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of copper as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Copper contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "copper",
+   "goal": "energy_metabolism",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Copper contributes to normal energy-yielding metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6358"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1211"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of copper as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006",
+   "explanation": "Copper contributes to normal energy-yielding metabolism."
+  },
+  {
+   "nutrient": "copper",
+   "goal": "hair_health",
+   "weight": 0.5,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Copper contributes to normal hair pigmentation"
+   ],
+   "claim_ids": [
+    "POL-HC-6360"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1211"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of copper as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Copper contributes to normal hair pigmentation."
+  },
+  {
+   "nutrient": "copper",
+   "goal": "immune_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Copper contributes to the normal function of the immune system"
+   ],
+   "claim_ids": [
+    "POL-HC-6363"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1211"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of copper as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Copper contributes to the normal function of the immune system."
+  },
+  {
+   "nutrient": "copper",
+   "goal": "iron_support",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Copper contributes to normal iron transport in the body"
+   ],
+   "claim_ids": [
+    "POL-HC-6361"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1211"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of copper as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Copper contributes to normal iron transport in the body."
+  },
+  {
+   "nutrient": "copper",
+   "goal": "joint_health",
+   "weight": 0.6,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Copper contributes to maintenance of normal connective tissues"
+   ],
+   "claim_ids": [
+    "POL-HC-6357"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1211"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of copper as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Copper contributes to maintenance of normal connective tissues."
+  },
+  {
+   "nutrient": "copper",
+   "goal": "skin_health",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Copper contributes to normal skin pigmentation"
+   ],
+   "claim_ids": [
+    "POL-HC-6362"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1211"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of copper as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Copper contributes to normal skin pigmentation."
+  },
+  {
+   "nutrient": "epa-dha",
+   "goal": "blood_pressure_support",
+   "weight": 0.3,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "DHA and EPA contribute to the maintenance of normal blood pressure"
+   ],
+   "claim_ids": [
+    "POL-HC-8354"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1796"
+   ],
+   "conditions_of_use": "The claim may be used only for food which provides a daily intake of 3 g of EPA and DHA. In order to bear the claim, information shall be given to the consumer that the beneficial effect is obtained with a daily intake of 3 g of EPA and DHA. When the claim is used on food supplements and/or fortified foods information shall also be given to consumers not to exceed a supplemental daily intake of 5 g of EPA and DHA combined.",
+   "explanation": "DHA and EPA contribute to the maintenance of normal blood pressure."
+  },
+  {
+   "nutrient": "epa-dha",
+   "goal": "cognitive_function",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "DHA contributes to maintenance of normal brain function"
+   ],
+   "claim_ids": [
+    "POL-HC-6366"
+   ],
+   "citations": [
+    "EFSA Journal 2011;9(4):2078"
+   ],
+   "conditions_of_use": "The claim may be used only for food which contains at least 40 mg of DHA per 100 g and per 100 kcal. In order to bear the claim information shall be given to the consumer that the beneficial effect is obtained with a daily intake of 250 mg of DHA.",
+   "explanation": "DHA contributes to maintenance of normal brain function."
+  },
+  {
+   "nutrient": "epa-dha",
+   "goal": "heart_health",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "EPA and DHA contribute to the normal function of the heart",
+    "DHA contributes to the maintenance of normal blood triglyceride levels",
+    "DHA and EPA contribute to the maintenance of normal blood triglyceride levels"
+   ],
+   "claim_ids": [
+    "POL-HC-6368",
+    "POL-HC-8293",
+    "POL-HC-8362"
+   ],
+   "citations": [
+    "EFSA Journal 2011;9(4):2078",
+    "EFSA Journal 2010;8(10):1734",
+    "EFSA Journal 2010;8(10):1796"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of EPA and DHA as referred to in the claim SOURCE OF OMEGA 3 FATTY ACIDS as listed in the Annex to Regulation (EC) No 1924/2006. In order to bear the claim information shall be given to the consumer that the beneficial effect is obtained with a daily intake of 250 mg of EPA and DHA.",
+   "explanation": "EPA and DHA contribute to the normal function of the heart. DHA contributes to the maintenance of normal blood triglyceride levels."
+  },
+  {
+   "nutrient": "epa-dha",
+   "goal": "vision_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "DHA contributes to the maintenance of normal vision"
+   ],
+   "claim_ids": [
+    "POL-HC-6367"
+   ],
+   "citations": [
+    "EFSA Journal 2011;9(4):2078"
+   ],
+   "conditions_of_use": "The claim may be used only for food which contains at least 40 mg of DHA per 100 g and per 100 kcal. In order to bear the claim information shall be given to the consumer that the beneficial effect is obtained with a daily intake of 250 mg of DHA.",
+   "explanation": "DHA contributes to the maintenance of normal vision."
+  },
+  {
+   "nutrient": "folate",
+   "goal": "energy_metabolism",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Folate contributes to the reduction of tiredness and fatigue"
+   ],
+   "claim_ids": [
+    "POL-HC-6376"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1760"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of folate as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Folate contributes to the reduction of tiredness and fatigue."
+  },
+  {
+   "nutrient": "folate",
+   "goal": "healthy_blood",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Folate contributes to normal blood formation"
+   ],
+   "claim_ids": [
+    "POL-HC-6372"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1213"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of folate as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Folate contributes to normal blood formation."
+  },
+  {
+   "nutrient": "folate",
+   "goal": "immune_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Folate contributes to the normal function of the immune system"
+   ],
+   "claim_ids": [
+    "POL-HC-6375"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1213"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of folate as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Folate contributes to the normal function of the immune system."
+  },
+  {
+   "nutrient": "folate",
+   "goal": "mood_support",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Folate contributes to normal psychological function"
+   ],
+   "claim_ids": [
+    "POL-HC-6374"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1760"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of folate as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Folate contributes to normal psychological function."
+  },
+  {
+   "nutrient": "iodine",
+   "goal": "cognitive_function",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Iodine contributes to normal cognitive function",
+    "Iodine contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6385",
+    "POL-HC-6387"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1800"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of iodine as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Iodine contributes to normal cognitive function. Iodine contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "iodine",
+   "goal": "energy_metabolism",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Iodine contributes to normal energy-yielding metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6386"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1800"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of iodine as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Iodine contributes to normal energy-yielding metabolism."
+  },
+  {
+   "nutrient": "iodine",
+   "goal": "skin_health",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Iodine contributes to the maintenance of normal skin"
+   ],
+   "claim_ids": [
+    "POL-HC-6388"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1214"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of iodine as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Iodine contributes to the maintenance of normal skin."
+  },
+  {
+   "nutrient": "iodine",
+   "goal": "thyroid_support",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Iodine contributes to the normal production of thyroid hormones and normal thyroid function"
+   ],
+   "claim_ids": [
+    "POL-HC-6389"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1800"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of iodine as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Iodine contributes to the normal production of thyroid hormones and normal thyroid function."
+  },
+  {
+   "nutrient": "iron",
+   "goal": "cognitive_function",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Iron contributes to normal cognitive function"
+   ],
+   "claim_ids": [
+    "POL-HC-6390"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1215"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of iron as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Iron contributes to normal cognitive function."
+  },
+  {
+   "nutrient": "iron",
+   "goal": "energy_metabolism",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Iron contributes to normal energy-yielding metabolism",
+    "Iron contributes to the reduction of tiredness and fatigue"
+   ],
+   "claim_ids": [
+    "POL-HC-6391",
+    "POL-HC-6395"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1215",
+    "EFSA Journal 2010;8(10):1740"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of iron as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Iron contributes to normal energy-yielding metabolism. Iron contributes to the reduction of tiredness and fatigue."
+  },
+  {
+   "nutrient": "iron",
+   "goal": "healthy_blood",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Iron contributes to normal formation of red blood cells and haemoglobin",
+    "Iron contributes to normal oxygen transport in the body"
+   ],
+   "claim_ids": [
+    "POL-HC-6392",
+    "POL-HC-6393"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1215"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of iron as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Iron contributes to normal formation of red blood cells and haemoglobin. Iron contributes to normal oxygen transport in the body."
+  },
+  {
+   "nutrient": "iron",
+   "goal": "immune_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Iron contributes to the normal function of the immune system"
+   ],
+   "claim_ids": [
+    "POL-HC-6394"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1215"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of iron as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Iron contributes to the normal function of the immune system."
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "bone_health",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Magnesium contributes to the maintenance of normal bones"
+   ],
+   "claim_ids": [
+    "POL-HC-6408"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1216"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of magnesium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Magnesium contributes to the maintenance of normal bones."
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Magnesium contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6404"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1216"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of magnesium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Magnesium contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "energy_metabolism",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Magnesium contributes to a reduction of tiredness and fatigue",
+    "Magnesium contributes to normal energy-yielding metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6401",
+    "POL-HC-6403"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1807",
+    "EFSA Journal 2009;7(9):1216"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of magnesium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Magnesium contributes to a reduction of tiredness and fatigue. Magnesium contributes to normal energy-yielding metabolism."
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "mood_support",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Magnesium contributes to normal psychological function"
+   ],
+   "claim_ids": [
+    "POL-HC-6407"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1807"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of magnesium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Magnesium contributes to normal psychological function."
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "muscle_recovery",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Magnesium contributes to normal muscle function"
+   ],
+   "claim_ids": [
+    "POL-HC-6405"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1807"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of magnesium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Magnesium contributes to normal muscle function."
+  },
+  {
+   "nutrient": "manganese",
+   "goal": "antioxidant_support",
+   "weight": 0.8,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Manganese contributes to the protection of cells from oxidative stress"
+   ],
+   "claim_ids": [
+    "POL-HC-6414"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1217"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of manganese as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Manganese contributes to the protection of cells from oxidative stress."
+  },
+  {
+   "nutrient": "manganese",
+   "goal": "bone_health",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Manganese contributes to the maintenance of normal bones"
+   ],
+   "claim_ids": [
+    "POL-HC-6412"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1217"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of manganese as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Manganese contributes to the maintenance of normal bones."
+  },
+  {
+   "nutrient": "manganese",
+   "goal": "energy_metabolism",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Manganese contributes to normal energy-yielding metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6411"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1808"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of manganese as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Manganese contributes to normal energy-yielding metabolism."
+  },
+  {
+   "nutrient": "manganese",
+   "goal": "joint_health",
+   "weight": 0.6,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Manganese contributes to the normal formation of connective tissue"
+   ],
+   "claim_ids": [
+    "POL-HC-6413"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1808"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of manganese as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Manganese contributes to the normal formation of connective tissue."
+  },
+  {
+   "nutrient": "niacin",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Niacin contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6425"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1224"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of niacin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Niacin contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "niacin",
+   "goal": "energy_metabolism",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Niacin contributes to normal energy-yielding metabolism",
+    "Niacin contributes to the reduction of tiredness and fatigue"
+   ],
+   "claim_ids": [
+    "POL-HC-6424",
+    "POL-HC-6428"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1224",
+    "EFSA Journal 2010;8(10):1757"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of niacin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Niacin contributes to normal energy-yielding metabolism. Niacin contributes to the reduction of tiredness and fatigue."
+  },
+  {
+   "nutrient": "niacin",
+   "goal": "mood_support",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Niacin contributes to normal psychological function"
+   ],
+   "claim_ids": [
+    "POL-HC-6423"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1757"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of niacin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Niacin contributes to normal psychological function."
+  },
+  {
+   "nutrient": "niacin",
+   "goal": "skin_health",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Niacin contributes to the maintenance of normal skin"
+   ],
+   "claim_ids": [
+    "POL-HC-6427"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1224"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of niacin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Niacin contributes to the maintenance of normal skin."
+  },
+  {
+   "nutrient": "pantothenic-acid",
+   "goal": "cognitive_function",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Pantothenic acid contributes to normal mental performance"
+   ],
+   "claim_ids": [
+    "POL-HC-6433"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1218"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of pantothenic acid as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Pantothenic acid contributes to normal mental performance."
+  },
+  {
+   "nutrient": "pantothenic-acid",
+   "goal": "energy_metabolism",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Pantothenic acid contributes to normal energy-yielding metabolism",
+    "Pantothenic acid contributes to the reduction of tiredness and fatigue"
+   ],
+   "claim_ids": [
+    "POL-HC-6432",
+    "POL-HC-6435"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1218",
+    "EFSA Journal 2010;8(10):1758"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of pantothenic acid as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Pantothenic acid contributes to normal energy-yielding metabolism. Pantothenic acid contributes to the reduction of tiredness and fatigue."
+  },
+  {
+   "nutrient": "phosphorus",
+   "goal": "bone_health",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Phosphorus contributes to the maintenance of normal bones"
+   ],
+   "claim_ids": [
+    "POL-HC-6440"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1219"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of phosphorus as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Phosphorus contributes to the maintenance of normal bones."
+  },
+  {
+   "nutrient": "phosphorus",
+   "goal": "energy_metabolism",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Phosphorus contributes to normal energy-yielding metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6438"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1219"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of phosphorus as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Phosphorus contributes to normal energy-yielding metabolism."
+  },
+  {
+   "nutrient": "potassium",
+   "goal": "blood_pressure_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Potassium contributes to the maintenance of normal blood pressure"
+   ],
+   "claim_ids": [
+    "POL-HC-6445"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(2):1469"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of potassium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Potassium contributes to the maintenance of normal blood pressure."
+  },
+  {
+   "nutrient": "potassium",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Potassium contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6443"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(2):1469"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of potassium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Potassium contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "potassium",
+   "goal": "muscle_recovery",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Potassium contributes to normal muscle function"
+   ],
+   "claim_ids": [
+    "POL-HC-6444"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(2):1469"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of potassium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Potassium contributes to normal muscle function."
+  },
+  {
+   "nutrient": "proteins",
+   "goal": "bone_health",
+   "weight": 0.5,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Protein contributes to the maintenance of normal bones"
+   ],
+   "claim_ids": [
+    "POL-HC-6448"
+   ],
+   "citations": [
+    "EFSA Journal 2011;9(6):2203"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of protein as referred to in the claim SOURCE OF PROTEIN as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Protein contributes to the maintenance of normal bones."
+  },
+  {
+   "nutrient": "proteins",
+   "goal": "muscle_recovery",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Protein contributes to a growth in muscle mass",
+    "Protein contributes to the maintenance of muscle mass"
+   ],
+   "claim_ids": [
+    "POL-HC-6446",
+    "POL-HC-6447"
+   ],
+   "citations": [
+    "EFSA Journal 2011;9(6):2203"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of protein as referred to in the claim SOURCE OF PROTEIN as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Protein contributes to a growth in muscle mass. Protein contributes to the maintenance of muscle mass."
+  },
+  {
+   "nutrient": "riboflavin",
+   "goal": "antioxidant_support",
+   "weight": 0.8,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Riboflavin contributes to the protection of cells from oxidative stress"
+   ],
+   "claim_ids": [
+    "POL-HC-6457"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1814"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of riboflavin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Riboflavin contributes to the protection of cells from oxidative stress."
+  },
+  {
+   "nutrient": "riboflavin",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Riboflavin contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6451"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1814"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of riboflavin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Riboflavin contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "riboflavin",
+   "goal": "energy_metabolism",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Riboflavin contributes to normal energy-yielding metabolism",
+    "Riboflavin contributes to the reduction of tiredness and fatigue"
+   ],
+   "claim_ids": [
+    "POL-HC-6450",
+    "POL-HC-6458"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1814"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of riboflavin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Riboflavin contributes to normal energy-yielding metabolism. Riboflavin contributes to the reduction of tiredness and fatigue."
+  },
+  {
+   "nutrient": "riboflavin",
+   "goal": "healthy_blood",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Riboflavin contributes to the maintenance of normal red blood cells"
+   ],
+   "claim_ids": [
+    "POL-HC-6453"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1814"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of riboflavin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Riboflavin contributes to the maintenance of normal red blood cells."
+  },
+  {
+   "nutrient": "riboflavin",
+   "goal": "iron_support",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Riboflavin contributes to the normal metabolism of iron"
+   ],
+   "claim_ids": [
+    "POL-HC-6456"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1814"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of riboflavin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Riboflavin contributes to the normal metabolism of iron."
+  },
+  {
+   "nutrient": "riboflavin",
+   "goal": "skin_health",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Riboflavin contributes to the maintenance of normal skin"
+   ],
+   "claim_ids": [
+    "POL-HC-6454"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1814"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of riboflavin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Riboflavin contributes to the maintenance of normal skin."
+  },
+  {
+   "nutrient": "riboflavin",
+   "goal": "vision_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Riboflavin contributes to the maintenance of normal vision"
+   ],
+   "claim_ids": [
+    "POL-HC-6455"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1814"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of riboflavin as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Riboflavin contributes to the maintenance of normal vision."
+  },
+  {
+   "nutrient": "saturated-fat",
+   "goal": "cholesterol_management",
+   "weight": 0.85,
+   "type": "negative",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Reducing consumption of saturated fat contributes to the maintenance of normal blood cholesterol levels"
+   ],
+   "claim_ids": [
+    "POL-HC-6378"
+   ],
+   "citations": [
+    "EFSA Journal 2011;9(4):2062"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least low in saturated fatty acids, as referred to in the claim LOW SATURATED FAT or reduced in saturated fatty acids as referred to in the claim REDUCED [NAME OF NUTRIENT] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Reducing consumption of saturated fat contributes to the maintenance of normal blood cholesterol levels."
+  },
+  {
+   "nutrient": "selenium",
+   "goal": "antioxidant_support",
+   "weight": 0.8,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Selenium contributes to the protection of cells from oxidative stress"
+   ],
+   "claim_ids": [
+    "POL-HC-6465"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1727"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of selenium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Selenium contributes to the protection of cells from oxidative stress."
+  },
+  {
+   "nutrient": "selenium",
+   "goal": "hair_health",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Selenium contributes to the maintenance of normal hair"
+   ],
+   "claim_ids": [
+    "POL-HC-6461"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1727"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of selenium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Selenium contributes to the maintenance of normal hair."
+  },
+  {
+   "nutrient": "selenium",
+   "goal": "immune_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Selenium contributes to the normal function of the immune system"
+   ],
+   "claim_ids": [
+    "POL-HC-6463"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1727"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of selenium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Selenium contributes to the normal function of the immune system."
+  },
+  {
+   "nutrient": "selenium",
+   "goal": "thyroid_support",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Selenium contributes to the normal thyroid function"
+   ],
+   "claim_ids": [
+    "POL-HC-6464"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1727"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of selenium as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Selenium contributes to the normal thyroid function."
+  },
+  {
+   "nutrient": "sodium",
+   "goal": "blood_pressure_support",
+   "weight": 0.85,
+   "type": "negative",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Reducing consumption of sodium contributes to the maintenance of normal blood pressure"
+   ],
+   "claim_ids": [
+    "POL-HC-6379"
+   ],
+   "citations": [
+    "EFSA Journal 2011;9(6):2237"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least low in sodium/salt as referred to in the claim LOW SODIUM/SALT or reduced in sodium/salt as referred to in the claim REDUCED [NAME OF NUTRIENT] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Reducing consumption of sodium contributes to the maintenance of normal blood pressure."
+  },
+  {
+   "nutrient": "thiamin",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Thiamine contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6473"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1222"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of thiamine as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Thiamine contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "thiamin",
+   "goal": "energy_metabolism",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Thiamine contributes to normal energy-yielding metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6472"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1222"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of thiamine as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Thiamine contributes to normal energy-yielding metabolism."
+  },
+  {
+   "nutrient": "thiamin",
+   "goal": "heart_health",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Thiamine contributes to the normal function of the heart"
+   ],
+   "claim_ids": [
+    "POL-HC-6475"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1222"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of thiamine as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Thiamine contributes to the normal function of the heart."
+  },
+  {
+   "nutrient": "thiamin",
+   "goal": "mood_support",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Thiamine contributes to normal psychological function"
+   ],
+   "claim_ids": [
+    "POL-HC-6474"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1755"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of thiamine as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Thiamine contributes to normal psychological function."
+  },
+  {
+   "nutrient": "vitamin-a",
+   "goal": "immune_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin A contributes to the normal function of the immune system"
+   ],
+   "claim_ids": [
+    "POL-HC-6480"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1221"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin A as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin A contributes to the normal function of the immune system."
+  },
+  {
+   "nutrient": "vitamin-a",
+   "goal": "iron_support",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin A contributes to normal iron metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6476"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1221"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin A as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin A contributes to normal iron metabolism."
+  },
+  {
+   "nutrient": "vitamin-a",
+   "goal": "skin_health",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin A contributes to the maintenance of normal skin"
+   ],
+   "claim_ids": [
+    "POL-HC-6478"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1754"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin A as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin A contributes to the maintenance of normal skin."
+  },
+  {
+   "nutrient": "vitamin-a",
+   "goal": "vision_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin A contributes to the maintenance of normal vision"
+   ],
+   "claim_ids": [
+    "POL-HC-6479"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1754"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin A as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin A contributes to the maintenance of normal vision."
+  },
+  {
+   "nutrient": "vitamin-b12",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B12 contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6483"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):4114"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B12 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B12 contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "vitamin-b12",
+   "goal": "energy_metabolism",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B12 contributes to normal energy-yielding metabolism",
+    "Vitamin B12 contributes to the reduction of tiredness and fatigue"
+   ],
+   "claim_ids": [
+    "POL-HC-6482",
+    "POL-HC-6488"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1223",
+    "EFSA Journal 2010;8(10):4114"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B12 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B12 contributes to normal energy-yielding metabolism. Vitamin B12 contributes to the reduction of tiredness and fatigue."
+  },
+  {
+   "nutrient": "vitamin-b12",
+   "goal": "healthy_blood",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B12 contributes to normal red blood cell formation"
+   ],
+   "claim_ids": [
+    "POL-HC-6486"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1223"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B12 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B12 contributes to normal red blood cell formation."
+  },
+  {
+   "nutrient": "vitamin-b12",
+   "goal": "immune_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B12 contributes to the normal function of the immune system"
+   ],
+   "claim_ids": [
+    "POL-HC-6487"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1223"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B12 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B12 contributes to the normal function of the immune system."
+  },
+  {
+   "nutrient": "vitamin-b12",
+   "goal": "mood_support",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B12 contributes to normal psychological function"
+   ],
+   "claim_ids": [
+    "POL-HC-6485"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):4114"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B12 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B12 contributes to normal psychological function."
+  },
+  {
+   "nutrient": "vitamin-b6",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B6 contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6492"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1225"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B6 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B6 contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "vitamin-b6",
+   "goal": "energy_metabolism",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B6 contributes to the reduction of tiredness and fatigue",
+    "Vitamin B6 contributes to normal energy-yielding metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6498",
+    "POL-HC-6491"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1759"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B6 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B6 contributes to the reduction of tiredness and fatigue. Vitamin B6 contributes to normal energy-yielding metabolism."
+  },
+  {
+   "nutrient": "vitamin-b6",
+   "goal": "healthy_blood",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B6 contributes to normal red blood cell formation"
+   ],
+   "claim_ids": [
+    "POL-HC-6496"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1225"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B6 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B6 contributes to normal red blood cell formation."
+  },
+  {
+   "nutrient": "vitamin-b6",
+   "goal": "immune_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B6 contributes to the normal function of the immune system"
+   ],
+   "claim_ids": [
+    "POL-HC-6497"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1225"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B6 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B6 contributes to the normal function of the immune system."
+  },
+  {
+   "nutrient": "vitamin-b6",
+   "goal": "metabolic_support",
+   "weight": 0.6,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B6 contributes to normal protein and glycogen metabolism"
+   ],
+   "claim_ids": [
+    "POL-HC-6494"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1225"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B6 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B6 contributes to normal protein and glycogen metabolism."
+  },
+  {
+   "nutrient": "vitamin-b6",
+   "goal": "mood_support",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin B6 contributes to normal psychological function"
+   ],
+   "claim_ids": [
+    "POL-HC-6495"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1759"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin B6 as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin B6 contributes to normal psychological function."
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "antioxidant_support",
+   "weight": 0.8,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin C contributes to the protection of cells from oxidative stress"
+   ],
+   "claim_ids": [
+    "POL-HC-6511"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1226"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin C as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006",
+   "explanation": "Vitamin C contributes to the protection of cells from oxidative stress."
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "bone_health",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin C contributes to normal collagen formation for the normal function of bones"
+   ],
+   "claim_ids": [
+    "POL-HC-6502"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1226"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin C as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin C contributes to normal collagen formation for the normal function of bones."
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "cognitive_function",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin C contributes to normal functioning of the nervous system"
+   ],
+   "claim_ids": [
+    "POL-HC-6508"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1226"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin C as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin C contributes to normal functioning of the nervous system."
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "energy_metabolism",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin C contributes to normal energy-yielding metabolism",
+    "Vitamin C contributes to the reduction of tiredness and fatigue"
+   ],
+   "claim_ids": [
+    "POL-HC-6507",
+    "POL-HC-6512"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1226",
+    "EFSA Journal 2010;8(10):1815"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin C as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin C contributes to normal energy-yielding metabolism. Vitamin C contributes to the reduction of tiredness and fatigue."
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "heart_health",
+   "weight": 0.4,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin C contributes to normal collagen formation for the normal function of blood vessels"
+   ],
+   "claim_ids": [
+    "POL-HC-6501"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1226"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin C as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin C contributes to normal collagen formation for the normal function of blood vessels."
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "immune_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin C contributes to maintain the normal function of the immune system during and after intense physical exercise",
+    "Vitamin C contributes to the normal function of the immune system"
+   ],
+   "claim_ids": [
+    "POL-HC-6500",
+    "POL-HC-6510"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1226"
+   ],
+   "conditions_of_use": "The claim may be used only for food which provides a daily intake of 200 mg vitamin C. In order to bear the claim information shall be given to the consumer that the beneficial effect is obtained with a daily intake of 200 mg in addition to the recommended daily intake of vitamin C.",
+   "explanation": "Vitamin C contributes to maintain the normal function of the immune system during and after intense physical exercise. Vitamin C contributes to the normal function of the immune system."
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "iron_support",
+   "weight": 0.8,
+   "type": "enhancer",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin C increases iron absorption"
+   ],
+   "claim_ids": [
+    "POL-HC-6514"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1226"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin C as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin C increases iron absorption."
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "joint_health",
+   "weight": 0.5,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin C contributes to normal collagen formation for the normal function of cartilage"
+   ],
+   "claim_ids": [
+    "POL-HC-6503"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1226"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin C as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin C contributes to normal collagen formation for the normal function of cartilage."
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "mood_support",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin C contributes to normal psychological function"
+   ],
+   "claim_ids": [
+    "POL-HC-6509"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1815"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin C as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin C contributes to normal psychological function."
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "skin_health",
+   "weight": 0.6,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin C contributes to normal collagen formation for the normal function of skin"
+   ],
+   "claim_ids": [
+    "POL-HC-6505"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1226"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin C as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin C contributes to normal collagen formation for the normal function of skin."
+  },
+  {
+   "nutrient": "vitamin-d",
+   "goal": "bone_health",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Calcium and vitamin D help to reduce the loss of bone mineral in post-menopausal women. Low bone mineral density is a risk factor for osteoporotic bone fractures",
+    "Vitamin D contributes to the maintenance of normal bones"
+   ],
+   "claim_ids": [
+    "POL-HC-6202",
+    "POL-HC-6517"
+   ],
+   "citations": [
+    "EFSA Journal Q-2008-721",
+    "EFSA Journal 2009;7(9):1272"
+   ],
+   "conditions_of_use": "The claim may be used only for food supplements which provide at least 400 mg of calcium and 15 μg of vitamin D per daily portion. Information shall be given to the consumer that the claim is specifically intended for women 50 years and older and the beneficial effect is obtained with a daily intake of at least 1 200 mg of calcium and 20 μg of vitamin D from all sources. For food supplements with added calcium and vitamin D the claim may be used only for those targeting women 50 years and older",
+   "explanation": "Calcium and vitamin D help to reduce the loss of bone mineral in post-menopausal women. Low bone mineral density is a risk factor for osteoporotic bone fractures. Vitamin D contributes to the maintenance of normal bones."
+  },
+  {
+   "nutrient": "vitamin-d",
+   "goal": "immune_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin D contributes to the normal function of the immune system"
+   ],
+   "claim_ids": [
+    "POL-HC-6520"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(2):1468"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin D as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin D contributes to the normal function of the immune system."
+  },
+  {
+   "nutrient": "vitamin-d",
+   "goal": "muscle_recovery",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin D contributes to the maintenance of normal muscle function"
+   ],
+   "claim_ids": [
+    "POL-HC-6518"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(2):1468"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin D as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin D contributes to the maintenance of normal muscle function."
+  },
+  {
+   "nutrient": "vitamin-e",
+   "goal": "antioxidant_support",
+   "weight": 0.8,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin E contributes to the protection of cells from oxidative stress"
+   ],
+   "claim_ids": [
+    "POL-HC-6522"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1816"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin E as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin E contributes to the protection of cells from oxidative stress."
+  },
+  {
+   "nutrient": "vitamin-k",
+   "goal": "bone_health",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin K contributes to the maintenance of normal bones"
+   ],
+   "claim_ids": [
+    "POL-HC-6524"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1228"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin K as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin K contributes to the maintenance of normal bones."
+  },
+  {
+   "nutrient": "vitamin-k",
+   "goal": "healthy_blood",
+   "weight": 0.6,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Vitamin K contributes to normal blood clotting"
+   ],
+   "claim_ids": [
+    "POL-HC-6523"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1228"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of vitamin K as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Vitamin K contributes to normal blood clotting."
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "antioxidant_support",
+   "weight": 0.8,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Zinc contributes to the protection of cells from oxidative stress"
+   ],
+   "claim_ids": [
+    "POL-HC-6546"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1229"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of zinc as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Zinc contributes to the protection of cells from oxidative stress."
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "bone_health",
+   "weight": 0.9,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Zinc contributes to the maintenance of normal bones"
+   ],
+   "claim_ids": [
+    "POL-HC-6539"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1229"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of zinc as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Zinc contributes to the maintenance of normal bones."
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "cognitive_function",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Zinc contributes to normal cognitive function"
+   ],
+   "claim_ids": [
+    "POL-HC-6533"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1229"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of zinc as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Zinc contributes to normal cognitive function."
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "hair_health",
+   "weight": 0.7,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Zinc contributes to the maintenance of normal hair"
+   ],
+   "claim_ids": [
+    "POL-HC-6540"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1819"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of zinc as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Zinc contributes to the maintenance of normal hair."
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "immune_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Zinc contributes to the normal function of the immune system"
+   ],
+   "claim_ids": [
+    "POL-HC-6545"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1229"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of zinc as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Zinc contributes to the normal function of the immune system."
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "metabolic_support",
+   "weight": 0.6,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Zinc contributes to normal carbohydrate metabolism",
+    "Zinc contributes to normal macronutrient metabolism",
+    "Zinc contributes to normal metabolism of fatty acids"
+   ],
+   "claim_ids": [
+    "POL-HC-6532",
+    "POL-HC-6535",
+    "POL-HC-6536"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1819",
+    "EFSA Journal 2009;7(9):1229"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of zinc as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Zinc contributes to normal carbohydrate metabolism. Zinc contributes to normal macronutrient metabolism."
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "skin_health",
+   "weight": 0.75,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Zinc contributes to the maintenance of normal skin"
+   ],
+   "claim_ids": [
+    "POL-HC-6542"
+   ],
+   "citations": [
+    "EFSA Journal 2010;8(10):1819"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of zinc as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Zinc contributes to the maintenance of normal skin."
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "vision_support",
+   "weight": 0.85,
+   "type": "positive",
+   "evidence_grade": "A",
+   "evidence_source": "eu_authorised",
+   "claims": [
+    "Zinc contributes to the maintenance of normal vision"
+   ],
+   "claim_ids": [
+    "POL-HC-6544"
+   ],
+   "citations": [
+    "EFSA Journal 2009;7(9):1229"
+   ],
+   "conditions_of_use": "The claim may be used only for food which is at least a source of zinc as referred to in the claim SOURCE OF [NAME OF VITAMIN/S] AND/OR [NAME OF MINERAL/S] as listed in the Annex to Regulation (EC) No 1924/2006.",
+   "explanation": "Zinc contributes to the maintenance of normal vision."
+  }
+ ],
+ "rejected": [
+  {
+   "nutrient": "ala",
+   "goal": "blood_pressure_support",
+   "relationships": [
+    "maintenance of normal blood pressure"
+   ],
+   "reason": "the evidence provided is insufficient to substantiate this claimed effect",
+   "reason_code": "HC_RR_130",
+   "citations": [
+    "EFSA Journal 2009;7(9):1252"
+   ]
+  },
+  {
+   "nutrient": "biotin",
+   "goal": "bone_health",
+   "relationships": [
+    "maintenance of normal bone"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1728"
+   ]
+  },
+  {
+   "nutrient": "calcium",
+   "goal": "blood_pressure_support",
+   "relationships": [
+    "maintenance of normal blood pressure"
+   ],
+   "reason": "the evidence provided is insufficient to substantiate this claimed effect",
+   "reason_code": "HC_RR_130",
+   "citations": [
+    "EFSA Journal 2009;7(9):1210"
+   ]
+  },
+  {
+   "nutrient": "calcium",
+   "goal": "mood_support",
+   "relationships": [
+    "contribution to normal psychological functions"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1725"
+   ]
+  },
+  {
+   "nutrient": "calcium",
+   "goal": "weight_management",
+   "relationships": [
+    "contribution to the maintenance or achievement of a normal body weight"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1725"
+   ]
+  },
+  {
+   "nutrient": "carbohydrates",
+   "goal": "endurance_support",
+   "relationships": [
+    "increase in endurance performance during the subsequent exercise bout after strenuous exercise"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2011;9(6):2247"
+   ]
+  },
+  {
+   "nutrient": "choline",
+   "goal": "cognitive_function",
+   "relationships": [
+    "Contribution to normal cognitive function"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2011;9(4):2056"
+   ]
+  },
+  {
+   "nutrient": "copper",
+   "goal": "cholesterol_management",
+   "relationships": [
+    "cholesterol metabolism"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1211"
+   ]
+  },
+  {
+   "nutrient": "epa-dha",
+   "goal": "antioxidant_support",
+   "relationships": [
+    "protection of blood lipids from oxidative damage"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1734"
+   ]
+  },
+  {
+   "nutrient": "epa-dha",
+   "goal": "weight_management",
+   "relationships": [
+    "contribution to the maintenance or achievement of a normal body weight"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1734"
+   ]
+  },
+  {
+   "nutrient": "iodine",
+   "goal": "hair_health",
+   "relationships": [
+    "maintenance of hair"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1214"
+   ]
+  },
+  {
+   "nutrient": "iodine",
+   "goal": "vision_support",
+   "relationships": [
+    "maintenance of vision"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1214"
+   ]
+  },
+  {
+   "nutrient": "iron",
+   "goal": "hair_health",
+   "relationships": [
+    "Excessive hair loss in non-menopausal women"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal Q-2012-00059"
+   ]
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "antioxidant_support",
+   "relationships": [
+    "protection of DNA, proteins and lipids from oxidative damage"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1807"
+   ]
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "blood_pressure_support",
+   "relationships": [
+    "Maintenance of normal blood pressure"
+   ],
+   "reason": "the evidence provided is insufficient to substantiate this claimed effect",
+   "reason_code": "HC_RR_130",
+   "citations": [
+    "EFSA Journal 2010;8(10):1807"
+   ]
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "blood_sugar_regulation",
+   "relationships": [
+    "Maintenance of normal blood glucose concentrations"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1807"
+   ]
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "healthy_blood",
+   "relationships": [
+    "blood coagulation"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1216"
+   ]
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "immune_support",
+   "relationships": [
+    "maintenance of the normal function of the immune system"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1807"
+   ]
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "metabolic_support",
+   "relationships": [
+    "maintenance of normal fat metabolism"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1807"
+   ]
+  },
+  {
+   "nutrient": "magnesium",
+   "goal": "stress_resilience",
+   "relationships": [
+    "Resistance to mental stress"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1807"
+   ]
+  },
+  {
+   "nutrient": "manganese",
+   "goal": "cognitive_function",
+   "relationships": [
+    "cognitive function"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1217"
+   ]
+  },
+  {
+   "nutrient": "niacin",
+   "goal": "bone_health",
+   "relationships": [
+    "maintenance of bone"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1224"
+   ]
+  },
+  {
+   "nutrient": "niacin",
+   "goal": "hair_health",
+   "relationships": [
+    "maintenance of hair"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1224"
+   ]
+  },
+  {
+   "nutrient": "omega-3-fat",
+   "goal": "bone_health",
+   "relationships": [
+    "maintenance of normal bone"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2011;9(6):2242"
+   ]
+  },
+  {
+   "nutrient": "omega-3-fat",
+   "goal": "cholesterol_management",
+   "relationships": [
+    "maintenance of normal blood LDL-cholesterol concentrations",
+    "maintenance of normal blood HDL-cholesterol concentrations"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1796"
+   ]
+  },
+  {
+   "nutrient": "omega-3-fat",
+   "goal": "joint_health",
+   "relationships": [
+    "maintenance of joints"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1263"
+   ]
+  },
+  {
+   "nutrient": "omega-3-fat",
+   "goal": "skin_health",
+   "relationships": [
+    "protection of the skin from photo-oxidative (UV-induced) damage"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1796"
+   ]
+  },
+  {
+   "nutrient": "pantothenic-acid",
+   "goal": "bone_health",
+   "relationships": [
+    "maintenance of bone"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1218"
+   ]
+  },
+  {
+   "nutrient": "pantothenic-acid",
+   "goal": "hair_health",
+   "relationships": [
+    "maintenance of hair"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1218"
+   ]
+  },
+  {
+   "nutrient": "pantothenic-acid",
+   "goal": "skin_health",
+   "relationships": [
+    "maintenance of skin",
+    "maintenance of normal skin"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1218",
+    "EFSA Journal 2010;8(10):1758"
+   ]
+  },
+  {
+   "nutrient": "proteins",
+   "goal": "weight_management",
+   "relationships": [
+    "contribution to the maintenance or achievement of a normal body weight"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1811"
+   ]
+  },
+  {
+   "nutrient": "riboflavin",
+   "goal": "bone_health",
+   "relationships": [
+    "maintenance of normal bone"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1814"
+   ]
+  },
+  {
+   "nutrient": "riboflavin",
+   "goal": "hair_health",
+   "relationships": [
+    "maintenance of normal hair"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1814"
+   ]
+  },
+  {
+   "nutrient": "riboflavin",
+   "goal": "mood_support",
+   "relationships": [
+    "contribution to normal psychological functions"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1814"
+   ]
+  },
+  {
+   "nutrient": "selenium",
+   "goal": "cognitive_function",
+   "relationships": [
+    "cognitive function"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1220"
+   ]
+  },
+  {
+   "nutrient": "selenium",
+   "goal": "heart_health",
+   "relationships": [
+    "function of the heart and blood vessels"
+   ],
+   "reason": "the evidence provided is insufficient to substantiate this claimed effect",
+   "reason_code": "HC_RR_130",
+   "citations": [
+    "EFSA Journal 2009;7(9):1220"
+   ]
+  },
+  {
+   "nutrient": "thiamin",
+   "goal": "bone_health",
+   "relationships": [
+    "maintenance of bone"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1222"
+   ]
+  },
+  {
+   "nutrient": "thiamin",
+   "goal": "hair_health",
+   "relationships": [
+    "maintenance of hair"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1222"
+   ]
+  },
+  {
+   "nutrient": "thiamin",
+   "goal": "skin_health",
+   "relationships": [
+    "maintenance of skin"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1222"
+   ]
+  },
+  {
+   "nutrient": "vitamin-a",
+   "goal": "antioxidant_support",
+   "relationships": [
+    "protection of DNA, proteins and lipids from oxidative damage"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1261"
+   ]
+  },
+  {
+   "nutrient": "vitamin-a",
+   "goal": "bone_health",
+   "relationships": [
+    "maintenance of bone"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1221"
+   ]
+  },
+  {
+   "nutrient": "vitamin-a",
+   "goal": "hair_health",
+   "relationships": [
+    "maintenance of hair"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1221"
+   ]
+  },
+  {
+   "nutrient": "vitamin-b12",
+   "goal": "bone_health",
+   "relationships": [
+    "maintenance of normal bone"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1756"
+   ]
+  },
+  {
+   "nutrient": "vitamin-b12",
+   "goal": "hair_health",
+   "relationships": [
+    "maintenance of normal hair"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1756"
+   ]
+  },
+  {
+   "nutrient": "vitamin-b12",
+   "goal": "skin_health",
+   "relationships": [
+    "maintenance of normal skin"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1756"
+   ]
+  },
+  {
+   "nutrient": "vitamin-b6",
+   "goal": "bone_health",
+   "relationships": [
+    "maintenance of normal bone"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1759"
+   ]
+  },
+  {
+   "nutrient": "vitamin-b6",
+   "goal": "hair_health",
+   "relationships": [
+    "maintenance of normal hair"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1759"
+   ]
+  },
+  {
+   "nutrient": "vitamin-b6",
+   "goal": "skin_health",
+   "relationships": [
+    "maintenance of normal skin"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1759"
+   ]
+  },
+  {
+   "nutrient": "vitamin-c",
+   "goal": "vision_support",
+   "relationships": [
+    "maintenance of vision"
+   ],
+   "reason": "the evidence provided is insufficient to substantiate this claimed effect",
+   "reason_code": "HC_RR_130",
+   "citations": [
+    "EFSA Journal 2009;7(9):1226"
+   ]
+  },
+  {
+   "nutrient": "vitamin-d",
+   "goal": "thyroid_support",
+   "relationships": [
+    "thyroid function"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1227"
+   ]
+  },
+  {
+   "nutrient": "vitamin-e",
+   "goal": "bone_health",
+   "relationships": [
+    "maintenance of normal bone"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1816"
+   ]
+  },
+  {
+   "nutrient": "vitamin-e",
+   "goal": "cognitive_function",
+   "relationships": [
+    "contribution to normal cognitive function"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1816"
+   ]
+  },
+  {
+   "nutrient": "vitamin-e",
+   "goal": "hair_health",
+   "relationships": [
+    "maintenance of normal hair"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1816"
+   ]
+  },
+  {
+   "nutrient": "vitamin-e",
+   "goal": "heart_health",
+   "relationships": [
+    "maintenance of normal cardiac function",
+    "maintenance of normal blood circulation"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1816"
+   ]
+  },
+  {
+   "nutrient": "vitamin-e",
+   "goal": "immune_support",
+   "relationships": [
+    "maintenance of the normal function of the immune system"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1816"
+   ]
+  },
+  {
+   "nutrient": "vitamin-e",
+   "goal": "skin_health",
+   "relationships": [
+    "maintenance of normal skin"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1816"
+   ]
+  },
+  {
+   "nutrient": "vitamin-e",
+   "goal": "vision_support",
+   "relationships": [
+    "maintenance of normal vision by protection of the lens of the eye"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1816"
+   ]
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "energy_metabolism",
+   "relationships": [
+    "reduction of tiredness and fatigue"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2010;8(10):1819"
+   ]
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "heart_health",
+   "relationships": [
+    "function of the heart and blood vessels"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1229"
+   ]
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "joint_health",
+   "relationships": [
+    "maintenance of joints"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1229"
+   ]
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "muscle_recovery",
+   "relationships": [
+    "muscle function"
+   ],
+   "reason": "this claimed effect has not been substantiated",
+   "reason_code": "HC_RR_132",
+   "citations": [
+    "EFSA Journal 2009;7(9):1229"
+   ]
+  },
+  {
+   "nutrient": "zinc",
+   "goal": "thyroid_support",
+   "relationships": [
+    "thyroid function"
+   ],
+   "reason": "the evidence provided is insufficient to substantiate this claimed effect",
+   "reason_code": "HC_RR_130",
+   "citations": [
+    "EFSA Journal 2009;7(9):1229"
+   ]
+  }
+ ],
+ "report": {
+  "authorised_claims": 269,
+  "authorised_mapped": 135,
+  "authorised_no_goal": 56,
+  "unmapped_substances": [
+   "A combination of artichoke leaf dry extract standardised in caffeoylquinic acids, monacolin K in red yeast rice, sugar-cane derived policosanols, procyanidolic oligomers from French maritime pine bark, garlic dry extract standardised in allicin, d-α-tocopheryl hydrogen succinate, riboflavin and inositol hexanicotinate",
+   "Activated charcoal",
+   "Alpha-cyclodextrin",
+   "Arabinoxylan produced from wheat endosperm",
+   "Barley beta-glucans",
+   "Barley grain fibre",
+   "Beta-glucans",
+   "Beta-glucans from oats and barley",
+   "Betaine",
+   "Carbohydrate solutions",
+   "Carbohydrate-electrolyte solutions",
+   "Chewing gum sweetened with 100% xylitol",
+   "Chitosan",
+   "Chloride",
+   "Chromium",
+   "Cocoa flavanols",
+   "Creatine",
+   "Dried plums of 'prune' cultivars (Prunus domestica L.)",
+   "Fluoride",
+   "Folic Acid",
+   "Fructose",
+   "Glucomannan (konjac mannan)",
+   "Green kiwifruit (Actinidia deliciosa (var. Hayward))",
+   "Guar Gum",
+   "Hydroxypropyl methylcellulose (HPMC)",
+   "Lactase enzyme",
+   "Lactitol",
+   "Lactulose",
+   "Linoleic acid",
+   "Live yoghurt cultures",
+   "Meal replacement for weight control",
+   "Meat or fish",
+   "Melatonin",
+   "Molybdenum",
+   "Monounsaturated and/or polyunsaturated fatty acids",
+   "Native chicory inulin",
+   "Non-digestible carbohydrates",
+   "Oat beta-glucan",
+   "Oat grain fibre",
+   "Oleic acid",
+   "Olive oil polyphenols",
+   "Pectins",
+   "Plant stanol esters",
+   "Plant sterols and plant stanols",
+   "Plant sterols/Plant stanol esters",
+   "Plant sterols: Sterols extracted from plants, free or esterified with food grade fatty acids.",
+   "Resistant starch",
+   "Rye fibre",
+   "Slowly digestible starch",
+   "Sugar beet fibre",
+   "Sugar replacers, i.e. intense sweeteners; xylitol, sorbitol, mannitol, maltitol, lactitol, isomalt, erythritol, sucralose and polydextrose; D-tagatose and isomaltulose",
+   "Sugar-free chewing gum",
+   "Sugar-free chewing gum with carbamide",
+   "Walnuts",
+   "Water",
+   "Water-Soluble Tomato Concentrate (WSTC) I and II",
+   "Wheat bran fibre",
+   "α-linolenic acid (ALA) & linoleic acid (LA), essential fatty acids",
+   "‘Reformulated, non-alcoholic, acidic drink with: — less than 1 g fermentable carbohydrate per 100 ml (sugars and other carbohydrates except polyols), — calcium in a range from 0,3 to 0,8 mol per mol acidulant, — display of pH between 3,7-4,0.",
+   "“Non-fermentable” carbohydrates"
+  ],
+  "unmatched_wordings": []
+ }
+}

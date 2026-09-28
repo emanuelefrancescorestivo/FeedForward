@@ -1,0 +1,31 @@
+# FeedForward backend dependencies
+
+# --- Scientific engine (core, no network) ---
+pulp>=2.8              # ILP meal optimisation (bundles CBC solver)
+
+# --- API layer ---
+fastapi>=0.111
+uvicorn[standard]>=0.30
+pydantic>=2.7
+pyjwt>=2.8
+python-multipart>=0.0.9   # form parsing for OAuth2 login
+
+# --- Persistence (PostgreSQL in production; SQLite is the test double) ---
+sqlalchemy>=2.0
+alembic>=1.13
+psycopg[binary]>=3.1
+
+# --- Data ingestion (optional, for rebuilding the dataset) ---
+requests>=2.31            # PubMed + OpenFoodFacts + USDA connectors
+beautifulsoup4>=4.12      # Wikipedia micronutrient scraping
+pandas>=2.2               # CIQUAL (xls) and Open Prices (parquet) importers
+pyarrow>=15               # parquet reader for Open Prices
+xlrd>=2.0                 # CIQUAL 2020 is distributed as .xls
+
+# --- Analytics / reporting (optional) ---
+networkx>=3.3             # centrality, community detection for the report
+matplotlib>=3.8           # graph visualisations
+
+# --- Testing ---
+pytest>=8.0
+httpx>=0.27               # FastAPI TestClient

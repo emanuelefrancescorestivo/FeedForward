@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+# Data caches (regenerable)
+backend/feedforward/data/pubmed_cache.json
+backend/feedforward/data/ingest/cache/
+backend/feedforward/data/feedforward.db
+backend/feedforward/data/seed/foods.json
+backend/.env
+.env
+*.db
+# Original Open Food Facts crawl (not used at runtime; see DATA_LICENSES.md)
+backend/feedforward/data/raw/
+# One-off local scripts, not part of the project
+backend/_bench.py
+backend/_pubmed_*.py
+backend/_pubmed_rest.json
+# Local tool configuration
+.claude/
+# Node / Expo
+node_modules/
+.expo/
+dist/
+*.log
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

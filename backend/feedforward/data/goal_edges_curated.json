@@ -1,0 +1,89 @@
+{
+  "_comment": "Curated nutrient->goal associations for FeedForward. base_weight in (0,1] is physiological association strength; evidence grade (A-D) is assigned in engine/evidence.py and modulates the final edge. Negative associations use type=negative: they are excluded from pathfinding, surfaced as warnings and penalise a food in proportion to how much of the daily limit one portion uses. type=enhancer marks a nutrient that helps the goal by improving absorption of another nutrient (vitamin C for non-heme iron): it is not a route on its own, it is applied through the bioavailability model and suggested as a meal pairing.",
+  "goal_edges": [
+    {"nutrient": "proteins", "goal": "muscle_recovery", "weight": 0.95, "explanation": "Protein provides the amino acids needed to repair and rebuild muscle tissue after exercise."},
+    {"nutrient": "proteins", "goal": "recovery", "weight": 0.85, "explanation": "Protein supports general tissue repair and recovery."},
+    {"nutrient": "proteins", "goal": "weight_management", "weight": 0.7, "explanation": "Protein increases satiety, helping to regulate appetite."},
+    {"nutrient": "proteins", "goal": "energy_metabolism", "weight": 0.5, "explanation": "Protein contributes to energy metabolism when other fuels are limited."},
+
+    {"nutrient": "carbohydrates", "goal": "energy_metabolism", "weight": 0.85, "explanation": "Carbohydrates are the body's primary and most readily available energy source."},
+    {"nutrient": "carbohydrates", "goal": "endurance_support", "weight": 0.9, "explanation": "Carbohydrates replenish glycogen stores critical for sustained endurance performance."},
+
+    {"nutrient": "fat", "goal": "energy_metabolism", "weight": 0.6, "explanation": "Dietary fat is an energy-dense fuel and supports absorption of fat-soluble vitamins."},
+
+    {"nutrient": "fiber", "goal": "digestive_health", "weight": 0.95, "explanation": "Fibre adds bulk and supports regular, healthy digestion."},
+    {"nutrient": "fiber", "goal": "gut_microbiome", "weight": 0.85, "explanation": "Fermentable fibre feeds beneficial gut bacteria."},
+    {"nutrient": "fiber", "goal": "blood_sugar_regulation", "weight": 0.75, "explanation": "Fibre slows glucose absorption, smoothing blood sugar response."},
+    {"nutrient": "fiber", "goal": "cholesterol_management", "weight": 0.7, "explanation": "Soluble fibre helps lower LDL cholesterol."},
+    {"nutrient": "fiber", "goal": "weight_management", "weight": 0.65, "explanation": "Fibre promotes fullness and slows digestion, aiding weight control."},
+
+    {"nutrient": "iron", "goal": "iron_support", "weight": 0.95, "explanation": "Iron is essential for haemoglobin and oxygen transport in the blood."},
+    {"nutrient": "iron", "goal": "healthy_blood", "weight": 0.9, "explanation": "Iron is required to produce healthy red blood cells."},
+    {"nutrient": "iron", "goal": "energy_metabolism", "weight": 0.7, "explanation": "Iron supports oxygen delivery that drives cellular energy production."},
+
+    {"nutrient": "vitamin-c", "goal": "immune_support", "weight": 0.85, "explanation": "Vitamin C supports normal immune cell function."},
+    {"nutrient": "vitamin-c", "goal": "iron_support", "weight": 0.8, "type": "enhancer", "explanation": "Vitamin C dramatically increases absorption of plant (non-heme) iron."},
+    {"nutrient": "vitamin-c", "goal": "antioxidant_support", "weight": 0.8, "explanation": "Vitamin C is a water-soluble antioxidant that neutralises free radicals."},
+    {"nutrient": "vitamin-c", "goal": "skin_health", "weight": 0.75, "explanation": "Vitamin C is required for collagen synthesis, supporting skin structure."},
+
+    {"nutrient": "calcium", "goal": "bone_health", "weight": 0.95, "explanation": "Calcium is the primary mineral in bone and maintains skeletal strength."},
+    {"nutrient": "calcium", "goal": "muscle_recovery", "weight": 0.55, "explanation": "Calcium is required for normal muscle contraction and relaxation."},
+
+    {"nutrient": "vitamin-d", "goal": "bone_health", "weight": 0.9, "explanation": "Vitamin D enables calcium absorption, essential for bone mineralisation."},
+    {"nutrient": "vitamin-d", "goal": "immune_support", "weight": 0.65, "explanation": "Vitamin D modulates immune responses."},
+    {"nutrient": "vitamin-d", "goal": "mood_support", "weight": 0.5, "explanation": "Vitamin D status is associated with mood regulation."},
+
+    {"nutrient": "magnesium", "goal": "sleep_support", "weight": 0.7, "explanation": "Magnesium supports the nervous system pathways involved in sleep."},
+    {"nutrient": "magnesium", "goal": "stress_resilience", "weight": 0.7, "explanation": "Magnesium helps regulate the stress response and nervous system."},
+    {"nutrient": "magnesium", "goal": "muscle_recovery", "weight": 0.65, "explanation": "Magnesium supports muscle function and reduces cramping."},
+    {"nutrient": "magnesium", "goal": "bone_health", "weight": 0.6, "explanation": "Magnesium is a structural component of bone."},
+    {"nutrient": "magnesium", "goal": "energy_metabolism", "weight": 0.6, "explanation": "Magnesium is a cofactor in hundreds of energy-producing reactions."},
+
+    {"nutrient": "zinc", "goal": "immune_support", "weight": 0.8, "explanation": "Zinc is essential for immune cell development and function."},
+    {"nutrient": "zinc", "goal": "skin_health", "weight": 0.65, "explanation": "Zinc supports skin repair and wound healing."},
+    {"nutrient": "zinc", "goal": "hair_health", "weight": 0.6, "explanation": "Zinc is involved in hair tissue growth and repair."},
+    {"nutrient": "zinc", "goal": "thyroid_support", "weight": 0.55, "explanation": "Zinc is required for thyroid hormone production."},
+
+    {"nutrient": "vitamin-a", "goal": "vision_support", "weight": 0.9, "explanation": "Vitamin A is essential for the light-detecting pigments in the eye."},
+    {"nutrient": "vitamin-a", "goal": "immune_support", "weight": 0.65, "explanation": "Vitamin A supports the integrity of immune barriers."},
+    {"nutrient": "vitamin-a", "goal": "skin_health", "weight": 0.7, "explanation": "Vitamin A regulates skin cell turnover and repair."},
+
+    {"nutrient": "vitamin-e", "goal": "antioxidant_support", "weight": 0.8, "explanation": "Vitamin E is a fat-soluble antioxidant protecting cell membranes."},
+    {"nutrient": "vitamin-e", "goal": "skin_health", "weight": 0.6, "explanation": "Vitamin E helps protect skin from oxidative damage."},
+
+    {"nutrient": "vitamin-k", "goal": "bone_health", "weight": 0.65, "explanation": "Vitamin K activates proteins that bind calcium to bone."},
+    {"nutrient": "vitamin-k", "goal": "healthy_blood", "weight": 0.7, "explanation": "Vitamin K is essential for normal blood clotting."},
+
+    {"nutrient": "omega-3-fat", "goal": "heart_health", "weight": 0.85, "explanation": "Omega-3 fatty acids support healthy triglyceride levels and heart function."},
+    {"nutrient": "omega-3-fat", "goal": "anti_inflammatory", "weight": 0.8, "explanation": "Omega-3 fatty acids have well-documented anti-inflammatory effects."},
+    {"nutrient": "omega-3-fat", "goal": "cognitive_function", "weight": 0.7, "explanation": "Omega-3 DHA is a major structural fat in the brain."},
+    {"nutrient": "omega-3-fat", "goal": "mood_support", "weight": 0.6, "explanation": "Omega-3 intake is associated with mood regulation."},
+
+    {"nutrient": "phosphorus", "goal": "bone_health", "weight": 0.7, "explanation": "Phosphorus works with calcium to build bone mineral."},
+    {"nutrient": "phosphorus", "goal": "energy_metabolism", "weight": 0.6, "explanation": "Phosphorus is part of ATP, the cell's energy currency."},
+
+    {"nutrient": "manganese", "goal": "antioxidant_support", "weight": 0.6, "explanation": "Manganese is a cofactor for antioxidant enzymes."},
+    {"nutrient": "manganese", "goal": "bone_health", "weight": 0.55, "explanation": "Manganese contributes to bone formation."},
+
+    {"nutrient": "sodium", "goal": "heart_health", "weight": 0.8, "type": "negative", "explanation": "Excess sodium is associated with raised blood pressure and cardiovascular risk."},
+    {"nutrient": "sodium", "goal": "blood_pressure_support", "weight": 0.85, "type": "negative", "explanation": "High sodium intake works against healthy blood pressure."},
+    {"nutrient": "saturated-fat", "goal": "heart_health", "weight": 0.75, "type": "negative", "explanation": "High saturated fat intake can raise LDL cholesterol."},
+    {"nutrient": "saturated-fat", "goal": "cholesterol_management", "weight": 0.8, "type": "negative", "explanation": "Saturated fat works against healthy cholesterol levels."},
+    {"nutrient": "sugars", "goal": "blood_sugar_regulation", "weight": 0.8, "type": "negative", "explanation": "Added sugars spike blood glucose and work against stable regulation."},
+    {"nutrient": "sugars", "goal": "weight_management", "weight": 0.7, "type": "negative", "explanation": "Excess sugar contributes calories with low satiety."},
+
+    {"nutrient": "potassium", "goal": "blood_pressure_support", "weight": 0.8, "explanation": "Higher potassium intake is associated with lower blood pressure in dose-response meta-analyses of trials. This is an association, not a treatment."},
+    {"nutrient": "magnesium", "goal": "blood_pressure_support", "weight": 0.6, "explanation": "Magnesium supplementation is associated with a modest reduction in blood pressure in randomised trials."},
+    {"nutrient": "calcium", "goal": "blood_pressure_support", "weight": 0.4, "explanation": "Calcium supplementation shows a small average blood-pressure effect in trial meta-analyses. The weight is kept low because the effect is modest and is not a reason to supplement."},
+
+    {"nutrient": "omega-3-fat", "goal": "joint_health", "weight": 0.65, "explanation": "Omega-3 intake is associated with lower joint inflammation in trial literature, including rheumatoid arthritis trials. This does not treat arthritis."},
+    {"nutrient": "vitamin-c", "goal": "joint_health", "weight": 0.5, "explanation": "Vitamin C is required for collagen synthesis in connective tissue. The trial evidence is about collagen synthesis, not joint-disease outcomes."},
+    {"nutrient": "manganese", "goal": "joint_health", "weight": 0.4, "low_confidence": true, "explanation": "Manganese is a cofactor in connective-tissue enzymes. The link to joint symptoms is mechanistic; no citation is attached, so this edge is low-confidence."},
+
+    {"nutrient": "magnesium", "goal": "metabolic_support", "weight": 0.7, "explanation": "Magnesium supplementation improved insulin-sensitivity measures in meta-analyses of randomised trials. Not a diabetes treatment."},
+    {"nutrient": "fiber", "goal": "metabolic_support", "weight": 0.7, "explanation": "Higher fibre intake is associated with lower metabolic-syndrome risk in pooled observational evidence and reviews."},
+    {"nutrient": "omega-3-fat", "goal": "metabolic_support", "weight": 0.55, "explanation": "Omega-3 intake is associated with metabolic-syndrome markers in systematic reviews. The association is not a treatment claim."},
+
+    {"nutrient": "selenium", "goal": "thyroid_support", "weight": 0.55, "explanation": "Selenium is a cofactor for thyroid hormone metabolism. Trial evidence is concentrated in autoimmune thyroiditis and is not a recommendation to treat thyroid disease."}
+  ]
+}

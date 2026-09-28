@@ -1,0 +1,1873 @@
+{
+ "_note": [
+  "DRAFT recipes written by the FeedForward team for a student budget in France. Status 'draft': to be reviewed by a dietitian and tested in a kitchen.",
+  "Quantities are for one person, in grams as bought (dry pasta, rice and lentils; raw meat and fish). Ingredient ids refer to data/ingredients.json.",
+  "batch: true means the recipe keeps 2-3 days in the fridge and can be cooked once for several meals.",
+  "Salt, pepper and dried spices are assumed to be in the cupboard and are not counted."
+ ],
+ "status": "draft",
+ "recipes": [
+  {
+   "id": "porridge-banana-walnut",
+   "en": "Porridge with banana and walnuts",
+   "fr": "Porridge banane et noix",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 7,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "oats",
+     "g": 60
+    },
+    {
+     "id": "milk",
+     "g": 250
+    },
+    {
+     "id": "banana",
+     "g": 120
+    },
+    {
+     "id": "walnuts",
+     "g": 15
+    }
+   ],
+   "steps": [
+    "Simmer the oats in the milk for 4-5 minutes, stirring.",
+    "Top with the sliced banana and the walnuts."
+   ]
+  },
+  {
+   "id": "fromage-blanc-kiwi-oats",
+   "en": "Fromage blanc with kiwi and oats",
+   "fr": "Fromage blanc, kiwi et avoine",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 3,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "fromage-blanc",
+     "g": 200
+    },
+    {
+     "id": "kiwi",
+     "g": 150
+    },
+    {
+     "id": "oats",
+     "g": 40
+    },
+    {
+     "id": "honey",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Put the fromage blanc in a bowl.",
+    "Add the chopped kiwis, the oats and a little honey."
+   ]
+  },
+  {
+   "id": "eggs-toast-orange",
+   "en": "Eggs on wholemeal toast, orange",
+   "fr": "Œufs sur pain complet, orange",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 8,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "egg",
+     "g": 120
+    },
+    {
+     "id": "wholemeal-bread",
+     "g": 80
+    },
+    {
+     "id": "butter",
+     "g": 5
+    },
+    {
+     "id": "orange",
+     "g": 150
+    }
+   ],
+   "steps": [
+    "Fry or boil two eggs.",
+    "Serve on buttered toasted bread, with an orange."
+   ]
+  },
+  {
+   "id": "pb-banana-toast",
+   "en": "Peanut butter and banana toast, glass of milk",
+   "fr": "Tartines beurre de cacahuète et banane",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 4,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "wholemeal-bread",
+     "g": 80
+    },
+    {
+     "id": "peanut-butter",
+     "g": 25
+    },
+    {
+     "id": "banana",
+     "g": 120
+    },
+    {
+     "id": "milk",
+     "g": 200
+    }
+   ],
+   "steps": [
+    "Spread the peanut butter on the bread.",
+    "Add banana slices; drink a glass of milk."
+   ]
+  },
+  {
+   "id": "yogurt-blueberry-seeds",
+   "en": "Yogurt with blueberries, oats and seeds",
+   "fr": "Yaourts, myrtilles, avoine et graines",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 3,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "yogurt",
+     "g": 250
+    },
+    {
+     "id": "blueberries",
+     "g": 100
+    },
+    {
+     "id": "oats",
+     "g": 40
+    },
+    {
+     "id": "sunflower-seeds",
+     "g": 15
+    }
+   ],
+   "steps": [
+    "Thaw the blueberries the night before or in the microwave.",
+    "Mix with the yogurts, oats and seeds."
+   ]
+  },
+  {
+   "id": "baguette-emmental-apple",
+   "en": "Baguette, emmental, apple and café au lait",
+   "fr": "Baguette, emmental, pomme et café au lait",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 3,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "baguette",
+     "g": 100
+    },
+    {
+     "id": "emmental",
+     "g": 30
+    },
+    {
+     "id": "apple",
+     "g": 150
+    },
+    {
+     "id": "milk",
+     "g": 200
+    }
+   ],
+   "steps": [
+    "Slice the baguette and the cheese.",
+    "With an apple and a milky coffee."
+   ]
+  },
+  {
+   "id": "overnight-oats-raisins",
+   "en": "Overnight oats with raisins, walnuts and apple",
+   "fr": "Overnight oats raisins, noix et pomme",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 5,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "oats",
+     "g": 60
+    },
+    {
+     "id": "milk",
+     "g": 200
+    },
+    {
+     "id": "raisins",
+     "g": 25
+    },
+    {
+     "id": "walnuts",
+     "g": 10
+    },
+    {
+     "id": "apple",
+     "g": 100
+    }
+   ],
+   "steps": [
+    "The night before, soak the oats and raisins in the milk in the fridge.",
+    "In the morning add grated apple and walnuts."
+   ]
+  },
+  {
+   "id": "omelette-spinach-toast",
+   "en": "Spinach omelette with toast",
+   "fr": "Omelette aux épinards et pain complet",
+   "meals": [
+    "breakfast",
+    "dinner"
+   ],
+   "time_min": 10,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "egg",
+     "g": 120
+    },
+    {
+     "id": "spinach",
+     "g": 100
+    },
+    {
+     "id": "wholemeal-bread",
+     "g": 60
+    },
+    {
+     "id": "olive-oil",
+     "g": 5
+    }
+   ],
+   "steps": [
+    "Wilt the frozen spinach in the pan with the oil.",
+    "Add two beaten eggs and cook 2-3 minutes; serve with bread."
+   ]
+  },
+  {
+   "id": "fromage-blanc-apple-walnut",
+   "en": "Fromage blanc with apple, walnuts and bread",
+   "fr": "Fromage blanc, pomme, noix et pain",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 3,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "fromage-blanc",
+     "g": 200
+    },
+    {
+     "id": "apple",
+     "g": 150
+    },
+    {
+     "id": "walnuts",
+     "g": 20
+    },
+    {
+     "id": "wholemeal-bread",
+     "g": 50
+    }
+   ],
+   "steps": [
+    "Dice the apple into the fromage blanc and add the walnuts.",
+    "A slice of wholemeal bread on the side."
+   ]
+  },
+  {
+   "id": "banana-oat-smoothie",
+   "en": "Banana and oat smoothie with toast",
+   "fr": "Smoothie banane-avoine et tartine",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 5,
+   "equipment": [
+    "blender"
+   ],
+   "ingredients": [
+    {
+     "id": "banana",
+     "g": 120
+    },
+    {
+     "id": "milk",
+     "g": 250
+    },
+    {
+     "id": "oats",
+     "g": 30
+    },
+    {
+     "id": "wholemeal-bread",
+     "g": 50
+    },
+    {
+     "id": "honey",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Blend the banana, milk and oats.",
+    "A slice of bread with a little honey."
+   ]
+  },
+  {
+   "id": "lentil-salad",
+   "en": "French lentil salad with carrots",
+   "fr": "Salade de lentilles aux carottes",
+   "meals": [
+    "lunch"
+   ],
+   "time_min": 25,
+   "equipment": [
+    "hob"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "green-lentils",
+     "g": 80
+    },
+    {
+     "id": "carrot",
+     "g": 100
+    },
+    {
+     "id": "onion",
+     "g": 30
+    },
+    {
+     "id": "rapeseed-oil",
+     "g": 10
+    },
+    {
+     "id": "lemon",
+     "g": 20
+    },
+    {
+     "id": "wholemeal-bread",
+     "g": 50
+    }
+   ],
+   "steps": [
+    "Cook the lentils 20 minutes in unsalted water, drain.",
+    "Add grated carrot, chopped onion, rapeseed oil and lemon.",
+    "Keeps 3 days in the fridge."
+   ]
+  },
+  {
+   "id": "tuna-pasta-salad",
+   "en": "Tuna pasta salad with tomato and pepper",
+   "fr": "Salade de pâtes au thon",
+   "meals": [
+    "lunch"
+   ],
+   "time_min": 15,
+   "equipment": [
+    "hob"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "pasta",
+     "g": 90
+    },
+    {
+     "id": "tuna",
+     "g": 100
+    },
+    {
+     "id": "tomato",
+     "g": 150
+    },
+    {
+     "id": "bell-pepper",
+     "g": 80
+    },
+    {
+     "id": "olive-oil",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Cook the pasta, cool under cold water.",
+    "Mix with tuna, diced tomato and pepper, olive oil."
+   ]
+  },
+  {
+   "id": "chickpea-couscous-salad",
+   "en": "Chickpea couscous salad",
+   "fr": "Taboulé de couscous aux pois chiches",
+   "meals": [
+    "lunch"
+   ],
+   "time_min": 10,
+   "equipment": [
+    "kettle"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "couscous",
+     "g": 80
+    },
+    {
+     "id": "chickpeas",
+     "g": 150
+    },
+    {
+     "id": "tomato",
+     "g": 100
+    },
+    {
+     "id": "bell-pepper",
+     "g": 80
+    },
+    {
+     "id": "lemon",
+     "g": 20
+    },
+    {
+     "id": "olive-oil",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Pour boiling water over the couscous, cover 5 minutes, fluff.",
+    "Add rinsed chickpeas, diced vegetables, lemon and oil."
+   ]
+  },
+  {
+   "id": "sardine-tartines",
+   "en": "Sardine tartines with salad",
+   "fr": "Tartines de sardines et salade",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 5,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "sardines",
+     "g": 90
+    },
+    {
+     "id": "wholemeal-bread",
+     "g": 100
+    },
+    {
+     "id": "lettuce",
+     "g": 80
+    },
+    {
+     "id": "tomato",
+     "g": 100
+    },
+    {
+     "id": "lemon",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Mash the sardines with a squeeze of lemon.",
+    "Spread on bread; salad and tomato on the side."
+   ]
+  },
+  {
+   "id": "red-lentil-dal",
+   "en": "Red lentil dal with spinach and rice",
+   "fr": "Dal de lentilles corail aux épinards",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 25,
+   "equipment": [
+    "hob"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "red-lentils",
+     "g": 80
+    },
+    {
+     "id": "canned-tomato",
+     "g": 150
+    },
+    {
+     "id": "onion",
+     "g": 50
+    },
+    {
+     "id": "garlic",
+     "g": 5
+    },
+    {
+     "id": "spinach",
+     "g": 100
+    },
+    {
+     "id": "rice",
+     "g": 70
+    },
+    {
+     "id": "rapeseed-oil",
+     "g": 5
+    }
+   ],
+   "steps": [
+    "Soften onion and garlic in the oil; add lentils, tomato and 300 ml water.",
+    "Simmer 15 minutes, add spinach for the last 5.",
+    "Serve with rice."
+   ]
+  },
+  {
+   "id": "egg-fried-rice",
+   "en": "Egg fried rice with peas and carrot",
+   "fr": "Riz sauté aux œufs et petits pois",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 15,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "rice",
+     "g": 80
+    },
+    {
+     "id": "egg",
+     "g": 120
+    },
+    {
+     "id": "peas",
+     "g": 100
+    },
+    {
+     "id": "carrot",
+     "g": 60
+    },
+    {
+     "id": "rapeseed-oil",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Use cooked, cooled rice (yesterday's is best).",
+    "Stir-fry carrot and peas, add rice, then the beaten eggs; stir until set."
+   ]
+  },
+  {
+   "id": "bean-chili-rice",
+   "en": "Bean chili with rice",
+   "fr": "Chili sin carne et riz",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 25,
+   "equipment": [
+    "hob"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "kidney-beans",
+     "g": 150
+    },
+    {
+     "id": "canned-tomato",
+     "g": 150
+    },
+    {
+     "id": "onion",
+     "g": 50
+    },
+    {
+     "id": "bell-pepper",
+     "g": 80
+    },
+    {
+     "id": "rice",
+     "g": 70
+    },
+    {
+     "id": "rapeseed-oil",
+     "g": 5
+    }
+   ],
+   "steps": [
+    "Soften onion and pepper in the oil, add beans, tomato, cumin and chili.",
+    "Simmer 15 minutes; serve with rice."
+   ]
+  },
+  {
+   "id": "jacket-potato-tuna",
+   "en": "Jacket potato with tuna and yogurt",
+   "fr": "Pomme de terre au four, thon et yaourt",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 12,
+   "equipment": [
+    "microwave"
+   ],
+   "ingredients": [
+    {
+     "id": "potato",
+     "g": 300
+    },
+    {
+     "id": "tuna",
+     "g": 100
+    },
+    {
+     "id": "yogurt",
+     "g": 100
+    },
+    {
+     "id": "lettuce",
+     "g": 60
+    }
+   ],
+   "steps": [
+    "Prick the potatoes and microwave 8-10 minutes.",
+    "Split and fill with tuna mixed with yogurt; salad on the side."
+   ]
+  },
+  {
+   "id": "mackerel-potato-salad",
+   "en": "Warm potato, green bean and mackerel salad",
+   "fr": "Salade tiède pommes de terre, haricots verts et maquereau",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 25,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "mackerel",
+     "g": 100
+    },
+    {
+     "id": "potato",
+     "g": 250
+    },
+    {
+     "id": "green-beans",
+     "g": 150
+    },
+    {
+     "id": "rapeseed-oil",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Boil the potatoes 15 minutes and the beans 8.",
+    "Pan-fry the mackerel 3 minutes each side; dress with rapeseed oil."
+   ]
+  },
+  {
+   "id": "quinoa-chickpea-bowl",
+   "en": "Quinoa and chickpea bowl",
+   "fr": "Bowl quinoa et pois chiches",
+   "meals": [
+    "lunch"
+   ],
+   "time_min": 20,
+   "equipment": [
+    "hob"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "quinoa",
+     "g": 70
+    },
+    {
+     "id": "chickpeas",
+     "g": 120
+    },
+    {
+     "id": "carrot",
+     "g": 100
+    },
+    {
+     "id": "sunflower-seeds",
+     "g": 15
+    },
+    {
+     "id": "olive-oil",
+     "g": 10
+    },
+    {
+     "id": "lemon",
+     "g": 15
+    }
+   ],
+   "steps": [
+    "Rinse and cook the quinoa 12 minutes.",
+    "Add chickpeas, grated carrot, seeds, oil and lemon."
+   ]
+  },
+  {
+   "id": "lentil-bolognese",
+   "en": "Wholemeal pasta with lentil bolognese",
+   "fr": "Pâtes complètes, bolognaise de lentilles",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 30,
+   "equipment": [
+    "hob"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "wholemeal-pasta",
+     "g": 90
+    },
+    {
+     "id": "green-lentils",
+     "g": 50
+    },
+    {
+     "id": "canned-tomato",
+     "g": 200
+    },
+    {
+     "id": "onion",
+     "g": 50
+    },
+    {
+     "id": "carrot",
+     "g": 60
+    },
+    {
+     "id": "olive-oil",
+     "g": 5
+    },
+    {
+     "id": "emmental",
+     "g": 15
+    }
+   ],
+   "steps": [
+    "Soften onion and carrot, add lentils, tomato and 250 ml water; simmer 25 minutes.",
+    "Serve on pasta with grated emmental."
+   ]
+  },
+  {
+   "id": "ham-cheese-baguette",
+   "en": "Ham and emmental baguette, apple",
+   "fr": "Jambon-beurre-emmental et pomme",
+   "meals": [
+    "lunch"
+   ],
+   "time_min": 3,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "baguette",
+     "g": 120
+    },
+    {
+     "id": "ham",
+     "g": 60
+    },
+    {
+     "id": "emmental",
+     "g": 30
+    },
+    {
+     "id": "lettuce",
+     "g": 30
+    },
+    {
+     "id": "apple",
+     "g": 150
+    }
+   ],
+   "steps": [
+    "Fill the baguette with ham, emmental and lettuce.",
+    "An apple for dessert."
+   ]
+  },
+  {
+   "id": "tofu-rice-broccoli",
+   "en": "Crispy tofu, rice and broccoli",
+   "fr": "Tofu grillé, riz et brocoli",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 20,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "tofu",
+     "g": 150
+    },
+    {
+     "id": "rice",
+     "g": 80
+    },
+    {
+     "id": "broccoli",
+     "g": 200
+    },
+    {
+     "id": "rapeseed-oil",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Cook the rice; steam or boil the broccoli 5 minutes.",
+    "Pan-fry cubed tofu in the oil until golden; soy sauce if you have it."
+   ]
+  },
+  {
+   "id": "salmon-potato-broccoli",
+   "en": "Salmon, potatoes and broccoli",
+   "fr": "Saumon, pommes de terre et brocoli",
+   "meals": [
+    "dinner"
+   ],
+   "time_min": 25,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "salmon",
+     "g": 125
+    },
+    {
+     "id": "potato",
+     "g": 250
+    },
+    {
+     "id": "broccoli",
+     "g": 200
+    },
+    {
+     "id": "olive-oil",
+     "g": 5
+    },
+    {
+     "id": "lemon",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Boil the potatoes 15 minutes, the broccoli 5.",
+    "Pan-fry the salmon 4 minutes each side; lemon on top."
+   ]
+  },
+  {
+   "id": "chicken-rice-courgette",
+   "en": "Chicken, rice and courgettes",
+   "fr": "Poulet, riz et courgettes",
+   "meals": [
+    "dinner",
+    "lunch"
+   ],
+   "time_min": 25,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "chicken",
+     "g": 130
+    },
+    {
+     "id": "rice",
+     "g": 80
+    },
+    {
+     "id": "zucchini",
+     "g": 250
+    },
+    {
+     "id": "olive-oil",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Cook the rice.",
+    "Pan-fry sliced chicken 6-8 minutes, then the courgettes 5 minutes."
+   ]
+  },
+  {
+   "id": "mushroom-omelette-salad",
+   "en": "Mushroom omelette with salad",
+   "fr": "Omelette aux champignons et salade",
+   "meals": [
+    "dinner"
+   ],
+   "time_min": 12,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "egg",
+     "g": 180
+    },
+    {
+     "id": "mushroom",
+     "g": 125
+    },
+    {
+     "id": "lettuce",
+     "g": 80
+    },
+    {
+     "id": "wholemeal-bread",
+     "g": 60
+    },
+    {
+     "id": "olive-oil",
+     "g": 5
+    }
+   ],
+   "steps": [
+    "Pan-fry the sliced mushrooms in the oil.",
+    "Pour over three beaten eggs; cook 3 minutes. Salad and bread."
+   ]
+  },
+  {
+   "id": "leek-potato-soup",
+   "en": "Leek and potato soup with bread and cheese",
+   "fr": "Soupe poireaux-pommes de terre, pain et fromage",
+   "meals": [
+    "dinner"
+   ],
+   "time_min": 30,
+   "equipment": [
+    "hob"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "leek",
+     "g": 250
+    },
+    {
+     "id": "potato",
+     "g": 200
+    },
+    {
+     "id": "milk",
+     "g": 100
+    },
+    {
+     "id": "wholemeal-bread",
+     "g": 60
+    },
+    {
+     "id": "emmental",
+     "g": 30
+    }
+   ],
+   "steps": [
+    "Simmer chopped leeks and potatoes in 600 ml water for 20 minutes.",
+    "Blend with the milk. Bread and cheese on the side."
+   ]
+  },
+  {
+   "id": "shakshuka",
+   "en": "Shakshuka with baguette",
+   "fr": "Chakchouka et baguette",
+   "meals": [
+    "dinner"
+   ],
+   "time_min": 20,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "egg",
+     "g": 120
+    },
+    {
+     "id": "canned-tomato",
+     "g": 250
+    },
+    {
+     "id": "bell-pepper",
+     "g": 100
+    },
+    {
+     "id": "onion",
+     "g": 50
+    },
+    {
+     "id": "olive-oil",
+     "g": 10
+    },
+    {
+     "id": "baguette",
+     "g": 80
+    }
+   ],
+   "steps": [
+    "Soften onion and pepper, add the tomato and simmer 10 minutes.",
+    "Make two wells, crack in the eggs, cover 5 minutes. Serve with bread."
+   ]
+  },
+  {
+   "id": "tofu-cabbage-stirfry",
+   "en": "Tofu and cabbage stir-fry with rice",
+   "fr": "Wok de tofu et chou, riz",
+   "meals": [
+    "dinner",
+    "lunch"
+   ],
+   "time_min": 20,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "tofu",
+     "g": 150
+    },
+    {
+     "id": "cabbage",
+     "g": 200
+    },
+    {
+     "id": "carrot",
+     "g": 80
+    },
+    {
+     "id": "rice",
+     "g": 80
+    },
+    {
+     "id": "rapeseed-oil",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Cook the rice.",
+    "Stir-fry shredded cabbage and carrot 5 minutes, add cubed tofu 5 more."
+   ]
+  },
+  {
+   "id": "beef-bean-chili",
+   "en": "Chili con carne with rice",
+   "fr": "Chili con carne et riz",
+   "meals": [
+    "dinner",
+    "lunch"
+   ],
+   "time_min": 30,
+   "equipment": [
+    "hob"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "minced-beef",
+     "g": 100
+    },
+    {
+     "id": "kidney-beans",
+     "g": 120
+    },
+    {
+     "id": "canned-tomato",
+     "g": 150
+    },
+    {
+     "id": "onion",
+     "g": 50
+    },
+    {
+     "id": "rice",
+     "g": 70
+    }
+   ],
+   "steps": [
+    "Brown the beef with the onion.",
+    "Add beans, tomato, cumin and chili; simmer 20 minutes. Serve with rice."
+   ]
+  },
+  {
+   "id": "sardine-tomato-pasta",
+   "en": "Pasta with sardines and tomato",
+   "fr": "Pâtes aux sardines et tomate",
+   "meals": [
+    "dinner",
+    "lunch"
+   ],
+   "time_min": 15,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "pasta",
+     "g": 90
+    },
+    {
+     "id": "sardines",
+     "g": 90
+    },
+    {
+     "id": "canned-tomato",
+     "g": 200
+    },
+    {
+     "id": "garlic",
+     "g": 5
+    },
+    {
+     "id": "olive-oil",
+     "g": 5
+    }
+   ],
+   "steps": [
+    "Cook the pasta.",
+    "Warm garlic in the oil, add tomato 5 minutes, then the sardines broken up."
+   ]
+  },
+  {
+   "id": "lentil-vegetable-soup",
+   "en": "Lentil and vegetable soup with bread",
+   "fr": "Soupe de lentilles aux légumes",
+   "meals": [
+    "dinner",
+    "lunch"
+   ],
+   "time_min": 35,
+   "equipment": [
+    "hob"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "green-lentils",
+     "g": 70
+    },
+    {
+     "id": "carrot",
+     "g": 100
+    },
+    {
+     "id": "leek",
+     "g": 100
+    },
+    {
+     "id": "potato",
+     "g": 150
+    },
+    {
+     "id": "wholemeal-bread",
+     "g": 60
+    }
+   ],
+   "steps": [
+    "Simmer everything chopped in 700 ml water for 30 minutes.",
+    "Blend half for a thicker soup. Bread on the side."
+   ]
+  },
+  {
+   "id": "chickpea-spinach-curry",
+   "en": "Chickpea and spinach curry with rice",
+   "fr": "Curry de pois chiches aux épinards",
+   "meals": [
+    "dinner",
+    "lunch"
+   ],
+   "time_min": 25,
+   "equipment": [
+    "hob"
+   ],
+   "batch": true,
+   "ingredients": [
+    {
+     "id": "chickpeas",
+     "g": 180
+    },
+    {
+     "id": "spinach",
+     "g": 150
+    },
+    {
+     "id": "canned-tomato",
+     "g": 150
+    },
+    {
+     "id": "onion",
+     "g": 50
+    },
+    {
+     "id": "rice",
+     "g": 70
+    },
+    {
+     "id": "rapeseed-oil",
+     "g": 5
+    }
+   ],
+   "steps": [
+    "Soften the onion with curry powder in the oil.",
+    "Add chickpeas, tomato and spinach; simmer 15 minutes. Serve with rice."
+   ]
+  },
+  {
+   "id": "pasta-peas-ham",
+   "en": "Pasta with peas and ham",
+   "fr": "Pâtes petits pois et jambon",
+   "meals": [
+    "dinner",
+    "lunch"
+   ],
+   "time_min": 15,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "pasta",
+     "g": 90
+    },
+    {
+     "id": "peas",
+     "g": 120
+    },
+    {
+     "id": "ham",
+     "g": 60
+    },
+    {
+     "id": "emmental",
+     "g": 20
+    },
+    {
+     "id": "olive-oil",
+     "g": 5
+    }
+   ],
+   "steps": [
+    "Cook the pasta with the peas for the last 4 minutes.",
+    "Drain, add diced ham, oil and grated emmental."
+   ]
+  },
+  {
+   "id": "potato-spinach-frittata",
+   "en": "Potato and spinach frittata",
+   "fr": "Frittata pommes de terre et épinards",
+   "meals": [
+    "dinner"
+   ],
+   "time_min": 25,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "egg",
+     "g": 150
+    },
+    {
+     "id": "potato",
+     "g": 200
+    },
+    {
+     "id": "spinach",
+     "g": 100
+    },
+    {
+     "id": "emmental",
+     "g": 20
+    },
+    {
+     "id": "olive-oil",
+     "g": 5
+    }
+   ],
+   "steps": [
+    "Boil the sliced potatoes 8 minutes.",
+    "Pan-fry with spinach, pour over the eggs and cheese, cover 8 minutes on low heat."
+   ]
+  },
+  {
+   "id": "mackerel-rice-beans",
+   "en": "Mackerel, rice and green beans",
+   "fr": "Maquereau, riz et haricots verts",
+   "meals": [
+    "dinner"
+   ],
+   "time_min": 20,
+   "equipment": [
+    "hob"
+   ],
+   "ingredients": [
+    {
+     "id": "mackerel",
+     "g": 120
+    },
+    {
+     "id": "rice",
+     "g": 80
+    },
+    {
+     "id": "green-beans",
+     "g": 200
+    },
+    {
+     "id": "lemon",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Cook the rice and the green beans.",
+    "Pan-fry or oven-bake the mackerel 6 minutes; lemon on top."
+   ]
+  },
+  {
+   "id": "porridge-soy-banana",
+   "en": "Microwave porridge with soy drink and banana",
+   "fr": "Porridge au lait de soja et banane",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 4,
+   "equipment": [
+    "microwave"
+   ],
+   "ingredients": [
+    {
+     "id": "oats",
+     "g": 60
+    },
+    {
+     "id": "soy-drink",
+     "g": 250
+    },
+    {
+     "id": "banana",
+     "g": 120
+    },
+    {
+     "id": "walnuts",
+     "g": 15
+    }
+   ],
+   "steps": [
+    "Mix the oats and the soy drink in a large bowl.",
+    "Microwave 2 minutes, stir, then 1 more minute.",
+    "Top with the sliced banana and the walnuts."
+   ]
+  },
+  {
+   "id": "pb-banana-toast-soy",
+   "en": "Peanut butter and banana toast, soy drink",
+   "fr": "Tartines beurre de cacahuète et banane, boisson soja",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 3,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "wholemeal-bread",
+     "g": 80
+    },
+    {
+     "id": "peanut-butter",
+     "g": 25
+    },
+    {
+     "id": "banana",
+     "g": 120
+    },
+    {
+     "id": "soy-drink",
+     "g": 200
+    }
+   ],
+   "steps": [
+    "Spread the peanut butter on the bread and add the sliced banana.",
+    "With a glass of soy drink."
+   ]
+  },
+  {
+   "id": "overnight-oats-soy",
+   "en": "Overnight oats with soy drink, apple and seeds",
+   "fr": "Flocons d'avoine de la veille, soja, pomme et graines",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 3,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "oats",
+     "g": 60
+    },
+    {
+     "id": "soy-drink",
+     "g": 200
+    },
+    {
+     "id": "raisins",
+     "g": 25
+    },
+    {
+     "id": "sunflower-seeds",
+     "g": 10
+    },
+    {
+     "id": "apple",
+     "g": 100
+    }
+   ],
+   "steps": [
+    "The evening before, mix the oats, soy drink and raisins in a jar; keep in the fridge.",
+    "In the morning, add the grated apple and the seeds."
+   ]
+  },
+  {
+   "id": "muesli-soy-kiwi",
+   "en": "Oat muesli with soy drink and kiwi",
+   "fr": "Muesli d'avoine, boisson soja et kiwi",
+   "meals": [
+    "breakfast"
+   ],
+   "time_min": 3,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "oats",
+     "g": 50
+    },
+    {
+     "id": "soy-drink",
+     "g": 200
+    },
+    {
+     "id": "kiwi",
+     "g": 150
+    },
+    {
+     "id": "walnuts",
+     "g": 15
+    },
+    {
+     "id": "raisins",
+     "g": 15
+    }
+   ],
+   "steps": [
+    "Put the oats, raisins and walnuts in a bowl and pour the soy drink over.",
+    "Add the sliced kiwis."
+   ]
+  },
+  {
+   "id": "jacket-potato-beans",
+   "en": "Jacket potato with beans and tomato",
+   "fr": "Pomme de terre au four micro-ondes, haricots rouges et tomate",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 12,
+   "equipment": [
+    "microwave"
+   ],
+   "ingredients": [
+    {
+     "id": "potato",
+     "g": 300
+    },
+    {
+     "id": "kidney-beans",
+     "g": 150
+    },
+    {
+     "id": "canned-tomato",
+     "g": 100
+    },
+    {
+     "id": "lettuce",
+     "g": 60
+    },
+    {
+     "id": "olive-oil",
+     "g": 5
+    }
+   ],
+   "steps": [
+    "Prick the potato with a fork and microwave 8-10 minutes, turning halfway, until soft.",
+    "Warm the drained beans with the tomato 2 minutes in the microwave.",
+    "Split the potato, fill with the beans, add the oil; lettuce on the side."
+   ]
+  },
+  {
+   "id": "salmon-couscous-spinach",
+   "en": "Microwave salmon with couscous and spinach",
+   "fr": "Saumon au micro-ondes, semoule et épinards",
+   "meals": [
+    "dinner",
+    "lunch"
+   ],
+   "time_min": 12,
+   "equipment": [
+    "microwave",
+    "kettle"
+   ],
+   "ingredients": [
+    {
+     "id": "salmon",
+     "g": 125
+    },
+    {
+     "id": "couscous",
+     "g": 80
+    },
+    {
+     "id": "spinach",
+     "g": 100
+    },
+    {
+     "id": "lemon",
+     "g": 10
+    },
+    {
+     "id": "olive-oil",
+     "g": 5
+    }
+   ],
+   "steps": [
+    "Cover the couscous with the same volume of boiling water; leave 5 minutes, then fluff with a fork.",
+    "Put the salmon and frozen spinach in a covered dish and microwave 4-5 minutes, until the fish flakes.",
+    "Serve with lemon and the oil."
+   ]
+  },
+  {
+   "id": "egg-spinach-mug",
+   "en": "Microwave eggs with spinach on toast",
+   "fr": "Œufs brouillés au micro-ondes, épinards et pain",
+   "meals": [
+    "dinner",
+    "lunch"
+   ],
+   "time_min": 6,
+   "equipment": [
+    "microwave"
+   ],
+   "ingredients": [
+    {
+     "id": "egg",
+     "g": 120
+    },
+    {
+     "id": "spinach",
+     "g": 100
+    },
+    {
+     "id": "wholemeal-bread",
+     "g": 80
+    },
+    {
+     "id": "emmental",
+     "g": 20
+    }
+   ],
+   "steps": [
+    "Microwave the frozen spinach 2 minutes in a bowl.",
+    "Beat in the eggs and cheese; microwave 1 minute, stir, then 30-45 seconds until just set.",
+    "Serve on the bread."
+   ]
+  },
+  {
+   "id": "chickpea-tomato-couscous",
+   "en": "Warm chickpea and tomato couscous",
+   "fr": "Semoule chaude aux pois chiches et tomate",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 10,
+   "equipment": [
+    "microwave",
+    "kettle"
+   ],
+   "ingredients": [
+    {
+     "id": "couscous",
+     "g": 80
+    },
+    {
+     "id": "chickpeas",
+     "g": 150
+    },
+    {
+     "id": "canned-tomato",
+     "g": 150
+    },
+    {
+     "id": "spinach",
+     "g": 100
+    },
+    {
+     "id": "olive-oil",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Cover the couscous with the same volume of boiling water; leave 5 minutes.",
+    "Microwave the drained chickpeas, tomato and frozen spinach 4 minutes, stirring once.",
+    "Mix with the couscous and the oil."
+   ],
+   "batch": true
+  },
+  {
+   "id": "tuna-rice-peas",
+   "en": "Microwave rice with tuna and peas",
+   "fr": "Riz au micro-ondes, thon et petits pois",
+   "meals": [
+    "lunch",
+    "dinner"
+   ],
+   "time_min": 18,
+   "equipment": [
+    "microwave"
+   ],
+   "ingredients": [
+    {
+     "id": "rice",
+     "g": 80
+    },
+    {
+     "id": "tuna",
+     "g": 100
+    },
+    {
+     "id": "peas",
+     "g": 100
+    },
+    {
+     "id": "olive-oil",
+     "g": 5
+    },
+    {
+     "id": "lemon",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Rinse the rice, add twice its volume of water in a large covered bowl; microwave 10-12 minutes, then rest 5.",
+    "Microwave the frozen peas 3 minutes.",
+    "Mix with the drained tuna, oil and lemon."
+   ]
+  },
+  {
+   "id": "tofu-couscous-beans",
+   "en": "Tofu with couscous and green beans",
+   "fr": "Tofu, semoule et haricots verts",
+   "meals": [
+    "dinner",
+    "lunch"
+   ],
+   "time_min": 10,
+   "equipment": [
+    "microwave",
+    "kettle"
+   ],
+   "ingredients": [
+    {
+     "id": "tofu",
+     "g": 150
+    },
+    {
+     "id": "couscous",
+     "g": 80
+    },
+    {
+     "id": "green-beans",
+     "g": 150
+    },
+    {
+     "id": "rapeseed-oil",
+     "g": 10
+    }
+   ],
+   "steps": [
+    "Cover the couscous with the same volume of boiling water; leave 5 minutes.",
+    "Microwave the frozen green beans 4 minutes, add the diced tofu and 1 more minute.",
+    "Mix everything with the oil."
+   ]
+  },
+  {
+   "id": "snack-banana",
+   "en": "A banana",
+   "fr": "Une banane",
+   "meals": [
+    "snack"
+   ],
+   "time_min": 0,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "banana",
+     "g": 120
+    }
+   ],
+   "steps": []
+  },
+  {
+   "id": "snack-apple-walnuts",
+   "en": "Apple and a handful of walnuts",
+   "fr": "Pomme et une poignée de noix",
+   "meals": [
+    "snack"
+   ],
+   "time_min": 0,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "apple",
+     "g": 150
+    },
+    {
+     "id": "walnuts",
+     "g": 20
+    }
+   ],
+   "steps": []
+  },
+  {
+   "id": "snack-yogurt-honey",
+   "en": "Yogurt with honey",
+   "fr": "Yaourt et miel",
+   "meals": [
+    "snack"
+   ],
+   "time_min": 0,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "yogurt",
+     "g": 125
+    },
+    {
+     "id": "honey",
+     "g": 10
+    }
+   ],
+   "steps": []
+  },
+  {
+   "id": "snack-bread-chocolate",
+   "en": "Bread and dark chocolate",
+   "fr": "Pain et chocolat noir",
+   "meals": [
+    "snack"
+   ],
+   "time_min": 0,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "baguette",
+     "g": 50
+    },
+    {
+     "id": "dark-chocolate",
+     "g": 20
+    }
+   ],
+   "steps": []
+  },
+  {
+   "id": "snack-orange",
+   "en": "An orange",
+   "fr": "Une orange",
+   "meals": [
+    "snack"
+   ],
+   "time_min": 0,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "orange",
+     "g": 150
+    }
+   ],
+   "steps": []
+  },
+  {
+   "id": "snack-seeds-raisins",
+   "en": "Sunflower seeds and raisins",
+   "fr": "Graines de tournesol et raisins secs",
+   "meals": [
+    "snack"
+   ],
+   "time_min": 0,
+   "equipment": [],
+   "ingredients": [
+    {
+     "id": "sunflower-seeds",
+     "g": 20
+    },
+    {
+     "id": "raisins",
+     "g": 20
+    }
+   ],
+   "steps": []
+  }
+ ]
+}

@@ -1,0 +1,567 @@
+{
+  "_comment": "Nutrient interaction matrix for FeedForward's bioavailability engine. Each entry is a documented mechanism by which one dietary factor changes the absorption (or, where noted, the retention) of a nutrient. 'factor' is the multiplicative effect when the modifier co-occurs in a meal (>1 enhances, <1 inhibits). Magnitudes are mid-range values from the cited literature and are deliberately conservative. Several mineral-mineral competitions are most pronounced at high/supplemental doses; these are marked in the mechanism and given mild factors. CITATIONS ARE REPRESENTATIVE ANCHORS AND MUST BE VERIFIED AGAINST SOURCE BEFORE ANY CLINICAL USE. See docs/SCIENTIFIC_BASIS.md.",
+  "_schema": {
+    "target": "nutrient whose absorption is affected (nutrient id, or form: heme_iron/non_heme_iron/beta_carotene)",
+    "modifier": "co-occurring factor (nutrient id, or property: phytate/oxalate/tannin/fat/animal_protein/fiber/caffeine/fructose/organic_acid)",
+    "direction": "enhances | inhibits",
+    "factor": "multiplicative effect on absorption/retention",
+    "mechanism": "one-sentence physiological explanation",
+    "evidence": "A-D grade for the interaction itself",
+    "dose_note": "optional: context in which the interaction is most relevant",
+    "citations": "representative PMIDs/DOIs (verify before clinical use)"
+  },
+  "interactions": [
+    {
+      "target": "non_heme_iron",
+      "modifier": "vitamin-c",
+      "direction": "enhances",
+      "factor": 2.5,
+      "mechanism": "Ascorbic acid reduces ferric (Fe3+) to absorbable ferrous (Fe2+) iron and forms a soluble chelate.",
+      "evidence": "A",
+      "citations": [
+        "PMID:2507711",
+        "PMID:20200263"
+      ]
+    },
+    {
+      "target": "non_heme_iron",
+      "modifier": "animal_protein",
+      "direction": "enhances",
+      "factor": 1.7,
+      "mechanism": "The 'meat factor' (MFP) from muscle tissue enhances non-heme iron uptake.",
+      "evidence": "B",
+      "citations": [
+        "PMID:6940487"
+      ]
+    },
+    {
+      "target": "non_heme_iron",
+      "modifier": "vitamin-a",
+      "direction": "enhances",
+      "factor": 1.4,
+      "mechanism": "Vitamin A and beta-carotene form soluble complexes with iron, keeping it available and counteracting phytate inhibition.",
+      "evidence": "B",
+      "citations": [
+        "PMID:9701160"
+      ]
+    },
+    {
+      "target": "non_heme_iron",
+      "modifier": "fructose",
+      "direction": "enhances",
+      "factor": 1.3,
+      "mechanism": "Fructose and other organic sugars chelate iron into a more absorbable form.",
+      "evidence": "C",
+      "citations": [],
+      "low_confidence": true,
+      "dose_note": "No verified citation is attached; the factor is a conservative placeholder, not a measured coefficient."
+    },
+    {
+      "target": "non_heme_iron",
+      "modifier": "organic_acid",
+      "direction": "enhances",
+      "factor": 1.35,
+      "mechanism": "Citric, malic and lactic acids solubilise non-heme iron, improving uptake.",
+      "evidence": "B",
+      "citations": [
+        "PMID:6940487"
+      ]
+    },
+    {
+      "target": "non_heme_iron",
+      "modifier": "phytate",
+      "direction": "inhibits",
+      "factor": 0.45,
+      "mechanism": "Phytic acid binds iron in the gut lumen forming an insoluble, unabsorbable complex.",
+      "evidence": "A",
+      "citations": [
+        "PMID:2670022"
+      ]
+    },
+    {
+      "target": "non_heme_iron",
+      "modifier": "tannin",
+      "direction": "inhibits",
+      "factor": 0.5,
+      "mechanism": "Polyphenols/tannins (tea, coffee) form insoluble complexes with non-heme iron.",
+      "evidence": "A",
+      "citations": [
+        "PMID:2911999"
+      ]
+    },
+    {
+      "target": "non_heme_iron",
+      "modifier": "calcium",
+      "direction": "inhibits",
+      "factor": 0.6,
+      "mechanism": "Calcium competes with iron at the enterocyte, reducing iron uptake when co-ingested.",
+      "evidence": "B",
+      "citations": [
+        "PMID:9022529"
+      ]
+    },
+    {
+      "target": "non_heme_iron",
+      "modifier": "fiber",
+      "direction": "inhibits",
+      "factor": 0.85,
+      "mechanism": "Some dietary fibres bind non-heme iron, modestly reducing absorption.",
+      "evidence": "C",
+      "citations": [
+        "PMID:2846913"
+      ]
+    },
+    {
+      "target": "non_heme_iron",
+      "modifier": "oxalate",
+      "direction": "inhibits",
+      "factor": 0.8,
+      "mechanism": "Oxalate can bind non-heme iron, modestly lowering its availability.",
+      "evidence": "C",
+      "citations": [
+        "PMID:18271278"
+      ]
+    },
+    {
+      "target": "calcium",
+      "modifier": "vitamin-d",
+      "direction": "enhances",
+      "factor": 1.4,
+      "mechanism": "Vitamin D upregulates intestinal calcium-binding proteins, increasing active absorption.",
+      "evidence": "A",
+      "citations": [
+        "PMID:24239701"
+      ]
+    },
+    {
+      "target": "calcium",
+      "modifier": "oxalate",
+      "direction": "inhibits",
+      "factor": 0.25,
+      "mechanism": "Oxalic acid binds calcium into insoluble calcium oxalate (e.g. spinach ~5% absorbed).",
+      "evidence": "A",
+      "citations": [
+        "PMID:8092089"
+      ]
+    },
+    {
+      "target": "calcium",
+      "modifier": "phytate",
+      "direction": "inhibits",
+      "factor": 0.65,
+      "mechanism": "Phytate chelates calcium, modestly reducing its absorption.",
+      "evidence": "B",
+      "citations": [
+        "PMID:2670022"
+      ]
+    },
+    {
+      "target": "calcium",
+      "modifier": "caffeine",
+      "direction": "inhibits",
+      "factor": 0.95,
+      "mechanism": "Caffeine slightly increases urinary calcium loss, marginally reducing net retention.",
+      "evidence": "C",
+      "dose_note": "small effect, offset by adequate intake",
+      "citations": [
+        "PMID:8172115"
+      ]
+    },
+    {
+      "target": "calcium",
+      "modifier": "sodium",
+      "direction": "inhibits",
+      "factor": 0.9,
+      "mechanism": "High sodium intake increases urinary calcium excretion, reducing retention.",
+      "evidence": "B",
+      "dose_note": "affects retention, not absorption",
+      "citations": [
+        "PMID:8172115"
+      ]
+    },
+    {
+      "target": "zinc",
+      "modifier": "animal_protein",
+      "direction": "enhances",
+      "factor": 1.4,
+      "mechanism": "Animal protein counteracts phytate inhibition and provides absorption-promoting amino acids.",
+      "evidence": "B",
+      "citations": [
+        "PMID:10801947"
+      ]
+    },
+    {
+      "target": "zinc",
+      "modifier": "phytate",
+      "direction": "inhibits",
+      "factor": 0.5,
+      "mechanism": "Phytate is the primary dietary inhibitor of zinc absorption, forming insoluble complexes.",
+      "evidence": "A",
+      "citations": [
+        "PMID:10801947"
+      ]
+    },
+    {
+      "target": "zinc",
+      "modifier": "calcium",
+      "direction": "inhibits",
+      "factor": 0.8,
+      "mechanism": "High calcium can modestly reduce zinc absorption, particularly with phytate present.",
+      "evidence": "C",
+      "citations": [
+        "PMID:9094857"
+      ]
+    },
+    {
+      "target": "zinc",
+      "modifier": "iron",
+      "direction": "inhibits",
+      "factor": 0.85,
+      "mechanism": "A high iron-to-zinc ratio competes for shared uptake pathways.",
+      "evidence": "C",
+      "dose_note": "mainly at supplemental doses",
+      "citations": [
+        "PMID:9701159"
+      ]
+    },
+    {
+      "target": "zinc",
+      "modifier": "fiber",
+      "direction": "inhibits",
+      "factor": 0.9,
+      "mechanism": "Some fibres bind zinc, modestly lowering absorption.",
+      "evidence": "C",
+      "citations": [
+        "PMID:2846913"
+      ]
+    },
+    {
+      "target": "magnesium",
+      "modifier": "phytate",
+      "direction": "inhibits",
+      "factor": 0.7,
+      "mechanism": "Phytate binds magnesium, reducing its bioavailability from high-phytate foods.",
+      "evidence": "C",
+      "citations": [
+        "PMID:12030424"
+      ]
+    },
+    {
+      "target": "magnesium",
+      "modifier": "fiber",
+      "direction": "inhibits",
+      "factor": 0.85,
+      "mechanism": "High fibre intake can modestly reduce magnesium absorption.",
+      "evidence": "C",
+      "citations": [
+        "PMID:2846913"
+      ]
+    },
+    {
+      "target": "copper",
+      "modifier": "zinc",
+      "direction": "inhibits",
+      "factor": 0.5,
+      "mechanism": "High zinc induces intestinal metallothionein, which binds copper and blocks its absorption.",
+      "evidence": "B",
+      "dose_note": "clinically important at high zinc intakes",
+      "citations": [
+        "PMID:3812338"
+      ]
+    },
+    {
+      "target": "copper",
+      "modifier": "vitamin-c",
+      "direction": "inhibits",
+      "factor": 0.85,
+      "mechanism": "Very high vitamin C intake can impair copper absorption/status.",
+      "evidence": "C",
+      "dose_note": "high-dose supplements",
+      "citations": [
+        "PMID:6538488"
+      ]
+    },
+    {
+      "target": "manganese",
+      "modifier": "phytate",
+      "direction": "inhibits",
+      "factor": 0.7,
+      "mechanism": "Phytate binds manganese, reducing absorption from high-phytate plant foods.",
+      "evidence": "C",
+      "citations": [
+        "PMID:2670022"
+      ]
+    },
+    {
+      "target": "manganese",
+      "modifier": "iron",
+      "direction": "inhibits",
+      "factor": 0.8,
+      "mechanism": "Iron and manganese share absorption pathways and compete when iron is high.",
+      "evidence": "C",
+      "citations": [],
+      "low_confidence": true,
+      "dose_note": "No verified citation is attached; the factor is a conservative placeholder, not a measured coefficient."
+    },
+    {
+      "target": "manganese",
+      "modifier": "calcium",
+      "direction": "inhibits",
+      "factor": 0.85,
+      "mechanism": "High calcium modestly reduces manganese absorption.",
+      "evidence": "D",
+      "citations": [],
+      "low_confidence": true,
+      "dose_note": "No verified citation is attached; the factor is a conservative placeholder, not a measured coefficient."
+    },
+    {
+      "target": "folate",
+      "modifier": "vitamin-c",
+      "direction": "enhances",
+      "factor": 1.2,
+      "mechanism": "Vitamin C protects natural folate from oxidative degradation, preserving availability.",
+      "evidence": "C",
+      "citations": [
+        "PMID:6538488"
+      ]
+    },
+    {
+      "target": "vitamin-a",
+      "modifier": "fat",
+      "direction": "enhances",
+      "factor": 1.5,
+      "mechanism": "Preformed vitamin A and provitamin carotenoids require dietary fat for micellar absorption.",
+      "evidence": "A",
+      "citations": [
+        "PMID:15113714"
+      ]
+    },
+    {
+      "target": "vitamin-d",
+      "modifier": "fat",
+      "direction": "enhances",
+      "factor": 1.3,
+      "mechanism": "Vitamin D is fat-soluble; dietary fat improves its intestinal absorption.",
+      "evidence": "B",
+      "citations": [
+        "PMID:25441954"
+      ]
+    },
+    {
+      "target": "vitamin-d",
+      "modifier": "magnesium",
+      "direction": "enhances",
+      "factor": 1.15,
+      "mechanism": "Magnesium is a cofactor for the enzymes that activate vitamin D, supporting its function.",
+      "evidence": "C",
+      "dose_note": "supports activation/status rather than absorption",
+      "citations": [
+        "PMID:29480918"
+      ]
+    },
+    {
+      "target": "vitamin-e",
+      "modifier": "fat",
+      "direction": "enhances",
+      "factor": 1.4,
+      "mechanism": "Tocopherols require dietary fat and bile for micelle formation and uptake.",
+      "evidence": "B",
+      "citations": [
+        "PMID:12639907"
+      ]
+    },
+    {
+      "target": "vitamin-k",
+      "modifier": "fat",
+      "direction": "enhances",
+      "factor": 1.4,
+      "mechanism": "Vitamin K absorption is fat-dependent and enhanced when consumed with lipids.",
+      "evidence": "B",
+      "citations": [
+        "PMID:19386741"
+      ]
+    },
+    {
+      "target": "beta_carotene",
+      "modifier": "fat",
+      "direction": "enhances",
+      "factor": 2.0,
+      "mechanism": "Carotenoid absorption rises several-fold with even modest dietary fat.",
+      "evidence": "A",
+      "citations": [
+        "PMID:15113714"
+      ]
+    },
+    {
+      "target": "heme_iron",
+      "modifier": "calcium",
+      "direction": "inhibits",
+      "factor": 0.6,
+      "mechanism": "Single-meal human studies found calcium reduced absorption of both heme and non-heme iron.",
+      "evidence": "B",
+      "dose_note": "Factor matches the existing non-heme calcium multiplier. It is a conservative meal-level factor, not a coefficient fitted from the cited study.",
+      "citations": [
+        "PMID:1984335"
+      ]
+    },
+    {
+      "target": "folate",
+      "modifier": "alcohol",
+      "direction": "inhibits",
+      "factor": 0.75,
+      "mechanism": "Alcohol interferes with folate absorption and increases urinary folate loss.",
+      "evidence": "C",
+      "dose_note": "Most relevant at higher intakes. The factor is a conservative model multiplier, not a measured coefficient from the cited review.",
+      "citations": [
+        "PMID:12163694"
+      ]
+    }
+  ],
+  "food_properties": {
+    "_comment": "Keyword heuristics used to detect anti-nutrient / enhancer properties in foods at ingest time. Production would use structured composition data (e.g. USDA phytate tables); these keyword sets are a transparent approximation. Nutrient-based modifiers (fat, calcium, iron, fiber, sodium) are detected numerically at meal time, not from keywords.",
+    "phytate": [
+      "bran",
+      "wholemeal",
+      "whole wheat",
+      "whole grain",
+      "complet",
+      "legume",
+      "bean",
+      "haricot",
+      "lentil",
+      "lentille",
+      "chickpea",
+      "pois chiche",
+      "soy",
+      "soja",
+      "tofu",
+      "tempeh",
+      "edamame",
+      "oat",
+      "avoine",
+      "seed",
+      "graine",
+      "nut",
+      "noix",
+      "amande",
+      "almond",
+      "walnut",
+      "cashew",
+      "quinoa"
+    ],
+    "oxalate": [
+      "spinach",
+      "epinard",
+      "rhubarb",
+      "rhubarbe",
+      "beet green",
+      "swiss chard",
+      "chard",
+      "blette",
+      "sorrel",
+      "oseille",
+      "almond"
+    ],
+    "tannin": [
+      "tea",
+      "the noir",
+      "coffee",
+      "cafe",
+      "cocoa",
+      "cacao",
+      "dark chocolate",
+      "red wine",
+      "vin rouge",
+      "grape",
+      "berry"
+    ],
+    "caffeine": [
+      "coffee",
+      "cafe",
+      "tea",
+      "the noir",
+      "cocoa",
+      "cacao",
+      "espresso",
+      "chocolate"
+    ],
+    "fructose": [
+      "fruit",
+      "orange",
+      "apple",
+      "banana",
+      "berry",
+      "strawberry",
+      "kiwi",
+      "grape",
+      "mango",
+      "pineapple",
+      "juice",
+      "jus"
+    ],
+    "organic_acid": [
+      "citrus",
+      "orange",
+      "lemon",
+      "citron",
+      "lime",
+      "tomato",
+      "tomate",
+      "kiwi",
+      "pineapple",
+      "ananas",
+      "berry",
+      "fermented",
+      "yogurt",
+      "yaourt"
+    ],
+    "animal_protein": [
+      "meat",
+      "fish",
+      "beef",
+      "pork",
+      "chicken",
+      "viande",
+      "poisson",
+      "boeuf",
+      "porc",
+      "poulet",
+      "thon",
+      "tuna",
+      "salmon",
+      "saumon",
+      "sardine",
+      "maquereau",
+      "mackerel",
+      "cod",
+      "morue",
+      "ham",
+      "jambon",
+      "turkey",
+      "dinde",
+      "lamb",
+      "agneau",
+      "veal",
+      "veau",
+      "egg",
+      "oeuf",
+      "oyster",
+      "shrimp",
+      "crevette",
+      "liver",
+      "foie"
+    ],
+    "alcohol": [
+      "beer",
+      "lager",
+      "cider",
+      "whiskey",
+      "whisky",
+      "vodka",
+      "rum",
+      "champagne",
+      "red wine",
+      "white wine"
+    ]
+  }
+}

@@ -1,0 +1,419 @@
+{
+  "_note": [
+    "How EU health claims (Regulation (EC) No 1924/2006, EU Register) become nutrient -> goal edges.",
+    "substances: register substance names that the ontology resolver does not map on its own, or maps to something else. nutrients: [] means 'known, deliberately not mapped' (with a reason).",
+    "rules: ordered regular expressions over the claim text (lowercase, accents removed). The FIRST match wins. goals: [] means the claim is understood but has no goal in the taxonomy (teeth, cell division, ...). A claim that matches no rule is reported as unmapped by the importer.",
+    "weight: association strength for the edge (the evidence grade is A for every authorised claim). Lower weights mark indirect links (nervous system -> cognition) or claims whose conditions of use exceed a normal portion (3 g/day EPA+DHA for blood pressure).",
+    "psychological function maps to mood_support only: EFSA rejected 'resistance to mental stress' for magnesium, so the authorised wording must not be stretched to stress resilience.",
+    "Rules with a 'why' lower the weight of a specific claim: indirect mechanisms (collagen) or conditions of use above what a portion delivers."
+  ],
+  "substances": {
+    "Docosahexaenoic acid (DHA)": {
+      "nutrients": [
+        "epa-dha"
+      ],
+      "note": "DHA-only claims; EPA+DHA is the proxy (they co-occur in fish)."
+    },
+    "Docosahexaenoic acid and Eicosapentaenoic acid (DHA/EPA)": {
+      "nutrients": [
+        "epa-dha"
+      ]
+    },
+    "Calcium and vitamin D": {
+      "nutrients": [
+        "calcium",
+        "vitamin-d"
+      ]
+    },
+    "Carbohydrates": {
+      "nutrients": [
+        "carbohydrates"
+      ]
+    },
+    "Protein": {
+      "nutrients": [
+        "proteins"
+      ]
+    },
+    "Foods with a low or reduced content of sodium": {
+      "nutrients": [
+        "sodium"
+      ],
+      "type": "negative"
+    },
+    "Foods with a low or reduced content of saturated fatty acids": {
+      "nutrients": [
+        "saturated-fat"
+      ],
+      "type": "negative"
+    },
+    "Folic Acid": {
+      "nutrients": [],
+      "reason": "supplemental folic acid in pregnancy, not a food claim"
+    },
+    "Fructose": {
+      "nutrients": [],
+      "reason": "comparison with sucrose/glucose, not a function of fructose itself"
+    },
+    "Carbohydrate solutions": {
+      "nutrients": [],
+      "reason": "sports drinks, not foods"
+    },
+    "Carbohydrate-electrolyte solutions": {
+      "nutrients": [],
+      "reason": "sports drinks, not foods"
+    },
+    "&alpha;-linolenic acid (ALA) & linoleic acid (LA), essential fatty acids": {
+      "nutrients": [],
+      "reason": "children's growth"
+    }
+  },
+  "rules": [
+    {
+      "pattern": "protein contributes to the maintenance of normal bones",
+      "goals": [
+        "bone_health"
+      ],
+      "weight": 0.5,
+      "why": "supporting role: calcium and vitamin D are the primary bone nutrients; at full weight lean meat outranked dairy for bones"
+    },
+    {
+      "pattern": "dha and epa contribute to the maintenance of normal blood pressure",
+      "goals": [
+        "blood_pressure_support"
+      ],
+      "weight": 0.3,
+      "why": "condition of use: 3 g EPA+DHA per day, a supplement dose"
+    },
+    {
+      "pattern": "(dha and epa|dha) contributes? to the maintenance of normal blood triglyceride",
+      "goals": [
+        "heart_health"
+      ],
+      "weight": 0.3,
+      "why": "condition of use: 2 g EPA+DHA per day"
+    },
+    {
+      "pattern": "carbohydrates contribute to the maintenance of normal brain function",
+      "goals": [
+        "cognitive_function"
+      ],
+      "weight": 0.3,
+      "why": "condition of use: 130 g carbohydrate per day, met by any ordinary diet"
+    },
+    {
+      "pattern": "increases? iron absorption|improvement of iron absorption",
+      "goals": [
+        "iron_support"
+      ],
+      "weight": 0.8,
+      "type": "enhancer"
+    },
+    {
+      "pattern": "iron transport|metabolism of iron|iron metabolism",
+      "goals": [
+        "iron_support"
+      ],
+      "weight": 0.4
+    },
+    {
+      "pattern": "red blood cell|haemoglobin|hemoglobin|blood formation|oxygen transport",
+      "goals": [
+        "healthy_blood"
+      ],
+      "weight": 0.9
+    },
+    {
+      "pattern": "blood clotting|blood coagulation",
+      "goals": [
+        "healthy_blood"
+      ],
+      "weight": 0.6
+    },
+    {
+      "pattern": "children|infant|foetus|fetus|maternal|pregnan",
+      "goals": []
+    },
+    {
+      "pattern": "risk of falling",
+      "goals": []
+    },
+    {
+      "pattern": "collagen formation for the normal function of bones",
+      "goals": [
+        "bone_health"
+      ],
+      "weight": 0.4,
+      "why": "indirect: collagen matrix, not mineralisation"
+    },
+    {
+      "pattern": "collagen formation for the normal function of cartilage",
+      "goals": [
+        "joint_health"
+      ],
+      "weight": 0.5
+    },
+    {
+      "pattern": "collagen formation for the normal function of skin",
+      "goals": [
+        "skin_health"
+      ],
+      "weight": 0.6
+    },
+    {
+      "pattern": "collagen formation for the normal function of blood vessels",
+      "goals": [
+        "heart_health"
+      ],
+      "weight": 0.4
+    },
+    {
+      "pattern": "loss of bone mineral|normal bones?\\b|\\bbone\\b",
+      "goals": [
+        "bone_health"
+      ],
+      "weight": 0.9
+    },
+    {
+      "pattern": "collagen formation for the normal function of cartilage|connective tissue|\\bjoints?\\b",
+      "goals": [
+        "joint_health"
+      ],
+      "weight": 0.6
+    },
+    {
+      "pattern": "skin pigmentation",
+      "goals": [
+        "skin_health"
+      ],
+      "weight": 0.4
+    },
+    {
+      "pattern": "collagen formation for the normal function of skin|normal skin\\b|\\bskin\\b(?! pigmentation)",
+      "goals": [
+        "skin_health"
+      ],
+      "weight": 0.75
+    },
+    {
+      "pattern": "collagen formation for the normal function of blood vessels|elasticity of blood vessels|blood circulation|blood flow",
+      "goals": [
+        "heart_health"
+      ],
+      "weight": 0.5
+    },
+    {
+      "pattern": "hair pigmentation",
+      "goals": [
+        "hair_health"
+      ],
+      "weight": 0.5
+    },
+    {
+      "pattern": "\\bhair\\b",
+      "goals": [
+        "hair_health"
+      ],
+      "weight": 0.7
+    },
+    {
+      "pattern": "teeth|tooth|gums|dental|plaque|oral",
+      "goals": []
+    },
+    {
+      "pattern": "\\bnails\\b|mucous membranes",
+      "goals": []
+    },
+    {
+      "pattern": "recovery of normal muscle function",
+      "goals": [
+        "recovery",
+        "muscle_recovery"
+      ],
+      "weight": 0.7
+    },
+    {
+      "pattern": "tiredness|fatigue|energy and vitality",
+      "goals": [
+        "energy_metabolism"
+      ],
+      "weight": 0.85
+    },
+    {
+      "pattern": "energy-yielding metabolism|energy yielding metabolism",
+      "goals": [
+        "energy_metabolism"
+      ],
+      "weight": 0.7
+    },
+    {
+      "pattern": "mental stress",
+      "goals": [
+        "stress_resilience"
+      ],
+      "weight": 0.7
+    },
+    {
+      "pattern": "psychological function",
+      "goals": [
+        "mood_support"
+      ],
+      "weight": 0.75
+    },
+    {
+      "pattern": "cognitive function|brain function",
+      "goals": [
+        "cognitive_function"
+      ],
+      "weight": 0.85
+    },
+    {
+      "pattern": "mental performance",
+      "goals": [
+        "cognitive_function"
+      ],
+      "weight": 0.7
+    },
+    {
+      "pattern": "nervous system|neurotransmission",
+      "goals": [
+        "cognitive_function"
+      ],
+      "weight": 0.4
+    },
+    {
+      "pattern": "fall asleep|sleep",
+      "goals": [
+        "sleep_support"
+      ],
+      "weight": 0.8
+    },
+    {
+      "pattern": "immune system|immune",
+      "goals": [
+        "immune_support"
+      ],
+      "weight": 0.85
+    },
+    {
+      "pattern": "\\bvision\\b|visual|\\beye\\b|\\blens\\b",
+      "goals": [
+        "vision_support"
+      ],
+      "weight": 0.85
+    },
+    {
+      "pattern": "thyroid",
+      "goals": [
+        "thyroid_support"
+      ],
+      "weight": 0.9
+    },
+    {
+      "pattern": "blood pressure",
+      "goals": [
+        "blood_pressure_support"
+      ],
+      "weight": 0.85
+    },
+    {
+      "pattern": "function of the heart|cardiac function|heart and blood vessels",
+      "goals": [
+        "heart_health"
+      ],
+      "weight": 0.85
+    },
+    {
+      "pattern": "triglyceride",
+      "goals": [
+        "heart_health"
+      ],
+      "weight": 0.5
+    },
+    {
+      "pattern": "cholesterol",
+      "goals": [
+        "cholesterol_management"
+      ],
+      "weight": 0.85
+    },
+    {
+      "pattern": "blood glucose|glycaemic|glycemic",
+      "goals": [
+        "blood_sugar_regulation"
+      ],
+      "weight": 0.8
+    },
+    {
+      "pattern": "body weight|weight loss|weight control|maintenance of weight",
+      "goals": [
+        "weight_management"
+      ],
+      "weight": 0.7
+    },
+    {
+      "pattern": "oxidative stress|oxidative damage|photo-oxidative",
+      "goals": [
+        "antioxidant_support"
+      ],
+      "weight": 0.8
+    },
+    {
+      "pattern": "muscle mass",
+      "goals": [
+        "muscle_recovery"
+      ],
+      "weight": 0.9
+    },
+    {
+      "pattern": "muscle function|muscle",
+      "goals": [
+        "muscle_recovery"
+      ],
+      "weight": 0.7
+    },
+    {
+      "pattern": "endurance|physical performance",
+      "goals": [
+        "endurance_support"
+      ],
+      "weight": 0.7
+    },
+    {
+      "pattern": "macronutrient metabolism|carbohydrate metabolism|metabolism of fatty acids|lipid metabolism|protein and glycogen metabolism|fat metabolism",
+      "goals": [
+        "metabolic_support"
+      ],
+      "weight": 0.6
+    },
+    {
+      "pattern": "bowel|faecal bulk|intestinal transit|digestion|flatulence",
+      "goals": [
+        "digestive_health"
+      ],
+      "weight": 0.7
+    },
+    {
+      "pattern": "cell division|cell specialisation|specialisation|dna synthesis|fertility|spermatogenesis|testosterone|homocysteine|amino acid synthesis|protein synthesis|cysteine|hormonal|steroid hormones|digestive enzymes|cell membranes|acid-base|vitamin e\\b|vitamin a\\b|sulphur amino|liver function|electrolyte|blood calcium|absorption/utilisation of calcium|prostate|xenobiotic|body.s temperature|growth",
+      "goals": []
+    }
+  ],
+  "rejection_reasons": {
+    "HC_RR_130": {
+      "demote": true,
+      "text": "the evidence provided is insufficient to substantiate this claimed effect"
+    },
+    "HC_RR_132": {
+      "demote": true,
+      "text": "this claimed effect has not been substantiated"
+    },
+    "HC_RR_134": {
+      "demote": false,
+      "text": "the claimed effect is not sufficiently defined to be assessed"
+    },
+    "HC_RR_152": {
+      "demote": false,
+      "text": "the claimed effect is not linked to a function of the body"
+    }
+  }
+}

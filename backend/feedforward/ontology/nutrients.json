@@ -1,0 +1,904 @@
+{
+ "_note": [
+  "Canonical nutrient vocabulary. Every importer resolves its own labels and codes to these ids; the engine only ever sees the ids.",
+  "The ids are the historical engine keys and must stay stable: edges, DRIs, interactions and tests refer to them.",
+  "unit is the canonical per-100 g unit the engine assumes. Importers convert into it with ontology/units.py.",
+  "infoods is the FAO/INFOODS tagname for the exact definition we store (e.g. TOCPHA, not VITE, because USDA 1109 is alpha-tocopherol). null means no single tagname describes the value.",
+  "codes.usda are internal FDC nutrient ids from nutrient.csv (verified in data/ingest/usda_bulk.py). codes.off is the OpenFoodFacts nutriment key.",
+  "EU table codes (CIQUAL, Fineli, CREA) are added when their importers are written against the real files, not before.",
+  "usda_sum lists FDC components summed into a derived nutrient (omega-3, EPA+DHA). They are not identifiers and are not resolvable as codes.",
+  "A codes.usda list with several ids means 'first id present, in this order' (folate: DFE then total; energy; sugars)."
+ ],
+ "nutrients": [
+  {
+   "id": "energy-kcal",
+   "infoods": "ENERC",
+   "unit": "kcal",
+   "group": "energy",
+   "names": {
+    "en": "Energy",
+    "it": "Energia",
+    "fr": "Énergie"
+   },
+   "aliases": [
+    "energy",
+    "calories",
+    "energia",
+    "calorie",
+    "énergie",
+    "valeur énergétique",
+    "valore energetico"
+   ],
+   "codes": {
+    "usda": [
+     "1008",
+     "2048",
+     "2047"
+    ],
+    "off": "energy-kcal"
+   },
+   "note": "kcal by the classic method (1008) when published; Foundation foods mostly publish Atwater energy instead, specific factors (2048) preferred over general (2047). Only one value is kept, never a sum."
+  },
+  {
+   "id": "proteins",
+   "infoods": "PROCNT",
+   "unit": "g",
+   "group": "macro",
+   "names": {
+    "en": "Protein",
+    "it": "Proteine",
+    "fr": "Protéines"
+   },
+   "aliases": [
+    "protein",
+    "proteins",
+    "proteine",
+    "proteina",
+    "protéines",
+    "protéine"
+   ],
+   "codes": {
+    "usda": [
+     "1003"
+    ],
+    "off": "proteins"
+   }
+  },
+  {
+   "id": "fat",
+   "infoods": "FAT",
+   "unit": "g",
+   "group": "macro",
+   "names": {
+    "en": "Fat",
+    "it": "Grassi",
+    "fr": "Lipides"
+   },
+   "aliases": [
+    "fat",
+    "total fat",
+    "total lipid",
+    "grassi",
+    "lipidi",
+    "grassi totali",
+    "lipides",
+    "matières grasses"
+   ],
+   "codes": {
+    "usda": [
+     "1004"
+    ],
+    "off": "fat"
+   }
+  },
+  {
+   "id": "carbohydrates",
+   "infoods": "CHOAVL",
+   "unit": "g",
+   "group": "macro",
+   "names": {
+    "en": "Carbohydrates",
+    "it": "Carboidrati",
+    "fr": "Glucides"
+   },
+   "aliases": [
+    "carbohydrate",
+    "carbohydrates",
+    "carbs",
+    "carboidrati",
+    "carboidrati disponibili",
+    "glucides"
+   ],
+   "codes": {
+    "usda": [
+     "1005"
+    ],
+    "off": "carbohydrates"
+   },
+   "note": "USDA 1005 is carbohydrate by difference; EU tables report available carbohydrate. The two differ by roughly the fibre content."
+  },
+  {
+   "id": "fiber",
+   "infoods": "FIBTG",
+   "unit": "g",
+   "group": "macro",
+   "names": {
+    "en": "Fibre",
+    "it": "Fibra alimentare",
+    "fr": "Fibres alimentaires"
+   },
+   "aliases": [
+    "fiber",
+    "fibre",
+    "dietary fiber",
+    "dietary fibre",
+    "fibra",
+    "fibra alimentare",
+    "fibre alimentari",
+    "fibres alimentaires",
+    "fibres"
+   ],
+   "codes": {
+    "usda": [
+     "1079"
+    ],
+    "off": "fiber"
+   }
+  },
+  {
+   "id": "sugars",
+   "infoods": "SUGAR",
+   "unit": "g",
+   "group": "macro",
+   "names": {
+    "en": "Sugars",
+    "it": "Zuccheri",
+    "fr": "Sucres"
+   },
+   "aliases": [
+    "sugar",
+    "sugars",
+    "total sugars",
+    "zuccheri",
+    "zuccheri solubili",
+    "sucres"
+   ],
+   "codes": {
+    "usda": [
+     "2000",
+     "1063"
+    ],
+    "off": "sugars"
+   },
+   "note": "USDA publishes total sugars under two ids: 2000 in most SR Legacy foods, 1063 (NLEA) in the rest of SR and in Foundation. The first present is used."
+  },
+  {
+   "id": "saturated-fat",
+   "infoods": "FASAT",
+   "unit": "g",
+   "group": "macro",
+   "names": {
+    "en": "Saturated Fat",
+    "it": "Acidi grassi saturi",
+    "fr": "Acides gras saturés"
+   },
+   "aliases": [
+    "saturated fat",
+    "saturated fatty acids",
+    "fatty acids total saturated",
+    "acidi grassi saturi",
+    "grassi saturi",
+    "acides gras saturés",
+    "ag saturés"
+   ],
+   "codes": {
+    "usda": [
+     "1258"
+    ],
+    "off": "saturated-fat"
+   }
+  },
+  {
+   "id": "omega-3-fat",
+   "infoods": null,
+   "unit": "g",
+   "group": "macro",
+   "names": {
+    "en": "Omega-3",
+    "it": "Omega-3",
+    "fr": "Oméga-3"
+   },
+   "aliases": [
+    "omega-3",
+    "omega 3",
+    "omega-3 fatty acids",
+    "acidi grassi omega-3",
+    "oméga-3",
+    "acides gras oméga-3"
+   ],
+   "codes": {
+    "off": "omega-3-fat"
+   },
+   "note": "Derived: ALA + EPA + DHA. No single INFOODS tagname; the components are F18D3N3, F20D5N3, F22D6N3.",
+   "usda_sum": [
+    "1404",
+    "1278",
+    "1272"
+   ]
+  },
+  {
+   "id": "salt",
+   "infoods": "NACL",
+   "unit": "g",
+   "group": "limit",
+   "names": {
+    "en": "Salt",
+    "it": "Sale",
+    "fr": "Sel"
+   },
+   "aliases": [
+    "salt",
+    "sale",
+    "sel",
+    "sel chlorure de sodium",
+    "sodium chloride"
+   ],
+   "codes": {
+    "off": "salt"
+   },
+   "note": "EU labelling salt = sodium x 2.5 (Reg. 1169/2011)."
+  },
+  {
+   "id": "sodium",
+   "infoods": "NA",
+   "unit": "mg",
+   "group": "mineral",
+   "names": {
+    "en": "Sodium",
+    "it": "Sodio",
+    "fr": "Sodium"
+   },
+   "aliases": [
+    "sodium",
+    "sodio"
+   ],
+   "codes": {
+    "usda": [
+     "1093"
+    ],
+    "off": "sodium"
+   }
+  },
+  {
+   "id": "calcium",
+   "infoods": "CA",
+   "unit": "mg",
+   "group": "mineral",
+   "names": {
+    "en": "Calcium",
+    "it": "Calcio",
+    "fr": "Calcium"
+   },
+   "aliases": [
+    "calcium",
+    "calcio"
+   ],
+   "codes": {
+    "usda": [
+     "1087"
+    ],
+    "off": "calcium"
+   }
+  },
+  {
+   "id": "iron",
+   "infoods": "FE",
+   "unit": "mg",
+   "group": "mineral",
+   "names": {
+    "en": "Iron",
+    "it": "Ferro",
+    "fr": "Fer"
+   },
+   "aliases": [
+    "iron",
+    "ferro",
+    "fer"
+   ],
+   "codes": {
+    "usda": [
+     "1089"
+    ],
+    "off": "iron"
+   }
+  },
+  {
+   "id": "magnesium",
+   "infoods": "MG",
+   "unit": "mg",
+   "group": "mineral",
+   "names": {
+    "en": "Magnesium",
+    "it": "Magnesio",
+    "fr": "Magnésium"
+   },
+   "aliases": [
+    "magnesium",
+    "magnesio",
+    "magnésium"
+   ],
+   "codes": {
+    "usda": [
+     "1090"
+    ],
+    "off": "magnesium"
+   }
+  },
+  {
+   "id": "phosphorus",
+   "infoods": "P",
+   "unit": "mg",
+   "group": "mineral",
+   "names": {
+    "en": "Phosphorus",
+    "it": "Fosforo",
+    "fr": "Phosphore"
+   },
+   "aliases": [
+    "phosphorus",
+    "fosforo",
+    "phosphore"
+   ],
+   "codes": {
+    "usda": [
+     "1091"
+    ],
+    "off": "phosphorus"
+   }
+  },
+  {
+   "id": "potassium",
+   "infoods": "K",
+   "unit": "mg",
+   "group": "mineral",
+   "names": {
+    "en": "Potassium",
+    "it": "Potassio",
+    "fr": "Potassium"
+   },
+   "aliases": [
+    "potassium",
+    "potassio"
+   ],
+   "codes": {
+    "usda": [
+     "1092"
+    ],
+    "off": "potassium"
+   }
+  },
+  {
+   "id": "zinc",
+   "infoods": "ZN",
+   "unit": "mg",
+   "group": "mineral",
+   "names": {
+    "en": "Zinc",
+    "it": "Zinco",
+    "fr": "Zinc"
+   },
+   "aliases": [
+    "zinc",
+    "zinco"
+   ],
+   "codes": {
+    "usda": [
+     "1095"
+    ],
+    "off": "zinc"
+   }
+  },
+  {
+   "id": "copper",
+   "infoods": "CU",
+   "unit": "mg",
+   "group": "mineral",
+   "names": {
+    "en": "Copper",
+    "it": "Rame",
+    "fr": "Cuivre"
+   },
+   "aliases": [
+    "copper",
+    "rame",
+    "cuivre"
+   ],
+   "codes": {
+    "usda": [
+     "1098"
+    ],
+    "off": "copper"
+   }
+  },
+  {
+   "id": "manganese",
+   "infoods": "MN",
+   "unit": "mg",
+   "group": "mineral",
+   "names": {
+    "en": "Manganese",
+    "it": "Manganese",
+    "fr": "Manganèse"
+   },
+   "aliases": [
+    "manganese",
+    "manganèse"
+   ],
+   "codes": {
+    "usda": [
+     "1101"
+    ],
+    "off": "manganese"
+   }
+  },
+  {
+   "id": "selenium",
+   "infoods": "SE",
+   "unit": "µg",
+   "group": "mineral",
+   "names": {
+    "en": "Selenium",
+    "it": "Selenio",
+    "fr": "Sélénium"
+   },
+   "aliases": [
+    "selenium",
+    "selenio",
+    "sélénium"
+   ],
+   "codes": {
+    "usda": [
+     "1103"
+    ],
+    "off": "selenium"
+   }
+  },
+  {
+   "id": "vitamin-a",
+   "infoods": "VITA_RAE",
+   "unit": "µg",
+   "group": "vitamin",
+   "names": {
+    "en": "Vitamin A",
+    "it": "Vitamina A",
+    "fr": "Vitamine A"
+   },
+   "aliases": [
+    "vitamin a",
+    "vitamin a rae",
+    "vitamina a",
+    "vitamina a rae",
+    "vitamine a",
+    "retinol activity equivalents"
+   ],
+   "codes": {
+    "usda": [
+     "1106"
+    ],
+    "off": "vitamin-a"
+   },
+   "note": "Retinol activity equivalents. Retinol alone and beta-carotene alone are NOT aliases: they are different quantities, and RAE must be computed from both."
+  },
+  {
+   "id": "vitamin-c",
+   "infoods": "VITC",
+   "unit": "mg",
+   "group": "vitamin",
+   "names": {
+    "en": "Vitamin C",
+    "it": "Vitamina C",
+    "fr": "Vitamine C"
+   },
+   "aliases": [
+    "vitamin c",
+    "ascorbic acid",
+    "total ascorbic acid",
+    "vitamina c",
+    "acido ascorbico",
+    "vitamine c",
+    "acide ascorbique"
+   ],
+   "codes": {
+    "usda": [
+     "1162"
+    ],
+    "off": "vitamin-c"
+   }
+  },
+  {
+   "id": "vitamin-d",
+   "infoods": "VITD",
+   "unit": "µg",
+   "group": "vitamin",
+   "names": {
+    "en": "Vitamin D",
+    "it": "Vitamina D",
+    "fr": "Vitamine D"
+   },
+   "aliases": [
+    "vitamin d",
+    "vitamin d d2 d3",
+    "vitamina d",
+    "vitamine d",
+    "calciferol"
+   ],
+   "codes": {
+    "usda": [
+     "1114"
+    ],
+    "off": "vitamin-d"
+   },
+   "note": "D2 + D3 in µg. IU convert at 40 IU = 1 µg."
+  },
+  {
+   "id": "vitamin-e",
+   "infoods": "TOCPHA",
+   "unit": "mg",
+   "group": "vitamin",
+   "names": {
+    "en": "Vitamin E",
+    "it": "Vitamina E",
+    "fr": "Vitamine E"
+   },
+   "aliases": [
+    "vitamin e",
+    "alpha-tocopherol",
+    "vitamin e alpha tocopherol",
+    "vitamina e",
+    "alfa-tocoferolo",
+    "vitamine e",
+    "alpha-tocophérol"
+   ],
+   "codes": {
+    "usda": [
+     "1109"
+    ],
+    "off": "vitamin-e"
+   }
+  },
+  {
+   "id": "vitamin-k",
+   "infoods": "VITK1",
+   "unit": "µg",
+   "group": "vitamin",
+   "names": {
+    "en": "Vitamin K",
+    "it": "Vitamina K",
+    "fr": "Vitamine K"
+   },
+   "aliases": [
+    "vitamin k",
+    "vitamin k1",
+    "phylloquinone",
+    "vitamina k",
+    "vitamina k1",
+    "fillochinone",
+    "vitamine k",
+    "vitamine k1",
+    "phylloquinone"
+   ],
+   "codes": {
+    "usda": [
+     "1185"
+    ],
+    "off": "vitamin-k"
+   }
+  },
+  {
+   "id": "folate",
+   "infoods": "FOLDFE",
+   "unit": "µg",
+   "group": "vitamin",
+   "names": {
+    "en": "Folate",
+    "it": "Folati",
+    "fr": "Folates"
+   },
+   "aliases": [
+    "folate",
+    "folates",
+    "vitamin b9",
+    "folate dfe",
+    "folati",
+    "vitamina b9",
+    "acido folico",
+    "vitamine b9",
+    "folates totaux"
+   ],
+   "codes": {
+    "usda": [
+     "1190",
+     "1177"
+    ],
+    "off": "vitamin-b9"
+   },
+   "note": "DFE preferred (USDA 1190). Total folate (USDA 1177, most EU tables) is accepted and flagged on the record as not DFE."
+  },
+  {
+   "id": "vitamin-b12",
+   "infoods": "VITB12",
+   "unit": "µg",
+   "group": "vitamin",
+   "names": {
+    "en": "Vitamin B12",
+    "it": "Vitamina B12",
+    "fr": "Vitamine B12"
+   },
+   "aliases": [
+    "vitamin b12",
+    "vitamin b-12",
+    "cobalamin",
+    "vitamina b12",
+    "cobalamina",
+    "vitamine b12",
+    "cobalamine"
+   ],
+   "codes": {
+    "usda": [
+     "1178"
+    ],
+    "off": "vitamin-b12"
+   }
+  },
+  {
+   "id": "thiamin",
+   "infoods": "THIA",
+   "unit": "mg",
+   "group": "vitamin",
+   "names": {
+    "en": "Thiamin (B1)",
+    "it": "Tiamina (B1)",
+    "fr": "Thiamine (B1)"
+   },
+   "aliases": [
+    "thiamin",
+    "thiamine",
+    "vitamin b1",
+    "tiamina",
+    "vitamina b1",
+    "vitamine b1"
+   ],
+   "codes": {
+    "usda": [
+     "1165"
+    ],
+    "off": "vitamin-b1"
+   }
+  },
+  {
+   "id": "riboflavin",
+   "infoods": "RIBF",
+   "unit": "mg",
+   "group": "vitamin",
+   "names": {
+    "en": "Riboflavin (B2)",
+    "it": "Riboflavina (B2)",
+    "fr": "Riboflavine (B2)"
+   },
+   "aliases": [
+    "riboflavin",
+    "vitamin b2",
+    "riboflavina",
+    "vitamina b2",
+    "riboflavine",
+    "vitamine b2"
+   ],
+   "codes": {
+    "usda": [
+     "1166"
+    ],
+    "off": "vitamin-b2"
+   }
+  },
+  {
+   "id": "niacin",
+   "infoods": "NIA",
+   "unit": "mg",
+   "group": "vitamin",
+   "names": {
+    "en": "Niacin (B3)",
+    "it": "Niacina (B3)",
+    "fr": "Niacine (B3)"
+   },
+   "aliases": [
+    "niacin",
+    "vitamin b3",
+    "nicotinic acid",
+    "vitamin pp",
+    "niacina",
+    "vitamina b3",
+    "vitamina pp",
+    "niacine",
+    "vitamine b3",
+    "vitamine pp"
+   ],
+   "codes": {
+    "usda": [
+     "1167"
+    ],
+    "off": "vitamin-pp"
+   },
+   "note": "Preformed niacin (USDA 1167), not niacin equivalents: tryptophan-derived niacin is not counted, so protein-rich foods are understated against the NE-based DRI."
+  },
+  {
+   "id": "vitamin-b6",
+   "infoods": "VITB6A",
+   "unit": "mg",
+   "group": "vitamin",
+   "names": {
+    "en": "Vitamin B6",
+    "it": "Vitamina B6",
+    "fr": "Vitamine B6"
+   },
+   "aliases": [
+    "vitamin b6",
+    "vitamin b-6",
+    "pyridoxine",
+    "vitamina b6",
+    "piridossina",
+    "vitamine b6"
+   ],
+   "codes": {
+    "usda": [
+     "1175"
+    ],
+    "off": "vitamin-b6"
+   }
+  },
+  {
+   "id": "pantothenic-acid",
+   "infoods": "PANTAC",
+   "unit": "mg",
+   "group": "vitamin",
+   "names": {
+    "en": "Pantothenic acid (B5)",
+    "it": "Acido pantotenico (B5)",
+    "fr": "Acide pantothénique (B5)"
+   },
+   "aliases": [
+    "pantothenic acid",
+    "vitamin b5",
+    "acido pantotenico",
+    "vitamina b5",
+    "acide pantothenique",
+    "vitamine b5"
+   ],
+   "codes": {
+    "usda": [
+     "1170"
+    ],
+    "off": "pantothenic-acid"
+   }
+  },
+  {
+   "id": "biotin",
+   "infoods": "BIOT",
+   "unit": "µg",
+   "group": "vitamin",
+   "names": {
+    "en": "Biotin",
+    "it": "Biotina",
+    "fr": "Biotine"
+   },
+   "aliases": [
+    "biotin",
+    "vitamin b7",
+    "vitamin h",
+    "biotina",
+    "biotine",
+    "vitamine b8"
+   ],
+   "codes": {
+    "usda": [
+     "1176"
+    ],
+    "off": "biotin"
+   },
+   "note": "USDA reports biotin for under 1,000 foods; absence is 'not analysed', not zero."
+  },
+  {
+   "id": "choline",
+   "infoods": null,
+   "unit": "mg",
+   "group": "vitamin",
+   "names": {
+    "en": "Choline",
+    "it": "Colina",
+    "fr": "Choline"
+   },
+   "aliases": [
+    "choline",
+    "choline total",
+    "colina"
+   ],
+   "codes": {
+    "usda": [
+     "1180"
+    ],
+    "off": "choline"
+   },
+   "note": "Total choline (USDA 1180). INFOODS tagname to be confirmed against the EU tables."
+  },
+  {
+   "id": "iodine",
+   "infoods": "ID",
+   "unit": "µg",
+   "group": "mineral",
+   "names": {
+    "en": "Iodine",
+    "it": "Iodio",
+    "fr": "Iode"
+   },
+   "aliases": [
+    "iodine",
+    "iodio",
+    "iode"
+   ],
+   "codes": {
+    "usda": [
+     "1100"
+    ],
+    "off": "iodine"
+   },
+   "note": "USDA SR/Foundation report iodine for ~480 foods only; EU tables (CIQUAL) are the better source."
+  },
+  {
+   "id": "epa-dha",
+   "infoods": null,
+   "unit": "g",
+   "group": "macro",
+   "names": {
+    "en": "EPA + DHA",
+    "it": "EPA + DHA",
+    "fr": "EPA + DHA"
+   },
+   "aliases": [
+    "epa and dha",
+    "epa dha",
+    "dha and epa",
+    "epa + dha",
+    "eicosapentaenoic acid and docosahexaenoic acid",
+    "docosahexaenoic acid and eicosapentaenoic acid"
+   ],
+   "codes": {},
+   "usda_sum": [
+    "1278",
+    "1272"
+   ],
+   "note": "Derived: EPA (F20D5N3) + DHA (F22D6N3). Also the proxy for DHA-only claims: fish that contain one contain the other."
+  },
+  {
+   "id": "ala",
+   "infoods": "F18D3N3",
+   "unit": "g",
+   "group": "macro",
+   "names": {
+    "en": "Alpha-linolenic acid (ALA)",
+    "it": "Acido alfa-linolenico (ALA)",
+    "fr": "Acide alpha-linolénique (ALA)"
+   },
+   "aliases": [
+    "alpha-linolenic acid",
+    "alpha linolenic acid",
+    "acido alfa-linolenico",
+    "acide alpha-linolenique"
+   ],
+   "codes": {
+    "usda": [
+     "1404"
+    ],
+    "off": "alpha-linolenic-acid"
+   }
+  }
+ ]
+}

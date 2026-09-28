@@ -1,0 +1,1079 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FeedForward Explorer</title>
+<!--
+Design notes (progressive disclosure, v2):
+  Level 1  one question per screen, few choices (8 main goals), 5 results, one
+           sentence per food, an icon and a plain name. No scores, no badges.
+  Level 2  "Why?" on a food: the EU claim wording, what else it provides, a
+           pairing tip, plain-language watch-outs.
+  Level 3  "Show the science" (Settings): evidence grades, citations, raw scores.
+"My week" (first tab): a short setup stored in this browser, then a weekly
+plan within budget at one shop. The plan opens on Today (day strip), with Week
+and Shopping (checkable) one tap away. The My week answers ARE the profile:
+the header chip and every other tab use them; the Settings sheet only edits
+diet and detail once they exist.
+Phones (< 700 px): the top tabs become a bottom bar (Week, Foods, List, More).
+Everyday foods are ranked first (engine/familiarity.py). "Why?" shows the
+food -> nutrient -> goal graph. The Dictionary (nutrients, foods, terms) cites a
+source for every entry. Theme: system, light or
+dark (◐). The shopping list lives in this browser (localStorage).
+Icons are emoji placeholders per food group until real food images exist.
+Wording avoids the regulated EU nutrition-claim terms ("source of", "high in",
+"rich in"): it states the share of daily need instead.
+-->
+<style>
+:root {
+  --bg: #f7f7f4; --surface: #ffffff; --soft: #f0f1ec; --text: #1f2522; --muted: #6b746f;
+  --line: #e4e6e0; --accent: #2e7a58; --accent-soft: #e3f1e9; --note: #8a5a1c; --note-soft: #fbf1e3;
+  --radius: 14px;
+}
+/* Theme: follows the system unless the user picks one (data-theme on <html>). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #121614; --surface: #1a1f1c; --soft: #232a26; --text: #e7ece9; --muted: #9ba7a0;
+    --line: #2c3530; --accent: #63c393; --accent-soft: #1f3529; --note: #e5ad6b; --note-soft: #33281b; }
+}
+:root[data-theme="dark"] { --bg: #121614; --surface: #1a1f1c; --soft: #232a26; --text: #e7ece9; --muted: #9ba7a0;
+    --line: #2c3530; --accent: #63c393; --accent-soft: #1f3529; --note: #e5ad6b; --note-soft: #33281b; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+button { font: inherit; color: inherit; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+header { background: var(--surface); border-bottom: 1px solid var(--line); }
+.top { display: flex; align-items: center; gap: 12px; padding: 14px 0 6px; }
+.brand { font-weight: 700; font-size: 18px; }
+.brand span { color: var(--accent); }
+.for { margin-left: auto; background: var(--soft); border: none; border-radius: 999px; padding: 6px 14px; min-height: 40px;
+  font-size: 14px; color: var(--muted); cursor: pointer; }
+.for b { color: var(--text); font-weight: 600; }
+nav.top-tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+nav.top-tabs::-webkit-scrollbar { display: none; }
+nav.top-tabs button { background: none; border: none; padding: 10px 12px; color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent; font-size: 15px; white-space: nowrap; }
+nav.top-tabs button.on { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+.tabbar { display: none; }
+main { padding: 28px 0 60px; }
+h1 { font-size: 26px; line-height: 1.25; margin: 0 0 6px; letter-spacing: -.01em; }
+.lead { color: var(--muted); margin: 0 0 22px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 14px;
+  text-align: left; cursor: pointer; transition: border-color .15s; }
+.tile:hover { border-color: var(--accent); }
+.tile .ic { font-size: 26px; display: block; margin-bottom: 6px; }
+.tile b { display: block; font-size: 16px; }
+.tile small { color: var(--muted); font-size: 13px; }
+details.more { margin-top: 18px; }
+details.more summary { cursor: pointer; color: var(--accent); font-weight: 600; list-style: none; }
+details.more summary::-webkit-details-marker { display: none; }
+.more-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.pill-btn { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px;
+  cursor: pointer; font-size: 14px; }
+.pill-btn:hover { border-color: var(--accent); }
+.back { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0; margin-bottom: 14px; font-size: 15px; }
+.note { background: var(--note-soft); color: var(--note); border-radius: 10px; padding: 10px 12px; font-size: 14px; margin: 0 0 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+.row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; width: 100%; background: none;
+  border: none; text-align: left; cursor: pointer; }
+.icon { font-size: 28px; width: 40px; text-align: center; flex: none; }
+.name { font-weight: 600; }
+.sub { color: var(--muted); font-size: 14px; }
+.level { margin-left: auto; text-align: right; flex: none; }
+.dots { letter-spacing: 2px; color: var(--accent); font-size: 14px; }
+.dots i { color: var(--line); font-style: normal; }
+.chev { color: var(--muted); font-size: 13px; }
+.why { border-top: 1px solid var(--line); padding: 14px 16px 16px 70px; font-size: 15px; display: none; }
+.card.open .why { display: block; }
+.claim { border-left: 3px solid var(--accent); padding: 2px 0 2px 12px; margin: 0 0 12px; }
+.claim small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.claim.plain { border-left-color: var(--line); }
+.also { color: var(--muted); margin: 0 0 8px; }
+.tip { color: var(--accent); margin: 0 0 8px; }
+.watch { color: var(--note); margin: 0 0 8px; }
+.links { display: flex; gap: 16px; margin-top: 10px; font-size: 14px; }
+.link { background: none; border: none; color: var(--accent); cursor: pointer; padding: 0; }
+.science { display: none; margin-top: 10px; font-size: 12px; color: var(--muted); background: var(--soft);
+  border-radius: 8px; padding: 8px 10px; }
+body.science-on .science { display: block; }
+.showmore { display: block; margin: 16px auto 0; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 999px; padding: 8px 18px; cursor: pointer; color: var(--accent); font-weight: 600; }
+input[type=search] { width: 100%; font: inherit; color: var(--text); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.hero { display: flex; gap: 16px; align-items: center; margin-bottom: 8px; }
+.hero .icon { font-size: 44px; width: 56px; }
+.goodfor { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+details.sec { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin-top: 10px; }
+details.sec summary { cursor: pointer; padding: 14px 16px; font-weight: 600; }
+details.sec > div { padding: 0 16px 14px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+td { padding: 6px 4px; border-bottom: 1px solid var(--line); }
+td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--muted); }
+.bar { height: 6px; background: var(--soft); border-radius: 3px; overflow: hidden; min-width: 80px; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.presets { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 18px; }
+.presets button { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+.presets button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+select { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.primary { background: var(--accent); color: #fff; border: none; border-radius: 999px; padding: 10px 22px; font-weight: 600; cursor: pointer; }
+dialog { border: none; border-radius: 18px; padding: 0; width: min(440px, 92vw); background: var(--surface); color: var(--text); }
+dialog::backdrop { background: rgba(0,0,0,.35); }
+.sheet { padding: 20px; }
+.sheet h2 { margin: 0 0 14px; font-size: 20px; }
+.sheet label.opt { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; }
+.sheet fieldset { border: none; padding: 0; margin: 0 0 16px; }
+.sheet legend { font-weight: 600; margin-bottom: 6px; }
+.sheet .hint { color: var(--muted); font-size: 13px; }
+.muted { color: var(--muted); }
+.setup fieldset { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface);
+  padding: 14px 16px; margin: 0 0 12px; }
+.setup legend { font-weight: 600; padding: 0 6px; }
+.setup .grid2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.setup label.f { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--muted); }
+.setup input[type=number], .setup select { font: inherit; color: var(--text); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.choice { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice label { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; font-size: 14px; }
+.choice input { display: none; }
+.choice input:checked + span { color: var(--accent); font-weight: 600; }
+.choice label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.summary { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; margin: -8px 0 16px; color: var(--muted); }
+.summary b { color: var(--text); font-size: 20px; }
+.day { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 10px; }
+.day .dayh { margin: 0; padding: 12px 16px 4px; font-size: 15px; }
+.daystrip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 0 0 12px; }
+.daystrip button { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; min-height: 44px;
+  cursor: pointer; font-size: 14px; color: var(--muted); position: relative; }
+.daystrip button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.daystrip button.today::after { content: ""; position: absolute; left: 50%; bottom: 5px; width: 4px; height: 4px;
+  margin-left: -2px; border-radius: 50%; background: var(--accent); }
+.wseg { display: flex; width: 100%; margin: 0 0 14px; }
+.wseg button { flex: 1; min-height: 40px; }
+.meal .chev { display: inline-block; transition: transform .15s; }
+.meal[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.shop-row { display: grid; grid-template-columns: 28px 1fr auto auto; gap: 8px; align-items: center; padding: 8px 2px;
+  border-bottom: 1px solid var(--line); cursor: pointer; font-size: 15px; }
+.shop-row input { width: 20px; height: 20px; accent-color: var(--accent); margin: 0; }
+.shop-row .num { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; font-size: 14px; }
+.shop-row:has(input:checked) .nm, .shop-row:has(input:checked) .num { text-decoration: line-through; opacity: .55; }
+.shop-progress { font-size: 14px; color: var(--muted); margin: 4px 0 0; }
+.meal { display: flex; gap: 12px; align-items: center; padding: 8px 16px; width: 100%; background: none; border: none;
+  text-align: left; cursor: pointer; border-top: 1px solid var(--line); }
+.meal .when { width: 76px; flex: none; font-size: 13px; color: var(--muted); }
+.meal .what { flex: 1; }
+.meal .what small { display: block; color: var(--muted); font-size: 13px; }
+.meal .t { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.recipe { display: none; padding: 4px 16px 14px 104px; font-size: 14px; }
+.recipe.open { display: block; }
+.recipe ol, .recipe ul { margin: 6px 0; padding-left: 18px; }
+.snackline { padding: 8px 16px 12px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
+.badge-soft { white-space: nowrap; font-size: 11px; background: var(--accent-soft); color: var(--accent); border-radius: 6px; padding: 1px 6px; margin-left: 6px; }
+.cover-row { display: grid; grid-template-columns: 130px 1fr 52px; gap: 10px; align-items: center; font-size: 14px; padding: 3px 0; }
+.graph { width: 100%; height: auto; margin: 4px 0 12px; color: var(--text); }
+.graph .n-food, .graph .n-goal { fill: var(--accent-soft); stroke: var(--accent); }
+.graph .n-nut { fill: var(--surface); stroke: var(--line); }
+.graph text { fill: currentColor; font-size: 13px; }
+.graph .lbl { fill: var(--muted); font-size: 11px; }
+.graph .e-eu { stroke: var(--accent); fill: none; opacity: .75; }
+.graph .e-lit { stroke: var(--muted); fill: none; opacity: .5; stroke-dasharray: 5 4; }
+.graph [data-nutrient] { cursor: pointer; }
+.graph-legend { font-size: 12px; color: var(--muted); margin: -6px 0 12px; }
+.nlink { background: none; border: none; padding: 0; color: inherit; text-decoration: underline dotted;
+  text-underline-offset: 3px; cursor: pointer; }
+.seg { display: inline-flex; background: var(--soft); border-radius: 999px; padding: 3px; margin-bottom: 18px; }
+.seg button { background: none; border: none; border-radius: 999px; padding: 6px 16px; cursor: pointer; color: var(--muted); }
+.seg button.on { background: var(--surface); color: var(--text); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.group-title { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 16px 0 8px; }
+.fact { display: flex; gap: 18px; flex-wrap: wrap; margin: 6px 0 16px; }
+.fact div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+.fact b { display: block; font-size: 18px; }
+.fact small { color: var(--muted); }
+.claims li { margin-bottom: 6px; }
+.src { font-size: 13px; color: var(--muted); }
+.src a { color: var(--accent); }
+.wiki { display: flex; gap: 14px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 12px; margin: 12px 0; }
+.wiki img { width: 96px; height: 96px; object-fit: cover; border-radius: 10px; flex: none; }
+.wiki p { margin: 0 0 6px; font-size: 14px; }
+.term { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 8px; }
+.term summary { padding: 12px 16px; cursor: pointer; }
+.term summary b { display: block; }
+.term summary span { color: var(--muted); font-size: 14px; }
+.term > div { padding: 0 16px 14px; font-size: 15px; }
+.icon-btn { background: var(--soft); border: none; border-radius: 999px; width: 40px; height: 40px; cursor: pointer;
+  font-size: 16px; color: var(--muted); }
+.count { background: var(--accent); color: #fff; border-radius: 999px; font-size: 11px; padding: 0 6px;
+  margin-left: 4px; font-weight: 700; }
+.add { background: var(--accent-soft); color: var(--accent); border: none; border-radius: 999px; padding: 4px 12px;
+  cursor: pointer; font-size: 14px; font-weight: 600; }
+.add.done { background: var(--soft); color: var(--muted); }
+.list-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+.list-item .x { margin-left: auto; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.ghost { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+.loading { color: var(--muted); padding: 20px 0; }
+footer { font-size: 12px; color: var(--muted); padding: 24px 0 40px; }
+/* Phones: bottom tab bar, meal label above the dish. Kept last so it wins. */
+@media (max-width: 699px) {
+  nav.top-tabs { display: none; }
+  .top { padding: 10px 0; }
+  .for { max-width: 58vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tabbar { display: grid; grid-template-columns: repeat(4, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+  .tabbar button { background: none; border: none; min-height: 56px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 2px; font-size: 12px; color: var(--muted); cursor: pointer; position: relative; }
+  .tabbar button .ti { font-size: 20px; line-height: 1; }
+  .tabbar button.on { color: var(--accent); font-weight: 600; }
+  .tabbar .count { position: absolute; top: 6px; left: calc(50% + 6px); }
+  main { padding-bottom: 96px; }
+  footer { padding-bottom: 90px; }
+  .meal { flex-wrap: wrap; row-gap: 2px; }
+  .meal .when { flex-basis: 100%; width: auto; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .recipe { padding-left: 16px; }
+  .cover-row { grid-template-columns: 96px 1fr 48px; }
+  .wseg button { padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">Feed<span>Forward</span></div>
+      <button class="icon-btn" id="theme-btn" title="Theme: follows your system" aria-label="Switch light or dark theme" style="margin-left:auto">◐</button>
+      <button class="for" id="for-btn" title="Profile and diet" style="margin-left:0">For: <b id="for-label">adult woman</b> ✎</button>
+    </div>
+    <nav class="top-tabs" aria-label="Main">
+      <button data-tab="week" class="on">My week</button>
+      <button data-tab="find">Find foods</button>
+      <button data-tab="food">Look up</button>
+      <button data-tab="meal">Plan a meal</button>
+      <button data-tab="dict">Dictionary</button>
+      <button data-tab="list">My list<span class="count" data-list-count hidden></span></button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="tab-week"></section>
+  <section id="tab-find" hidden></section>
+  <section id="tab-food" hidden>
+    <div id="food-search">
+      <h1>Look up a food</h1>
+      <p class="lead">See what one portion gives you, and what to swap it for.</p>
+      <input type="search" id="q" placeholder="e.g. lentils, salmon, spinach">
+      <div id="search-results" style="margin-top:12px"></div>
+    </div>
+    <div id="food-detail" hidden></div>
+  </section>
+  <section id="tab-meal" hidden></section>
+  <section id="tab-list" hidden></section>
+  <section id="tab-dict" hidden></section>
+</main>
+
+<nav class="tabbar" aria-label="Main">
+  <button data-tab="week" class="on"><span class="ti" aria-hidden="true">📅</span>Week</button>
+  <button data-tab="find"><span class="ti" aria-hidden="true">🥕</span>Foods</button>
+  <button data-tab="list"><span class="ti" aria-hidden="true">🛒</span>List<span class="count" data-list-count hidden></span></button>
+  <button data-tab="more"><span class="ti" aria-hidden="true">⋯</span>More</button>
+</nav>
+
+<dialog id="more-sheet">
+  <form method="dialog" class="sheet">
+    <h2>More</h2>
+    <div class="more-list" style="flex-direction:column;align-items:stretch">
+      <button class="ghost" value="food" style="text-align:left">🔎 Look up a food</button>
+      <button class="ghost" value="meal" style="text-align:left">🍽️ Plan a meal</button>
+      <button class="ghost" value="dict" style="text-align:left">📖 Dictionary</button>
+      <button class="ghost" value="settings" style="text-align:left">⚙️ Profile and settings</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="wrap"><footer>
+  Information, not medical advice. Amounts use typical portions and daily reference intakes for your profile.
+  Only text marked "EU authorised health claim" is official claim wording (Regulation (EC) No 1924/2006).
+  Food icons are placeholders.<br>
+  Food composition: ANSES-CIQUAL 2020 and USDA FoodData Central. Products and prices: Open Food Facts and
+  Open Prices (ODbL). Health claims: EU Register of nutrition and health claims, © European Union.
+  Descriptions: Wikipedia (CC BY-SA).
+</footer></div>
+
+<dialog id="settings">
+  <form method="dialog" class="sheet">
+    <h2>Personalise</h2>
+    <fieldset><legend>Who is this for?</legend>
+      <div id="profile-summary" hidden></div>
+      <div id="demo-pick"><div id="demo-opts"></div>
+      <div class="hint">Daily needs differ: an adult woman needs 18 mg of iron, an adult man 8 mg.</div></div></fieldset>
+    <fieldset><legend>Diet</legend><div id="diet-opts"></div></fieldset>
+    <fieldset><legend>Detail</legend>
+      <label class="opt"><input type="checkbox" id="science"> Show the science (evidence grades, citations, scores)</label></fieldset>
+    <button class="primary" value="ok">Done</button>
+  </form>
+</dialog>
+
+<script>
+// ---------------------------------------------------------------- config
+const MAIN_GOALS = [
+  ["energy_metabolism", "⚡", "Energy", "Less tiredness"],
+  ["cognitive_function", "🧠", "Focus", "Clear thinking"],
+  ["mood_support", "🙂", "Mood", "Feeling balanced"],
+  ["sleep_support", "🌙", "Sleep", "Rest well"],
+  ["iron_support", "🩸", "Iron", "Iron levels"],
+  ["immune_support", "🛡️", "Immunity", "Body defences"],
+  ["bone_health", "🦴", "Bones", "Strong bones"],
+  ["heart_health", "❤️", "Heart", "Heart health"],
+];
+const DEMOS = [["adult_female", "Adult woman (19–50)", "adult woman"], ["adult_male", "Adult man (19–50)", "adult man"],
+  ["older_female", "Woman 51+", "woman 51+"], ["older_male", "Man 51+", "man 51+"], ["pregnancy", "Pregnancy", "pregnancy"],
+  ["lactation", "Breastfeeding", "breastfeeding"], ["teen", "Teenager (14–18)", "teenager"]];
+const DIETS = [["", "No restriction"], ["vegetarian", "Vegetarian"], ["vegan", "Vegan"]];
+const EXTRA = [["low_sodium", "Low salt"], ["low_sugar", "Low sugar"]];
+const ICONS = { fish_seafood: "🐟", caviar_roe: "🐟", meat: "🥩", organ_meats: "🥩", cured_meats: "🥓", pate_spread: "🥓",
+  eggs: "🥚", dairy: "🥛", milk_powder: "🥛", cheese: "🧀", soft_cheese: "🧀", legumes: "🫘", legumes_dry: "🫘",
+  tofu_tempeh: "🫘", textured_protein: "🫘", peanuts: "🥜", nuts_seeds: "🥜", nut_butter: "🥜", vegetables: "🥬",
+  fresh_herbs: "🌿", spices_herbs: "🌿", dried_vegetables: "🌶️", dried_vegetables_any: "🥬", dried_seaweed: "🌿",
+  starchy_veg: "🥔", potato_skin: "🥔", fruits: "🍎", dried_fruit: "🍇", dried_fruit_any: "🍇", olives: "🫒",
+  grains_dry: "🌾", grains_cooked: "🍚", flour: "🌾", bran_germ: "🌾", breakfast_cereal: "🥣", bread_baked: "🍞",
+  crispbread: "🍘", oils_fats: "🫒", fish_oil: "🫒", beverages: "🥤", beverage_concentrate: "🥤", espresso: "☕",
+  sweets_snacks: "🍫", spreads_sweeteners: "🍯", soups: "🍲", sauces: "🥫", mixed_dishes: "🍽️" };
+const WORD_ICONS = [[/\b(shrimp|prawn|crab|lobster|crustacean)/, "🦐"], [/\b(oyster|mussel|clam|scallop|mollus|squid|octopus)/, "🦪"],
+  [/\b(chicken|turkey|duck|goose|emu|grouse|quail|pheasant|poultry)\b/, "🍗"], [/\beggs?\b/, "🥚"], [/\bmushroom/, "🍄"],
+  [/\bcarrot/, "🥕"], [/\bbroccoli/, "🥦"], [/\bpeppers?\b/, "🫑"], [/\bavocado/, "🥑"], [/\bbanana/, "🍌"], [/\b(orange|citrus|lemon)/, "🍊"],
+  [/\bkiwi/, "🥝"], [/\b(berr|currant)/, "🫐"], [/\btomato/, "🍅"], [/\b(milk|yogurt|kefir)\b/, "🥛"], [/\bcheese/, "🧀"],
+  [/\b(fish|salmon|tuna|cod|sardine|trout|pollock)\b/, "🐟"], [/\b(corn ?flakes|cereal)/, "🥣"]];
+// Words that only describe preparation or grading, dropped from display names.
+const FILLER = /^(raw|cooked|imported|domestic|new zealand|australian|farmed|wild|wild caught|boiled|drained|without salt|with salt|dry heat|moist heat|fresh|frozen|canned|unprepared|prepared|mature seeds|mixed species|all classes|meat only|separable lean only|variety meats and by-products|solids and liquids|simmered|braised|roasted|broiled|baked|steamed|stewed|grilled|fried|pan-fried|microwaved|heated|dried|ready-to-eat|includes foods for usda.*|\(includes.*|ns as to.*)$/i;
+const GENERIC_HEADS = /^(fish|mollusks|crustaceans|beverages|cereals|cereals ready-to-eat|game meat|spices|seeds|nuts|snacks|candies|babyfood)$/i;
+
+// ---------------------------------------------------------------- state
+const state = { demo: "adult_female", diet: "", extra: new Set(), science: false, goals: {}, nutrients: {},
+  coverage: {}, goal: null, results: [], shown: 5, food: null, mealGoal: "energy_metabolism", mealKcal: 600 };
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const round = (x) => x >= 100 ? Math.round(x / 10) * 10 : x >= 10 ? Math.round(x) : Math.round(x * 10) / 10;
+const nName = (id) => (state.nutrients[id]?.name || id).replace(/ \(.*\)$/, "");
+const nLower = (id) => { const n = nName(id); return /^[A-Z]{2}|^Vitamin|^EPA|^ALA/.test(n) ? n : n.toLowerCase(); };
+const constraints = () => [state.diet, ...state.extra].filter(Boolean);
+const mainGoal = (id) => MAIN_GOALS.find(g => g[0] === id);
+const goalTitle = (id) => mainGoal(id)?.[2] || state.goals[id]?.label || id.replace(/_/g, " ");
+const goalIcon = (id) => mainGoal(id)?.[1] || "•";
+
+function friendlyName(raw) {
+  const parts = String(raw).split(",").map(p => p.trim()).filter(Boolean);
+  const prep = parts.find(p => /^(raw|cooked)/i.test(p)) || (parts.some(p => /boiled|roasted|braised|baked|broiled|stewed|grilled|fried|steamed/i.test(p)) ? "cooked" : "");
+  let kept = parts.filter(p => !FILLER.test(p));
+  if (kept.length > 1 && GENERIC_HEADS.test(kept[0])) kept = kept.slice(1);
+  let name = kept.slice(0, 2).join(", ") || parts[0];
+  name = name.replace(/\b([A-Z]{3,})\b/g, w => w[0] + w.slice(1).toLowerCase());
+  name = name.charAt(0).toUpperCase() + name.slice(1);
+  return prep ? `${name} (${prep.toLowerCase().split(" ")[0]})` : name;
+}
+function iconFor(name, group) {
+  const low = String(name).toLowerCase();
+  for (const [re, ic] of WORD_ICONS) if (re.test(low)) return ic;
+  return ICONS[group] || "🍽️";
+}
+function dots(pct) {   // 1-3 dots: under 15%, 15-30%, over 30% of daily need per portion
+  const n = pct >= 30 ? 3 : pct >= 15 ? 2 : 1;
+  return `<span class="dots" aria-label="${n} of 3">${"●".repeat(n)}<i>${"●".repeat(3 - n)}</i></span>`;
+}
+async function api(path, body) {
+  const opts = body ? { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body) } : {};
+  const res = await fetch(path, opts);
+  if (!res.ok) throw new Error(`${res.status}`);
+  return res.json();
+}
+const qs = (o) => new URLSearchParams(Object.entries(o).flatMap(([k, v]) => Array.isArray(v) ? v.map(x => [k, x]) : [[k, v]])).toString();
+
+// ---------------------------------------------------------------- settings
+$("demo-opts").innerHTML = DEMOS.map(([v, l]) => `<label class="opt"><input type="radio" name="demo" value="${v}" ${v === state.demo ? "checked" : ""}> ${l}</label>`).join("");
+$("diet-opts").innerHTML = DIETS.map(([v, l]) => `<label class="opt"><input type="radio" name="diet" value="${v}" ${v === "" ? "checked" : ""}> ${l}</label>`).join("")
+  + EXTRA.map(([v, l]) => `<label class="opt"><input type="checkbox" name="extra" value="${v}"> ${l}</label>`).join("");
+// One profile: the My week answers, when they exist, set the demographic and
+// diet used everywhere; the sheet then shows them instead of the age groups.
+function demoFromSetup(v) {
+  if (v.sex === "female" && v.stage === "pregnant") return "pregnancy";
+  if (v.sex === "female" && v.stage === "breastfeeding") return "lactation";
+  if (+v.age < 19) return "teen";
+  return (+v.age >= 51 ? "older_" : "adult_") + (v.sex === "male" ? "male" : "female");
+}
+function profileLabel() {
+  const v = loadWeekSetup();
+  const who = v ? `${v.sex === "male" ? "man" : "woman"}, ${v.age}${v.sex === "female" && v.stage ? " · " + v.stage : ""}`
+    : DEMOS.find(d => d[0] === state.demo)[2];
+  return state.diet ? `${who} · ${state.diet}` : who;
+}
+function syncProfile() {
+  const v = loadWeekSetup();
+  if (v) {
+    state.demo = demoFromSetup(v);
+    state.diet = v.diet || "";
+    const d = $("settings").querySelector(`[name=diet][value="${state.diet}"]`); if (d) d.checked = true;
+  }
+  const r = $("settings").querySelector(`[name=demo][value="${state.demo}"]`); if (r) r.checked = true;
+  $("demo-pick").hidden = !!v;
+  $("profile-summary").hidden = !v;
+  if (v) $("profile-summary").innerHTML = `<p style="margin:0 0 8px">${esc(profileLabel())}, from <b>My week</b>.</p>
+    <button type="button" class="ghost" data-week-edit>Edit my profile</button>`;
+  $("for-label").textContent = profileLabel();
+}
+function refreshViews() {
+  if (state.goal) showGoal(state.goal); else renderHome();
+  if (state.food) openFood(state.food);
+}
+$("for-btn").onclick = () => { syncProfile(); $("settings").showModal(); };
+$("settings").addEventListener("close", () => {
+  const f = $("settings");
+  state.demo = f.querySelector("[name=demo]:checked").value;
+  state.diet = f.querySelector("[name=diet]:checked").value;
+  state.extra = new Set([...f.querySelectorAll("[name=extra]:checked")].map(i => i.value));
+  state.science = $("science").checked;
+  document.body.classList.toggle("science-on", state.science);
+  const v = loadWeekSetup();
+  if (v && (v.diet || "") !== state.diet) { v.diet = state.diet; saveWeekSetup(v); weekPlan = null; }
+  syncProfile();
+  refreshViews();
+  if (!$("tab-week").hidden) renderWeek();
+});
+$("more-sheet").addEventListener("close", () => {
+  const to = $("more-sheet").returnValue;
+  if (to === "settings") { syncProfile(); $("settings").showModal(); }
+  else if (to) showTab(to);
+});
+
+// ---------------------------------------------------------------- tabs
+document.querySelectorAll("nav button[data-tab]").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+function showTab(tab) {
+  if (tab === "more") { $("more-sheet").returnValue = ""; $("more-sheet").showModal(); return; }
+  const inMore = ["food", "meal", "dict"].includes(tab);
+  document.querySelectorAll("nav button[data-tab]").forEach(b =>
+    b.classList.toggle("on", b.dataset.tab === tab || (b.dataset.tab === "more" && inMore)));
+  ["week", "find", "food", "meal", "list", "dict"].forEach(t => $("tab-" + t).hidden = t !== tab);
+  if (tab === "week") renderWeek();
+  if (tab === "dict" && !$("tab-dict").innerHTML) renderDict("nutrients");
+  if (tab === "meal") renderMeal();
+  if (tab === "list") renderList();
+}
+
+// ---------------------------------------------------------------- find foods
+function renderHome() {
+  state.goal = null;
+  const others = Object.values(state.goals).filter(g => !mainGoal(g.id));
+  $("tab-find").innerHTML = `
+    <h1>What would you like to support?</h1>
+    <p class="lead">Pick one. We'll show a few foods and explain why.</p>
+    <div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) =>
+      `<button class="tile" data-goal="${id}"><span class="ic">${ic}</span><b>${title}</b><small>${sub}</small></button>`).join("")}</div>
+    <details class="more"><summary>More goals ▾</summary>
+      <div class="more-list">${others.map(g => `<button class="pill-btn" data-goal="${g.id}">${esc(g.label)}</button>`).join("")}</div>
+    </details>`;
+}
+
+async function showGoal(goal) {
+  state.goal = goal; state.shown = 5;
+  const box = $("tab-find");
+  box.innerHTML = `<button class="back" data-home>← All goals</button><div class="loading">Finding foods…</div>`;
+  const cov = state.coverage;
+  let note = "";
+  if ((cov.evidence_gaps || []).includes(goal))
+    note = `No nutrient has solid evidence for this goal yet, so we don't suggest foods for it.`;
+  else if ((cov.goals_without_eu_claim || []).includes(goal))
+    note = `Evidence for this goal is limited: these suggestions come from research, not from official EU health claims.`;
+  try {
+    const res = (cov.evidence_gaps || []).includes(goal) ? { recommendations: [] } :
+      await api("/recommend", { goal, k: 15, constraints: constraints(), demographic: state.demo, professional_preview: state.science });
+    state.results = res.recommendations;
+    const g = state.goals[goal] || {};
+    box.innerHTML = `<button class="back" data-home>← All goals</button>
+      <h1>${goalIcon(goal)} ${esc(goalTitle(goal))}</h1>
+      <p class="lead">${esc(g.description || "")}</p>
+      ${note ? `<div class="note">${note}</div>` : ""}
+      <div id="results"></div>`;
+    renderResults();
+  } catch (e) { box.innerHTML += `<div class="note">Could not load results (${esc(e.message)}).</div>`; }
+}
+
+function renderResults() {
+  const list = state.results.slice(0, state.shown);
+  $("results").innerHTML = list.map(foodCard).join("") +
+    (state.results.length > state.shown ? `<button class="showmore" data-more>Show more foods</button>` : "") +
+    (!state.results.length && !$("tab-find").querySelector(".note") ? `<p class="muted">No foods match your diet settings.</p>` : "");
+}
+
+function foodCard(r) {
+  const e = r.explanation || {};
+  const top = (e.contributions || [])[0] || {};
+  const pct = top.percent_of_need || 0;
+  const name = friendlyName(r.food_name);
+  const also = (e.contributions || []).slice(1, 4).map(c => `${nLink(c.nutrient, nLower(c.nutrient))} (${round(c.percent_of_need)}%)`);
+  const watch = (e.penalties || []).filter(p => p.factor < 0.9).map(p => p.kind === "upper_limit"
+    ? `one portion goes above the safe upper limit for ${nLower(p.nutrient)}`
+    : `one portion has ${round(p.share_of_daily_limit * 100)}% of the daily limit for ${nLower(p.nutrient)}`);
+  const claim = e.eu_claim
+    ? `<div class="claim">“${esc(e.note)}”<small>EU authorised health claim</small></div>`
+    : `<div class="claim plain">${esc(e.note)}<small>Research association, not an official EU health claim</small></div>`;
+  return `<div class="card">
+    <button class="row" data-toggle>
+      <span class="icon">${iconFor(r.food_name, e.portion_group)}</span>
+      <span><div class="name">${esc(name)}</div>
+        <div class="sub">${round(e.portion_g || 100)} g gives ${round(pct)}% of your daily ${esc(nLower(top.nutrient || ""))}</div></span>
+      <span class="level">${dots(pct)}<div class="chev">Why? ▾</div></span>
+    </button>
+    <div class="why">
+      ${graphSvg(r.food_name, e.portion_group, (e.contributions || []).slice(0, 4), state.goal)}
+      <div class="graph-legend">Thicker line = stronger link · solid = EU authorised claim · dashed = research association · tap a nutrient to learn more</div>
+      ${claim}
+      ${also.length ? `<p class="also">Also gives ${also.join(", ")}.</p>` : ""}
+      ${e.pairing ? `<p class="tip">Tip: ${esc(e.pairing.split(". ")[0].replace(/^Pair/, "pair"))}.</p>` : ""}
+      ${watch.length ? `<p class="watch">Worth knowing: ${watch.join("; ")}.</p>` : ""}
+      <div class="links">${addBtn(r.food_id, r.food_name, e.portion_g, e.portion_group)}<button class="link" data-food="${esc(r.food_id)}">About this food →</button></div>
+      <div class="science">${esc(r.food_name)}<br>Match ${r.match}/100 · evidence ${esc(e.evidence || "–")} (${esc(e.evidence_source || "–")})
+        · ${(e.contributions || []).map(c => `${esc(nName(c.nutrient))} ${c.evidence || "?"} s=${c.strength} bio=${c.relative_bioavailability}`).join(" · ")}
+        ${(e.citations || []).length ? "<br>" + e.citations.slice(0, 4).map(esc).join(" · ") : ""}</div>
+    </div>
+  </div>`;
+}
+
+document.addEventListener("click", (ev) => {
+  const t = ev.target;
+  if (t.closest("[data-week-edit]")) {
+    document.querySelectorAll("dialog[open]").forEach(d => d.close());
+    showTab("week"); renderWeek(true); return;
+  }
+  const wv = t.closest("[data-wview]");
+  if (wv) { weekUI.view = wv.dataset.wview; renderWeekPlan(loadWeekSetup()); return; }
+  const wd = t.closest("[data-day]");
+  if (wd) { weekUI.day = +wd.dataset.day; renderWeekPlan(loadWeekSetup()); return; }
+  const wb = t.closest("[data-week-budget]");
+  if (wb) { const v = loadWeekSetup(); v.budget = wb.dataset.weekBudget; saveWeekSetup(v); renderWeek(); return; }
+  const meal = t.closest("[data-recipe]");
+  if (meal) { toggleRecipe(meal); return; }
+  const nut = t.closest("[data-nutrient]");
+  if (nut) { ev.stopPropagation(); showTab("dict"); openNutrient(nut.dataset.nutrient); return; }
+  const dictFood = t.closest("[data-dictfood]");
+  if (dictFood) { openDictFood(dictFood.dataset.dictfood); return; }
+  const add = t.closest("[data-add]");
+  if (add) { const d = add.dataset; addToList(d.add, d.name, +d.portion, d.group); add.outerHTML = addBtn(d.add, d.name, +d.portion, d.group); return; }
+  const goalBtn = t.closest("[data-goal]"); if (goalBtn) { showTab("find"); showGoal(goalBtn.dataset.goal); return; }
+  if (t.closest("[data-home]")) { renderHome(); return; }
+  if (t.closest("[data-more]")) { state.shown += 5; renderResults(); return; }
+  const food = t.closest("[data-food]"); if (food) { showTab("food"); openFood(food.dataset.food); return; }
+  const tog = t.closest("[data-toggle]"); if (tog) {
+    const card = tog.closest(".card"); card.classList.toggle("open");
+    tog.querySelector(".chev").textContent = card.classList.contains("open") ? "Less ▴" : "Why? ▾";
+  }
+  if (t.closest("[data-search]")) { state.food = null; $("food-detail").hidden = true; $("food-search").hidden = false; }
+});
+
+// ---------------------------------------------------------------- look up a food
+let timer;
+$("q").addEventListener("input", (e) => {
+  clearTimeout(timer);
+  const q = e.target.value.trim();
+  if (q.length < 2) { $("search-results").innerHTML = ""; return; }
+  timer = setTimeout(async () => {
+    const hits = await api("/search?" + qs({ q, limit: 12 }));
+    $("search-results").innerHTML = hits.length ? hits.map(h => `<div class="card"><button class="row" data-food="${esc(h.food_id)}">
+      <span class="icon">${iconFor(h.food_name + " " + h.category, "")}</span>
+      <span><div class="name">${esc(friendlyName(h.food_name))}</div><div class="sub">${esc(h.category)}</div></span></button></div>`).join("")
+      : `<p class="muted">Nothing found. Try a simpler word.</p>`;
+  }, 250);
+});
+
+async function openFood(id) {
+  state.food = id;
+  $("food-search").hidden = true;
+  const box = $("food-detail"); box.hidden = false;
+  box.innerHTML = `<button class="back" data-search>← Search</button><div class="loading">Loading…</div>`;
+  const swapDiet = state.diet || "vegetarian";
+  try {
+    const [p, similar, swaps] = await Promise.all([
+      api(`/analysis/profile/${encodeURIComponent(id)}?` + qs({ demographic: state.demo, professional_preview: state.science })),
+      api(`/foods/${encodeURIComponent(id)}/similar?` + qs({ k: 5 })),
+      api(`/foods/${encodeURIComponent(id)}/similar?` + qs({ k: 5, constraints: [swapDiet] })),
+    ]);
+    const f = p.portion_g / 100;
+    const rows = p.nutrients.filter(n => n.kind === "beneficial" && n.percent_of_need != null)
+      .map(n => ({ ...n, pct: n.percent_of_need * f })).sort((a, b) => b.pct - a.pct);
+    const best = rows.filter(r => r.pct >= 15).slice(0, 3);
+    const summary = best.length
+      ? `One portion (${round(p.portion_g)} g) gives ${best.map(r => `<b>${round(r.pct)}%</b> of your daily ${esc(nLower(r.nutrient))}`).join(", ")}.`
+      : `One portion (${round(p.portion_g)} g) gives small amounts of many nutrients.`;
+    const limits = p.nutrients.filter(n => n.kind === "limit").map(n => ({ ...n, pct: (n.percent_of_limit || 0) * f })).filter(n => n.pct >= 15);
+    const goodFor = p.goals_supported.filter(g => g.match >= 50).slice(0, 3);
+    const sim = (list) => list.length ? list.map(s => `<div class="card"><button class="row" data-food="${esc(s.food_id)}">
+      <span class="icon">${iconFor(s.food_name + " " + s.category, "")}</span>
+      <span><div class="name">${esc(friendlyName(s.food_name))}</div><div class="sub">${esc(s.category)}</div></span></button></div>`).join("") : `<p class="muted">None found.</p>`;
+    box.innerHTML = `<button class="back" data-search>← Search</button>
+      <div class="hero"><span class="icon">${iconFor(p.food_name + " " + p.category, p.portion_group)}</span>
+        <div><h1 style="margin:0">${esc(friendlyName(p.food_name))}</h1><div class="sub">${esc(p.category)}</div></div></div>
+      <p>${addBtn(p.food_id, p.food_name, p.portion_g, p.portion_group)}</p>
+      <div id="what-is-it"></div>
+      <p>${summary}</p>
+      ${limits.length ? `<div class="note">Worth knowing: one portion has ${limits.map(l => `${round(l.pct)}% of the daily limit for ${esc(nLower(l.nutrient))}`).join(", ")}.</div>` : ""}
+      ${p.cautions.slice(0, 1).map(c => `<div class="note">${esc(c.message)}</div>`).join("")}
+      ${goodFor.length ? `<div class="sub">Good for</div><div class="goodfor">${goodFor.map(g => `<button class="pill-btn" data-goal="${g.goal}">${goalIcon(g.goal)} ${esc(goalTitle(g.goal))}</button>`).join("")}</div>` : ""}
+      <details class="sec"><summary>All nutrients in one portion</summary><div><table>
+        ${rows.map(r => `<tr><td>${nLink(r.nutrient, nName(r.nutrient))}</td><td style="width:40%"><div class="bar"><i style="width:${Math.min(100, r.pct)}%"></i></div></td><td class="num">${round(r.pct)}%</td></tr>`).join("")}
+      </table><p class="muted" style="font-size:13px">% of daily need for your profile, per ${round(p.portion_g)} g portion.</p></div></details>
+      <details class="sec"><summary>${swapDiet === "vegan" ? "Vegan" : "Vegetarian"} swaps</summary><div>${sim(swaps)}</div></details>
+      <details class="sec"><summary>Similar foods</summary><div>${sim(similar)}</div></details>
+      <div class="science">${esc(p.food_name)} · density ${p.density_score} · portion group ${esc(p.portion_group)}
+        ${p.goals_supported.slice(0, 6).map(g => `<br>${esc(g.goal)} ${g.match} via ${esc(g.nutrient)} ${g.evidence || ""}`).join("")}</div>`;
+    loadWhatIsIt(id);
+  } catch (e) { box.innerHTML += `<div class="note">Could not load this food (${esc(e.message)}).</div>`; }
+}
+async function loadWhatIsIt(id) {
+  const slot = $("what-is-it"); if (!slot) return;
+  slot.innerHTML = `<div class="src">Looking up a description…</div>`;
+  try { const d = await api(`/dictionary/foods/${encodeURIComponent(id)}`); if (state.food === id) slot.innerHTML = wikiBlock(d); }
+  catch { slot.innerHTML = ""; }
+}
+
+// ---------------------------------------------------------------- plan a meal
+function renderMeal() {
+  const opts = [...MAIN_GOALS.map(g => [g[0], `${g[1]} ${g[2]}`]), ...Object.values(state.goals).filter(g => !mainGoal(g.id)).map(g => [g.id, g.label])];
+  $("tab-meal").innerHTML = `
+    <h1>Plan a meal</h1>
+    <p class="lead">Three foods that together cover as much as possible of what your goal needs.</p>
+    <label>Goal <select id="meal-goal">${opts.map(([v, l]) => `<option value="${v}" ${v === state.mealGoal ? "selected" : ""}>${esc(l)}</option>`).join("")}</select></label>
+    <div class="presets">${[[400, "Light · 400 kcal"], [600, "Regular · 600 kcal"], [900, "Hearty · 900 kcal"]].map(([k, l]) =>
+      `<button data-kcal="${k}" class="${k === state.mealKcal ? "on" : ""}">${l}</button>`).join("")}</div>
+    <button class="primary" id="meal-go">Suggest a meal</button>
+    <div id="meal-out" style="margin-top:22px"></div>`;
+  $("meal-goal").onchange = (e) => state.mealGoal = e.target.value;
+  $("tab-meal").querySelectorAll("[data-kcal]").forEach(b => b.onclick = () => { state.mealKcal = +b.dataset.kcal; renderMeal(); });
+  $("meal-go").onclick = buildMeal;
+}
+async function buildMeal() {
+  const out = $("meal-out");
+  out.innerHTML = `<div class="loading">Putting it together…</div>`;
+  try {
+    const plan = await api("/meal-plan", { goal: state.mealGoal, max_calories: state.mealKcal, k: 3, constraints: constraints(), demographic: state.demo });
+    if (!plan.feasible) { out.innerHTML = `<div class="note">${esc(plan.note || "No meal fits these settings.")}</div>`; return; }
+    const cov = Object.entries(plan.coverage).sort((a, b) => b[1] - a[1]);
+    out.innerHTML = plan.items.map(i => `<div class="card"><button class="row" data-food="${esc(i.food_id)}">
+        <span class="icon">${iconFor(i.food_name, "")}</span>
+        <span><div class="name">${esc(friendlyName(i.food_name))}</div><div class="sub">${round(i.portion_g)} g · ${Math.round(i.kcal)} kcal</div></span></button></div>`).join("")
+      + `<p style="margin-top:18px">Together (${Math.round(plan.total_kcal)} kcal) they cover:</p><table>
+        ${cov.slice(0, 4).map(([n, v]) => `<tr><td>${esc(nName(n))}</td><td style="width:45%"><div class="bar"><i style="width:${Math.min(100, v)}%"></i></div></td><td class="num">${round(v)}%</td></tr>`).join("")}</table>
+      ${cov.length > 4 ? `<details class="sec"><summary>All nutrients</summary><div><table>${cov.slice(4).map(([n, v]) => `<tr><td>${esc(nName(n))}</td><td class="num">${round(v)}%</td></tr>`).join("")}</table></div></details>` : ""}
+      <div class="actions"><button class="add" id="meal-add">+ Add these ${plan.items.length} to my list</button></div>
+      <div class="science">Coverage ${Math.round((1 - plan.total_cost) * 100)}% of achievable${plan.greedy_total_cost != null ? ` · top-ranked picks: ${Math.round((1 - plan.greedy_total_cost) * 100)}%` : ""}</div>`;
+    $("meal-add").onclick = () => { plan.items.forEach(i => addToList(i.food_id, i.food_name, i.portion_g, "")); $("meal-add").textContent = "✓ Added to my list"; $("meal-add").classList.add("done"); };
+  } catch (e) { out.innerHTML = `<div class="note">Could not plan a meal (${esc(e.message)}).</div>`; }
+}
+
+// ---------------------------------------------------------------- my week
+// Setup answers stay in this browser only (localStorage); the server gets them
+// only to compute the plan and does not store them.
+const WEEK_KEY = "feedforward.week.v1";
+const ACTIVITY_LABELS = [["sedentary", "Mostly sitting"], ["light", "Light (walking, some stairs)"],
+  ["moderate", "Moderate (sport 2-3×/week)"], ["active", "Active (sport 4-5×/week)"], ["very_active", "Very active"]];
+const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const STORAGE_TITLES = { fresh: "Fruit & vegetables", bakery: "Bakery", fridge: "Fridge", freezer: "Freezer", pantry: "Cupboard" };
+function loadWeekSetup() { try { return JSON.parse(localStorage.getItem(WEEK_KEY)); } catch { return null; } }
+function saveWeekSetup(v) { try { localStorage.setItem(WEEK_KEY, JSON.stringify(v)); } catch {} }
+const SHOP_KEY = "feedforward.shop.v1";      // ticked shopping items, per plan
+const SHORT_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const MEAL_LABEL = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
+let weekChains = null, weekPlan = null, weekKey = null, weekToken = 0;
+const todayIdx = () => (new Date().getDay() + 6) % 7;     // plan day 1 = Monday
+const weekUI = { view: "today", day: todayIdx() };
+const recipeCache = new Map();
+
+function weekRequest(v) {
+  return { age: +v.age, sex: v.sex, weight_kg: +v.weight, height_cm: +v.height, activity: v.activity,
+    pregnant: v.sex === "female" && v.stage === "pregnant", breastfeeding: v.sex === "female" && v.stage === "breastfeeding",
+    goal: v.goal, budget: +v.budget, chain: v.chain, diet: v.diet || null, equipment: v.microwave ? ["microwave"] : null };
+}
+
+async function renderWeek(forceSetup = false) {
+  const my = ++weekToken;
+  const setup = loadWeekSetup();
+  if (!setup || forceSetup) return renderWeekSetup(setup || {});
+  const req = weekRequest(setup), key = JSON.stringify(req);
+  if (weekPlan && weekKey === key) return renderWeekPlan(setup);      // no re-solve on tab switches
+  const box = $("tab-week");
+  box.innerHTML = `<div class="loading">Planning your week…</div>`;
+  try {
+    const plan = await api("/plan/week", req);
+    if (my !== weekToken) return;                                      // user moved on
+    weekPlan = plan; weekPlan._req = req; weekKey = key;
+    renderWeekPlan(setup);
+  } catch (e) { if (my === weekToken) box.innerHTML = `<div class="note">Could not plan the week (${esc(e.message)}).</div><button class="ghost" data-week-edit>Change settings</button>`; }
+}
+
+async function renderWeekSetup(v) {
+  const my = ++weekToken;
+  if (!weekChains) weekChains = (await api("/plan/options")).chains;
+  if (my !== weekToken) return;
+  const tierSign = (c) => c.price_index < 0.8 ? "€" : c.price_index < 1.15 ? "€€" : "€€€";
+  const radio = (name, value, label, checked) => `<label><input type="radio" name="${name}" value="${value}" ${checked ? "checked" : ""}><span>${label}</span></label>`;
+  $("tab-week").innerHTML = `
+    <h1>Plan your week</h1>
+    <p class="lead">About a minute. Your answers stay on this device and are used only to compute your plan.</p>
+    <form class="setup" id="week-form">
+      <fieldset><legend>About you</legend><div class="grid2">
+        <label class="f">Age<input type="number" name="age" min="14" max="100" value="${esc(v.age || "")}" required></label>
+        <label class="f">Sex<select name="sex"><option value="female" ${v.sex === "female" ? "selected" : ""}>Female</option><option value="male" ${v.sex === "male" ? "selected" : ""}>Male</option></select></label>
+        <label class="f">Height (cm)<input type="number" name="height" min="120" max="230" value="${esc(v.height || "")}" required></label>
+        <label class="f">Weight (kg)<input type="number" name="weight" min="30" max="250" value="${esc(v.weight || "")}" required></label>
+      </div>
+      <label class="f" id="stage-f" style="margin-top:10px" ${v.sex === "male" ? "hidden" : ""}>Pregnant or breastfeeding?<select name="stage">
+        <option value="">No</option><option value="pregnant" ${v.stage === "pregnant" ? "selected" : ""}>Pregnant</option>
+        <option value="breastfeeding" ${v.stage === "breastfeeding" ? "selected" : ""}>Breastfeeding</option></select></label>
+      <label class="f" style="margin-top:10px">Activity<select name="activity">${ACTIVITY_LABELS.map(([k, l]) => `<option value="${k}" ${(v.activity || "light") === k ? "selected" : ""}>${l}</option>`).join("")}</select></label>
+      <p class="src" style="margin:8px 0 0">Weight and height only set your energy and protein needs. Vitamins and minerals depend on age and sex.</p></fieldset>
+      <fieldset><legend>What would you like to support?</legend><div class="choice">
+        ${MAIN_GOALS.map(([id, ic, title]) => radio("goal", id, `${ic} ${title}`, (v.goal || "cognitive_function") === id)).join("")}</div></fieldset>
+      <fieldset><legend>Where do you shop?</legend>
+        <select name="chain" style="width:100%">${weekChains.map(c => `<option value="${c.id}" ${(v.chain || "lidl") === c.id ? "selected" : ""}>${esc(c.label)} · ${tierSign(c)}</option>`).join("")}</select>
+        <p class="src" style="margin:8px 0 0">€ = cheaper, €€€ = pricier, from open receipt data (Open Prices).</p></fieldset>
+      <fieldset><legend>Budget and diet</legend><div class="grid2">
+        <label class="f">Budget for the week (€)<input type="number" name="budget" min="10" max="500" step="5" value="${esc(v.budget || 50)}" required></label>
+        <label class="f">Diet<select name="diet"><option value="">No restriction</option><option value="vegetarian" ${v.diet === "vegetarian" ? "selected" : ""}>Vegetarian</option><option value="vegan" ${v.diet === "vegan" ? "selected" : ""}>Vegan</option></select></label></div>
+        <label class="opt" style="margin-top:10px;display:flex;gap:8px;align-items:center"><input type="checkbox" name="microwave" ${v.microwave ? "checked" : ""}> I only have a microwave and a kettle</label></fieldset>
+      <button class="primary" type="submit">Plan my week</button>
+    </form>`;
+  $("week-form").sex.onchange = (e) => { $("stage-f").hidden = e.target.value === "male"; };
+  $("week-form").onsubmit = (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    saveWeekSetup({ age: f.get("age"), sex: f.get("sex"), stage: f.get("sex") === "female" ? f.get("stage") : "",
+      height: f.get("height"), weight: f.get("weight"),
+      activity: f.get("activity"), goal: f.get("goal"), chain: f.get("chain"), budget: f.get("budget"),
+      diet: f.get("diet"), microwave: !!f.get("microwave") });
+    weekUI.view = "today"; weekUI.day = todayIdx();
+    syncProfile(); refreshViews();
+    renderWeek();
+  };
+}
+
+function renderWeekPlan(setup) {
+  const box = $("tab-week"), p = weekPlan;
+  const chainLabel = p.chain?.label || (weekChains || []).find(c => c.id === setup.chain)?.label || setup.chain;
+  if (!p.feasible) {
+    box.innerHTML = `<h1>Your week</h1>
+      <div class="note">${p.minimum_budget
+        ? `A week with enough food costs more than €${esc(setup.budget)} at ${esc(chainLabel)}: at least <b>€${p.minimum_budget}</b>. FeedForward never plans less food to fit a budget.`
+        : `No week fits these settings yet: there are too few recipes for this combination. Try another diet or kitchen setting.`}</div>
+      <div class="actions">${p.minimum_budget ? `<button class="primary" data-week-budget="${p.minimum_budget}">Use €${p.minimum_budget}</button>` : ""}
+      <button class="ghost" data-week-edit>Try another shop</button></div>`;
+    return;
+  }
+  const views = [["today", "Today"], ["week", "Week"], ["shop", "🛒 Shopping"]];
+  box.innerHTML = `
+    <h1>Your week</h1>
+    <div class="summary"><span><b>€${p.total_cost.toFixed(2)}</b> of €${esc(setup.budget)} at ${esc(chainLabel)}</span>
+      <span>${p.energy.planned_per_day.toLocaleString("en")} kcal a day</span>
+      <button class="link" data-week-edit>Change settings</button></div>
+    <div class="seg wseg" role="tablist" aria-label="Plan view">${views.map(([k, l]) =>
+      `<button role="tab" aria-selected="${weekUI.view === k}" class="${weekUI.view === k ? "on" : ""}" data-wview="${k}">${l}</button>`).join("")}</div>
+    ${weekUI.view === "shop" ? shopView(p, chainLabel) : weekUI.view === "week" ? weekView(p) : todayView(p)}`;
+  if (weekUI.view === "shop") bindShop(p);
+  // recipes already opened in this session come back open-able without a refetch
+}
+
+function dayCard(i, title) {
+  const d = weekPlan.days[i];
+  return `<div class="day"><h2 class="dayh">${title}</h2>
+    ${["breakfast", "lunch", "dinner"].map(m => d.meals[m] ? `
+      <button class="meal" data-recipe="${esc(d.meals[m].id)}" data-slot="${i}-${m}" aria-expanded="false" aria-controls="r-${i}-${m}">
+        <span class="when">${MEAL_LABEL[m]}</span>
+        <span class="what">${esc(d.meals[m].en)}${d.meals[m].batch ? `<span class="badge-soft">keeps 3 days</span>` : ""}<small>${esc(d.meals[m].fr)}</small></span>
+        <span class="t">${d.meals[m].time_min ? d.meals[m].time_min + " min " : ""}<span class="chev" aria-hidden="true">▾</span></span></button>
+      <div class="recipe" id="r-${i}-${m}"></div>` : "").join("")}
+    ${d.snacks.length ? `<div class="snackline">Snacks: ${d.snacks.map(s => esc(s.en)).join(" · ")}</div>` : ""}
+  </div>`;
+}
+
+function todayView(p) {
+  const t = todayIdx(), i = weekUI.day;
+  return `<div class="daystrip" role="tablist" aria-label="Day of the week">${SHORT_DAYS.map((d, k) =>
+      `<button role="tab" aria-selected="${k === i}" aria-label="${WEEKDAYS[k]}${k === t ? " (today)" : ""}" class="${k === i ? "on" : ""} ${k === t ? "today" : ""}" data-day="${k}">${d}</button>`).join("")}</div>
+    ${dayCard(i, i === t ? `Today · ${WEEKDAYS[i]}` : WEEKDAYS[i])}
+    ${planNotes(p)}
+    ${whyPlan(p)}`;
+}
+
+function weekView(p) {
+  const t = todayIdx();
+  return p.days.map((_d, i) => dayCard(i, WEEKDAYS[i] + (i === t ? " · today" : ""))).join("") + whyPlan(p);
+}
+
+function planNotes(p) {
+  return [p.diet_note, p.repeats ? "Some meals come back more often this week, so that it fits your budget and settings." : ""]
+    .filter(Boolean).map(n => `<p class="src" style="margin:4px 0 10px">${esc(n)}</p>`).join("");
+}
+
+// "Why this plan?" is collapsed: one line when the goal is covered, bars on demand.
+function whyPlan(p) {
+  const goalNut = p.goal_nutrients.slice(0, 4);
+  const short = goalNut.filter(n => p.coverage[n] < 100);
+  const low = Object.entries(p.coverage).filter(([, v]) => v < 100).sort((a, b) => a[1] - b[1]).slice(0, 2);
+  const goalName = p.goal ? goalTitle(p.goal).toLowerCase() : "your needs";
+  const head = short.length
+    ? `${goalIcon(p.goal)} For ${esc(goalName)}: ${short.map(n => `${esc(nName(n))} ${Math.round(p.coverage[n])}%`).join(", ")}`
+    : `${goalIcon(p.goal)} ✓ This week covers what ${esc(goalName)} needs`;
+  const bar = (n, v) => `<div class="cover-row"><span>${nLink(n, nName(n))}</span><div class="bar"><i style="width:${Math.min(100, v)}%"></i></div><span class="num">${v >= 100 ? "100%+" : Math.round(v) + "%"}</span></div>`;
+  return `<details class="sec"><summary>${head}</summary><div>
+    <p class="sub" style="margin:0 0 6px">Share of the week's need, from the nutrients linked to ${esc(goalName)}:</p>
+    ${goalNut.map(n => bar(n, p.coverage[n])).join("")}
+    ${low.length ? `<p class="src" style="margin:8px 0 0">Lower this week: ${low.map(([n, v]) => `${esc(nName(n))} ${Math.round(v)}%`).join(", ")}.${low.some(([n]) => n === "vitamin-d") ? " Few foods are rich in vitamin D; the skin also makes it in sunlight." : ""}${low.some(([n]) => n === "iodine") ? " Using iodised salt (sel iodé) instead of plain salt is the usual way to get iodine." : ""}</p>` : `<p class="src" style="margin:8px 0 0">Every vitamin and mineral we track reaches 100% this week.</p>`}
+    <p class="src">Recipes are drafts, not yet reviewed by a dietitian.</p></div></details>`;
+}
+
+const sameName = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
+function qty(b) {
+  const g = (x) => b.liquid ? (x >= 1000 ? `${round(x / 1000)} L` : `${round(x)} ml`) : (x >= 1000 ? `${round(x / 1000)} kg` : `${round(x)} g`);
+  if (b.packs) return b.units_per_pack ? `${b.packs} × box of ${b.units_per_pack}` : `${b.packs} × ${g(b.pack_g)}`;
+  return `${g(b.grams)}${b.about_units ? ` <span class="muted">(~${b.about_units})</span>` : ""}`;
+}
+function loadTicks() {
+  try { const t = JSON.parse(localStorage.getItem(SHOP_KEY)); return t && t.key === weekKey ? new Set(t.ids) : new Set(); } catch { return new Set(); }
+}
+function saveTicks(ids) { try { localStorage.setItem(SHOP_KEY, JSON.stringify({ key: weekKey, ids: [...ids] })); } catch {} }
+
+function shopView(p, chainLabel) {
+  const groups = {};
+  p.basket.forEach(b => (groups[b.storage] ||= []).push(b));
+  const ticks = loadTicks();
+  return `<div class="card" style="padding:4px 16px 14px">
+    <p class="shop-progress" id="shop-progress"></p>
+    ${["fresh", "bakery", "fridge", "freezer", "pantry"].filter(g => groups[g]).map(g => `<div class="group-title">${STORAGE_TITLES[g]}</div>
+      ${groups[g].map(b => `<label class="shop-row"><input type="checkbox" data-shop="${esc(b.id)}" ${ticks.has(b.id) ? "checked" : ""}>
+        <span class="nm">${esc(b.fr)}${sameName(b.fr, b.en) ? "" : ` <span class="muted">· ${esc(b.en)}</span>`}</span>
+        <span class="num">${qty(b)}</span><span class="num">${b.estimated ? "≈" : ""}€${b.cost.toFixed(2)}</span></label>`).join("")}`).join("")}
+    <div class="actions"><button class="add" id="week-to-list">+ Add all to My list</button></div>
+    <p class="src">At ${esc(chainLabel)}. ≈ price estimated from the national median and this shop's price level. Cupboard and freezer items count only the share used this week. Prices: Open Prices (ODbL).</p>
+  </div>`;
+}
+function bindShop(p) {
+  const ticks = loadTicks();
+  const progress = () => { $("shop-progress").textContent = `${ticks.size} of ${p.basket.length} in the basket`; };
+  progress();
+  $("tab-week").querySelectorAll("[data-shop]").forEach(cb => cb.onchange = () => {
+    cb.checked ? ticks.add(cb.dataset.shop) : ticks.delete(cb.dataset.shop);
+    saveTicks(ticks); progress();
+  });
+  $("week-to-list").onclick = () => {
+    p.basket.forEach(b => addToList(b.food_id, `${b.fr} (${b.en})`, b.packs ? b.pack_g : b.grams, ""));
+    $("week-to-list").textContent = "✓ Added to My list"; $("week-to-list").classList.add("done");
+  };
+}
+
+async function toggleRecipe(btn) {
+  const slot = $("r-" + btn.dataset.slot);
+  const open = slot.classList.toggle("open");
+  btn.setAttribute("aria-expanded", open);
+  if (!open || slot.innerHTML) return;
+  const key = `${btn.dataset.recipe}|${weekKey}`;
+  if (!recipeCache.has(key)) {
+    slot.innerHTML = `<span class="muted">Loading…</span>`;
+    const r = await api(`/plan/recipes/${encodeURIComponent(btn.dataset.recipe)}?` + qs({ chain: weekPlan._req.chain, scale: weekPlan.portion_scale }));
+    const amount = (i) => i.liquid ? `${round(i.g)} ml` : `${round(i.g)} g`;
+    recipeCache.set(key, `<ul>${r.ingredients.map(i => `<li>${amount(i)} ${esc(i.fr)}${sameName(i.fr, i.en) ? "" : ` <span class="muted">(${esc(i.en)})</span>`}</li>`).join("")}</ul>
+      ${r.steps.length ? `<ol>${r.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
+      <p class="src">About €${r.cost_per_serving.toFixed(2)} a portion · draft recipe</p>`);
+  }
+  slot.innerHTML = recipeCache.get(key);
+}
+
+// ---------------------------------------------------------------- graph
+// Food -> nutrients -> goal, the same edges the ranking uses. Line width follows
+// edge strength (0-1); solid lines are authorised EU claims.
+function graphSvg(foodName, group, contribs, goal) {
+  if (!contribs.length) return "";
+  const W = 600, rowH = 46, H = Math.max(120, contribs.length * rowH + 24);
+  const xF = 80, xN = 300, xG = 520, mid = H / 2;
+  const ys = contribs.map((_, i) => 12 + rowH / 2 + i * rowH + (H - 24 - contribs.length * rowH) / 2);
+  const curve = (x1, y1, x2, y2) => `M${x1},${y1} C${(x1 + x2) / 2},${y1} ${(x1 + x2) / 2},${y2} ${x2},${y2}`;
+  const width = (v) => (1.5 + 10 * Math.max(0, Math.min(1, v || 0))).toFixed(1);
+  const clip = (t, n) => t.length > n ? t.slice(0, n - 1) + "…" : t;
+  let edges = "", nodes = "";
+  contribs.forEach((c, i) => {
+    const cls = c.eu_claim ? "e-eu" : "e-lit";
+    edges += `<path class="${cls}" d="${curve(xF + 46, mid, xN - 70, ys[i])}" stroke-width="${width(c.delivery_strength)}"/>`;
+    edges += `<path class="${cls}" d="${curve(xN + 70, ys[i], xG - 46, mid)}" stroke-width="${width(c.association)}"/>`;
+    nodes += `<g data-nutrient="${esc(c.nutrient)}"><rect class="n-nut" x="${xN - 70}" y="${ys[i] - 17}" width="140" height="34" rx="17"/>
+      <text x="${xN}" y="${ys[i] - 1}" text-anchor="middle">${esc(clip(nName(c.nutrient), 18))}</text>
+      <text class="lbl" x="${xN}" y="${ys[i] + 12}" text-anchor="middle">${round(c.percent_of_need)}% of daily need</text></g>`;
+  });
+  nodes += `<rect class="n-food" x="${xF - 46}" y="${mid - 30}" width="92" height="60" rx="14"/>
+    <text x="${xF}" y="${mid - 4}" text-anchor="middle" style="font-size:22px">${iconFor(foodName, group)}</text>
+    <text class="lbl" x="${xF}" y="${mid + 18}" text-anchor="middle">${esc(clip(friendlyName(foodName), 16))}</text>`;
+  nodes += `<rect class="n-goal" x="${xG - 46}" y="${mid - 30}" width="92" height="60" rx="14"/>
+    <text x="${xG}" y="${mid - 4}" text-anchor="middle" style="font-size:22px">${goalIcon(goal)}</text>
+    <text class="lbl" x="${xG}" y="${mid + 18}" text-anchor="middle">${esc(clip(goalTitle(goal), 16))}</text>`;
+  return `<svg class="graph" viewBox="0 0 ${W} ${H}" role="img" aria-label="How this food supports ${esc(goalTitle(goal))}">${edges}${nodes}</svg>`;
+}
+function nLink(id, label) { return `<button class="nlink" data-nutrient="${esc(id)}">${esc(label)}</button>`; }
+
+// ---------------------------------------------------------------- dictionary
+const GROUP_TITLES = { vitamin: "Vitamins", mineral: "Minerals", macro: "Other nutrients", energy: "Other nutrients" };
+function renderDict(section) {
+  state.dictSection = section;
+  const box = $("tab-dict");
+  const seg = `<div class="seg">${[["nutrients", "Nutrients"], ["foods", "Foods"], ["terms", "Terms"]].map(([k, l]) =>
+    `<button data-dict="${k}" class="${k === section ? "on" : ""}">${l}</button>`).join("")}</div>`;
+  box.innerHTML = `<h1>Dictionary</h1><p class="lead">What things are, what they do, and where each answer comes from.</p>${seg}<div id="dict-body"></div>`;
+  box.querySelectorAll("[data-dict]").forEach(b => b.onclick = () => renderDict(b.dataset.dict));
+  if (section === "nutrients") dictNutrients();
+  if (section === "foods") dictFoods();
+  if (section === "terms") dictTerms();
+}
+async function dictNutrients() {
+  const list = state.dictIndex || (state.dictIndex = await api("/dictionary/nutrients"));
+  const groups = {};
+  list.forEach(n => (groups[GROUP_TITLES[n.group] || "Other nutrients"] ||= []).push(n));
+  $("dict-body").innerHTML = ["Vitamins", "Minerals", "Other nutrients"].filter(g => groups[g]).map(g =>
+    `<div class="group-title">${g}</div><div class="more-list">${groups[g].map(n =>
+      `<button class="pill-btn" data-nutrient="${n.id}">${esc(n.name)}</button>`).join("")}</div>`).join("");
+}
+async function openNutrient(id) {
+  if (!$("tab-dict").innerHTML || state.dictSection !== "nutrients") renderDict("nutrients");
+  const body = $("dict-body");
+  body.innerHTML = `<div class="loading">Loading…</div>`;
+  try {
+    const n = await api(`/dictionary/nutrients/${encodeURIComponent(id)}?` + qs({ demographic: state.demo }));
+    const who = DEMOS.find(d => d[0] === state.demo)[2];
+    const fmtAmt = (a) => `${round(a)} ${esc(n.unit)}`;
+    const withGoal = n.what_it_does.filter(c => c.goals.length), other = n.what_it_does.filter(c => !c.goals.length);
+    body.innerHTML = `<button class="back" data-dict-back>← All nutrients</button>
+      <h1>${esc(n.names.en)}</h1><p class="src" style="margin-top:-4px">${esc(n.names.it || "")}${n.names.fr ? " · " + esc(n.names.fr) : ""}</p>
+      <div class="fact">${n.daily_need ? `<div><small>Your daily need (${esc(who)})</small><b>${fmtAmt(n.daily_need.amount)}</b></div>` : ""}
+        ${n.upper_limit ? `<div><small>Safe upper limit${n.upper_limit.applies_to_food ? "" : " (supplements)"}</small><b>${fmtAmt(n.upper_limit.amount)}</b></div>` : ""}</div>
+      ${n.what_it_does.length ? `<h3>What it does</h3><ul class="claims">${[...withGoal, ...other].map(c => `<li>${esc(c.text)}</li>`).join("")}</ul>
+        <p class="src">EU authorised health claims, wording as approved (EFSA opinions ${[...new Set(n.what_it_does.map(c => c.efsa).filter(Boolean))].slice(0, 3).map(esc).join(", ")}${n.what_it_does.length > 3 ? ", …" : ""}).</p>`
+        : `<p class="muted">No authorised EU health claim exists for this nutrient.</p>`}
+      ${n.everyday_sources.length ? `<h3>Everyday foods with the most</h3>${n.everyday_sources.map(f => `<div class="card"><button class="row" data-food="${esc(f.food_id)}">
+        <span class="icon">${iconFor(f.name, f.portion_group)}</span><span><div class="name">${esc(friendlyName(f.name))}</div>
+        <div class="sub">${round(f.portion_g)} g gives ${round(f.percent_of_need)}% of your daily need</div></span><span class="level">${dots(f.percent_of_need)}</span></button></div>`).join("")}` : ""}
+      ${n.not_proven.length ? `<details class="sec"><summary>Not proven: claims EFSA did not accept (${n.not_proven.length})</summary><div><ul class="claims">
+        ${n.not_proven.map(r => `<li>${esc(r.relationships.join("; "))} <span class="src">— ${esc(r.reason)}</span></li>`).join("")}</ul></div></details>` : ""}
+      ${n.note ? `<p class="src">${esc(n.note)}</p>` : ""}
+      <h3>Sources</h3><p class="src">${n.sources.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`).join(" · ")}</p>`;
+    body.querySelector("[data-dict-back]").onclick = () => dictNutrients();
+  } catch (e) { body.innerHTML = `<div class="note">Could not load this nutrient (${esc(e.message)}).</div>`; }
+}
+function dictFoods() {
+  $("dict-body").innerHTML = `<input type="search" id="dq" placeholder="What is… (e.g. emu, bitter gourd, quinoa)"><div id="dq-results" style="margin-top:12px"></div>`;
+  let t;
+  $("dq").addEventListener("input", (e) => {
+    clearTimeout(t); const q = e.target.value.trim();
+    if (q.length < 2) { $("dq-results").innerHTML = ""; return; }
+    t = setTimeout(async () => {
+      const hits = await api("/search?" + qs({ q, limit: 10 }));
+      $("dq-results").innerHTML = hits.map(h => `<div class="card"><button class="row" data-dictfood="${esc(h.food_id)}">
+        <span class="icon">${iconFor(h.food_name + " " + h.category, "")}</span><span><div class="name">${esc(friendlyName(h.food_name))}</div><div class="sub">${esc(h.category)}</div></span></button></div>`).join("")
+        || `<p class="muted">Nothing found.</p>`;
+    }, 250);
+  });
+}
+async function openDictFood(id) {
+  const body = $("dict-body");
+  body.innerHTML = `<div class="loading">Looking it up…</div>`;
+  try {
+    const d = await api(`/dictionary/foods/${encodeURIComponent(id)}`);
+    body.innerHTML = `<button class="back" data-dict-foods>← Food dictionary</button>
+      <div class="hero"><span class="icon">${iconFor(d.name + " " + d.category, d.portion_group)}</span>
+      <div><h1 style="margin:0">${esc(friendlyName(d.name))}</h1><div class="sub">${esc(d.category)}${d.everyday ? "" : " · less common in Europe"}</div></div></div>
+      ${wikiBlock(d)}
+      <p class="src">Nutrient data: ${esc(d.data_source.name)}${d.data_source.licence ? ` (${esc(d.data_source.licence)})` : ""} · full name “${esc(d.name)}” · typical portion ${round(d.portion_g)} g</p>
+      <button class="link" data-food="${esc(d.food_id)}">What one portion gives →</button>`;
+    body.querySelector("[data-dict-foods]").onclick = () => dictFoods();
+  } catch (e) { body.innerHTML = `<div class="note">Could not load this food (${esc(e.message)}).</div>`; }
+}
+function wikiBlock(d) {
+  const w = d.wikipedia;
+  if (!w) return `<p class="src">No description found yet for this food.</p>`;
+  const extract = w.extract.split(". ").slice(0, 2).join(". ").replace(/\.?$/, ".");
+  return `<div class="wiki">${w.thumbnail ? `<img src="${esc(w.thumbnail)}" alt="${esc(w.title)}" loading="lazy">` : ""}
+    <div><p>${esc(extract)}</p>
+    <div class="src">From Wikipedia, “<a href="${esc(w.url)}" target="_blank" rel="noopener">${esc(w.title)}</a>” (CC BY-SA 4.0), matched automatically from “${esc(w.search_term)}”${w.image_page ? ` · <a href="${esc(w.image_page)}" target="_blank" rel="noopener">image licence</a>` : ""}</div></div></div>`;
+}
+async function dictTerms() {
+  const terms = state.terms || (state.terms = await api("/dictionary/terms"));
+  $("dict-body").innerHTML = terms.map(t => `<details class="term"><summary><b>${esc(t.term)}</b><span>${esc(t.short)}</span></summary>
+    <div><p>${esc(t.long)}</p>${t.source ? `<p class="src">Source: <a href="${esc(t.source.url)}" target="_blank" rel="noopener">${esc(t.source.label)}</a></p>`
+      : `<p class="src">How FeedForward works.</p>`}</div></details>`).join("")
+    + `<p class="src">Definitions written by the FeedForward team, awaiting review by a dietitian.</p>`;
+}
+
+// ---------------------------------------------------------------- shopping list
+// Stored in this browser only (localStorage), so it works without an account.
+const LIST_KEY = "feedforward.list.v1";
+function loadList() { try { return JSON.parse(localStorage.getItem(LIST_KEY)) || []; } catch { return []; } }
+function saveList(list) { try { localStorage.setItem(LIST_KEY, JSON.stringify(list)); } catch {} updateCount(); }
+let shopping = loadList();
+function inList(id) { return shopping.some(i => i.id === id); }
+function addBtn(id, name, portion, group) {
+  return inList(id) ? `<button class="add done" disabled>✓ On my list</button>`
+    : `<button class="add" data-add="${esc(id)}" data-name="${esc(name)}" data-portion="${portion || 100}" data-group="${esc(group || "")}">+ My list</button>`;
+}
+function addToList(id, name, portion, group) {
+  if (inList(id)) return;
+  shopping.push({ id, name, portion: portion || 100, group: group || "" });
+  saveList(shopping);
+}
+function updateCount() {
+  document.querySelectorAll("[data-list-count]").forEach(c => { c.hidden = !shopping.length; c.textContent = shopping.length; });
+}
+function renderList() {
+  const box = $("tab-list");
+  if (!shopping.length) {
+    box.innerHTML = `<h1>My list</h1><p class="lead">Nothing yet. Add foods with “+ My list” from a goal, a food page or a meal plan.</p>`;
+    return;
+  }
+  box.innerHTML = `<h1>My list</h1><p class="lead">${shopping.length} food${shopping.length > 1 ? "s" : ""} · saved in this browser only.</p>
+    ${shopping.map((i, n) => `<div class="card"><div class="list-item">
+      <span class="icon">${iconFor(i.name, i.group)}</span>
+      <span><div class="name" style="cursor:pointer" data-food="${esc(i.id)}">${esc(friendlyName(i.name))}</div><div class="sub">about ${round(i.portion)} g per portion</div></span>
+      <button class="x" data-remove="${n}" aria-label="Remove">×</button></div></div>`).join("")}
+    <div class="actions"><button class="ghost" id="list-copy">Copy as text</button><button class="ghost" id="list-clear">Clear list</button></div>`;
+  box.querySelectorAll("[data-remove]").forEach(b => b.onclick = () => { shopping.splice(+b.dataset.remove, 1); saveList(shopping); renderList(); });
+  $("list-copy").onclick = async () => {
+    const text = shopping.map(i => `- ${friendlyName(i.name)} (${round(i.portion)} g)`).join("\n");
+    try { await navigator.clipboard.writeText(text); $("list-copy").textContent = "Copied ✓"; } catch { $("list-copy").textContent = "Copy failed"; }
+  };
+  $("list-clear").onclick = () => { if (confirm("Clear your whole list?")) { shopping = []; saveList(shopping); renderList(); } };
+}
+updateCount();
+
+// ---------------------------------------------------------------- theme
+const THEME_KEY = "feedforward.theme";
+const THEMES = ["auto", "light", "dark"];
+function applyTheme(t) {
+  if (t === "auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", t);
+  $("theme-btn").textContent = t === "light" ? "☀" : t === "dark" ? "☾" : "◐";
+  $("theme-btn").title = t === "auto" ? "Theme: follows your system" : `Theme: ${t}`;
+}
+let theme = (() => { try { return localStorage.getItem(THEME_KEY) || "auto"; } catch { return "auto"; } })();
+applyTheme(theme);
+$("theme-btn").onclick = () => {
+  theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+  try { localStorage.setItem(THEME_KEY, theme); } catch {}
+  applyTheme(theme);
+};
+
+// ---------------------------------------------------------------- start
+(async () => {
+  try {
+    const [systems, coverage, nutrients] = await Promise.all([api("/goals/by-system"), api("/analysis/coverage"), api("/analysis/nutrients")]);
+    systems.forEach(s => s.goals.forEach(g => state.goals[g.id] = g));
+    nutrients.forEach(n => state.nutrients[n.id] = n);
+    state.coverage = coverage;
+    syncProfile();
+    renderHome();
+    renderWeek();
+  } catch (e) { $("tab-find").innerHTML = `<div class="note">Could not reach the FeedForward API. Is the backend running?</div>`; }
+})();
+</script>
+</body>
+</html>

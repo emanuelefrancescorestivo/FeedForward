@@ -1,0 +1,399 @@
+{
+  "_comment": "PubMed esearch log for curated edges that had no hand-reviewed grade. accepted is false: several queries matched tens or hundreds of thousands of papers (proteins AND energy metabolism returned 354369 hits). Volume thresholds would have labelled those Grade A. That is a query artefact, not evidence, so these rows do not enter the graph until a reviewer sets accepted to true on a row-level basis. PMIDs are the first esearch hits, not a curated bibliography.",
+  "grades": {
+    "proteins|weight_management": {
+      "grade": "A",
+      "n_studies": 29696,
+      "n_rct_or_meta": 3108,
+      "citations": [
+        "PMID:42777864",
+        "PMID:42777373",
+        "PMID:42776131",
+        "PMID:42776001",
+        "PMID:42774454"
+      ],
+      "query": "proteins AND weight management",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "proteins|energy_metabolism": {
+      "grade": "A",
+      "n_studies": 354369,
+      "n_rct_or_meta": 5721,
+      "citations": [
+        "PMID:42779398",
+        "PMID:42778939",
+        "PMID:42778931",
+        "PMID:42778925",
+        "PMID:42778794"
+      ],
+      "query": "proteins AND energy metabolism",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "fat|energy_metabolism": {
+      "grade": "A",
+      "n_studies": 46209,
+      "n_rct_or_meta": 3910,
+      "citations": [
+        "PMID:42779363",
+        "PMID:42778413",
+        "PMID:42778341",
+        "PMID:42777369",
+        "PMID:42777335"
+      ],
+      "query": "fat AND energy metabolism",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "fiber|cholesterol_management": {
+      "grade": "A",
+      "n_studies": 734,
+      "n_rct_or_meta": 144,
+      "citations": [
+        "PMID:42692629",
+        "PMID:42651919",
+        "PMID:42645390",
+        "PMID:32644459",
+        "PMID:42630190"
+      ],
+      "query": "fiber AND cholesterol management",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "fiber|weight_management": {
+      "grade": "A",
+      "n_studies": 2870,
+      "n_rct_or_meta": 318,
+      "citations": [
+        "PMID:42777864",
+        "PMID:42765615",
+        "PMID:42765172",
+        "PMID:42755070",
+        "PMID:42754407"
+      ],
+      "query": "fiber AND weight management",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "iron|healthy_blood": {
+      "grade": "A",
+      "n_studies": 6009,
+      "n_rct_or_meta": 485,
+      "citations": [
+        "PMID:42770178",
+        "PMID:42765366",
+        "PMID:42763157",
+        "PMID:42756485",
+        "PMID:42756334"
+      ],
+      "query": "iron AND healthy blood",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "iron|energy_metabolism": {
+      "grade": "A",
+      "n_studies": 34535,
+      "n_rct_or_meta": 194,
+      "citations": [
+        "PMID:42776010",
+        "PMID:42770691",
+        "PMID:42770178",
+        "PMID:42768987",
+        "PMID:42765120"
+      ],
+      "query": "iron AND energy metabolism",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "vitamin-c|antioxidant_support": {
+      "grade": "A",
+      "n_studies": 23241,
+      "n_rct_or_meta": 1336,
+      "citations": [
+        "PMID:42777345",
+        "PMID:42772737",
+        "PMID:42769343",
+        "PMID:42755980",
+        "PMID:42755468"
+      ],
+      "query": "vitamin c AND antioxidant support",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "vitamin-c|skin_health": {
+      "grade": "B",
+      "n_studies": 511,
+      "n_rct_or_meta": 38,
+      "citations": [
+        "PMID:42755575",
+        "PMID:42730108",
+        "PMID:42701085",
+        "PMID:42692671",
+        "PMID:42653478"
+      ],
+      "query": "vitamin c AND skin health",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "calcium|muscle_recovery": {
+      "grade": "A",
+      "n_studies": 3205,
+      "n_rct_or_meta": 51,
+      "citations": [
+        "PMID:42776313",
+        "PMID:42754425",
+        "PMID:42750173",
+        "PMID:42703858",
+        "PMID:42699896"
+      ],
+      "query": "calcium AND muscle recovery",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "vitamin-d|immune_support": {
+      "grade": "A",
+      "n_studies": 3755,
+      "n_rct_or_meta": 272,
+      "citations": [
+        "PMID:42778435",
+        "PMID:42769962",
+        "PMID:42758666",
+        "PMID:42741707",
+        "PMID:42738959"
+      ],
+      "query": "vitamin d AND immune support",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "vitamin-d|mood_support": {
+      "grade": "A",
+      "n_studies": 2415,
+      "n_rct_or_meta": 351,
+      "citations": [
+        "PMID:42772682",
+        "PMID:42755259",
+        "PMID:42725242",
+        "PMID:20301298",
+        "PMID:42710002"
+      ],
+      "query": "vitamin d AND mood support",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "magnesium|muscle_recovery": {
+      "grade": "B",
+      "n_studies": 413,
+      "n_rct_or_meta": 24,
+      "citations": [
+        "PMID:42695098",
+        "PMID:42688416",
+        "PMID:42680360",
+        "PMID:42679097",
+        "PMID:42549304"
+      ],
+      "query": "magnesium AND muscle recovery",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "magnesium|bone_health": {
+      "grade": "A",
+      "n_studies": 1208,
+      "n_rct_or_meta": 66,
+      "citations": [
+        "PMID:42744314",
+        "PMID:42744073",
+        "PMID:42743742",
+        "PMID:42734888",
+        "PMID:42687797"
+      ],
+      "query": "magnesium AND bone health",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "magnesium|energy_metabolism": {
+      "grade": "A",
+      "n_studies": 5803,
+      "n_rct_or_meta": 91,
+      "citations": [
+        "PMID:42777631",
+        "PMID:42763556",
+        "PMID:42748141",
+        "PMID:42716287",
+        "PMID:42707469"
+      ],
+      "query": "magnesium AND energy metabolism",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "zinc|skin_health": {
+      "grade": "A",
+      "n_studies": 884,
+      "n_rct_or_meta": 71,
+      "citations": [
+        "PMID:42751070",
+        "PMID:42744271",
+        "PMID:42734888",
+        "PMID:42710447",
+        "PMID:42646397"
+      ],
+      "query": "zinc AND skin health",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "zinc|hair_health": {
+      "grade": "B",
+      "n_studies": 419,
+      "n_rct_or_meta": 32,
+      "citations": [
+        "PMID:42577150",
+        "PMID:42537600",
+        "PMID:42426545",
+        "PMID:42105887",
+        "PMID:41819941"
+      ],
+      "query": "zinc AND hair health",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "zinc|thyroid_support": {
+      "grade": "B",
+      "n_studies": 535,
+      "n_rct_or_meta": 19,
+      "citations": [
+        "PMID:42533171",
+        "PMID:42419667",
+        "PMID:42181188",
+        "PMID:42177558",
+        "PMID:41940915"
+      ],
+      "query": "zinc AND thyroid support",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "vitamin-a|immune_support": {
+      "grade": "A",
+      "n_studies": 2020,
+      "n_rct_or_meta": 174,
+      "citations": [
+        "PMID:42773109",
+        "PMID:42760268",
+        "PMID:42656577",
+        "PMID:42642387",
+        "PMID:42615038"
+      ],
+      "query": "vitamin a AND immune support",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "vitamin-a|skin_health": {
+      "grade": "A",
+      "n_studies": 456,
+      "n_rct_or_meta": 57,
+      "citations": [
+        "PMID:20301481",
+        "PMID:30000953",
+        "PMID:42088054",
+        "PMID:42019490",
+        "PMID:41997549"
+      ],
+      "query": "vitamin a AND skin health",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "vitamin-e|skin_health": {
+      "grade": "B",
+      "n_studies": 319,
+      "n_rct_or_meta": 38,
+      "citations": [
+        "PMID:42577150",
+        "PMID:42497476",
+        "PMID:42250416",
+        "PMID:42205212",
+        "PMID:42105366"
+      ],
+      "query": "vitamin e AND skin health",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "vitamin-k|healthy_blood": {
+      "grade": "A",
+      "n_studies": 709,
+      "n_rct_or_meta": 88,
+      "citations": [
+        "PMID:42667590",
+        "PMID:42643720",
+        "PMID:42608134",
+        "PMID:42575715",
+        "PMID:42529886"
+      ],
+      "query": "vitamin k AND healthy blood",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "omega-3-fat|cognitive_function": {
+      "grade": "B",
+      "n_studies": 116,
+      "n_rct_or_meta": 11,
+      "citations": [
+        "PMID:42457037",
+        "PMID:42194011",
+        "PMID:42134084",
+        "PMID:41961405",
+        "PMID:41653314"
+      ],
+      "query": "omega 3 fat AND cognitive function",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "omega-3-fat|mood_support": {
+      "grade": "A",
+      "n_studies": 315,
+      "n_rct_or_meta": 46,
+      "citations": [
+        "PMID:42747303",
+        "PMID:42457037",
+        "PMID:42439247",
+        "PMID:42344141",
+        "PMID:42278015"
+      ],
+      "query": "omega 3 fat AND mood support",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "phosphorus|bone_health": {
+      "grade": "A",
+      "n_studies": 2007,
+      "n_rct_or_meta": 113,
+      "citations": [
+        "PMID:42777353",
+        "PMID:42770947",
+        "PMID:42769574",
+        "PMID:42743742",
+        "PMID:42739931"
+      ],
+      "query": "phosphorus AND bone health",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "phosphorus|energy_metabolism": {
+      "grade": "A",
+      "n_studies": 8164,
+      "n_rct_or_meta": 147,
+      "citations": [
+        "PMID:42772387",
+        "PMID:42768987",
+        "PMID:42765259",
+        "PMID:42764331",
+        "PMID:42754105"
+      ],
+      "query": "phosphorus AND energy metabolism",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "manganese|antioxidant_support": {
+      "grade": "A",
+      "n_studies": 5663,
+      "n_rct_or_meta": 49,
+      "citations": [
+        "PMID:42723412",
+        "PMID:42713862",
+        "PMID:42710353",
+        "PMID:42708961",
+        "PMID:42691903"
+      ],
+      "query": "manganese AND antioxidant support",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    },
+    "manganese|bone_health": {
+      "grade": "C",
+      "n_studies": 219,
+      "n_rct_or_meta": 3,
+      "citations": [
+        "PMID:42767484",
+        "PMID:42695497",
+        "PMID:42521041",
+        "PMID:42508767",
+        "PMID:42484352"
+      ],
+      "query": "manganese AND bone health",
+      "note": "PMIDs are the first esearch hits for this query, not a curated bibliography. The curated table overrides this file."
+    }
+  },
+  "accepted": false,
+  "rejection": "query_too_broad_for_automatic_promotion"
+}

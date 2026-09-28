@@ -1,0 +1,759 @@
+{
+ "_note": [
+  "Recipe ingredients. Each is a generic food concept with: its CIQUAL 2020 code (nutrition, ANSES), the Open Food Facts category tags used to price packaged products, and the Open Prices category tags used for loose fresh produce.",
+  "unit_g converts a per-unit price (one banana, one lettuce) into a price per kg. Weights are typical edible units and should be reviewed.",
+  "Amounts in recipes are in grams as bought (dry pasta, raw lentils, raw meat), matching the CIQUAL code chosen.",
+  "storage: pantry / freezer items are charged at the share a week uses; fridge and bakery items are bought as whole packs; fresh produce is sold by weight. animal: meat, fish, dairy, egg or honey, for diet filters."
+ ],
+ "ingredients": [
+  {
+   "id": "oats",
+   "en": "Rolled oats",
+   "fr": "Flocons d'avoine",
+   "ciqual": 32140,
+   "off": [
+    "en:rolled-oats",
+    "en:oat-flakes"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "rice",
+   "en": "White rice",
+   "fr": "Riz blanc",
+   "ciqual": 9100,
+   "off": [
+    "en:white-rices",
+    "en:long-grain-rices",
+    "en:basmati-rices"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "pasta",
+   "en": "Pasta",
+   "fr": "Pâtes",
+   "ciqual": 9810,
+   "off": [
+    "en:dry-pastas",
+    "en:spaghetti",
+    "en:penne"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "wholemeal-pasta",
+   "en": "Wholemeal pasta",
+   "fr": "Pâtes complètes",
+   "ciqual": 9870,
+   "off": [
+    "en:whole-wheat-spaghetti",
+    "en:whole-wheat-pastas"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "couscous",
+   "en": "Couscous",
+   "fr": "Semoule de couscous",
+   "ciqual": 9681,
+   "off": [
+    "en:couscous",
+    "en:durum-wheat-semolinas"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "quinoa",
+   "en": "Quinoa",
+   "fr": "Quinoa",
+   "ciqual": 9340,
+   "off": [
+    "en:quinoa"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "baguette",
+   "en": "Baguette",
+   "fr": "Baguette",
+   "ciqual": 7001,
+   "off": [
+    "en:baguettes"
+   ],
+   "fresh": [],
+   "storage": "bakery"
+  },
+  {
+   "id": "wholemeal-bread",
+   "en": "Wholemeal bread",
+   "fr": "Pain complet",
+   "ciqual": 7110,
+   "off": [
+    "en:wholemeal-breads",
+    "en:wholemeal-sliced-breads"
+   ],
+   "fresh": [],
+   "storage": "bakery"
+  },
+  {
+   "id": "potato",
+   "en": "Potatoes",
+   "fr": "Pommes de terre",
+   "ciqual": 4008,
+   "off": [
+    "en:potatoes"
+   ],
+   "fresh": [
+    "en:potatoes"
+   ],
+   "storage": "fresh"
+  },
+  {
+   "id": "green-lentils",
+   "en": "Green lentils (dry)",
+   "fr": "Lentilles vertes",
+   "ciqual": 20585,
+   "off": [
+    "en:green-lentils",
+    "en:lentils"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "red-lentils",
+   "en": "Red lentils (dry)",
+   "fr": "Lentilles corail",
+   "ciqual": 20535,
+   "off": [
+    "en:coral-lentils",
+    "en:red-lentils"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "chickpeas",
+   "en": "Chickpeas (canned)",
+   "fr": "Pois chiches en conserve",
+   "ciqual": 20532,
+   "off": [
+    "en:canned-chickpeas",
+    "en:chickpeas"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "kidney-beans",
+   "en": "Red kidney beans (canned)",
+   "fr": "Haricots rouges en conserve",
+   "ciqual": 20524,
+   "off": [
+    "en:canned-red-kidney-beans",
+    "en:red-kidney-beans"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "tofu",
+   "en": "Tofu",
+   "fr": "Tofu nature",
+   "ciqual": 20904,
+   "off": [
+    "en:plain-tofu",
+    "en:tofu"
+   ],
+   "fresh": [],
+   "storage": "fridge"
+  },
+  {
+   "id": "egg",
+   "en": "Eggs",
+   "fr": "Œufs",
+   "ciqual": 22000,
+   "off": [
+    "en:chicken-eggs",
+    "en:eggs"
+   ],
+   "fresh": [],
+   "unit_g": 60,
+   "storage": "fridge",
+   "animal": "egg",
+   "pack_g": 360
+  },
+  {
+   "id": "sardines",
+   "en": "Sardines in oil (canned)",
+   "fr": "Sardines à l'huile",
+   "ciqual": 26034,
+   "off": [
+    "en:sardines-in-oil",
+    "en:canned-sardines",
+    "en:sardines-in-olive-oil"
+   ],
+   "fresh": [],
+   "storage": "pantry",
+   "animal": "fish"
+  },
+  {
+   "id": "tuna",
+   "en": "Tuna (canned)",
+   "fr": "Thon au naturel",
+   "ciqual": 26039,
+   "off": [
+    "en:canned-tunas",
+    "en:tunas-in-brine",
+    "en:tuna-in-natural-juice"
+   ],
+   "fresh": [],
+   "storage": "pantry",
+   "animal": "fish"
+  },
+  {
+   "id": "mackerel",
+   "en": "Mackerel fillets",
+   "fr": "Filets de maquereau",
+   "ciqual": 26051,
+   "off": [
+    "en:mackerel-fillets",
+    "en:canned-mackerels",
+    "en:mackerels"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "animal": "fish"
+  },
+  {
+   "id": "salmon",
+   "en": "Salmon fillet",
+   "fr": "Pavé de saumon",
+   "ciqual": 26036,
+   "off": [
+    "en:salmon-fillets",
+    "en:frozen-salmon-fillets",
+    "en:salmons"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "animal": "fish"
+  },
+  {
+   "id": "chicken",
+   "en": "Chicken breast",
+   "fr": "Blanc de poulet",
+   "ciqual": 36017,
+   "off": [
+    "en:chicken-breasts",
+    "en:chicken-breast-fillets"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "animal": "meat"
+  },
+  {
+   "id": "minced-beef",
+   "en": "Minced beef 5%",
+   "fr": "Steak haché 5%",
+   "ciqual": 6250,
+   "off": [
+    "en:ground-beef-steaks",
+    "en:minced-beef"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "animal": "meat"
+  },
+  {
+   "id": "ham",
+   "en": "Cooked ham",
+   "fr": "Jambon blanc",
+   "ciqual": 28900,
+   "off": [
+    "en:white-hams",
+    "en:cooked-hams"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "animal": "meat"
+  },
+  {
+   "id": "yogurt",
+   "en": "Plain yogurt",
+   "fr": "Yaourt nature",
+   "ciqual": 19600,
+   "off": [
+    "en:plain-yogurts",
+    "en:natural-yogurts"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "animal": "dairy"
+  },
+  {
+   "id": "fromage-blanc",
+   "en": "Fromage blanc 3%",
+   "fr": "Fromage blanc 3%",
+   "ciqual": 19646,
+   "off": [
+    "en:fromage-blanc",
+    "en:quarks"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "animal": "dairy"
+  },
+  {
+   "id": "milk",
+   "en": "Semi-skimmed milk",
+   "fr": "Lait demi-écrémé",
+   "ciqual": 19041,
+   "off": [
+    "en:semi-skimmed-milks"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "animal": "dairy",
+   "liquid": true
+  },
+  {
+   "id": "soy-drink",
+   "en": "Soy drink (calcium-enriched)",
+   "fr": "Boisson au soja enrichie en calcium",
+   "ciqual": 18901,
+   "off": [
+    "en:unsweetened-plain-soy-based-drinks",
+    "en:soy-based-drinks"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "liquid": true
+  },
+  {
+   "id": "emmental",
+   "en": "Emmental",
+   "fr": "Emmental",
+   "ciqual": 12115,
+   "off": [
+    "en:emmentaler",
+    "en:grated-emmentaler"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "animal": "dairy"
+  },
+  {
+   "id": "butter",
+   "en": "Butter",
+   "fr": "Beurre",
+   "ciqual": 16400,
+   "off": [
+    "en:butters",
+    "en:unsalted-butters"
+   ],
+   "fresh": [],
+   "storage": "fridge",
+   "animal": "dairy"
+  },
+  {
+   "id": "olive-oil",
+   "en": "Olive oil",
+   "fr": "Huile d'olive",
+   "ciqual": 17270,
+   "off": [
+    "en:extra-virgin-olive-oils",
+    "en:olive-oils"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "rapeseed-oil",
+   "en": "Rapeseed oil",
+   "fr": "Huile de colza",
+   "ciqual": 17130,
+   "off": [
+    "en:rapeseed-oils",
+    "en:colza-oils"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "carrot",
+   "en": "Carrots",
+   "fr": "Carottes",
+   "ciqual": 20009,
+   "off": [
+    "en:carrots"
+   ],
+   "fresh": [
+    "en:carrots"
+   ],
+   "unit_g": 100,
+   "storage": "fresh"
+  },
+  {
+   "id": "onion",
+   "en": "Onions",
+   "fr": "Oignons",
+   "ciqual": 20034,
+   "off": [
+    "en:onions",
+    "en:yellow-onions"
+   ],
+   "fresh": [
+    "en:yellow-onions",
+    "en:onions"
+   ],
+   "unit_g": 150,
+   "storage": "fresh"
+  },
+  {
+   "id": "tomato",
+   "en": "Tomatoes",
+   "fr": "Tomates",
+   "ciqual": 20047,
+   "off": [
+    "en:tomatoes"
+   ],
+   "fresh": [
+    "en:tomatoes"
+   ],
+   "unit_g": 120,
+   "storage": "fresh"
+  },
+  {
+   "id": "canned-tomato",
+   "en": "Crushed tomatoes (canned)",
+   "fr": "Pulpe de tomates",
+   "ciqual": 20169,
+   "off": [
+    "en:crushed-tomatoes",
+    "en:tomato-pulps",
+    "en:canned-tomatoes"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "spinach",
+   "en": "Spinach (frozen)",
+   "fr": "Épinards surgelés",
+   "ciqual": 20083,
+   "off": [
+    "en:frozen-spinachs",
+    "en:frozen-spinach",
+    "en:spinachs"
+   ],
+   "fresh": [],
+   "storage": "freezer"
+  },
+  {
+   "id": "broccoli",
+   "en": "Broccoli",
+   "fr": "Brocoli",
+   "ciqual": 20057,
+   "off": [
+    "en:broccoli",
+    "en:frozen-broccoli"
+   ],
+   "fresh": [
+    "en:broccoli"
+   ],
+   "unit_g": 400,
+   "storage": "fresh"
+  },
+  {
+   "id": "zucchini",
+   "en": "Courgette",
+   "fr": "Courgette",
+   "ciqual": 20020,
+   "off": [
+    "en:zucchini",
+    "en:courgettes"
+   ],
+   "fresh": [
+    "en:zucchini"
+   ],
+   "unit_g": 250,
+   "storage": "fresh"
+  },
+  {
+   "id": "bell-pepper",
+   "en": "Red pepper",
+   "fr": "Poivron rouge",
+   "ciqual": 20087,
+   "off": [
+    "en:red-bell-peppers",
+    "en:bell-peppers"
+   ],
+   "fresh": [
+    "en:red-bell-peppers"
+   ],
+   "unit_g": 150,
+   "storage": "fresh"
+  },
+  {
+   "id": "peas",
+   "en": "Peas (frozen)",
+   "fr": "Petits pois surgelés",
+   "ciqual": 20084,
+   "off": [
+    "en:frozen-peas",
+    "en:frozen-green-peas",
+    "en:peas"
+   ],
+   "fresh": [],
+   "storage": "freezer"
+  },
+  {
+   "id": "green-beans",
+   "en": "Green beans (frozen)",
+   "fr": "Haricots verts surgelés",
+   "ciqual": 20070,
+   "off": [
+    "en:frozen-green-beans"
+   ],
+   "fresh": [],
+   "storage": "freezer"
+  },
+  {
+   "id": "cabbage",
+   "en": "White cabbage",
+   "fr": "Chou blanc",
+   "ciqual": 20116,
+   "off": [
+    "en:white-cabbages",
+    "en:cabbages"
+   ],
+   "fresh": [
+    "en:cabbages",
+    "en:white-cabbages"
+   ],
+   "unit_g": 1000,
+   "storage": "fresh"
+  },
+  {
+   "id": "leek",
+   "en": "Leeks",
+   "fr": "Poireaux",
+   "ciqual": 20039,
+   "off": [
+    "en:leeks"
+   ],
+   "fresh": [
+    "en:leeks"
+   ],
+   "unit_g": 200,
+   "storage": "fresh"
+  },
+  {
+   "id": "mushroom",
+   "en": "Mushrooms",
+   "fr": "Champignons de Paris",
+   "ciqual": 20056,
+   "off": [
+    "en:button-mushrooms",
+    "en:mushrooms"
+   ],
+   "fresh": [
+    "en:mushrooms"
+   ],
+   "unit_g": 20,
+   "storage": "fresh"
+  },
+  {
+   "id": "lettuce",
+   "en": "Lettuce",
+   "fr": "Salade",
+   "ciqual": 20031,
+   "off": [
+    "en:lettuces",
+    "en:leaf-salads"
+   ],
+   "fresh": [
+    "en:lettuces",
+    "fr:batavia",
+    "en:leaf-salads"
+   ],
+   "unit_g": 350,
+   "storage": "fresh"
+  },
+  {
+   "id": "garlic",
+   "en": "Garlic",
+   "fr": "Ail",
+   "ciqual": 11000,
+   "off": [
+    "en:garlic"
+   ],
+   "fresh": [
+    "en:garlic"
+   ],
+   "unit_g": 50,
+   "nutrition": false,
+   "storage": "pantry"
+  },
+  {
+   "id": "lemon",
+   "en": "Lemon",
+   "fr": "Citron",
+   "ciqual": 13009,
+   "off": [
+    "en:lemons"
+   ],
+   "fresh": [
+    "en:lemons"
+   ],
+   "unit_g": 100,
+   "storage": "fresh"
+  },
+  {
+   "id": "banana",
+   "en": "Bananas",
+   "fr": "Bananes",
+   "ciqual": 13005,
+   "off": [
+    "en:bananas"
+   ],
+   "fresh": [
+    "en:bananas"
+   ],
+   "unit_g": 120,
+   "storage": "fresh"
+  },
+  {
+   "id": "apple",
+   "en": "Apples",
+   "fr": "Pommes",
+   "ciqual": 13039,
+   "off": [
+    "en:apples"
+   ],
+   "fresh": [
+    "en:apples",
+    "en:gala-apples",
+    "en:golden-delicious-apples"
+   ],
+   "unit_g": 150,
+   "storage": "fresh"
+  },
+  {
+   "id": "orange",
+   "en": "Oranges",
+   "fr": "Oranges",
+   "ciqual": 13034,
+   "off": [
+    "en:oranges"
+   ],
+   "fresh": [
+    "en:oranges"
+   ],
+   "unit_g": 150,
+   "storage": "fresh"
+  },
+  {
+   "id": "kiwi",
+   "en": "Kiwis",
+   "fr": "Kiwis",
+   "ciqual": 13021,
+   "off": [
+    "en:kiwis"
+   ],
+   "fresh": [
+    "en:kiwis"
+   ],
+   "unit_g": 75,
+   "storage": "fresh"
+  },
+  {
+   "id": "blueberries",
+   "en": "Blueberries (frozen)",
+   "fr": "Myrtilles surgelées",
+   "ciqual": 13132,
+   "off": [
+    "en:frozen-blueberries",
+    "en:frozen-red-fruits"
+   ],
+   "fresh": [],
+   "storage": "freezer"
+  },
+  {
+   "id": "raisins",
+   "en": "Raisins",
+   "fr": "Raisins secs",
+   "ciqual": 13046,
+   "off": [
+    "en:raisins"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "walnuts",
+   "en": "Walnuts",
+   "fr": "Cerneaux de noix",
+   "ciqual": 15005,
+   "off": [
+    "en:shelled-walnuts",
+    "en:walnuts"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "sunflower-seeds",
+   "en": "Sunflower seeds",
+   "fr": "Graines de tournesol",
+   "ciqual": 15011,
+   "off": [
+    "en:sunflower-seeds"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "peanut-butter",
+   "en": "Peanut butter",
+   "fr": "Beurre de cacahuète",
+   "ciqual": 15202,
+   "off": [
+    "en:peanut-butters"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  },
+  {
+   "id": "honey",
+   "en": "Honey",
+   "fr": "Miel",
+   "ciqual": 31008,
+   "off": [
+    "en:honeys"
+   ],
+   "fresh": [],
+   "storage": "pantry",
+   "animal": "honey"
+  },
+  {
+   "id": "dark-chocolate",
+   "en": "Dark chocolate",
+   "fr": "Chocolat noir",
+   "ciqual": 31005,
+   "off": [
+    "en:dark-chocolates"
+   ],
+   "fresh": [],
+   "storage": "pantry"
+  }
+ ]
+}
