@@ -17,6 +17,23 @@ a path: *food → nutrient → goal*, backed by EU-authorised health claims.
 > possible for €20 at Naturalia, and the app says so, with the minimum budget
 > it would take, instead of planning less food.
 
+<p align="center">
+  <img alt="My week on a laptop: €39.56 of €50 at Lidl, 2,361 kcal a day, today's breakfast, lunch and dinner with French names and cooking times" src="docs/screenshots/week-desktop.png" width="66%">
+  &nbsp;
+  <img alt="The same plan on a phone, with the tab bar at the bottom" src="docs/screenshots/week-phone.png" width="24%">
+</p>
+
+![Same student, same €50, two shops: at Lidl every tracked nutrient reaches 100 % except vitamin D (81 %); at Naturalia vitamin D, iodine, EPA + DHA and selenium fall to 27–40 %](docs/figures/week_coverage.svg)
+
+The shop changes what the same money buys. The planner never trades energy for
+budget: below the cheapest week that feeds you enough, it says so and gives that
+figure. Here it is for every chain in the price data:
+
+![The cheapest week with enough energy, by chain: Netto €22, Lidl €25, Aldi €26, up to Naturalia €50, Picard €52 and Biocoop €53](docs/figures/minimum_budget.svg)
+
+Every figure in this README is computed by the engine: `python scripts/figures.py`
+(from `backend/`) redraws them and prints each number they show.
+
 ---
 
 ## Why I built this
@@ -120,6 +137,8 @@ product of its edges and Dijkstra's *shortest* path is exactly the *strongest*
 food → nutrient → goal chain; Yen's k-shortest-paths gives the next-strongest
 routes. The graph is hand-written (no NetworkX backing store); NetworkX is used
 only for offline analytics.
+
+![Soybeans for iron: the strongest route goes through iron (131 % of daily need in 150 g, absorbed ×0.56, evidence A); copper, riboflavin and vitamin K are weaker routes](docs/figures/evidence_path.svg)
 
 ### Scoring (v1.3) — [`engine/scoring.py`](backend/feedforward/engine/scoring.py)
 - **Food → Nutrient** = what **one realistic portion** delivers as a share of
@@ -232,6 +251,7 @@ feedforward/
 │   │   ├── api/             # FastAPI: routers, auth (JWT), models
 │   │   ├── web/             # the web app (one HTML file, no build step)
 │   │   └── data/            # corpora, edges, recipes, prices, sources.json; ingest/ rebuilds them
+│   ├── scripts/figures.py   # the README's figures, computed by the engine
 │   └── tests/               # pytest suite (engine + algorithms + API)
 ├── mobile/                  # React Native (Expo) prototype; predates the web app
 │   └── src/{screens,components,api,theme}
@@ -309,9 +329,12 @@ and Wikipedia scrapers, the Food → Nutrient → Goal graph, graph-based
 recommendations and an ILP vs greedy meal comparison. Since then it has been
 rebuilt and extended by Emanuele Restivo: new scientific engine (bioavailability,
 evidence grading, EU claims), the French data and price pipeline, the weekly
-planner, an API, a web app and a mobile prototype. Built with AI coding
-assistants (Claude Code) as tools; design decisions and their trade-offs are
-documented in `docs/`.
+planner, an API, a web app and a mobile prototype.
+
+**How it was built.** With an AI coding assistant (Claude Code) as a pair
+programmer, and the commit history shows it. The questions, the choice of data
+sources and evidence rules, and the checks are mine; each design decision, with
+the alternatives and what it costs, is in [`DECISIONS.md`](DECISIONS.md).
 
 ## License
 
