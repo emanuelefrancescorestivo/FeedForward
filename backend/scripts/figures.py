@@ -93,7 +93,7 @@ def week_coverage(rec) -> None:
 def minimum_budget(rec) -> None:
     rows = []
     for c in wp.chains():
-        m = wp._minimum_budget(rec, STUDENT, GOAL, c["id"], None, 7, None)
+        m, _reason = wp._minimum_budget(rec, STUDENT, GOAL, c["id"], None, 7, None)
         rows.append((c["label"], m, c["price_index"]))
         print(f"{c['label']}: cheapest week with enough energy €{m} (price index {c['price_index']})")
     rows = sorted((r for r in rows if r[1] is not None), key=lambda r: r[1])

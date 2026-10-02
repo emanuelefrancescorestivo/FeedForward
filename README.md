@@ -19,12 +19,12 @@ a path: *food → nutrient → goal*, backed by EU-authorised health claims.
 > says so, with the minimum budget it would take, instead of planning less food.
 
 <p align="center">
-  <img alt="My week on a laptop: €39.56 of €50 at Lidl, 2,361 kcal a day, today's breakfast, lunch and dinner with French names and cooking times" src="docs/screenshots/week-desktop.png" width="66%">
+  <img alt="My week on a laptop: €39.33 of €50 at Lidl, 2,357 kcal a day, a segmented control for today, the week and shopping, today's breakfast, lunch and dinner with French names and cooking times" src="docs/screenshots/week-desktop.png" width="66%">
   &nbsp;
   <img alt="The same plan on a phone, with the tab bar at the bottom" src="docs/screenshots/week-phone.png" width="24%">
 </p>
 
-![Same student, same €50, two shops: at Lidl every tracked nutrient reaches 100 % except vitamin D (81 %); at Naturalia vitamin D, iodine, EPA + DHA and selenium fall to 27–40 %](docs/figures/week_coverage.svg)
+![Same student, same €50, two shops: at Lidl every tracked nutrient reaches 97 % or more except vitamin D (81 %); at Naturalia vitamin D, iodine, EPA + DHA and selenium fall to 27–40 %](docs/figures/week_coverage.svg)
 
 The shop changes what the same money buys. The planner never trades energy for
 budget: below the cheapest week that feeds you enough, it says so and gives that
@@ -219,6 +219,8 @@ in the browser (localStorage) and are sent only to compute the plan.
 - **Why this meal?** In an opened recipe: the goal's nutrients one portion gives
   (from 15 % of the daily need, the EU "source" threshold), the ingredient each
   comes from, and the EU claim wording with its EFSA reference.
+
+  <img alt="Why this meal for focus: sardine tartines give 7 times the daily need of EPA + DHA, 67 % of iron and 55 % of iodine, each with the EU authorised claim and its EFSA reference, and a note that one portion has 35 % of the daily salt limit" src="docs/screenshots/why-this-meal.png" width="60%">
 - API: `GET /plan/options`, `POST /plan/week`, `GET /plan/recipes/{id}`,
   `GET /plan/recipes/{id}/why`.
 
