@@ -113,7 +113,9 @@ _WEB = Path(__file__).resolve().parent.parent / "web" / "index.html"
 @app.get("/app", include_in_schema=False)
 def explorer():
     """Local exploration UI (single page, talks to this API)."""
-    return FileResponse(_WEB)
+    # Revalidate on every load (the ETag makes it cheap); without this, browsers
+    # cache heuristically and keep showing an old interface after an update.
+    return FileResponse(_WEB, headers={"Cache-Control": "no-cache"})
 
 
 @app.get("/health", tags=["meta"])

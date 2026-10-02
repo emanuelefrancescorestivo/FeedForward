@@ -211,7 +211,10 @@ fruit and milk) as soft constraints with a heavy penalty. Objective: capped
 coverage of each nutrient's weekly need, with goal nutrients weighted
 1 + 3 × their association to the goal. If no plan fits the budget, a second
 solve finds the cheapest adequate week and the app shows that minimum budget.
-Portions scale with energy need (×0.8–1.4 of a 2,100 kcal reference).
+Portions scale with energy need (×0.4–2.5 of a 2,100 kcal reference), and
+snacks go from 2 to 3 to 4 a day above 2,800 and 3,800 kcal, so plans exist from
+about 500 to 6,000 kcal a day; outside that, the answer is "energy need out of
+reach", never a smaller plan. The solver stops within 1 % of the optimum.
 
 **Prices.** Open Prices receipts in France (ODbL), last 30 months, per chain:
 median €/kg; observations beyond 3× the ingredient's national median dropped

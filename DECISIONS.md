@@ -132,7 +132,13 @@ and the app shows that minimum budget.
 students who already skip meals to save money, a plan that quietly
 under-feeds would be harmful.
 **Cost.** Some users get "at least €50" instead of a plan. That is the point.
-*Where:* [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`ENERGY_BAND`, `_minimum_budget`)
+**Revised.** Portions were first bounded to ×0.8–1.4 with at most 2 snacks a
+day, which made the band unreachable for big needs: no student-athlete
+(≈ 4,000 kcal a day) got a plan anywhere, at any budget, and the app blamed
+"too few recipes". Portions now scale ×0.4–2.5 and snacks rise to 3 and 4 a
+day above 2,800 and 3,800 kcal, so plans exist from ≈ 500 to ≈ 6,000 kcal a
+day. Every "no plan" carries its reason (budget, energy, recipes).
+*Where:* [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`ENERGY_BAND`, `PORTION_SCALE`, `SNACKS_PER_DAY`, `_minimum_budget`)
 
 ### 12. Variety is soft, and repeats are spread out
 **Decision.** A recipe twice a week (three times for batch cooking), with
@@ -175,8 +181,33 @@ which works with PuLP 3 and 4.
 "stopped within the optimality gap" as its own status, so valid plans came
 back as "impossible". Running the suite from a fresh clone in a new
 environment caught it before CI did.
+**Also here: a 1 % optimality gap.** Proving the last fraction of a percent took
+20 s for athlete-sized weeks; stopping within 1 % takes under a second and
+changed nutrient coverage by less than 0.4 points.
 
-### 16. Privacy by construction, and a web app with no build step
+### 16. Unknown input is an error; the input space is tested, not the demo
+**Decision.** An unknown diet, appliance or goal, a man marked pregnant, or
+pregnant and breastfeeding at once, is rejected with a message instead of
+being ignored. A sweep of 531 cases (every shop × diet × kitchen for small,
+typical and athlete-sized needs, budget edges, the corners of every input
+range, random profiles, every goal) checks that each answer is a plan within
+budget and energy band that respects diet and kitchen, or a "no plan" with a
+true reason; a smaller version runs in CI.
+**Why.** Ignoring a misspelt "vegna" would hand a vegan a week with meat. And
+the demo scenario hid that 35 % of the input space was broken.
+*Where:* [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py), [`tests/test_week.py`](backend/tests/test_week.py) (`test_planner_handles_the_input_space`)
+
+### 17. "Why this meal?" only from 15 % of the daily need
+**Decision.** An opened recipe lists the goal's nutrients one portion gives,
+the ingredient each comes from and the evidence for the link, quoting the EU
+claim, but only from 15 % of the daily need and only for evidence graded A to
+C.
+**Why.** 15 % is the EU threshold for a food to be a "source" of a vitamin or
+mineral; citing a claim for a trace amount would mislead, and so would
+literature-only (grade D) links such as vitamin K for iron.
+*Where:* [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`recipe_why`)
+
+### 18. Privacy by construction, and a web app with no build step
 **Decision.** The planner's answers live in the browser (localStorage); the
 server computes the plan per request and stores nothing. The web app is one
 HTML file with no framework or build step, designed for progressive

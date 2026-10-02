@@ -215,6 +215,118 @@ def test_narrow_settings_repeat_meals_instead_of_failing(engine):
     assert plan["diet_note"] and "B12" in plan["diet_note"]
 
 
+def test_why_this_meal_lists_only_meaningful_supported_nutrients(engine):
+    why = wp.recipe_why(engine, "sardine-tartines", goal="cognitive_function", demographic="adult_male")
+    assert why["nutrients"], why
+    top = why["nutrients"][0]
+    assert top["nutrient"] == "epa-dha" and top["eu_claim"] and top["eu_claims"]
+    assert top["main_source"]["id"] == "sardines"
+    for n in why["nutrients"]:
+        assert n["percent_of_need"] >= wp.WHY_MIN_SHARE           # the EU "source" threshold
+        assert n["evidence"] in ("A", "B", "C")                   # no literature-only (D) reasons
+    strengths = [n["delivery_strength"] * n["association"] for n in why["nutrients"]]
+    assert strengths == sorted(strengths, reverse=True)
+    # a banana is not a reason to sleep better, and the app should say so
+    assert wp.recipe_why(engine, "snack-banana", goal="sleep_support")["nutrients"] == []
+    with pytest.raises(KeyError):
+        wp.recipe_why(engine, "no-such-recipe", goal="cognitive_function")
+    with pytest.raises(KeyError):
+        wp.recipe_why(engine, "sardine-tartines", goal="no_such_goal")
+
+
+def _violations(plan, profile, budget, diet, kitchen):
+    """Invariants every answer must keep, whatever the input."""
+    _i, recipes, _p = wp._load()
+    ingredients = _i
+    by_id = {r["id"]: r for r in recipes}
+    banned = {"vegetarian": {"meat", "fish"}, "vegan": {"meat", "fish", "dairy", "egg", "honey"}}.get(diet, set())
+    bad = []
+    if plan["feasible"]:
+        if plan["total_cost"] > budget:
+            bad.append(f"cost {plan['total_cost']} over budget {budget}")
+        target, got = plan["energy"]["target_per_day"], plan["energy"]["planned_per_day"]
+        if not 0.895 * target <= got <= 1.155 * target:
+            bad.append(f"energy {got} for a need of {target}")
+        for d in plan["days"]:
+            if set(d["meals"]) != {"breakfast", "lunch", "dinner"}:
+                bad.append(f"day {d['day']} incomplete")
+            for m in list(d["meals"].values()) + d["snacks"]:
+                r = by_id[m["id"]]
+                if {ingredients[i["id"]].get("animal") for i in r["ingredients"]} & banned:
+                    bad.append(f"{m['id']} breaks {diet}")
+                if kitchen and not set(r.get("equipment", [])) <= set(kitchen) | {"kettle"}:
+                    bad.append(f"{m['id']} needs more than {kitchen}")
+    elif plan["reason"] == "budget":
+        if not plan["minimum_budget"] or plan["minimum_budget"] <= budget:
+            bad.append(f"minimum budget {plan['minimum_budget']} for budget {budget}")
+    elif plan["reason"] == "energy":
+        if 500 <= energy_kcal(profile) <= 6000:
+            bad.append(f"no plan for {round(energy_kcal(profile))} kcal, inside the promised range")
+    else:
+        bad.append(f"no plan: {plan['reason']}")
+    return bad
+
+
+def test_planner_handles_the_input_space(engine):
+    """Not just the demo: small and athlete-sized needs, every diet and kitchen, cheap and dear shops."""
+    import random
+    small = Profile(75, "female", 45, 150, "sedentary")        # ~1,000 kcal a day
+    typical = Profile(22, "female", 60, 165, "moderate")
+    athlete = Profile(20, "male", 90, 190, "very_active")      # ~4,000 kcal a day
+    failures = []
+
+    def run(profile, budget, chain, diet=None, kitchen=None):
+        plan = wp.plan_week(engine, profile, goal="energy_metabolism", budget=budget, chain=chain,
+                            diet=diet, equipment=kitchen)
+        failures.extend(f"{profile} {chain} {diet} {kitchen} €{budget}: {b}"
+                        for b in _violations(plan, profile, budget, diet, kitchen))
+        return plan
+
+    for profile in (small, typical, athlete):
+        for chain in ("lidl", "biocoop"):
+            for diet in (None, "vegetarian", "vegan"):
+                for kitchen in (None, ["microwave"]):
+                    assert run(profile, 500, chain, diet, kitchen)["feasible"], (profile, chain, diet, kitchen)
+    for chain in ("netto", "monoprix", "naturalia"):
+        for diet in (None, "vegan"):
+            low = run(typical, 10, chain, diet)
+            assert not low["feasible"] and low["reason"] == "budget"
+            assert run(typical, low["minimum_budget"], chain, diet)["feasible"], (chain, diet)
+    rng = random.Random(42)
+    for _ in range(15):
+        p = Profile(rng.randint(14, 90), rng.choice(["female", "male"]), round(rng.uniform(40, 140), 1),
+                    round(rng.uniform(145, 205), 1), rng.choice(["sedentary", "light", "moderate", "active", "very_active"]))
+        run(p, 500, rng.choice(["lidl", "carrefour", "naturalia"]), rng.choice([None, "vegetarian", "vegan"]))
+    assert not failures, failures[:10]
+
+
+def test_needs_out_of_reach_say_so(engine):
+    """A need no recipe can be portioned for gets a reason, not a fake budget."""
+    giant = Profile(14, "male", 250, 230, "very_active")       # ~7,400 kcal a day
+    plan = wp.plan_week(engine, giant, goal=None, budget=500, chain="naturalia")
+    assert not plan["feasible"] and plan["reason"] == "energy" and plan["minimum_budget"] is None
+
+
+def test_unknown_inputs_are_errors_not_ignored(engine):
+    """A misspelt diet must never silently become 'no restriction'."""
+    for bad in (dict(diet="vegna"), dict(equipment=["oven"]), dict(goal="telepathy")):
+        with pytest.raises(ValueError):
+            wp.plan_week(engine, STUDENT, **{"goal": None, "budget": 50, "chain": "lidl", **bad})
+    for profile in (Profile(30, "male", 70, 175, pregnant=True),
+                    Profile(30, "female", 60, 165, pregnant=True, breastfeeding=True)):
+        with pytest.raises(ValueError):
+            profile.validate()
+
+
+def test_shown_total_never_exceeds_the_budget(engine):
+    """Lines are rounded to cents so they add up to a total the budget covers."""
+    for chain, budget in (("lidl", 43), ("aldi", 24), ("carrefour", 35)):
+        plan = wp.plan_week(engine, Profile(22, "female", 60, 165, "moderate"), goal=None, budget=budget, chain=chain)
+        if plan["feasible"]:
+            assert plan["total_cost"] <= budget
+            assert round(sum(b["cost"] for b in plan["basket"]), 2) == plan["total_cost"]
+
+
 def test_unknown_chain_is_an_error(engine):
     with pytest.raises(ValueError):
         wp.plan_week(engine, STUDENT, goal=None, budget=50, chain="harrods")
@@ -238,3 +350,12 @@ def test_plan_api_round_trip():
         assert client.post("/plan/week", json={**body, "age": 9}).status_code == 422
         assert client.post("/plan/week", json={**body, "activity": "couch"}).status_code == 400
         assert client.get("/plan/recipes/nope").status_code == 404
+        why = client.get(f"/plan/recipes/{first}/why",
+                         params={"goal": "cognitive_function", "scale": plan["portion_scale"]}).json()
+        assert why["goal"] == "cognitive_function" and "rule" in why
+        assert client.get("/plan/recipes/nope/why").status_code == 404
+        assert client.get(f"/plan/recipes/{first}/why", params={"demographic": "martian"}).status_code == 400
+        for bad in ({"diet": "keto"}, {"equipment": ["oven"]}, {"goal": "telepathy"}, {"pregnant": True}):
+            assert client.post("/plan/week", json={**body, **bad}).status_code in (400, 422), bad
+        assert client.get(f"/plan/recipes/{first}", params={"chain": "harrods"}).status_code == 400
+        assert client.get(f"/plan/recipes/{first}", params={"scale": -3}).status_code == 422

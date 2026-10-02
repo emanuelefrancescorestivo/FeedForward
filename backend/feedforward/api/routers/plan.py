@@ -1,7 +1,9 @@
 """Weekly plan endpoints: options, the plan itself, and recipe details."""
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from typing import Literal
+
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from ...engine import load_engine
@@ -22,8 +24,8 @@ class WeekRequest(BaseModel):
     goal: str | None = "cognitive_function"
     budget: float = Field(50, ge=10, le=500)
     chain: str = "lidl"
-    diet: str | None = None               # None | vegetarian | vegan
-    equipment: list[str] | None = None    # e.g. ["microwave"]; None = full kitchen
+    diet: Literal["vegetarian", "vegan"] | None = None
+    equipment: list[Literal["hob", "microwave", "kettle", "blender"]] | None = None   # None = full kitchen
 
 
 @router.get("/options")
@@ -44,13 +46,18 @@ def week(req: WeekRequest):
         raise HTTPException(400, str(exc)) from exc
 
 
+SCALE = Query(1.0, ge=0.25, le=3.0, description="the plan's portion_scale")
+
+
 @router.get("/recipes/{recipe_id}")
-def recipe(recipe_id: str, chain: str = "lidl", scale: float = 1.0):
-    ingredients, raw, _prices = wp._load()
+def recipe(recipe_id: str, chain: str = "lidl", scale: float = SCALE):
+    ingredients, raw, prices = wp._load()
     r = next((x for x in raw if x["id"] == recipe_id), None)
     if r is None:
         raise HTTPException(404, f"Unknown recipe: {recipe_id}")
-    k = 1.0 if "snack" in r["meals"] else max(0.5, min(2.0, scale))
+    if chain not in prices["chains"]:
+        raise HTTPException(400, f"unknown chain: {chain}")
+    k = wp.serving_scale(r, scale)
     items, cost = [], 0.0
     for it in r["ingredients"]:
         eur_kg, _pack, estimated = wp._price(it["id"], chain)
@@ -63,3 +70,15 @@ def recipe(recipe_id: str, chain: str = "lidl", scale: float = 1.0):
             "time_min": r.get("time_min", 0), "equipment": r.get("equipment", []),
             "batch": bool(r.get("batch")), "steps": r.get("steps", []),
             "ingredients": items, "cost_per_serving": round(cost, 2), "status": "draft"}
+
+
+@router.get("/recipes/{recipe_id}/why")
+def recipe_why(recipe_id: str, goal: str = "cognitive_function", scale: float = SCALE,
+               demographic: str | None = None):
+    """Why this recipe is in the plan: goal nutrients per portion, with their evidence."""
+    try:
+        return wp.recipe_why(load_engine(), recipe_id, goal=goal, scale=scale, demographic=demographic)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc).strip("'")) from exc
+    except ValueError as exc:                      # unknown demographic
+        raise HTTPException(400, str(exc)) from exc

@@ -44,6 +44,10 @@ class Profile:
             raise ValueError("weight or height out of range")
         if self.activity not in ACTIVITY:
             raise ValueError(f"activity must be one of {sorted(ACTIVITY)}")
+        if (self.pregnant or self.breastfeeding) and self.sex != "female":
+            raise ValueError("pregnant and breastfeeding apply to sex 'female' only")
+        if self.pregnant and self.breastfeeding:
+            raise ValueError("choose pregnant or breastfeeding, not both")
         return self
 
     @property

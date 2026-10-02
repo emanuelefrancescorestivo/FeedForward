@@ -12,10 +12,11 @@ shopping list at that shop from real receipts, and can explain every choice as
 a path: *food → nutrient → goal*, backed by EU-authorised health claims.
 
 > Example: 24-year-old man, 178 cm, 72 kg, light activity, goal "focus",
-> €50 at Lidl → a week for **€39.56**, 2,361 kcal a day, every tracked vitamin
-> and mineral at 100 % or more except vitamin D (81 %). The same week is not
-> possible for €20 at Naturalia, and the app says so, with the minimum budget
-> it would take, instead of planning less food.
+> €50 at Lidl → a week for **€39.33**, 2,357 kcal a day, every tracked vitamin
+> and mineral at 97 % or more except vitamin D (81 %). A 90 kg student-athlete
+> training hard (≈ 3,800 kcal a day) gets bigger plates and three snacks a day
+> for €53.57. The same week is not possible for €20 at Naturalia, and the app
+> says so, with the minimum budget it would take, instead of planning less food.
 
 <p align="center">
   <img alt="My week on a laptop: €39.56 of €50 at Lidl, 2,361 kcal a day, today's breakfast, lunch and dinner with French names and cooking times" src="docs/screenshots/week-desktop.png" width="66%">
@@ -69,8 +70,8 @@ says so.
 | **Optimisation** | Two mixed-integer programs (PuLP/CBC): one meal that covers a goal, and a whole week under a budget, with energy as a hard constraint and WHO limits on salt, saturated fat and free sugars | [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py), [`engine/meal_optimizer.py`](backend/feedforward/engine/meal_optimizer.py) |
 | **Statistics on messy data** | Crowdsourced receipts → median €/kg per chain, outliers dropped, chains with few receipts shrunk towards national median × chain price index; the index comes out of the data (Lidl 0.67, Carrefour 1.06, Biocoop 1.49) | [`data/ingest/prices.py`](backend/feedforward/data/ingest/prices.py) |
 | **Scientific judgement** | Scoring per realistic portion against reference intakes; heme vs non-heme iron; the EU register as evidence layer (118 authorised links, 62 EFSA rejections removed); no medical conditions collected, on purpose (EU medical-device rules) | [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) |
-| **Design choices** | Sixteen decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
-| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 189 tests on GitHub Actions | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
+| **Design choices** | Eighteen decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
+| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 194 tests on GitHub Actions, including one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
 
 Two bugs the tests caught, as examples of how the project is checked:
 
@@ -210,11 +211,29 @@ in the browser (localStorage) and are sent only to compute the plan.
   budget it maximises coverage of the week's needs (goal nutrients weighted up),
   under WHO limits for sodium, saturated fat and free sugars; fridge/bakery
   items are bought in whole packs, cupboard/freezer items counted by share used.
-- API: `GET /plan/options`, `POST /plan/week`, `GET /plan/recipes/{id}`.
+  Portions scale with the energy need (×0.4 to ×2.5) and snacks go from 2 to 4
+  a day above 2,800 kcal, so plans exist from ≈ 500 to ≈ 6,000 kcal a day.
+  When there is no plan, the answer says why: the budget (with the minimum),
+  an energy need out of reach, or too few recipes for that diet and kitchen.
+  Unknown diets, appliances or goals are errors, never silently ignored.
+- **Why this meal?** In an opened recipe: the goal's nutrients one portion gives
+  (from 15 % of the daily need, the EU "source" threshold), the ingredient each
+  comes from, and the EU claim wording with its EFSA reference.
+- API: `GET /plan/options`, `POST /plan/week`, `GET /plan/recipes/{id}`,
+  `GET /plan/recipes/{id}/why`.
 
-Example (man, 24, 178 cm, 72 kg, light activity, goal "focus"): Lidl €50 →
-€39.56, 2,361 kcal/day, all needs ≥ 100 % except vitamin D (81 %); Naturalia
-€50 → €49.91, fewer fish meals, so vitamin D, iodine and EPA+DHA fall to 27–37 %.
+**Checked over the input space**, not just the demo: a sweep of 531 cases
+(17 shops × 3 diets × 2 kitchens × small / typical / athlete needs, budget
+edges, the corners of every input range, 60 random profiles, all 28 goals)
+found 188 broken answers in the first version (35 %: no plan for any athlete,
+cents over budget, wrong reasons); after the fixes, none, with a median solve
+of 0.1–0.7 s. A smaller version runs in the test suite.
+
+Examples (goal "focus"): man, 24, 178 cm, 72 kg, light activity: Lidl €50 →
+€39.33, 2,357 kcal/day, all needs ≥ 97 % except vitamin D (81 %); Naturalia
+€50 → €49.92, fewer fish meals, so vitamin D, iodine and EPA+DHA fall to 27–37 %.
+Man, 20, 190 cm, 90 kg, very active (goal "energy"): Lidl €80 → €53.57,
+3,773 kcal/day, portions ×1.8 and three snacks a day.
 
 ### The latency fix
 The original prototype ran Dijkstra from all ~1,800 food nodes per query (587 ms).
@@ -302,7 +321,7 @@ This is a personal project and a working prototype, not a product in use.
 Nothing here has been reviewed by a dietitian or tested with users yet.
 What exists today:
 
-- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 189 tests (pytest, run on every push by GitHub Actions).
+- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 194 tests (pytest, run on every push by GitHub Actions).
 - ✅ FastAPI backend: recommend / explain / meal-plan / week plan / food detail / dictionary / auth with tiered access.
 - ✅ Web app (`/app`): My week, food search, meal builder, dictionary, shopping list; works on phones.
 - 🟡 Expo mobile prototype (`mobile/`): early screens against the recommend API; it does not have My week.
@@ -312,7 +331,7 @@ Known limitations, stated plainly:
 - The bioavailability rules cover the best-established interactions (iron, calcium, fat-soluble vitamins). They are a curated subset of the literature, not exhaustive.
 - Evidence grades come from the EU register (authorised claims = A) and a curated table with representative PMIDs; the live PubMed grader is implemented but off by default for reproducibility. `stress_resilience` has no nutrient with established evidence, and sleep rests on one grade-C association.
 - The food corpus is ANSES-CIQUAL 2020 (3,185 foods), USDA FoodData Central (~8,000 foods, Foundation + SR Legacy), 88 curated staples and 1,809 OpenFoodFacts products whose micronutrients pass a USDA range gate. Fineli and CREA are not imported yet.
-- Week planner: recipes are drafts; prices are medians of crowdsourced receipts (few receipts for some chain × ingredient pairs, marked ≈ when estimated); pack sizes are medians; vitamin D is rarely covered by food alone; vegan weeks are low in B12 and iodine by nature (the app says so).
+- Week planner: recipes are drafts; prices are medians of crowdsourced receipts (few receipts for some chain × ingredient pairs, marked ≈ when estimated); pack sizes are medians; vitamin D is rarely covered by food alone; vegan weeks are low in B12 and iodine by nature (the app says so); energy needs above ≈ 6,000 kcal a day (extreme height, weight and activity together) get no plan, with that reason.
 - Not deployed anywhere; it runs locally. Nothing has been submitted to an app store.
 
 See [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) for the evidence

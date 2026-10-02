@@ -15,8 +15,15 @@ from __future__ import annotations
 import pulp
 
 
+# Stop within 1% of the best possible objective. Proving the last fraction of
+# a percent took 20 s for athlete-sized weeks (more snacks, more combinations)
+# and changed nutrient coverage by under 0.4 points; with the gap they take
+# well under a second.
+GAP = 0.01
+
+
 def _cbc(time_limit: float | None):
-    options = {"msg": False}
+    options = {"msg": False, "gapRel": GAP}
     if time_limit is not None:
         options["timeLimit"] = time_limit
     bundled = getattr(pulp, "PULP_CBC_CMD", None)
