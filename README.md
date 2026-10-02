@@ -19,9 +19,9 @@ a path: *food → nutrient → goal*, backed by EU-authorised health claims.
 > says so, with the minimum budget it would take, instead of planning less food.
 
 <p align="center">
-  <img alt="My week on a laptop: €39.33 of €50 at Lidl, 2,357 kcal a day, a segmented control for today, the week and shopping, today's breakfast, lunch and dinner with French names and cooking times" src="docs/screenshots/week-desktop.png" width="66%">
+  <img alt="My week on a laptop: €39.33 of €50 at Lidl with a budget bar, 2,357 kcal a day, Today and Week, today's breakfast, lunch and dinner each with an icon and a cooking time" src="docs/screenshots/week-desktop.png" width="66%">
   &nbsp;
-  <img alt="The same plan on a phone, with the tab bar at the bottom" src="docs/screenshots/week-phone.png" width="24%">
+  <img alt="The same plan on a phone, with three sections in the tab bar: Week, Foods, List" src="docs/screenshots/week-phone.png" width="24%">
 </p>
 
 ![Same student, same €50, two shops: at Lidl every tracked nutrient reaches 97 % or more except vitamin D (81 %); at Naturalia vitamin D, iodine, EPA + DHA and selenium fall to 27–40 %](docs/figures/week_coverage.svg)
@@ -71,7 +71,7 @@ says so.
 | **Statistics on messy data** | Crowdsourced receipts → median €/kg per chain, outliers dropped, chains with few receipts shrunk towards national median × chain price index; the index comes out of the data (Lidl 0.67, Carrefour 1.06, Biocoop 1.49) | [`data/ingest/prices.py`](backend/feedforward/data/ingest/prices.py) |
 | **Scientific judgement** | Scoring per realistic portion against reference intakes; heme vs non-heme iron; the EU register as evidence layer (118 authorised links, 62 EFSA rejections removed); no medical conditions collected, on purpose (EU medical-device rules) | [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) |
 | **Design choices** | Eighteen decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
-| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 194 tests on GitHub Actions, including one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
+| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 198 tests on GitHub Actions, including one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
 
 Two bugs the tests caught, as examples of how the project is checked:
 
@@ -174,10 +174,31 @@ so that energy, mood and cognition claims reach foods. See
 [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md#eu-health-claims-v14--the-knowledge-layer).
 Sanity benchmark on the EU-grounded engine: 0.68 mean top-20 hit rate (v2 lists, everyday foods first), 0 implausible results.
 
-### Dictionary and explorer UI
-`http://localhost:8000/app` is a progressive-disclosure explorer: 8 main goals,
-5 everyday foods at a time, "Why?" with the food → nutrient → goal graph, a
-shopping list (stored in the browser) and a light/dark theme. The **dictionary**
+### The app: three sections
+`http://localhost:8000/app` has three sections, chosen after measuring the first
+version (6 overlapping tabs, 417 words on the week view, a 68-word footer on
+every screen):
+
+- **Week**: a 3-step setup (you, your goal, shop and budget), then Today or the
+  whole week, one line per meal. A meal opens a sheet with three tabs:
+  **Recipe**, **Why** (below) and **Swap**, which offers up to three meals that
+  keep the week's budget, energy band and limits, with the price difference
+  and the effect on the goal. The edited week is recomputed by the server
+  (`POST /plan/evaluate`) and kept in the browser.
+- **Foods**: one search for foods and nutrients above the goal tiles; 5 everyday
+  foods at a time, "Why?" with the food → nutrient → goal graph, food pages and
+  the nutrient dictionary open inside it.
+- **List**: one list. The week's shopping, ticked off in the shop or marked
+  **at home**; "Plan around them" re-plans with those ingredients free.
+  Foods added by hand join the same list.
+
+<p align="center">
+  <img alt="Swap on a phone: three dinners that keep the budget and limits, each with its cooking time, price difference and effect on focus" src="docs/screenshots/swap-phone.png" width="24%">
+  &nbsp;
+  <img alt="The shopping list on a phone: €39.33 to buy at Lidl, grouped by aisle, each line with a tick and an at-home button" src="docs/screenshots/list-phone.png" width="24%">
+</p>
+
+The **dictionary**
 (`/dictionary/*`, [`feedforward/dictionary/`](backend/feedforward/dictionary/))
 builds every entry from a named source: nutrients from the EU claim wording,
 EFSA rejections, DRIs and computed everyday sources; foods from our data plus
@@ -216,13 +237,17 @@ in the browser (localStorage) and are sent only to compute the plan.
   When there is no plan, the answer says why: the budget (with the minimum),
   an energy need out of reach, or too few recipes for that diet and kitchen.
   Unknown diets, appliances or goals are errors, never silently ignored.
-- **Why this meal?** In an opened recipe: the goal's nutrients one portion gives
-  (from 15 % of the daily need, the EU "source" threshold), the ingredient each
-  comes from, and the EU claim wording with its EFSA reference.
+- **Why this meal?** The goal's nutrients one portion gives (from 15 % of the
+  daily need, the EU "source" threshold), the ingredient each comes from, and
+  the EU claim wording with its EFSA reference.
+- **Swap and at home:** `swap_options` tries every recipe allowed for that meal
+  against the whole week (deterministic, about 10 ms) and keeps those within
+  budget, energy band and limits; ingredients marked at home cost nothing in
+  the next plan.
 
   <img alt="Why this meal for focus: sardine tartines give 7 times the daily need of EPA + DHA, 67 % of iron and 55 % of iodine, each with the EU authorised claim and its EFSA reference, and a note that one portion has 35 % of the daily salt limit" src="docs/screenshots/why-this-meal.png" width="60%">
-- API: `GET /plan/options`, `POST /plan/week`, `GET /plan/recipes/{id}`,
-  `GET /plan/recipes/{id}/why`.
+- API: `GET /plan/options`, `POST /plan/week` (with `pantry`), `POST /plan/swap-options`,
+  `POST /plan/evaluate`, `GET /plan/recipes/{id}`, `GET /plan/recipes/{id}/why`.
 
 **Checked over the input space**, not just the demo: a sweep of 531 cases
 (17 shops × 3 diets × 2 kitchens × small / typical / athlete needs, budget
@@ -323,9 +348,9 @@ This is a personal project and a working prototype, not a product in use.
 Nothing here has been reviewed by a dietitian or tested with users yet.
 What exists today:
 
-- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 194 tests (pytest, run on every push by GitHub Actions).
+- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 198 tests (pytest, run on every push by GitHub Actions).
 - ✅ FastAPI backend: recommend / explain / meal-plan / week plan / food detail / dictionary / auth with tiered access.
-- ✅ Web app (`/app`): My week, food search, meal builder, dictionary, shopping list; works on phones.
+- ✅ Web app (`/app`): Week (plan, recipe sheet, swap), Foods (search, goals, dictionary), List (one shopping list with "at home"); works on phones. The single-meal optimiser stays in the engine and the API (`/meal-plan`), not in the interface.
 - 🟡 Expo mobile prototype (`mobile/`): early screens against the recommend API; it does not have My week.
 
 Known limitations, stated plainly:

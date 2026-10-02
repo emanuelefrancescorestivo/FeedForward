@@ -209,9 +209,17 @@ literature-only (grade D) links such as vitamin K for iron.
 
 ### 18. Privacy by construction, and a web app with no build step
 **Decision.** The planner's answers live in the browser (localStorage); the
-server computes the plan per request and stores nothing. The web app is one
-HTML file with no framework or build step, designed for progressive
+server computes the plan per request and stores nothing, including a week the
+user edited, which is sent back and recomputed (`/plan/evaluate`). The web app
+is one HTML file with no framework or build step, designed for progressive
 disclosure (one question per screen, details on demand).
+**Revised.** A word count of every screen found the first version text-heavy
+and hard to navigate: 6 tabs that overlapped (three ways to look up a food, a
+single-meal planner next to the weekly one, two shopping lists), 417 words on
+the week view, a 68-word footer everywhere. It now has three sections (Week,
+Foods, List), a 3-step setup, one line per meal with a recipe sheet instead of
+inline expansion, one list, and an 8-word footer; the week view dropped to
+281 words, the setup to 27 per step.
 **Why.** No account is needed to be useful, and there is no personal data to
 protect on the server. A single file keeps the front end readable and
 deployable anywhere; the cost is less structure than a component framework

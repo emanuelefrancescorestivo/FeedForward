@@ -327,6 +327,70 @@ def test_shown_total_never_exceeds_the_budget(engine):
             assert round(sum(b["cost"] for b in plan["basket"]), 2) == plan["total_cost"]
 
 
+def _composition(plan):
+    return [{"meals": {m: d["meals"][m]["id"] for m in d["meals"]}, "snacks": [s["id"] for s in d["snacks"]]}
+            for d in plan["days"]]
+
+
+def test_an_unedited_week_evaluates_to_the_same_plan(engine):
+    kw = dict(goal="cognitive_function", budget=50, chain="lidl")
+    plan = wp.plan_week(engine, STUDENT, **kw)
+    again = wp.evaluate_week(engine, STUDENT, _composition(plan), **kw)
+    assert again["total_cost"] == plan["total_cost"] and again["coverage"] == plan["coverage"]
+    assert again["edited"] and not plan["edited"]
+
+
+def test_swap_options_keep_the_rules_of_the_week(engine):
+    for diet in (None, "vegan"):
+        kw = dict(goal="cognitive_function", budget=50, chain="lidl", diet=diet)
+        plan = wp.plan_week(engine, STUDENT, **kw)
+        week = _composition(plan)
+        for day, meal in ((0, "breakfast"), (3, "lunch"), (6, "dinner")):
+            res = wp.swap_options(engine, STUDENT, week, day, meal, **kw)
+            current = week[day]["meals"][meal]
+            assert res["options"], (diet, day, meal)
+            for opt in res["options"]:
+                assert opt["id"] != current
+                trial = [dict(d, meals=dict(d["meals"])) for d in week]
+                trial[day]["meals"][meal] = opt["id"]
+                after = wp.evaluate_week(engine, STUDENT, trial, **kw)
+                assert after["within_budget"] and after["energy"]["in_band"], opt
+                assert after["total_cost"] == opt["total_cost"]
+                assert not _violations(after, STUDENT, 50, diet, None)
+                if meal != "breakfast":                           # not the other main meal that day
+                    other = "dinner" if meal == "lunch" else "lunch"
+                    assert opt["id"] != week[day]["meals"][other]
+
+
+def test_edited_weeks_are_validated(engine):
+    kw = dict(goal=None, budget=60, chain="lidl", diet="vegan")
+    week = _composition(wp.plan_week(engine, STUDENT, **kw))
+    bad = [dict(d, meals=dict(d["meals"])) for d in week]
+    bad[0]["meals"]["dinner"] = "chicken-rice-courgette"             # meat in a vegan week
+    with pytest.raises(ValueError):
+        wp.evaluate_week(engine, STUDENT, bad, **kw)
+    with pytest.raises(ValueError):
+        wp.evaluate_week(engine, STUDENT, week[:6], **kw)                # six days
+    wrong_meal = [dict(d, meals=dict(d["meals"])) for d in week]
+    wrong_meal[1]["meals"]["breakfast"] = "chickpea-tomato-couscous"   # a lunch, not a breakfast
+    with pytest.raises(ValueError):
+        wp.evaluate_week(engine, STUDENT, wrong_meal, **kw)
+
+
+def test_what_is_at_home_is_free(engine):
+    kw = dict(goal="cognitive_function", budget=50, chain="lidl")
+    plain = wp.plan_week(engine, STUDENT, **kw)
+    home = ["rice", "olive-oil", "rapeseed-oil"]
+    with_home = wp.plan_week(engine, STUDENT, **kw, pantry=home)
+    rows = {b["id"]: b for b in with_home["basket"]}
+    assert with_home["total_cost"] <= plain["total_cost"]
+    for iid in home:
+        if iid in rows:
+            assert rows[iid]["at_home"] and rows[iid]["cost"] == 0 and rows[iid]["price"] > 0
+    with pytest.raises(ValueError):
+        wp.plan_week(engine, STUDENT, **kw, pantry=["unobtainium"])
+
+
 def test_unknown_chain_is_an_error(engine):
     with pytest.raises(ValueError):
         wp.plan_week(engine, STUDENT, goal=None, budget=50, chain="harrods")
@@ -359,3 +423,12 @@ def test_plan_api_round_trip():
             assert client.post("/plan/week", json={**body, **bad}).status_code in (400, 422), bad
         assert client.get(f"/plan/recipes/{first}", params={"chain": "harrods"}).status_code == 400
         assert client.get(f"/plan/recipes/{first}", params={"scale": -3}).status_code == 422
+        days = [{"meals": {m: d["meals"][m]["id"] for m in d["meals"]}, "snacks": [s["id"] for s in d["snacks"]]}
+                for d in plan["days"]]
+        opts = client.post("/plan/swap-options", json={**body, "days": days, "day": 2, "meal": "dinner"}).json()
+        assert opts["options"] and opts["current"]["id"] == days[2]["meals"]["dinner"]
+        days[2]["meals"]["dinner"] = opts["options"][0]["id"]
+        edited = client.post("/plan/evaluate", json={**body, "days": days}).json()
+        assert edited["edited"] and edited["total_cost"] == opts["options"][0]["total_cost"]
+        assert client.post("/plan/evaluate", json={**body, "days": days[:6]}).status_code == 422
+        assert client.post("/plan/week", json={**body, "pantry": ["rice"]}).status_code == 200

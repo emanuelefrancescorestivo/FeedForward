@@ -147,9 +147,29 @@ def _price(ingredient_id: str, chain: str) -> tuple[float, float | None, bool]:
     return eur_kg, pack, bool(at.get("estimated", True))
 
 
-def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: str,
-              diet: str | None = None, days: int = 7, equipment: list[str] | None = None,
-              _cheapest: bool = False, _ignore_energy: bool = False) -> dict:
+@dataclass
+class _Week:
+    """Everything a week is planned or checked against, for one person and shop."""
+    profile: Profile
+    goal: str | None
+    chain: str
+    diet: str | None
+    days: int
+    scale: float
+    by_id: dict
+    meals: list
+    snacks: list
+    weekly: dict
+    kcal_target: float
+    assoc: dict
+    weight: dict
+    limits: dict
+    snacks_per_day: int
+    snack_repeat: int
+    pantry: frozenset
+
+
+def _context(rec, profile: Profile, *, goal, chain, diet, equipment, pantry, days) -> _Week:
     ingredients, _raw, prices = _load()
     if chain not in prices["chains"]:
         raise ValueError(f"unknown chain: {chain}")
@@ -161,33 +181,50 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
         raise ValueError(f"equipment must be among {list(APPLIANCES)}")
     if goal is not None and goal not in rec.scorer.positive and get_goal(goal) is None:
         raise ValueError(f"unknown goal: {goal}")
+    unknown = set(pantry or ()) - set(ingredients)
+    if unknown:
+        raise ValueError(f"unknown pantry ingredients: {sorted(unknown)}")
     profile.validate()
     scale = portion_scale(profile)
     recipes = [r for r in _recipes(rec, scale) if not (r.animal & _EXCLUDED.get(diet or "", set()))]
     if equipment is not None:
         allowed = set(equipment) | {"kettle"}
         recipes = [r for r in recipes if set(r.equipment) <= allowed]
-    meals = [r for r in recipes if any(m in MEALS for m in r.meals)]
-    snacks = [r for r in recipes if "snack" in r.meals]
-
     nutrient_ids = sorted({n for r in recipes for n in r.nutrients})
-    need = daily_needs(profile, nutrient_ids)
-    weekly = {n: v * days for n, v in need.items()}
-    kcal_target = energy_kcal(profile) * days
+    weekly = {n: v * days for n, v in daily_needs(profile, nutrient_ids).items()}
     assoc = {n: a for n, a, _g in rec.scorer.positive.get(goal or "", [])}
-    weight = {n: 1.0 + GOAL_BONUS * assoc.get(n, 0.0) for n in weekly}
-    limits = {("free-sugars" if n == "sugars" else n): lim * days for n, lim in LIMIT_NUTRIENTS.items()}
+    per_day = next(n for kcal, n in SNACKS_PER_DAY if energy_kcal(profile) <= kcal)
+    return _Week(
+        profile=profile, goal=goal, chain=chain, diet=diet, days=days, scale=scale,
+        by_id={r.id: r for r in recipes},
+        meals=[r for r in recipes if any(m in MEALS for m in r.meals)],
+        snacks=[r for r in recipes if "snack" in r.meals],
+        weekly=weekly, kcal_target=energy_kcal(profile) * days, assoc=assoc,
+        weight={n: 1.0 + GOAL_BONUS * assoc.get(n, 0.0) for n in weekly},
+        limits={("free-sugars" if n == "sugars" else n): lim * days for n, lim in LIMIT_NUTRIENTS.items()},
+        snacks_per_day=per_day, snack_repeat=SNACK_REPEAT if per_day <= 2 else days,
+        pantry=frozenset(pantry or ()))
+
+
+def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: str,
+              diet: str | None = None, days: int = 7, equipment: list[str] | None = None,
+              pantry: list[str] | None = None, _cheapest: bool = False, _ignore_energy: bool = False) -> dict:
+    """
+    The best week within the budget. ``pantry``: ingredients already at home,
+    which cost nothing (the planner then tends to use them).
+    """
+    ingredients, _raw, prices = _load()
+    ctx = _context(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment,
+                   pantry=pantry, days=days)
+    by_id, weekly, limits, kcal_target = ctx.by_id, ctx.weekly, ctx.limits, ctx.kcal_target
 
     prob = pulp.LpProblem("week", pulp.LpMaximize)
     x = {}
-    for r in meals:
+    for r in ctx.meals:
         for m in MEALS:
             if m in r.meals:
                 x[r.id, m] = prob.add_variable(f"x_{r.id}_{m}", 0, days, cat="Integer")
-    per_day = next(n for kcal, n in SNACKS_PER_DAY if energy_kcal(profile) <= kcal)
-    repeat = SNACK_REPEAT if per_day <= 2 else days
-    s = {r.id: prob.add_variable(f"s_{r.id}", 0, repeat, cat="Integer") for r in snacks}
-    by_id = {r.id: r for r in recipes}
+    s = {r.id: prob.add_variable(f"s_{r.id}", 0, ctx.snack_repeat, cat="Integer") for r in ctx.snacks}
     servings = list(x.items()) + [((rid, "snack"), v) for rid, v in s.items()]
 
     def intake(n):
@@ -200,17 +237,17 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
     # The first extra time of a recipe costs 1, each further one 3: repeats
     # spread over several recipes instead of one dish every night.
     repeats = {}
-    for r in meals:
+    for r in ctx.meals:
         vs = [v for (rid, _m), v in x.items() if rid == r.id]
         once = prob.add_variable(f"rep1_{r.id}", 0, 1, cat="Integer")
         more = prob.add_variable(f"rep2_{r.id}", 0, cat="Integer")
         repeats[r.id] = (once, more)
-        prob += pulp.lpSum(vs) <= (3 if r.batch else 2) + once + more, f"variety_{r.id}"
+        prob += pulp.lpSum(vs) <= _variety_cap(r) + once + more, f"variety_{r.id}"
     extra = pulp.lpSum(once + 3 * more for once, more in repeats.values())
     y = {n: prob.add_variable(f"y_{n}", 0, 1) for n in weekly}
     for n in weekly:
         prob += y[n] * weekly[n] <= intake(n), f"cover_{n}"
-    prob += pulp.lpSum(s.values()) <= per_day * days, "snacks_per_day"
+    prob += pulp.lpSum(s.values()) <= ctx.snacks_per_day * days, "snacks_per_day"
     e_over, e_under = prob.add_variable("e_over", 0), prob.add_variable("e_under", 0)
     prob += intake("energy-kcal") - kcal_target == e_over - e_under, "energy"
     if not _ignore_energy:
@@ -220,19 +257,21 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
     for n, lim in limits.items():
         prob += intake(n) <= lim + slack[n], f"limit_{n}"
 
-    # cost
+    # cost: what has to be bought (ingredients at home are free)
     usage = {}
     for (rid, _m), v in servings:
         for item in by_id[rid].ingredients:
             usage.setdefault(item["id"], []).append((item["g"], v))
-    cost_terms, packs = [], {}
+    cost_terms = []
     for iid, uses in usage.items():
+        if iid in ctx.pantry:
+            continue
         eur_kg, pack_g, _est = _price(iid, chain)
         grams = pulp.lpSum(g * v for g, v in uses)
         if ingredients[iid]["storage"] in PACKED and pack_g:
-            packs[iid] = prob.add_variable(f"p_{iid}", 0, cat="Integer")
-            prob += packs[iid] * pack_g >= grams, f"pack_{iid}"
-            cost_terms.append(packs[iid] * pack_g * eur_kg / 1000)
+            n_packs = prob.add_variable(f"p_{iid}", 0, cat="Integer")
+            prob += n_packs * pack_g >= grams, f"pack_{iid}"
+            cost_terms.append(n_packs * pack_g * eur_kg / 1000)
         else:
             cost_terms.append(grams * eur_kg / 1000)
     cost = pulp.lpSum(cost_terms)
@@ -243,50 +282,85 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
         return {"feasible": ok, "total_cost": round(pulp.value(cost), 2) if ok else None}
     prob += cost <= budget, "budget"
 
-    total_w = sum(weight.values()) or 1.0
-    prob += (pulp.lpSum(weight[n] * y[n] for n in weekly) / total_w
+    total_w = sum(ctx.weight.values()) or 1.0
+    prob += (pulp.lpSum(ctx.weight[n] * y[n] for n in weekly) / total_w
              - (e_over + e_under) / kcal_target
              - 5 * pulp.lpSum(slack[n] / limits[n] for n in limits)
              - REPEAT_PENALTY * extra
              - 0.01 * cost / max(budget, 1)), "objective"
     ok, status = solve(prob, time_limit=SOLVE_SECONDS)
     if not ok:
-        minimum, reason = _minimum_budget(rec, profile, goal, chain, diet, days, equipment)
+        minimum, reason = _minimum_budget(rec, profile, goal, chain, diet, days, equipment, pantry=pantry)
         return {"feasible": False, "status": status, "reason": reason, "note": REASONS[reason],
                 "chain": {"id": chain, "label": prices["chains"][chain]["label"]}, "budget": budget,
                 "energy": {"target_per_day": round(kcal_target / days)}, "minimum_budget": minimum}
 
     counts = {k: int(round(v.value() or 0)) for k, v in x.items()}
-    n_extra = int(round(sum((a.value() or 0) + (b.value() or 0) for a, b in repeats.values())))
     snack_counts = {k: int(round(v.value() or 0)) for k, v in s.items()}
-    week = _schedule(counts, snack_counts, by_id, days)
-    basket = _basket(usage, packs, chain, ingredients)
+    return _assemble(ctx, _schedule(counts, snack_counts, by_id, days), budget=budget)
+
+
+def _variety_cap(r: Recipe) -> int:
+    return 3 if r.batch else 2
+
+
+def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = False) -> dict:
+    """
+    A plan from a composed week ([{"meals": {meal: recipe id}, "snacks": [ids]}]):
+    shopping list (whole packs for fridge and bakery items, ingredients at home
+    free), cost, energy, coverage and limits. Deterministic, so a week the user
+    edited is checked exactly like one the solver chose.
+    """
+    ingredients, _raw, prices = _load()
+    by_id, days = ctx.by_id, ctx.days
+    eaten = [by_id[rid] for d in week for rid in list(d["meals"].values()) + list(d["snacks"])]
+    intake: dict[str, float] = {}
+    grams: dict[str, float] = {}
+    for r in eaten:
+        for n, v in r.nutrients.items():
+            intake[n] = intake.get(n, 0.0) + v
+        for item in r.ingredients:
+            grams[item["id"]] = grams.get(item["id"], 0.0) + item["g"]
+    basket = _basket(grams, ctx.chain, ingredients, ctx.pantry)
     total_cost = round(sum(b["cost"] for b in basket), 2)
-    intake_val = {n: sum(by_id[rid].nutrients.get(n, 0) * (counts.get((rid, m)) if m != "snack" else snack_counts[rid])
-                         for (rid, m), _v in servings) for n in set(weekly) | set(limits) | {"energy-kcal"}}
-    coverage = {n: round(100 * intake_val[n] / weekly[n], 1) for n in weekly}
-    goal_nutrients = sorted(assoc, key=lambda n: -assoc[n])
+    coverage = {n: round(100 * intake.get(n, 0.0) / ctx.weekly[n], 1) for n in ctx.weekly}
+    served = {}
+    for d in week:
+        for rid in d["meals"].values():
+            served[rid] = served.get(rid, 0) + 1
+    extra = sum(max(0, c - _variety_cap(by_id[rid])) for rid, c in served.items())
+    planned = intake.get("energy-kcal", 0.0)
+
+    def show(rid, meal=True):
+        r = by_id[rid]
+        out = {"id": r.id, "en": r.en, "fr": r.fr}
+        return {**out, "time_min": r.time_min, "batch": r.batch} if meal else out
+
     return {
-        "feasible": True,
-        "chain": {"id": chain, "label": prices["chains"][chain]["label"]},
-        "budget": budget, "total_cost": total_cost,
-        "energy": {"target_per_day": round(kcal_target / days), "planned_per_day": round(intake_val["energy-kcal"] / days)},
-        "demographic": profile.demographic.value,
-        "portion_scale": scale,
-        "goal": goal, "goal_nutrients": [n for n in goal_nutrients if n in coverage],
+        "feasible": True, "edited": edited,
+        "chain": {"id": ctx.chain, "label": prices["chains"][ctx.chain]["label"]},
+        "budget": budget, "total_cost": total_cost, "within_budget": total_cost <= budget + 1e-9,
+        "energy": {"target_per_day": round(ctx.kcal_target / days), "planned_per_day": round(planned / days),
+                   "in_band": ENERGY_BAND[0] * ctx.kcal_target - 1e-6 <= planned <= ENERGY_BAND[1] * ctx.kcal_target + 1e-6},
+        "demographic": ctx.profile.demographic.value,
+        "portion_scale": ctx.scale,
+        "goal": ctx.goal, "goal_nutrients": [n for n in sorted(ctx.assoc, key=lambda n: -ctx.assoc[n]) if n in coverage],
         "coverage": coverage,
-        "limits": {n: round(100 * intake_val[n] / limits[n], 1) for n in limits},
-        "days": week, "basket": basket,
-        "diet_note": VEGAN_B12_NOTE if diet == "vegan" else None,
-        "repeats": n_extra,
+        "limits": {n: round(100 * intake.get(n, 0.0) / lim, 1) for n, lim in ctx.limits.items()},
+        "days": [{"day": i + 1, "meals": {m: show(d["meals"][m]) for m in MEALS if m in d["meals"]},
+                  "snacks": [show(rid, meal=False) for rid in d["snacks"]]} for i, d in enumerate(week)],
+        "basket": basket, "pantry": sorted(ctx.pantry),
+        "diet_note": VEGAN_B12_NOTE if ctx.diet == "vegan" else None,
+        "repeats": extra,
         "notes": ["Pantry and freezer items (rice, oil, frozen vegetables…) are counted at the share this week uses.",
                   "Prices: Open Prices medians for this chain; items marked 'estimated' use the national median x the chain's price index.",
+                  "Ingredients you have at home cost nothing in this plan.",
                   "Recipes are drafts awaiting review by a dietitian."],
     }
 
 
 def _schedule(counts: dict, snack_counts: dict, by_id: dict, days: int) -> list[dict]:
-    """Spread recipe counts over the days; batch recipes on consecutive days."""
+    """Spread recipe counts over the days; batch recipes on consecutive days. Returns recipe ids."""
     lines = {}
     for m in MEALS:
         seq = []
@@ -303,48 +377,130 @@ def _schedule(counts: dict, snack_counts: dict, by_id: dict, days: int) -> list[
                     dinner[d], dinner[e] = dinner[e], dinner[d]
                     break
     snack_seq = [rid for rid, c in sorted(snack_counts.items()) for _ in range(c)]
-    out = []
-    for d in range(days):
-        day = {"day": d + 1, "meals": {}, "snacks": []}
-        for m in MEALS:
-            rid = lines[m][d] if d < len(lines[m]) else None
-            if rid:
-                r = by_id[rid]
-                day["meals"][m] = {"id": r.id, "en": r.en, "fr": r.fr, "time_min": r.time_min, "batch": r.batch}
-        for i, rid in enumerate(snack_seq):
-            if i % days == d:
-                day["snacks"].append({"id": rid, "en": by_id[rid].en, "fr": by_id[rid].fr})
-        out.append(day)
-    return out
+    return [{"meals": {m: lines[m][d] for m in MEALS if d < len(lines[m])},
+             "snacks": [rid for i, rid in enumerate(snack_seq) if i % days == d]} for d in range(days)]
 
 
-def _basket(usage: dict, packs: dict, chain: str, ingredients: dict) -> list[dict]:
+def _basket(grams_by_ingredient: dict, chain: str, ingredients: dict, pantry: frozenset = frozenset()) -> list[dict]:
+    """
+    The shopping list. ``cost`` is what this plan pays (0 for what is at home);
+    ``price`` is what the line would cost bought, so the app can move items in
+    and out of "at home" without asking the server.
+    """
     order = {"fresh": 0, "bakery": 1, "fridge": 2, "freezer": 3, "pantry": 4}
     out = []
-    for iid, uses in usage.items():
-        grams = sum(g * (v.value() or 0) for g, v in uses)
+    for iid, grams in grams_by_ingredient.items():
         if grams <= 0:
             continue
         eur_kg, pack_g, estimated = _price(iid, chain)
         ing = ingredients[iid]
-        if iid in packs:
-            n = int(round(packs[iid].value() or 0))
-            cost = n * pack_g * eur_kg / 1000
+        if ing["storage"] in PACKED and pack_g:
+            n = math.ceil(grams / pack_g - 1e-9)     # whole packs: the fewest that cover the week
+            price = n * pack_g * eur_kg / 1000
             buy = {"packs": n, "pack_g": pack_g}
             if ing.get("unit_g"):                       # eggs: a box of 6, not 374 g
                 buy["units_per_pack"] = max(1, round(pack_g / ing["unit_g"]))
         else:
-            cost = grams * eur_kg / 1000
+            price = grams * eur_kg / 1000
             buy = {"grams": round(grams)}
             if ing.get("unit_g") and grams >= 0.75 * ing["unit_g"]:   # loose produce: "about 8 apples"
                 buy["about_units"] = max(1, round(grams / ing["unit_g"]))
+        at_home = iid in pantry
         out.append({"id": iid, "food_id": f"ciqual-{ing['ciqual']}", "en": ing["en"], "fr": ing["fr"],
                     "storage": ing["storage"], "liquid": bool(ing.get("liquid")),
                     "grams_used": round(grams), **buy, "eur_kg": eur_kg,
-                    "cost": cost, "estimated": estimated})
+                    "cost": 0.0 if at_home else price, "price": round(price, 2),
+                    "at_home": at_home, "estimated": estimated})
     _round_to_cents(out)
-    out.sort(key=lambda b: (order.get(b["storage"], 9), -b["cost"]))
+    out.sort(key=lambda b: (order.get(b["storage"], 9), -b["price"]))
     return out
+
+
+# ---------------------------------------------------------------- edits
+def _week_from(ctx: _Week, week: list[dict]) -> list[dict]:
+    """Validate a week sent back by the app: 7 days, allowed recipes, in the right meals."""
+    if len(week) != ctx.days:
+        raise ValueError(f"a week has {ctx.days} days, got {len(week)}")
+    out = []
+    for i, d in enumerate(week):
+        meals, snacks = dict(d.get("meals") or {}), list(d.get("snacks") or [])
+        if set(meals) != set(MEALS):
+            raise ValueError(f"day {i + 1} needs breakfast, lunch and dinner")
+        for m, rid in meals.items():
+            r = ctx.by_id.get(rid)
+            if r is None or m not in r.meals:
+                raise ValueError(f"day {i + 1}: '{rid}' is not a {m} for this diet and kitchen")
+        for rid in snacks:
+            if rid not in ctx.by_id or "snack" not in ctx.by_id[rid].meals:
+                raise ValueError(f"day {i + 1}: '{rid}' is not a snack for this diet")
+        if len(snacks) > ctx.snacks_per_day:
+            raise ValueError(f"day {i + 1}: at most {ctx.snacks_per_day} snacks")
+        out.append({"meals": meals, "snacks": snacks})
+    return out
+
+
+def evaluate_week(rec, profile: Profile, week: list[dict], *, goal: str | None, budget: float, chain: str,
+                  diet: str | None = None, equipment: list[str] | None = None,
+                  pantry: list[str] | None = None, days: int = 7) -> dict:
+    """The plan for a week the user edited (swapped meals), checked like a solved one."""
+    ctx = _context(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment, pantry=pantry, days=days)
+    return _assemble(ctx, _week_from(ctx, week), budget=budget, edited=True)
+
+
+def _goal_score(ctx: _Week, coverage: dict) -> float:
+    """The solver's objective on coverage: capped, goal nutrients weighted up."""
+    total = sum(ctx.weight.values()) or 1.0
+    return sum(ctx.weight[n] * min(coverage[n], 100.0) / 100.0 for n in ctx.weekly) / total
+
+
+def swap_options(rec, profile: Profile, week: list[dict], day: int, meal: str, *, goal: str | None,
+                 budget: float, chain: str, diet: str | None = None, equipment: list[str] | None = None,
+                 pantry: list[str] | None = None, k: int = 3, days: int = 7) -> dict:
+    """
+    Up to ``k`` recipes to put in place of one meal. Each keeps the week's
+    rules: within budget, energy in the band, no salt / saturated fat / free
+    sugar limit worse than now, not the other main meal of that day, and no
+    extra repeat while non-repeating options exist. Best for the goal first.
+    """
+    if meal not in MEALS:
+        raise ValueError(f"meal must be one of {list(MEALS)}")
+    if not 0 <= day < days:
+        raise ValueError(f"day must be 0 to {days - 1}")
+    ctx = _context(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment, pantry=pantry, days=days)
+    week = _week_from(ctx, week)
+    base = _assemble(ctx, week, budget=budget)
+    current = week[day]["meals"][meal]
+    other = {week[day]["meals"][m] for m in ("lunch", "dinner") if m != meal} if meal != "breakfast" else set()
+    served = {}
+    for d in week:
+        served[d["meals"][meal]] = served.get(d["meals"][meal], 0) + 1
+    base_score = _goal_score(ctx, base["coverage"])
+
+    fresh, repeated = [], []
+    for r in ctx.meals:
+        if meal not in r.meals or r.id == current or r.id in other:
+            continue
+        trial = [{"meals": dict(d["meals"]), "snacks": list(d["snacks"])} for d in week]
+        trial[day]["meals"][meal] = r.id
+        plan = _assemble(ctx, trial, budget=budget)
+        if not (plan["within_budget"] and plan["energy"]["in_band"]):
+            continue
+        if any(plan["limits"][n] > max(100.0, base["limits"][n]) + 0.05 for n in ctx.limits):
+            continue
+        score = _goal_score(ctx, plan["coverage"])
+        delta = score - base_score
+        option = {"id": r.id, "en": r.en, "fr": r.fr, "time_min": r.time_min, "batch": r.batch,
+                  "total_cost": plan["total_cost"], "cost_delta": round(plan["total_cost"] - base["total_cost"], 2),
+                  "effect": "better" if delta > 0.005 else "less" if delta < -0.005 else "same",
+                  "_score": score}
+        (repeated if served.get(r.id, 0) + 1 > _variety_cap(r) else fresh).append(option)
+    ranked = sorted(fresh, key=lambda o: (-o["_score"], o["total_cost"]))
+    if len(ranked) < k:
+        ranked += sorted(repeated, key=lambda o: (-o["_score"], o["total_cost"]))
+    for o in ranked:
+        o.pop("_score")
+    return {"day": day, "meal": meal, "current": base["days"][day]["meals"][meal], "options": ranked[:k],
+            "total_cost": base["total_cost"]}
 
 
 def _round_to_cents(rows: list[dict]) -> None:
@@ -371,13 +527,14 @@ REASONS = {
 }
 
 
-def _minimum_budget(rec, profile, goal, chain, diet, days, equipment) -> tuple[float | None, str]:
+def _minimum_budget(rec, profile, goal, chain, diet, days, equipment, *, pantry=None) -> tuple[float | None, str]:
     """
     (minimum budget, reason) when a week does not fit. The cheapest adequate
     week gives the minimum; if even that is impossible, a second solve without
     the energy band tells an energy need out of reach from too few recipes.
     """
-    kw = dict(goal=goal, budget=0, chain=chain, diet=diet, days=days, equipment=equipment, _cheapest=True)
+    kw = dict(goal=goal, budget=0, chain=chain, diet=diet, days=days, equipment=equipment, pantry=pantry,
+              _cheapest=True)
     cheapest = plan_week(rec, profile, **kw)
     if cheapest.get("feasible"):
         return math.ceil(cheapest["total_cost"]), "budget"

@@ -11,12 +11,14 @@ Design notes (progressive disclosure, v2):
   Level 2  "Why?" on a food: the EU claim wording, what else it provides, a
            pairing tip, plain-language watch-outs.
   Level 3  "Show the science" (Settings): evidence grades, citations, raw scores.
-"My week" (first tab): a short setup stored in this browser, then a weekly
-plan within budget at one shop. The plan opens on Today (day strip), with Week
-and Shopping (checkable) one tap away. The My week answers ARE the profile:
-the header chip and every other tab use them; the Settings sheet only edits
-diet and detail once they exist.
-Phones (< 700 px): the top tabs become a bottom bar (Week, Foods, List, More).
+Three sections (v3, after a text-density audit: 417 words on the week view,
+317 and 75 actions on the shopping list, 6 overlapping tabs):
+  Week   3-step setup, then Today / Week; a meal opens a sheet (Recipe, Why,
+         Swap) instead of growing the page; swaps keep budget, energy, limits.
+  Foods  one search (foods and nutrients) above the goal tiles; food pages and
+         the nutrient dictionary open inside it.
+  List   ONE list: the week's shopping (tick, or "at home") + foods added by hand.
+The setup answers ARE the profile (header chip). Phones: bottom bar, same 3.
 Everyday foods are ranked first (engine/familiarity.py). "Why?" shows the
 food -> nutrient -> goal graph. The Dictionary (nutrients, foods, terms) cites a
 source for every entry. Theme: system, light or
@@ -249,39 +251,89 @@ dialog[open] { animation: sheet-in .28s cubic-bezier(.2, .9, .3, 1); }
   margin-left: -2px; border-radius: 50%; background: currentColor; }
 .day { margin-bottom: 12px; overflow: hidden; }
 .day .dayh { margin: 0; padding: 14px 16px 6px; font-size: 20px; font-weight: 700; }
-.meal { display: flex; gap: 12px; align-items: center; padding: 10px 16px; min-height: 60px; width: 100%; background: none; border: none;
+.meal { display: flex; gap: 12px; align-items: center; padding: 10px 16px; min-height: 64px; width: 100%; background: none; border: none;
   text-align: left; cursor: pointer; border-top: var(--hair) solid var(--line); }
-.meal .when { width: 76px; flex: none; font-size: 13px; color: var(--muted); }
-.meal .what { flex: 1; }
-.meal .what small { display: block; color: var(--muted); font-size: 13px; }
-.meal .t { font-size: 13px; color: var(--muted); white-space: nowrap; }
-.meal .chev { display: inline-block; transition: transform .2s; }
-.meal[aria-expanded="true"] .chev { transform: rotate(180deg); }
-.recipe { display: none; padding: 4px 16px 16px 104px; font-size: 15px; }
-.recipe.open { display: block; }
-.recipe ol, .recipe ul { margin: 6px 0; padding-left: 18px; }
+.meal .mi, .swap-opt .mi { font-size: 28px; width: 38px; text-align: center; flex: none; }
+.meal .what { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.meal .what .when { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.meal .t { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); white-space: nowrap; }
+.meal .chev { font-size: 22px; line-height: 1; color: #c7c7cc; }
 .snackline { padding: 10px 16px 14px; font-size: 13px; color: var(--muted); border-top: var(--hair) solid var(--line); }
 .badge-soft { white-space: nowrap; font-size: 12px; font-weight: 600; background: var(--accent-soft); color: var(--accent);
-  border-radius: 6px; padding: 1px 7px; margin-left: 6px; }
-.shop-row { display: grid; grid-template-columns: 30px 1fr auto auto; gap: 10px; align-items: center; padding: 10px 2px; min-height: 48px;
-  border-bottom: var(--hair) solid var(--line); cursor: pointer; font-size: 17px; }
+  border-radius: 6px; padding: 1px 7px; }
+
+/* Week: plan head, budget, chips */
+.link.quiet { color: var(--muted); font-size: 17px; min-height: 0; }
+.budget-card { padding: 14px 16px; margin-bottom: 14px; }
+.bline { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.bline b { font-size: 24px; }
+.bar.big { height: 8px; border-radius: 4px; }
+.chip { display: inline-block; font-size: 13px; font-weight: 600; background: var(--soft); color: var(--text); border-radius: 999px;
+  padding: 3px 10px; white-space: nowrap; }
+.chip.good { background: var(--accent-soft); color: var(--accent); }
+.chip.warn { background: var(--note-soft); color: var(--note); }
+.edited { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+/* Week: 3-step setup */
+.steps { display: flex; gap: 6px; margin: 4px 0 18px; }
+.steps i { flex: 1; height: 4px; border-radius: 2px; background: var(--soft); }
+.steps i.on { background: var(--accent); }
+.field { margin-top: 16px; }
+.flabel { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.hint { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+.money { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.money span { font-size: 24px; font-weight: 600; }
+.setup .money input { font-size: 24px; font-weight: 600; width: 7ch; }
+.tile.pick { position: relative; display: block; }
+.tile.pick input { position: absolute; opacity: 0; pointer-events: none; }
+.tile.pick:has(input:checked) { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
+.tile.pick:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.choice label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.actions.wizard { margin-top: 18px; }
+.actions.wizard .primary { flex: 1; }
+.center { text-align: center; }
+
+/* Recipe sheet: Recipe / Why / Swap */
+dialog#recipe-sheet { width: min(560px, 94vw); }
+.recipe-sheet { max-height: 86vh; overflow: auto; }
+.rs-head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.rs-icon { font-size: 36px; }
+.rs-titles { flex: 1; min-width: 0; }
+.rs-titles h2 { margin: 0; font-size: 20px; }
+#rs-body { min-height: 120px; }
+.fr { margin: 0 0 6px; }
+.ingredients { list-style: none; padding: 0; margin: 4px 0 16px; }
+.ingredients li { padding: 9px 0; border-bottom: var(--hair) solid var(--line); }
+.ingredients li b { display: inline-block; min-width: 64px; font-variant-numeric: tabular-nums; }
+.steps-list { padding-left: 20px; margin: 0; }
+.steps-list li { margin-bottom: 8px; }
+.why-list { list-style: none; padding: 0; margin: 8px 0; }
+.why-list li { margin: 0 0 14px; }
+.why-list .claim { margin: 6px 0 0; font-size: 15px; }
+.swap-opt { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: var(--hair) solid var(--line); }
+.swap-opt .what { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.swap-opt .what small { color: var(--muted); font-size: 13px; }
+.swap-opt .chip { align-self: flex-start; }
+
+/* List: one shopping list, tick or "at home" */
+.shop-card { padding: 0 14px 6px; }
+.shop-row { display: grid; grid-template-columns: 28px 1fr auto auto 40px; gap: 10px; align-items: center; padding: 6px 0; min-height: 52px;
+  border-bottom: var(--hair) solid var(--line); font-size: 17px; }
+.shop-row:last-child { border-bottom: none; }
+.shop-row .nm { cursor: pointer; min-width: 0; }
+.shop-row.home .nm { cursor: default; }
 .shop-row input { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; margin: 0; cursor: pointer;
   border: 1.5px solid #c7c7cc; transition: background .15s, border-color .15s; }
 .shop-row input:checked { background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7.5l2.8 2.8L11 4.5'/%3E%3C/svg%3E") center no-repeat;
   border-color: var(--accent); }
 .shop-row .num { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; text-align: right; font-size: 15px; }
 .shop-row:has(input:checked) .nm, .shop-row:has(input:checked) .num { text-decoration: line-through; opacity: .5; }
-.shop-progress { font-size: 15px; color: var(--muted); margin: 8px 0 0; }
-
-/* Why this meal (inside an opened recipe) */
-.why-meal { margin-top: 14px; padding-top: 12px; border-top: var(--hair) solid var(--line); }
-.why-meal h4 { margin: 0 0 4px; font-size: 17px; }
-.why-list { list-style: none; padding: 0 !important; margin: 8px 0 !important; }
-.why-list li { margin: 0 0 12px; }
-.why-list .claim { margin: 6px 0 0; font-size: 15px; }
-.ev { display: inline-block; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 1px 7px; margin-left: 4px;
-  background: var(--soft); color: var(--muted); }
-.ev.eu { background: var(--accent-soft); color: var(--accent); }
+.home-btn { background: none; border: none; color: var(--muted); width: 40px; height: 40px; border-radius: 10px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; }
+.home-btn[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); }
+details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
+.empty { text-align: center; padding: 32px 16px; }
+.big-ic { font-size: 48px; display: block; margin-bottom: 8px; }
 
 /* Graph */
 .graph { width: 100%; height: auto; margin: 4px 0 12px; color: var(--text); }
@@ -299,7 +351,7 @@ dialog[open] { animation: sheet-in .28s cubic-bezier(.2, .9, .3, 1); }
   nav.top-tabs { display: none; }
   .top { padding: 8px 0; }
   .for { max-width: 58vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .tabbar { display: grid; grid-template-columns: repeat(4, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+  .tabbar { display: grid; grid-template-columns: repeat(3, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
     background: var(--bar); border-top: var(--hair) solid var(--line); padding-bottom: env(safe-area-inset-bottom);
     -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
   .tabbar button { background: none; border: none; min-height: 50px; display: flex; flex-direction: column; align-items: center;
@@ -312,9 +364,10 @@ dialog[open] { animation: sheet-in .28s cubic-bezier(.2, .9, .3, 1); }
   dialog { width: 100%; max-width: 100%; margin: auto 0 0; border-radius: 14px 14px 0 0; padding-bottom: env(safe-area-inset-bottom); }
   dialog[open] { animation-name: sheet-up; }
   @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
-  .meal { flex-wrap: wrap; row-gap: 2px; }
-  .meal .when { flex-basis: 100%; width: auto; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
-  .recipe { padding-left: 16px; }
+  .meal .t .badge-soft { display: none; }
+  .shop-row { gap: 8px; font-size: 16px; }
+  .shop-row .num { font-size: 14px; }
+  dialog#recipe-sheet { width: 100%; }
   .cover-row { grid-template-columns: 96px 1fr 48px; }
   .wseg button { padding: 6px 8px; }
   h1 { font-size: 30px; }
@@ -333,12 +386,9 @@ dialog[open] { animation: sheet-in .28s cubic-bezier(.2, .9, .3, 1); }
       <button class="for" id="for-btn" title="Profile and diet" style="margin-left:0">For: <b id="for-label">adult woman</b> ✎</button>
     </div>
     <nav class="top-tabs" aria-label="Main">
-      <button data-tab="week" class="on">My week</button>
-      <button data-tab="find">Find foods</button>
-      <button data-tab="food">Look up</button>
-      <button data-tab="meal">Plan a meal</button>
-      <button data-tab="dict">Dictionary</button>
-      <button data-tab="list">My list<span class="count" data-list-count hidden></span></button>
+      <button data-tab="week" class="on">Week</button>
+      <button data-tab="foods">Foods</button>
+      <button data-tab="list">List<span class="count" data-list-count hidden></span></button>
     </nav>
   </div>
 </header>
@@ -346,47 +396,45 @@ dialog[open] { animation: sheet-in .28s cubic-bezier(.2, .9, .3, 1); }
 <main class="wrap">
   <section id="tab-week"></section>
   <section id="tab-find" hidden></section>
-  <section id="tab-food" hidden>
-    <div id="food-search">
-      <h1>Look up a food</h1>
-      <p class="lead">See what one portion gives you, and what to swap it for.</p>
-      <input type="search" id="q" placeholder="e.g. lentils, salmon, spinach">
-      <div id="search-results" style="margin-top:12px"></div>
-    </div>
-    <div id="food-detail" hidden></div>
-  </section>
-  <section id="tab-meal" hidden></section>
-  <section id="tab-list" hidden></section>
+  <section id="tab-food" hidden><div id="food-detail"></div></section>
   <section id="tab-dict" hidden></section>
+  <section id="tab-list" hidden></section>
 </main>
 
 <nav class="tabbar" aria-label="Main">
   <button data-tab="week" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Week</button>
-  <button data-tab="find"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8.3 5.7-14 14-14 0 8.3-5.7 14-14 14z"/><path d="M5 19l8-8"/></svg>Foods</button>
+  <button data-tab="foods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8.3 5.7-14 14-14 0 8.3-5.7 14-14 14z"/><path d="M5 19l8-8"/></svg>Foods</button>
   <button data-tab="list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6.5h10M9.5 12h10M9.5 17.5h10"/><circle cx="5" cy="6.5" r="1.2"/><circle cx="5" cy="12" r="1.2"/><circle cx="5" cy="17.5" r="1.2"/></svg>List<span class="count" data-list-count hidden></span></button>
-  <button data-tab="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18.5" cy="12" r="1.4"/></svg>More</button>
 </nav>
 
-<dialog id="more-sheet">
+<div class="wrap"><footer>
+  Information, not medical advice · <button class="link" data-about>Sources and licences</button>
+</footer></div>
+
+<dialog id="about">
   <form method="dialog" class="sheet">
-    <h2>More</h2>
-    <div class="more-list" style="flex-direction:column;align-items:stretch">
-      <button class="ghost" value="food" style="text-align:left">🔎 Look up a food</button>
-      <button class="ghost" value="meal" style="text-align:left">🍽️ Plan a meal</button>
-      <button class="ghost" value="dict" style="text-align:left">📖 Dictionary</button>
-      <button class="ghost" value="settings" style="text-align:left">⚙️ Profile and settings</button>
-    </div>
+    <h2>About this information</h2>
+    <p>Information, not medical advice. Amounts use typical portions and the daily reference intakes for your age and sex.</p>
+    <p>Only text marked "EU authorised health claim" is official claim wording (Regulation (EC) No 1924/2006). Recipes are drafts, not yet reviewed by a dietitian.</p>
+    <p class="src">Food composition: ANSES-CIQUAL 2020 and USDA FoodData Central. Products and prices: Open Food Facts and
+      Open Prices (ODbL); ≈ marks a price estimated from the national median and the shop's price level. Health claims:
+      EU Register of nutrition and health claims, © European Union. Descriptions: Wikipedia (CC BY-SA). Food icons are placeholders.</p>
+    <button class="primary" value="ok">Close</button>
   </form>
 </dialog>
 
-<div class="wrap"><footer>
-  Information, not medical advice. Amounts use typical portions and daily reference intakes for your profile.
-  Only text marked "EU authorised health claim" is official claim wording (Regulation (EC) No 1924/2006).
-  Food icons are placeholders.<br>
-  Food composition: ANSES-CIQUAL 2020 and USDA FoodData Central. Products and prices: Open Food Facts and
-  Open Prices (ODbL). Health claims: EU Register of nutrition and health claims, © European Union.
-  Descriptions: Wikipedia (CC BY-SA).
-</footer></div>
+<dialog id="recipe-sheet" aria-labelledby="rs-title">
+  <div class="sheet recipe-sheet">
+    <div class="rs-head">
+      <span class="rs-icon" id="rs-icon" aria-hidden="true"></span>
+      <div class="rs-titles"><h2 id="rs-title"></h2><div class="sub" id="rs-sub"></div></div>
+      <button class="icon-btn" data-rs-close aria-label="Close">✕</button>
+    </div>
+    <div class="seg wseg" role="tablist" aria-label="Recipe" id="rs-tabs"></div>
+    <div id="rs-body"></div>
+  </div>
+</dialog>
+
 
 <dialog id="settings">
   <form method="dialog" class="sheet">
@@ -431,14 +479,14 @@ const WORD_ICONS = [[/\b(shrimp|prawn|crab|lobster|crustacean)/, "🦐"], [/\b(o
   [/\b(chicken|turkey|duck|goose|emu|grouse|quail|pheasant|poultry)\b/, "🍗"], [/\beggs?\b/, "🥚"], [/\bmushroom/, "🍄"],
   [/\bcarrot/, "🥕"], [/\bbroccoli/, "🥦"], [/\bpeppers?\b/, "🫑"], [/\bavocado/, "🥑"], [/\bbanana/, "🍌"], [/\b(orange|citrus|lemon)/, "🍊"],
   [/\bkiwi/, "🥝"], [/\b(berr|currant)/, "🫐"], [/\btomato/, "🍅"], [/\b(milk|yogurt|kefir)\b/, "🥛"], [/\bcheese/, "🧀"],
-  [/\b(fish|salmon|tuna|cod|sardine|trout|pollock)\b/, "🐟"], [/\b(corn ?flakes|cereal)/, "🥣"]];
+  [/\b(fish|salmon|tuna|cod|sardines?|trout|pollock|mackerel)\b/, "🐟"], [/\b(corn ?flakes|cereal)/, "🥣"]];
 // Words that only describe preparation or grading, dropped from display names.
 const FILLER = /^(raw|cooked|imported|domestic|new zealand|australian|farmed|wild|wild caught|boiled|drained|without salt|with salt|dry heat|moist heat|fresh|frozen|canned|unprepared|prepared|mature seeds|mixed species|all classes|meat only|separable lean only|variety meats and by-products|solids and liquids|simmered|braised|roasted|broiled|baked|steamed|stewed|grilled|fried|pan-fried|microwaved|heated|dried|ready-to-eat|includes foods for usda.*|\(includes.*|ns as to.*)$/i;
 const GENERIC_HEADS = /^(fish|mollusks|crustaceans|beverages|cereals|cereals ready-to-eat|game meat|spices|seeds|nuts|snacks|candies|babyfood)$/i;
 
 // ---------------------------------------------------------------- state
 const state = { demo: "adult_female", diet: "", extra: new Set(), science: false, goals: {}, nutrients: {},
-  coverage: {}, goal: null, results: [], shown: 5, food: null, mealGoal: "energy_metabolism", mealKcal: 600 };
+  coverage: {}, goal: null, results: [], shown: 5, food: null };
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const round = (x) => x >= 100 ? Math.round(x / 10) * 10 : x >= 10 ? Math.round(x) : Math.round(x * 10) / 10;
@@ -526,24 +574,22 @@ $("settings").addEventListener("close", () => {
   refreshViews();
   if (!$("tab-week").hidden) renderWeek();
 });
-$("more-sheet").addEventListener("close", () => {
-  const to = $("more-sheet").returnValue;
-  if (to === "settings") { syncProfile(); $("settings").showModal(); }
-  else if (to) showTab(to);
-});
+// a tap on the dimmed backdrop closes a sheet
+["recipe-sheet", "about"].forEach(id => $(id).addEventListener("click", (e) => { if (e.target === $(id)) $(id).close(); }));
 
 // ---------------------------------------------------------------- tabs
 document.querySelectorAll("nav button[data-tab]").forEach(b => b.onclick = () => showTab(b.dataset.tab));
+// Pages inside the three sections: Foods shows goals (find), a food (food) or the dictionary (dict).
+const NAV_OF = { week: "week", find: "foods", food: "foods", dict: "foods", list: "list" };
 function showTab(tab) {
-  if (tab === "more") { $("more-sheet").returnValue = ""; $("more-sheet").showModal(); return; }
-  const inMore = ["food", "meal", "dict"].includes(tab);
-  document.querySelectorAll("nav button[data-tab]").forEach(b =>
-    b.classList.toggle("on", b.dataset.tab === tab || (b.dataset.tab === "more" && inMore)));
-  ["week", "find", "food", "meal", "list", "dict"].forEach(t => $("tab-" + t).hidden = t !== tab);
+  if (tab === "foods") tab = "find";
+  document.querySelectorAll("nav button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === NAV_OF[tab]));
+  Object.keys(NAV_OF).forEach(t => $("tab-" + t).hidden = t !== tab);
   if (tab === "week") renderWeek();
+  if (tab === "find" && !$("tab-find").innerHTML) renderHome();
   if (tab === "dict" && !$("tab-dict").innerHTML) renderDict("nutrients");
-  if (tab === "meal") renderMeal();
   if (tab === "list") renderList();
+  window.scrollTo(0, 0);
 }
 
 // ---------------------------------------------------------------- find foods
@@ -551,19 +597,43 @@ function renderHome() {
   state.goal = null;
   const others = Object.values(state.goals).filter(g => !mainGoal(g.id));
   $("tab-find").innerHTML = `
-    <h1>What would you like to support?</h1>
-    <p class="lead">Pick one. We'll show a few foods and explain why.</p>
-    <div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) =>
-      `<button class="tile" data-goal="${id}"><span class="ic">${ic}</span><b>${title}</b><small>${sub}</small></button>`).join("")}</div>
-    <details class="more"><summary>More goals ▾</summary>
-      <div class="more-list">${others.map(g => `<button class="pill-btn" data-goal="${g.id}">${esc(g.label)}</button>`).join("")}</div>
-    </details>`;
+    <h1>Foods</h1>
+    <input type="search" id="q" placeholder="Search a food or a nutrient" autocomplete="off" aria-label="Search a food or a nutrient">
+    <div id="search-results"></div>
+    <div id="foods-home">
+      <div class="group-title">Good for</div>
+      <div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) =>
+        `<button class="tile" data-goal="${id}"><span class="ic">${ic}</span><b>${title}</b><small>${sub}</small></button>`).join("")}</div>
+      <details class="more"><summary>More goals</summary>
+        <div class="more-list">${others.map(g => `<button class="pill-btn" data-goal="${g.id}">${esc(g.label)}</button>`).join("")}</div>
+      </details>
+      <div class="links"><button class="link" data-dict-open="nutrients">Nutrients A–Z</button><button class="link" data-dict-open="terms">Glossary</button></div>
+    </div>`;
+  let timer;
+  $("q").addEventListener("input", (e) => {
+    clearTimeout(timer);
+    const q = e.target.value.trim();
+    $("foods-home").hidden = q.length >= 2;
+    if (q.length < 2) { $("search-results").innerHTML = ""; return; }
+    timer = setTimeout(async () => {
+      const low = q.toLowerCase();
+      const nutrients = Object.values(state.nutrients).filter(n => (n.name || "").toLowerCase().includes(low)).slice(0, 4);
+      const hits = await api("/search?" + qs({ q, limit: 10 }));
+      if ($("q")?.value.trim() !== q) return;
+      $("search-results").innerHTML =
+        (nutrients.length ? `<div class="more-list" style="margin:12px 0">${nutrients.map(n => `<button class="pill-btn" data-nutrient="${esc(n.id)}">${esc(nName(n.id))}</button>`).join("")}</div>` : "")
+        + (hits.length ? hits.map(h => `<div class="card"><button class="row" data-food="${esc(h.food_id)}">
+            <span class="icon">${iconFor(h.food_name + " " + h.category, "")}</span>
+            <span><div class="name">${esc(friendlyName(h.food_name))}</div><div class="sub">${esc(h.category)}</div></span></button></div>`).join("")
+          : nutrients.length ? "" : `<p class="muted">Nothing found. Try a simpler word.</p>`);
+    }, 250);
+  });
 }
 
 async function showGoal(goal) {
   state.goal = goal; state.shown = 5;
   const box = $("tab-find");
-  box.innerHTML = `<button class="back" data-home>← All goals</button><div class="loading">Finding foods…</div>`;
+  box.innerHTML = `<button class="back" data-home>← Foods</button><div class="loading">Finding foods…</div>`;
   const cov = state.coverage;
   let note = "";
   if ((cov.evidence_gaps || []).includes(goal))
@@ -575,7 +645,7 @@ async function showGoal(goal) {
       await api("/recommend", { goal, k: 15, constraints: constraints(), demographic: state.demo, professional_preview: state.science });
     state.results = res.recommendations;
     const g = state.goals[goal] || {};
-    box.innerHTML = `<button class="back" data-home>← All goals</button>
+    box.innerHTML = `<button class="back" data-home>← Foods</button>
       <h1>${goalIcon(goal)} ${esc(goalTitle(goal))}</h1>
       <p class="lead">${esc(g.description || "")}</p>
       ${note ? `<div class="note">${note}</div>` : ""}
@@ -627,10 +697,18 @@ function foodCard(r) {
 
 document.addEventListener("click", (ev) => {
   const t = ev.target;
-  if (t.closest("[data-week-edit]")) {
-    document.querySelectorAll("dialog[open]").forEach(d => d.close());
-    showTab("week"); renderWeek(true); return;
-  }
+  const closeSheets = () => document.querySelectorAll("dialog[open]").forEach(d => d.close());
+  if (t.closest("[data-week-edit]")) { closeSheets(); weekUI.step = 0; showTab("week"); renderWeek(true); return; }
+  if (t.closest("[data-about]")) { $("about").showModal(); return; }
+  if (t.closest("[data-rs-close]")) { $("recipe-sheet").close(); return; }
+  const rst = t.closest("[data-rs-tab]"); if (rst) { showSheetTab(rst.dataset.rsTab); return; }
+  const swap = t.closest("[data-swap-to]"); if (swap) { chooseSwap(swap.dataset.swapTo); return; }
+  if (t.closest("[data-reset-edits]")) { clearEdits(); weekPlan = null; renderWeek(); return; }
+  const pantry = t.closest("[data-pantry]"); if (pantry) { togglePantry(pantry.dataset.pantry); return; }
+  if (t.closest("[data-replan-home]")) { replanWithPantry(); return; }
+  const go = t.closest("[data-tab-go]"); if (go) { showTab(go.dataset.tabGo); return; }
+  const dict = t.closest("[data-dict-open]"); if (dict) { showTab("dict"); renderDict(dict.dataset.dictOpen); return; }
+  if (t.closest("[data-foods-home]")) { state.food = null; showTab("find"); renderHome(); return; }
   const wv = t.closest("[data-wview]");
   if (wv) { weekUI.view = wv.dataset.wview; renderWeekPlan(loadWeekSetup()); return; }
   const wd = t.closest("[data-day]");
@@ -638,44 +716,26 @@ document.addEventListener("click", (ev) => {
   const wb = t.closest("[data-week-budget]");
   if (wb) { const v = loadWeekSetup(); v.budget = wb.dataset.weekBudget; saveWeekSetup(v); renderWeek(); return; }
   const meal = t.closest("[data-recipe]");
-  if (meal) { toggleRecipe(meal); return; }
+  if (meal) { openRecipe(meal); return; }
   const nut = t.closest("[data-nutrient]");
-  if (nut) { ev.stopPropagation(); showTab("dict"); openNutrient(nut.dataset.nutrient); return; }
-  const dictFood = t.closest("[data-dictfood]");
-  if (dictFood) { openDictFood(dictFood.dataset.dictfood); return; }
+  if (nut) { ev.stopPropagation(); closeSheets(); showTab("dict"); openNutrient(nut.dataset.nutrient); return; }
   const add = t.closest("[data-add]");
   if (add) { const d = add.dataset; addToList(d.add, d.name, +d.portion, d.group); add.outerHTML = addBtn(d.add, d.name, +d.portion, d.group); return; }
   const goalBtn = t.closest("[data-goal]"); if (goalBtn) { showTab("find"); showGoal(goalBtn.dataset.goal); return; }
   if (t.closest("[data-home]")) { renderHome(); return; }
   if (t.closest("[data-more]")) { state.shown += 5; renderResults(); return; }
-  const food = t.closest("[data-food]"); if (food) { showTab("food"); openFood(food.dataset.food); return; }
+  const food = t.closest("[data-food]"); if (food) { closeSheets(); showTab("food"); openFood(food.dataset.food); return; }
   const tog = t.closest("[data-toggle]"); if (tog) {
     const card = tog.closest(".card"); card.classList.toggle("open");
     tog.querySelector(".chev").textContent = card.classList.contains("open") ? "Less ▴" : "Why? ▾";
   }
-  if (t.closest("[data-search]")) { state.food = null; $("food-detail").hidden = true; $("food-search").hidden = false; }
 });
 
-// ---------------------------------------------------------------- look up a food
-let timer;
-$("q").addEventListener("input", (e) => {
-  clearTimeout(timer);
-  const q = e.target.value.trim();
-  if (q.length < 2) { $("search-results").innerHTML = ""; return; }
-  timer = setTimeout(async () => {
-    const hits = await api("/search?" + qs({ q, limit: 12 }));
-    $("search-results").innerHTML = hits.length ? hits.map(h => `<div class="card"><button class="row" data-food="${esc(h.food_id)}">
-      <span class="icon">${iconFor(h.food_name + " " + h.category, "")}</span>
-      <span><div class="name">${esc(friendlyName(h.food_name))}</div><div class="sub">${esc(h.category)}</div></span></button></div>`).join("")
-      : `<p class="muted">Nothing found. Try a simpler word.</p>`;
-  }, 250);
-});
-
+// ---------------------------------------------------------------- a food
 async function openFood(id) {
   state.food = id;
-  $("food-search").hidden = true;
-  const box = $("food-detail"); box.hidden = false;
-  box.innerHTML = `<button class="back" data-search>← Search</button><div class="loading">Loading…</div>`;
+  const box = $("food-detail");
+  box.innerHTML = `<button class="back" data-foods-home>← Foods</button><div class="loading">Loading…</div>`;
   const swapDiet = state.diet || "vegetarian";
   try {
     const [p, similar, swaps] = await Promise.all([
@@ -695,7 +755,7 @@ async function openFood(id) {
     const sim = (list) => list.length ? list.map(s => `<div class="card"><button class="row" data-food="${esc(s.food_id)}">
       <span class="icon">${iconFor(s.food_name + " " + s.category, "")}</span>
       <span><div class="name">${esc(friendlyName(s.food_name))}</div><div class="sub">${esc(s.category)}</div></span></button></div>`).join("") : `<p class="muted">None found.</p>`;
-    box.innerHTML = `<button class="back" data-search>← Search</button>
+    box.innerHTML = `<button class="back" data-foods-home>← Foods</button>
       <div class="hero"><span class="icon">${iconFor(p.food_name + " " + p.category, p.portion_group)}</span>
         <div><h1 style="margin:0">${esc(friendlyName(p.food_name))}</h1><div class="sub">${esc(p.category)}</div></div></div>
       <p>${addBtn(p.food_id, p.food_name, p.portion_g, p.portion_group)}</p>
@@ -721,63 +781,48 @@ async function loadWhatIsIt(id) {
   catch { slot.innerHTML = ""; }
 }
 
-// ---------------------------------------------------------------- plan a meal
-function renderMeal() {
-  const opts = [...MAIN_GOALS.map(g => [g[0], `${g[1]} ${g[2]}`]), ...Object.values(state.goals).filter(g => !mainGoal(g.id)).map(g => [g.id, g.label])];
-  $("tab-meal").innerHTML = `
-    <h1>Plan a meal</h1>
-    <p class="lead">Three foods that together cover as much as possible of what your goal needs.</p>
-    <label>Goal <select id="meal-goal">${opts.map(([v, l]) => `<option value="${v}" ${v === state.mealGoal ? "selected" : ""}>${esc(l)}</option>`).join("")}</select></label>
-    <div class="presets">${[[400, "Light · 400 kcal"], [600, "Regular · 600 kcal"], [900, "Hearty · 900 kcal"]].map(([k, l]) =>
-      `<button data-kcal="${k}" class="${k === state.mealKcal ? "on" : ""}">${l}</button>`).join("")}</div>
-    <button class="primary" id="meal-go">Suggest a meal</button>
-    <div id="meal-out" style="margin-top:22px"></div>`;
-  $("meal-goal").onchange = (e) => state.mealGoal = e.target.value;
-  $("tab-meal").querySelectorAll("[data-kcal]").forEach(b => b.onclick = () => { state.mealKcal = +b.dataset.kcal; renderMeal(); });
-  $("meal-go").onclick = buildMeal;
-}
-async function buildMeal() {
-  const out = $("meal-out");
-  out.innerHTML = `<div class="loading">Putting it together…</div>`;
-  try {
-    const plan = await api("/meal-plan", { goal: state.mealGoal, max_calories: state.mealKcal, k: 3, constraints: constraints(), demographic: state.demo });
-    if (!plan.feasible) { out.innerHTML = `<div class="note">${esc(plan.note || "No meal fits these settings.")}</div>`; return; }
-    const cov = Object.entries(plan.coverage).sort((a, b) => b[1] - a[1]);
-    out.innerHTML = plan.items.map(i => `<div class="card"><button class="row" data-food="${esc(i.food_id)}">
-        <span class="icon">${iconFor(i.food_name, "")}</span>
-        <span><div class="name">${esc(friendlyName(i.food_name))}</div><div class="sub">${round(i.portion_g)} g · ${Math.round(i.kcal)} kcal</div></span></button></div>`).join("")
-      + `<p style="margin-top:18px">Together (${Math.round(plan.total_kcal)} kcal) they cover:</p><table>
-        ${cov.slice(0, 4).map(([n, v]) => `<tr><td>${esc(nName(n))}</td><td style="width:45%"><div class="bar"><i style="width:${Math.min(100, v)}%"></i></div></td><td class="num">${round(v)}%</td></tr>`).join("")}</table>
-      ${cov.length > 4 ? `<details class="sec"><summary>All nutrients</summary><div><table>${cov.slice(4).map(([n, v]) => `<tr><td>${esc(nName(n))}</td><td class="num">${round(v)}%</td></tr>`).join("")}</table></div></details>` : ""}
-      <div class="actions"><button class="add" id="meal-add">+ Add these ${plan.items.length} to my list</button></div>
-      <div class="science">Coverage ${Math.round((1 - plan.total_cost) * 100)}% of achievable${plan.greedy_total_cost != null ? ` · top-ranked picks: ${Math.round((1 - plan.greedy_total_cost) * 100)}%` : ""}</div>`;
-    $("meal-add").onclick = () => { plan.items.forEach(i => addToList(i.food_id, i.food_name, i.portion_g, "")); $("meal-add").textContent = "✓ Added to my list"; $("meal-add").classList.add("done"); };
-  } catch (e) { out.innerHTML = `<div class="note">Could not plan a meal (${esc(e.message)}).</div>`; }
-}
-
 // ---------------------------------------------------------------- my week
 // Setup answers stay in this browser only (localStorage); the server gets them
 // only to compute the plan and does not store them.
 const WEEK_KEY = "feedforward.week.v1";
-const ACTIVITY_LABELS = [["sedentary", "Mostly sitting"], ["light", "Light (walking, some stairs)"],
-  ["moderate", "Moderate (sport 2-3×/week)"], ["active", "Active (sport 4-5×/week)"], ["very_active", "Very active"]];
+const EDITS_KEY = "feedforward.edits.v1";    // a week the user changed (swapped meals), for one plan
+const ACTIVITIES = [["sedentary", "Sitting"], ["light", "Light"], ["moderate", "Moderate"], ["active", "Active"], ["very_active", "Very active"]];
+const ACTIVITY_HINT = { sedentary: "Mostly sitting", light: "Walking, some stairs", moderate: "Sport 2–3 times a week",
+  active: "Sport 4–5 times a week", very_active: "Training most days" };
+const STEP_TITLES = ["About you", "Your goal", "Shop and budget"];
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const SHORT_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const MEAL_LABEL = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
 const STORAGE_TITLES = { fresh: "Fruit & vegetables", bakery: "Bakery", fridge: "Fridge", freezer: "Freezer", pantry: "Cupboard" };
 function loadWeekSetup() { try { return JSON.parse(localStorage.getItem(WEEK_KEY)); } catch { return null; } }
 function saveWeekSetup(v) { try { localStorage.setItem(WEEK_KEY, JSON.stringify(v)); } catch {} }
-const SHOP_KEY = "feedforward.shop.v1";      // ticked shopping items, per plan
-const SHORT_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const MEAL_LABEL = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
+function loadEdits(key) { try { const e = JSON.parse(localStorage.getItem(EDITS_KEY)); return e && e.key === key ? e.days : null; } catch { return null; } }
+function saveEdits(key, days) { try { localStorage.setItem(EDITS_KEY, JSON.stringify({ key, days })); } catch {} }
+function clearEdits() { try { localStorage.removeItem(EDITS_KEY); } catch {} }
 let weekChains = null, weekPlan = null, weekKey = null, weekToken = 0;
 const todayIdx = () => (new Date().getDay() + 6) % 7;     // plan day 1 = Monday
-const weekUI = { view: "today", day: todayIdx() };
+const weekUI = { view: "today", day: todayIdx(), step: 0 };
 const recipeCache = new Map();
+
+// Dishes first, then the main ingredient: a picture says "pasta" faster than a name.
+const RECIPE_ICONS = [[/pasta|spaghetti|bolognese/i, "🍝"], [/soup|\bdal\b/i, "🍲"], [/curry/i, "🍛"], [/chili/i, "🌶️"],
+  [/porridge|oats|muesli/i, "🥣"], [/smoothie/i, "🥤"], [/omelette|frittata|shakshuka|\beggs?\b/i, "🍳"], [/salad/i, "🥗"],
+  [/salmon|mackerel|sardine|tuna|fish/i, "🐟"], [/chicken/i, "🍗"], [/beef|ham\b/i, "🥩"], [/tofu/i, "🥢"],
+  [/rice|couscous|quinoa|bowl/i, "🍚"], [/potato/i, "🥔"], [/toast|tartine|baguette|bread/i, "🥖"],
+  [/yogurt|yaourt|fromage blanc/i, "🥛"], [/banana/i, "🍌"], [/apple/i, "🍎"], [/orange/i, "🍊"], [/chocolate/i, "🍫"],
+  [/seeds|walnut|nuts|raisins/i, "🥜"]];
+const recipeIcon = (name) => (RECIPE_ICONS.find(([re]) => re.test(name)) || [, "🍽️"])[1];
+const euro = (x) => `€${x.toFixed(2)}`;
 
 function weekRequest(v) {
   return { age: +v.age, sex: v.sex, weight_kg: +v.weight, height_cm: +v.height, activity: v.activity,
     pregnant: v.sex === "female" && v.stage === "pregnant", breastfeeding: v.sex === "female" && v.stage === "breastfeeding",
-    goal: v.goal, budget: +v.budget, chain: v.chain, diet: v.diet || null, equipment: v.microwave ? ["microwave"] : null };
+    goal: v.goal, budget: +v.budget, chain: v.chain, diet: v.diet || null, equipment: v.microwave ? ["microwave"] : null,
+    pantry: v.pantry && v.pantry.length ? v.pantry : null };
 }
+// The week as the server takes it back: recipe ids per meal and snacks, day by day.
+const composition = (p) => p.days.map(d => ({
+  meals: Object.fromEntries(Object.entries(d.meals).map(([m, r]) => [m, r.id])), snacks: d.snacks.map(s => s.id) }));
 
 async function renderWeek(forceSetup = false) {
   const my = ++weekToken;
@@ -788,54 +833,80 @@ async function renderWeek(forceSetup = false) {
   const box = $("tab-week");
   box.innerHTML = `<div class="loading">Planning your week…</div>`;
   try {
-    const plan = await api("/plan/week", req);
+    let plan = null;
+    const edits = loadEdits(key);                                       // meals the user swapped
+    if (edits) { try { plan = await api("/plan/evaluate", { ...req, days: edits }); } catch { clearEdits(); } }
+    if (!plan) plan = await api("/plan/week", req);
     if (my !== weekToken) return;                                      // user moved on
     weekPlan = plan; weekPlan._req = req; weekKey = key;
-    renderWeekPlan(setup);
-  } catch (e) { if (my === weekToken) box.innerHTML = `<div class="note">Could not plan the week (${esc(e.message)}).</div><button class="ghost" data-week-edit>Change settings</button>`; }
+    renderWeekPlan(setup); updateCount();
+  } catch (e) { if (my === weekToken) box.innerHTML = `<div class="note">Could not plan the week (${esc(e.message)}).</div><button class="ghost" data-week-edit>Change your answers</button>`; }
 }
 
+// Three short steps instead of one long form: you, your goal, shop and budget.
 async function renderWeekSetup(v) {
   const my = ++weekToken;
   if (!weekChains) weekChains = (await api("/plan/options")).chains;
   if (my !== weekToken) return;
+  const step = weekUI.step || 0;
   const tierSign = (c) => c.price_index < 0.8 ? "€" : c.price_index < 1.15 ? "€€" : "€€€";
-  const radio = (name, value, label, checked) => `<label><input type="radio" name="${name}" value="${value}" ${checked ? "checked" : ""}><span>${label}</span></label>`;
+  const chip = (name, value, label, checked) => `<label><input type="radio" name="${name}" value="${value}" ${checked ? "checked" : ""}><span>${label}</span></label>`;
+  const act = v.activity || "light", female = (v.sex || "female") === "female";
   $("tab-week").innerHTML = `
-    <h1>Plan your week</h1>
-    <p class="lead">About a minute. Your answers stay on this device and are used only to compute your plan.</p>
-    <form class="setup" id="week-form">
-      <fieldset><legend>About you</legend><div class="grid2">
-        <label class="f">Age<input type="number" name="age" min="14" max="100" value="${esc(v.age || "")}" required></label>
-        <label class="f">Sex<select name="sex"><option value="female" ${v.sex === "female" ? "selected" : ""}>Female</option><option value="male" ${v.sex === "male" ? "selected" : ""}>Male</option></select></label>
-        <label class="f">Height (cm)<input type="number" name="height" min="120" max="230" step="any" inputmode="decimal" value="${esc(v.height || "")}" required></label>
-        <label class="f">Weight (kg)<input type="number" name="weight" min="30" max="250" step="any" inputmode="decimal" value="${esc(v.weight || "")}" required></label>
+    <h1>${STEP_TITLES[step]}</h1>
+    <div class="steps" role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="${step + 1}" aria-label="Step ${step + 1} of 3">${[0, 1, 2].map(i => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>
+    <form class="setup" id="week-form" novalidate>
+      <div class="step" data-step="0" ${step === 0 ? "" : "hidden"}><fieldset>
+        <div class="grid2">
+          <label class="f">Age<input type="number" name="age" min="14" max="100" inputmode="numeric" value="${esc(v.age || "")}" required></label>
+          <label class="f">Height (cm)<input type="number" name="height" min="120" max="230" step="any" inputmode="decimal" value="${esc(v.height || "")}" required></label>
+          <label class="f">Weight (kg)<input type="number" name="weight" min="30" max="250" step="any" inputmode="decimal" value="${esc(v.weight || "")}" required></label>
+        </div>
+        <div class="field"><span class="flabel">Sex</span><div class="choice">${chip("sex", "female", "Female", female)}${chip("sex", "male", "Male", !female)}</div></div>
+        <div class="field" id="stage-f" ${female ? "" : "hidden"}><span class="flabel">Pregnant or breastfeeding?</span><div class="choice">
+          ${chip("stage", "", "No", !v.stage)}${chip("stage", "pregnant", "Pregnant", v.stage === "pregnant")}${chip("stage", "breastfeeding", "Breastfeeding", v.stage === "breastfeeding")}</div></div>
+        <div class="field"><span class="flabel">Activity</span><div class="choice">${ACTIVITIES.map(([k, l]) => chip("activity", k, l, act === k)).join("")}</div>
+          <p class="hint" id="act-hint">${ACTIVITY_HINT[act]}</p></div>
+      </fieldset></div>
+      <div class="step" data-step="1" ${step === 1 ? "" : "hidden"}>
+        <div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) => `<label class="tile pick"><input type="radio" name="goal" value="${id}" ${(v.goal || "cognitive_function") === id ? "checked" : ""}>
+          <span class="ic">${ic}</span><b>${title}</b><small>${sub}</small></label>`).join("")}</div>
       </div>
-      <label class="f" id="stage-f" style="margin-top:10px" ${v.sex === "male" ? "hidden" : ""}>Pregnant or breastfeeding?<select name="stage">
-        <option value="">No</option><option value="pregnant" ${v.stage === "pregnant" ? "selected" : ""}>Pregnant</option>
-        <option value="breastfeeding" ${v.stage === "breastfeeding" ? "selected" : ""}>Breastfeeding</option></select></label>
-      <label class="f" style="margin-top:10px">Activity<select name="activity">${ACTIVITY_LABELS.map(([k, l]) => `<option value="${k}" ${(v.activity || "light") === k ? "selected" : ""}>${l}</option>`).join("")}</select></label>
-      <p class="src" style="margin:8px 0 0">Weight and height only set your energy and protein needs. Vitamins and minerals depend on age and sex.</p></fieldset>
-      <fieldset><legend>What would you like to support?</legend><div class="choice">
-        ${MAIN_GOALS.map(([id, ic, title]) => radio("goal", id, `${ic} ${title}`, (v.goal || "cognitive_function") === id)).join("")}</div></fieldset>
-      <fieldset><legend>Where do you shop?</legend>
-        <select name="chain" style="width:100%">${weekChains.map(c => `<option value="${c.id}" ${(v.chain || "lidl") === c.id ? "selected" : ""}>${esc(c.label)} · ${tierSign(c)}</option>`).join("")}</select>
-        <p class="src" style="margin:8px 0 0">€ = cheaper, €€€ = pricier, from open receipt data (Open Prices).</p></fieldset>
-      <fieldset><legend>Budget and diet</legend><div class="grid2">
-        <label class="f">Budget for the week (€)<input type="number" name="budget" min="10" max="500" step="any" inputmode="decimal" value="${esc(v.budget || 50)}" required></label>
-        <label class="f">Diet<select name="diet"><option value="">No restriction</option><option value="vegetarian" ${v.diet === "vegetarian" ? "selected" : ""}>Vegetarian</option><option value="vegan" ${v.diet === "vegan" ? "selected" : ""}>Vegan</option></select></label></div>
-        <label class="opt" style="margin-top:10px;display:flex;gap:8px;align-items:center"><input type="checkbox" name="microwave" ${v.microwave ? "checked" : ""}> I only have a microwave and a kettle</label></fieldset>
-      <button class="primary" type="submit">Plan my week</button>
+      <div class="step" data-step="2" ${step === 2 ? "" : "hidden"}><fieldset>
+        <label class="f">Shop<select name="chain">${weekChains.map(c => `<option value="${c.id}" ${(v.chain || "lidl") === c.id ? "selected" : ""}>${esc(c.label)} · ${tierSign(c)}</option>`).join("")}</select></label>
+        <div class="field"><span class="flabel">Budget for the week</span>
+          <div class="money"><span aria-hidden="true">€</span><input type="number" name="budget" min="10" max="500" step="any" inputmode="decimal" aria-label="Budget in euros" value="${esc(v.budget || 50)}" required></div>
+          <div class="choice">${[30, 40, 50, 60, 80].map(b => `<button type="button" class="pill-btn" data-budget-pick="${b}">€${b}</button>`).join("")}</div></div>
+        <div class="field"><span class="flabel">Diet</span><div class="choice">${chip("diet", "", "Anything", !v.diet)}${chip("diet", "vegetarian", "Vegetarian", v.diet === "vegetarian")}${chip("diet", "vegan", "Vegan", v.diet === "vegan")}</div></div>
+        <label class="opt">Only a microwave and a kettle<input type="checkbox" name="microwave" ${v.microwave ? "checked" : ""}></label>
+      </fieldset></div>
+      <div class="actions wizard">
+        ${step > 0 ? `<button type="button" class="ghost" id="ws-back">Back</button>` : ""}
+        <button type="${step === 2 ? "submit" : "button"}" class="primary" id="ws-next">${step === 2 ? "Plan my week" : "Next"}</button>
+      </div>
+      <p class="src center">Your answers stay on this device.</p>
     </form>`;
-  $("week-form").sex.onchange = (e) => { $("stage-f").hidden = e.target.value === "male"; };
-  $("week-form").onsubmit = (e) => {
+  const form = $("week-form");
+  // keep what was typed when moving between steps
+  const collect = () => {
+    const f = new FormData(form), get = (k, d) => f.get(k) ?? d;
+    return { ...v, age: get("age", v.age), height: get("height", v.height), weight: get("weight", v.weight),
+      sex: get("sex", v.sex || "female"), stage: get("sex", v.sex) === "female" ? get("stage", v.stage || "") : "",
+      activity: get("activity", act), goal: get("goal", v.goal || "cognitive_function"), chain: get("chain", v.chain || "lidl"),
+      budget: get("budget", v.budget || 50), diet: get("diet", v.diet || ""),
+      microwave: step === 2 ? !!f.get("microwave") : !!v.microwave };
+  };
+  form.querySelectorAll("[name=sex]").forEach(r => r.onchange = () => { $("stage-f").hidden = r.value === "male"; });
+  form.querySelectorAll("[name=activity]").forEach(r => r.onchange = () => { $("act-hint").textContent = ACTIVITY_HINT[r.value]; });
+  form.querySelectorAll("[data-budget-pick]").forEach(b => b.onclick = () => { form.budget.value = b.dataset.budgetPick; });
+  const valid = () => [...form.querySelector(`[data-step="${step}"]`).querySelectorAll("input, select")].every(i => i.reportValidity());
+  if ($("ws-back")) $("ws-back").onclick = () => { weekUI.step = step - 1; renderWeekSetup(collect()); };
+  if (step < 2) $("ws-next").onclick = () => { if (valid()) { weekUI.step = step + 1; renderWeekSetup(collect()); } };
+  form.onsubmit = (e) => {
     e.preventDefault();
-    const f = new FormData(e.target);
-    saveWeekSetup({ age: f.get("age"), sex: f.get("sex"), stage: f.get("sex") === "female" ? f.get("stage") : "",
-      height: f.get("height"), weight: f.get("weight"),
-      activity: f.get("activity"), goal: f.get("goal"), chain: f.get("chain"), budget: f.get("budget"),
-      diet: f.get("diet"), microwave: !!f.get("microwave") });
-    weekUI.view = "today"; weekUI.day = todayIdx();
+    if (!valid()) return;
+    saveWeekSetup(collect());
+    weekUI.step = 0; weekUI.view = "today"; weekUI.day = todayIdx();
     syncProfile(); refreshViews();
     renderWeek();
   };
@@ -849,39 +920,41 @@ function renderWeekPlan(setup) {
     const MAX_BUDGET = 500;     // the API's limit
     const kcal = p.energy?.target_per_day ? `${p.energy.target_per_day.toLocaleString("en")} kcal a day` : "";
     const msg = p.reason === "budget"
-      ? `A week with enough food costs more than €${esc(setup.budget)} at ${esc(chainLabel)}: at least <b>€${p.minimum_budget}</b>. FeedForward never plans less food to fit a budget.`
+      ? `A week with enough food costs at least <b>€${p.minimum_budget}</b> at ${esc(chainLabel)}. FeedForward never plans less food to fit a budget.`
       : p.reason === "energy"
-        ? `${esc(p.note)}${kcal ? ` Your estimate: ${kcal}.` : ""} Check your height, weight and activity.`
-        : `${esc(p.note || "No week fits these settings.")} Try another diet or kitchen setting.`;
+        ? `${esc(p.note)}${kcal ? ` Your estimate: ${kcal}.` : ""}`
+        : esc(p.note || "No week fits these settings.");
     const useMin = p.reason === "budget" && p.minimum_budget && p.minimum_budget <= MAX_BUDGET;
     box.innerHTML = `<h1>Your week</h1><div class="note">${msg}</div>
       <div class="actions">${useMin ? `<button class="primary" data-week-budget="${p.minimum_budget}">Use €${p.minimum_budget}</button>` : ""}
-      <button class="ghost" data-week-edit>${p.reason === "budget" ? "Try another shop" : "Change settings"}</button></div>`;
+      <button class="ghost" data-week-edit>${p.reason === "budget" ? "Try another shop" : "Change your answers"}</button></div>`;
     return;
   }
-  const views = [["today", "Today"], ["week", "Week"], ["shop", "🛒 Shopping"]];
+  const share = Math.min(100, 100 * p.total_cost / (p.budget || +setup.budget));
+  const views = [["today", "Today"], ["week", "Week"]];
   box.innerHTML = `
     <h1>Your week</h1>
-    <div class="summary"><span><b>€${p.total_cost.toFixed(2)}</b> of €${esc(setup.budget)} at ${esc(chainLabel)}</span>
-      <span>${p.energy.planned_per_day.toLocaleString("en")} kcal a day</span>
-      <button class="link" data-week-edit>Change settings</button></div>
+    <div class="card budget-card">
+      <div class="bline"><span><b>${euro(p.total_cost)}</b> <button class="link quiet" data-week-edit title="Change budget, shop or answers">of €${esc(setup.budget)} · ${esc(chainLabel)} ›</button></span>
+        <span class="chip">${p.energy.planned_per_day.toLocaleString("en")} kcal/day</span></div>
+      <div class="bar big" role="img" aria-label="${Math.round(share)}% of the budget"><i style="width:${share}%"></i></div>
+      ${p.edited ? `<div class="edited">You changed some meals · <button class="link" data-reset-edits>Back to the suggested week</button></div>` : ""}
+    </div>
     <div class="seg wseg" role="tablist" aria-label="Plan view">${views.map(([k, l]) =>
       `<button role="tab" aria-selected="${weekUI.view === k}" class="${weekUI.view === k ? "on" : ""}" data-wview="${k}">${l}</button>`).join("")}</div>
-    ${weekUI.view === "shop" ? shopView(p, chainLabel) : weekUI.view === "week" ? weekView(p) : todayView(p)}`;
-  if (weekUI.view === "shop") bindShop(p);
-  // recipes already opened in this session come back open-able without a refetch
+    ${weekUI.view === "week" ? weekView(p) : todayView(p)}`;
 }
 
 function dayCard(i, title) {
   const d = weekPlan.days[i];
   return `<div class="day"><h2 class="dayh">${title}</h2>
     ${["breakfast", "lunch", "dinner"].map(m => d.meals[m] ? `
-      <button class="meal" data-recipe="${esc(d.meals[m].id)}" data-slot="${i}-${m}" aria-expanded="false" aria-controls="r-${i}-${m}">
-        <span class="when">${MEAL_LABEL[m]}</span>
-        <span class="what">${esc(d.meals[m].en)}${d.meals[m].batch ? `<span class="badge-soft">keeps 3 days</span>` : ""}<small>${esc(d.meals[m].fr)}</small></span>
-        <span class="t">${d.meals[m].time_min ? d.meals[m].time_min + " min " : ""}<span class="chev" aria-hidden="true">▾</span></span></button>
-      <div class="recipe" id="r-${i}-${m}"></div>` : "").join("")}
-    ${d.snacks.length ? `<div class="snackline">Snacks: ${d.snacks.map(s => esc(s.en)).join(" · ")}</div>` : ""}
+      <button class="meal" data-recipe="${esc(d.meals[m].id)}" data-slot="${i}|${m}" aria-haspopup="dialog">
+        <span class="mi" aria-hidden="true">${recipeIcon(d.meals[m].en)}</span>
+        <span class="what"><small class="when">${MEAL_LABEL[m]}</small>${esc(d.meals[m].en)}</span>
+        <span class="t">${d.meals[m].batch ? `<span class="badge-soft" title="Keeps 3 days">3 days</span>` : ""}${d.meals[m].time_min ? `${d.meals[m].time_min} min` : ""}<span class="chev" aria-hidden="true">›</span></span>
+      </button>` : "").join("")}
+    ${d.snacks.length ? `<div class="snackline"><span aria-hidden="true">${recipeIcon(d.snacks[0].en)}</span> ${d.snacks.map(s => esc(s.en)).join(" · ")}</div>` : ""}
   </div>`;
 }
 
@@ -889,7 +962,7 @@ function todayView(p) {
   const t = todayIdx(), i = weekUI.day;
   return `<div class="daystrip" role="tablist" aria-label="Day of the week">${SHORT_DAYS.map((d, k) =>
       `<button role="tab" aria-selected="${k === i}" aria-label="${WEEKDAYS[k]}${k === t ? " (today)" : ""}" class="${k === i ? "on" : ""} ${k === t ? "today" : ""}" data-day="${k}">${d}</button>`).join("")}</div>
-    ${dayCard(i, i === t ? `Today · ${WEEKDAYS[i]}` : WEEKDAYS[i])}
+    ${dayCard(i, i === t ? `Today` : WEEKDAYS[i])}
     ${planNotes(p)}
     ${whyPlan(p)}`;
 }
@@ -900,131 +973,129 @@ function weekView(p) {
 }
 
 function planNotes(p) {
-  return [p.diet_note, p.repeats ? "Some meals come back more often this week, so that it fits your budget and settings." : ""]
-    .filter(Boolean).map(n => `<p class="src" style="margin:4px 0 10px">${esc(n)}</p>`).join("");
+  return [p.diet_note, p.repeats ? "Some meals come back more often, to fit your budget and settings." : ""]
+    .filter(Boolean).map(n => `<p class="src" style="margin:4px 4px 10px">${esc(n)}</p>`).join("");
 }
 
-// "Why this plan?" is collapsed: one line when the goal is covered, bars on demand.
+// "Why this plan?" is one line; the bars are one tap away.
 function whyPlan(p) {
   const goalNut = p.goal_nutrients.slice(0, 4);
   const short = goalNut.filter(n => p.coverage[n] < 100);
   const low = Object.entries(p.coverage).filter(([, v]) => v < 100).sort((a, b) => a[1] - b[1]).slice(0, 2);
   const goalName = p.goal ? goalTitle(p.goal).toLowerCase() : "your needs";
   const head = short.length
-    ? `${goalIcon(p.goal)} For ${esc(goalName)}: ${short.map(n => `${esc(nName(n))} ${Math.round(p.coverage[n])}%`).join(", ")}`
-    : `${goalIcon(p.goal)} ✓ This week covers what ${esc(goalName)} needs`;
+    ? `${goalIcon(p.goal)} ${esc(goalTitle(p.goal || ""))}: ${short.map(n => `${esc(nName(n))} ${Math.round(p.coverage[n])}%`).join(", ")}`
+    : `${goalIcon(p.goal)} Covers what ${esc(goalName)} needs`;
   const bar = (n, v) => `<div class="cover-row"><span>${nLink(n, nName(n))}</span><div class="bar"><i style="width:${Math.min(100, v)}%"></i></div><span class="num">${v >= 100 ? "100%+" : Math.round(v) + "%"}</span></div>`;
+  const tips = { "vitamin-d": "The skin also makes vitamin D in sunlight.", iodine: "Iodised salt (sel iodé) is the usual source of iodine." };
   return `<details class="sec"><summary>${head}</summary><div>
-    <p class="sub" style="margin:0 0 6px">Share of the week's need, from the nutrients linked to ${esc(goalName)}:</p>
     ${goalNut.map(n => bar(n, p.coverage[n])).join("")}
-    ${low.length ? `<p class="src" style="margin:8px 0 0">Lower this week: ${low.map(([n, v]) => `${esc(nName(n))} ${Math.round(v)}%`).join(", ")}.${low.some(([n]) => n === "vitamin-d") ? " Few foods are rich in vitamin D; the skin also makes it in sunlight." : ""}${low.some(([n]) => n === "iodine") ? " Using iodised salt (sel iodé) instead of plain salt is the usual way to get iodine." : ""}</p>` : `<p class="src" style="margin:8px 0 0">Every vitamin and mineral we track reaches 100% this week.</p>`}
-    <p class="src">Recipes are drafts, not yet reviewed by a dietitian.</p></div></details>`;
+    ${low.length ? `<p class="src" style="margin:10px 0 0">Lower this week: ${low.map(([n, v]) => `${esc(nName(n))} ${Math.round(v)}%`).join(", ")}. ${low.map(([n]) => tips[n] || "").join(" ")}</p>` : ""}
+  </div></details>`;
 }
 
-const sameName = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
-function qty(b) {
-  const g = (x) => b.liquid ? (x >= 1000 ? `${round(x / 1000)} L` : `${round(x)} ml`) : (x >= 1000 ? `${round(x / 1000)} kg` : `${round(x)} g`);
-  if (b.packs) return b.units_per_pack ? `${b.packs} × box of ${b.units_per_pack}` : `${b.packs} × ${g(b.pack_g)}`;
-  return `${g(b.grams)}${b.about_units ? ` <span class="muted">(~${b.about_units})</span>` : ""}`;
+// ---------------------------------------------------------------- recipe sheet
+// A meal opens in a sheet with three tabs (recipe, why, swap) instead of
+// growing the page. Swapping keeps the week's rules: the server only offers
+// meals that stay within budget, energy band and limits.
+let sheetSlot = null;
+const SHEET_TABS = [["recipe", "Recipe"], ["why", "Why"], ["swap", "Swap"]];
+function openRecipe(btn) {
+  const [day, meal] = btn.dataset.slot.split("|");
+  const r = weekPlan.days[+day].meals[meal];
+  sheetSlot = { day: +day, meal, id: r.id };
+  $("rs-icon").textContent = recipeIcon(r.en);
+  $("rs-title").textContent = r.en;
+  $("rs-sub").textContent = `${MEAL_LABEL[meal]} · ${WEEKDAYS[+day]}${r.time_min ? ` · ${r.time_min} min` : ""}`;
+  $("recipe-sheet").showModal();
+  showSheetTab("recipe");
 }
-function loadTicks() {
-  try { const t = JSON.parse(localStorage.getItem(SHOP_KEY)); return t && t.key === weekKey ? new Set(t.ids) : new Set(); } catch { return new Set(); }
+async function cached(key, load) {
+  if (!recipeCache.has(key)) recipeCache.set(key, await load());
+  return recipeCache.get(key);
 }
-function saveTicks(ids) { try { localStorage.setItem(SHOP_KEY, JSON.stringify({ key: weekKey, ids: [...ids] })); } catch {} }
-
-function shopView(p, chainLabel) {
-  const groups = {};
-  p.basket.forEach(b => (groups[b.storage] ||= []).push(b));
-  const ticks = loadTicks();
-  return `<div class="card" style="padding:4px 16px 14px">
-    <p class="shop-progress" id="shop-progress"></p>
-    ${["fresh", "bakery", "fridge", "freezer", "pantry"].filter(g => groups[g]).map(g => `<div class="group-title">${STORAGE_TITLES[g]}</div>
-      ${groups[g].map(b => `<label class="shop-row"><input type="checkbox" data-shop="${esc(b.id)}" ${ticks.has(b.id) ? "checked" : ""}>
-        <span class="nm">${esc(b.fr)}${sameName(b.fr, b.en) ? "" : ` <span class="muted">· ${esc(b.en)}</span>`}</span>
-        <span class="num">${qty(b)}</span><span class="num">${b.estimated ? "≈" : ""}€${b.cost.toFixed(2)}</span></label>`).join("")}`).join("")}
-    <div class="actions"><button class="add" id="week-to-list">+ Add all to My list</button></div>
-    <p class="src">At ${esc(chainLabel)}. ≈ price estimated from the national median and this shop's price level. Cupboard and freezer items count only the share used this week. Prices: Open Prices (ODbL).</p>
-  </div>`;
-}
-function bindShop(p) {
-  const ticks = loadTicks();
-  const progress = () => { $("shop-progress").textContent = `${ticks.size} of ${p.basket.length} in the basket`; };
-  progress();
-  $("tab-week").querySelectorAll("[data-shop]").forEach(cb => cb.onchange = () => {
-    cb.checked ? ticks.add(cb.dataset.shop) : ticks.delete(cb.dataset.shop);
-    saveTicks(ticks); progress();
-  });
-  $("week-to-list").onclick = () => {
-    p.basket.forEach(b => addToList(b.food_id, `${b.fr} (${b.en})`, b.packs ? b.pack_g : b.grams, ""));
-    $("week-to-list").textContent = "✓ Added to My list"; $("week-to-list").classList.add("done");
-  };
-}
-
-async function toggleRecipe(btn) {
-  const slot = $("r-" + btn.dataset.slot);
-  const open = slot.classList.toggle("open");
-  btn.setAttribute("aria-expanded", open);
-  if (!open || slot.innerHTML) return;
-  const id = btn.dataset.recipe, key = `${id}|${weekKey}|${state.demo}`;
-  if (!recipeCache.has(key)) {
-    slot.innerHTML = `<span class="muted">Loading…</span>`;
-    try {
-      const [r, why] = await Promise.all([
-        api(`/plan/recipes/${encodeURIComponent(id)}?` + qs({ chain: weekPlan._req.chain, scale: weekPlan.portion_scale })),
-        api(`/plan/recipes/${encodeURIComponent(id)}/why?` + qs({ goal: weekPlan.goal, scale: weekPlan.portion_scale, demographic: state.demo }))
-          .catch(() => null),     // the recipe still shows if the explanation fails
-      ]);
+async function showSheetTab(tab) {
+  const { id, day, meal } = sheetSlot, req = weekPlan._req, body = $("rs-body");
+  $("rs-tabs").innerHTML = SHEET_TABS.map(([k, l]) =>
+    `<button role="tab" aria-selected="${k === tab}" class="${k === tab ? "on" : ""}" data-rs-tab="${k}">${l}</button>`).join("");
+  body.innerHTML = `<div class="loading">Loading…</div>`;
+  try {
+    if (tab === "recipe") {
+      const r = await cached(`r|${id}|${req.chain}|${weekPlan.portion_scale}`, () =>
+        api(`/plan/recipes/${encodeURIComponent(id)}?` + qs({ chain: req.chain, scale: weekPlan.portion_scale })));
       const amount = (i) => i.liquid ? `${round(i.g)} ml` : `${round(i.g)} g`;
-      recipeCache.set(key, `<ul>${r.ingredients.map(i => `<li>${amount(i)} ${esc(i.fr)}${sameName(i.fr, i.en) ? "" : ` <span class="muted">(${esc(i.en)})</span>`}</li>`).join("")}</ul>
-        ${r.steps.length ? `<ol>${r.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
-        <p class="src">About €${r.cost_per_serving.toFixed(2)} a portion · draft recipe</p>
-        ${why ? whyMeal(why, r.en) : ""}`);
-    } catch (e) {
-      slot.innerHTML = `<div class="note">Could not load this recipe (${esc(e.message)}).</div>`;
-      return;
+      body.innerHTML = `<p class="sub fr">${esc(r.fr)} · about ${euro(r.cost_per_serving)} a portion</p>
+        <ul class="ingredients">${r.ingredients.map(i => `<li><b>${amount(i)}</b> ${esc(i.fr)}${sameName(i.fr, i.en) ? "" : ` <span class="muted">${esc(i.en)}</span>`}</li>`).join("")}</ul>
+        ${r.steps.length ? `<ol class="steps-list">${r.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}`;
+    } else if (tab === "why") {
+      const w = await cached(`w|${id}|${weekPlan.goal}|${weekPlan.portion_scale}|${state.demo}`, () =>
+        api(`/plan/recipes/${encodeURIComponent(id)}/why?` + qs({ goal: weekPlan.goal, scale: weekPlan.portion_scale, demographic: state.demo })));
+      body.innerHTML = whyMeal(w, weekPlan.days[day].meals[meal].en);
+    } else {
+      const res = await api("/plan/swap-options", { ...req, days: composition(weekPlan), day, meal });
+      body.innerHTML = swapView(res);
     }
-  }
-  slot.innerHTML = recipeCache.get(key);
+  } catch (e) { body.innerHTML = `<div class="note">Could not load this (${esc(e.message)}).</div>`; }
+}
+function swapView(res) {
+  const goal = weekPlan.goal ? goalTitle(weekPlan.goal).toLowerCase() : "your needs";
+  const effect = { better: [`Better for ${goal}`, "good"], same: [`Same for ${goal}`, ""], less: [`A little less for ${goal}`, "warn"] };
+  const delta = (d) => d === 0 ? "same price" : d > 0 ? `+${euro(d)}` : `−${euro(-d)}`;
+  if (!res.options.length) return `<p class="sub">No other ${res.meal} fits this week's budget and needs.</p>`;
+  return `<p class="sub">Each keeps your budget, energy and limits.</p>
+    ${res.options.map(o => `<div class="swap-opt"><span class="mi" aria-hidden="true">${recipeIcon(o.en)}</span>
+      <span class="what"><b>${esc(o.en)}</b><small>${o.time_min ? `${o.time_min} min · ` : ""}${delta(o.cost_delta)}</small>
+        <span class="chip ${effect[o.effect][1]}">${effect[o.effect][0]}</span></span>
+      <button class="add" data-swap-to="${esc(o.id)}">Choose</button></div>`).join("")}`;
+}
+async function chooseSwap(newId) {
+  const { day, meal } = sheetSlot, req = weekPlan._req;
+  const days = composition(weekPlan);
+  days[day].meals[meal] = newId;
+  $("rs-body").innerHTML = `<div class="loading">Updating your week…</div>`;
+  try {
+    const plan = await api("/plan/evaluate", { ...req, days });
+    weekPlan = { ...plan, _req: req };
+    saveEdits(weekKey, days);
+    $("recipe-sheet").close();
+    renderWeekPlan(loadWeekSetup()); updateCount();
+  } catch (e) { $("rs-body").innerHTML = `<div class="note">Could not swap this meal (${esc(e.message)}).</div>`; }
 }
 
 // "Why this meal?": the goal's nutrients one portion gives (from 15% of the
 // daily need, the EU "source" threshold), where they come from, and the
 // evidence for each nutrient -> goal link, quoting the EU claim when there is one.
 const EVIDENCE_SOURCE = { eu_authorised: "EU register", curated: "curated literature review", scraped: "reference texts" };
-const LIMIT_WORDS = { sodium: "salt (sodium)", "saturated-fat": "saturated fat", "free-sugars": "free sugars" };
+const LIMIT_WORDS = { sodium: "salt", "saturated-fat": "saturated fat", "free-sugars": "free sugars" };
 function needText(pct) {
   return pct >= 200 ? `${Math.round(pct / 100)}× your daily need` : pct >= 100 ? "a full day's need" : `${Math.round(pct)}% of your daily need`;
 }
 function fromSource(src) {
   if (!src) return "";
   const name = esc(src.en.charAt(0).toLowerCase() + src.en.slice(1));
-  return src.share >= 95 ? `, from ${name}` : `, mostly from ${name}`;
+  return src.share >= 95 ? ` · from ${name}` : ` · mostly ${name}`;
 }
 function whyMeal(w, recipeName) {
   const goal = w.goal, title = esc(goalTitle(goal).toLowerCase());
-  const head = `<h4>${goalIcon(goal)} Why this meal for ${title}?</h4>`;
   if (!w.nutrients.length) {
-    return `<div class="why-meal">${head}<p class="sub">It is here for energy and variety: one portion does not give
-      15% of the daily need of any nutrient linked to ${title}.</p></div>`;
+    return `<p class="sub">Here for energy and variety: one portion gives less than 15% of the daily need of each nutrient linked to ${title}.</p>`;
   }
-  const item = (n) => `<li><b>${nLink(n.nutrient, nName(n.nutrient))}</b>: one portion gives ${needText(n.percent_of_need)}${fromSource(n.main_source)}.
+  const item = (n) => `<li><b>${nLink(n.nutrient, nName(n.nutrient))}</b> ${needText(n.percent_of_need)}<span class="muted">${fromSource(n.main_source)}</span>
     ${n.eu_claim && n.eu_claims.length
       ? `<div class="claim">“${esc(n.eu_claims[0])}.”<small>EU authorised health claim${n.citations.length ? ` · ${esc(n.citations[0])}` : ""}</small></div>`
-      : `<div class="claim plain">${esc(n.consumer_label || "Supported by research")}.<small>Evidence grade ${esc(n.evidence)} · ${esc(EVIDENCE_SOURCE[n.evidence_source] || "FeedForward sources")}</small></div>`}</li>`;
+      : `<div class="claim plain">${esc(n.consumer_label || "Supported by research")}.<small>Evidence ${esc(n.evidence)} · ${esc(EVIDENCE_SOURCE[n.evidence_source] || "FeedForward sources")}</small></div>`}</li>`;
   const top = w.nutrients.slice(0, 3), rest = w.nutrients.slice(3);
-  return `<div class="why-meal">${head}
-    ${graphSvg(recipeName, "mixed_dishes", top, goal)}
-    <p class="graph-legend">Solid lines: EU authorised health claims. Thicker lines: more of your daily need in one portion.</p>
+  return `${graphSvg(recipeName, "mixed_dishes", top, goal, recipeIcon(recipeName))}
     <ul class="why-list">${top.map(item).join("")}</ul>
-    ${rest.length ? `<details class="sec"><summary>${rest.length} more nutrient${rest.length > 1 ? "s" : ""} for ${title}</summary><div><ul class="why-list">${rest.map(item).join("")}</ul></div></details>` : ""}
-    ${w.limits.map(l => `<p class="watch">Worth knowing: one portion has ${l.percent_of_limit}% of the daily limit for ${esc(LIMIT_WORDS[l.nutrient] || l.nutrient)}${fromSource(l.main_source)}.</p>`).join("")}
-    <p class="src">${esc(w.rule)}</p></div>`;
+    ${rest.length ? `<details class="sec"><summary>${rest.length} more for ${title}</summary><div><ul class="why-list">${rest.map(item).join("")}</ul></div></details>` : ""}
+    ${w.limits.map(l => `<p class="watch">One portion has ${l.percent_of_limit}% of the daily limit for ${esc(LIMIT_WORDS[l.nutrient] || l.nutrient)}${fromSource(l.main_source)}.</p>`).join("")}
+    <p class="src">From 15% of the daily need, evidence A to C. Solid lines: EU authorised claims.</p>`;
 }
 
 // ---------------------------------------------------------------- graph
 // Food -> nutrients -> goal, the same edges the ranking uses. Line width follows
 // edge strength (0-1); solid lines are authorised EU claims.
-function graphSvg(foodName, group, contribs, goal) {
+function graphSvg(foodName, group, contribs, goal, icon = null) {
   if (!contribs.length) return "";
   const W = 600, rowH = 46, H = Math.max(120, contribs.length * rowH + 24);
   const xF = 80, xN = 300, xG = 520, mid = H / 2;
@@ -1039,10 +1110,10 @@ function graphSvg(foodName, group, contribs, goal) {
     edges += `<path class="${cls}" d="${curve(xN + 70, ys[i], xG - 46, mid)}" stroke-width="${width(c.association)}"/>`;
     nodes += `<g data-nutrient="${esc(c.nutrient)}"><rect class="n-nut" x="${xN - 70}" y="${ys[i] - 17}" width="140" height="34" rx="17"/>
       <text x="${xN}" y="${ys[i] - 1}" text-anchor="middle">${esc(clip(nName(c.nutrient), 18))}</text>
-      <text class="lbl" x="${xN}" y="${ys[i] + 12}" text-anchor="middle">${round(c.percent_of_need)}% of daily need</text></g>`;
+      <text class="lbl" x="${xN}" y="${ys[i] + 12}" text-anchor="middle">${c.percent_of_need >= 200 ? `${Math.round(c.percent_of_need / 100)}× daily need` : `${round(c.percent_of_need)}% of daily need`}</text></g>`;
   });
   nodes += `<rect class="n-food" x="${xF - 46}" y="${mid - 30}" width="92" height="60" rx="14"/>
-    <text x="${xF}" y="${mid - 4}" text-anchor="middle" style="font-size:22px">${iconFor(foodName, group)}</text>
+    <text x="${xF}" y="${mid - 4}" text-anchor="middle" style="font-size:22px">${icon || iconFor(foodName, group)}</text>
     <text class="lbl" x="${xF}" y="${mid + 18}" text-anchor="middle">${esc(clip(friendlyName(foodName), 16))}</text>`;
   nodes += `<rect class="n-goal" x="${xG - 46}" y="${mid - 30}" width="92" height="60" rx="14"/>
     <text x="${xG}" y="${mid - 4}" text-anchor="middle" style="font-size:22px">${goalIcon(goal)}</text>
@@ -1056,12 +1127,12 @@ const GROUP_TITLES = { vitamin: "Vitamins", mineral: "Minerals", macro: "Other n
 function renderDict(section) {
   state.dictSection = section;
   const box = $("tab-dict");
-  const seg = `<div class="seg">${[["nutrients", "Nutrients"], ["foods", "Foods"], ["terms", "Terms"]].map(([k, l]) =>
+  const seg = `<div class="seg">${[["nutrients", "Nutrients"], ["terms", "Glossary"]].map(([k, l]) =>
     `<button data-dict="${k}" class="${k === section ? "on" : ""}">${l}</button>`).join("")}</div>`;
-  box.innerHTML = `<h1>Dictionary</h1><p class="lead">What things are, what they do, and where each answer comes from.</p>${seg}<div id="dict-body"></div>`;
+  box.innerHTML = `<div id="dict-head"><button class="back" data-foods-home>← Foods</button>
+    <h1>${section === "terms" ? "Glossary" : "Nutrients"}</h1>${seg}</div><div id="dict-body"></div>`;
   box.querySelectorAll("[data-dict]").forEach(b => b.onclick = () => renderDict(b.dataset.dict));
   if (section === "nutrients") dictNutrients();
-  if (section === "foods") dictFoods();
   if (section === "terms") dictTerms();
 }
 async function dictNutrients() {
@@ -1074,6 +1145,7 @@ async function dictNutrients() {
 }
 async function openNutrient(id) {
   if (!$("tab-dict").innerHTML || state.dictSection !== "nutrients") renderDict("nutrients");
+  $("dict-head").hidden = true;
   const body = $("dict-body");
   body.innerHTML = `<div class="loading">Loading…</div>`;
   try {
@@ -1081,7 +1153,7 @@ async function openNutrient(id) {
     const who = DEMOS.find(d => d[0] === state.demo)[2];
     const fmtAmt = (a) => `${round(a)} ${esc(n.unit)}`;
     const withGoal = n.what_it_does.filter(c => c.goals.length), other = n.what_it_does.filter(c => !c.goals.length);
-    body.innerHTML = `<button class="back" data-dict-back>← All nutrients</button>
+    body.innerHTML = `<button class="back" data-dict-back>← Nutrients</button>
       <h1>${esc(n.names.en)}</h1><p class="src" style="margin-top:-4px">${esc(n.names.it || "")}${n.names.fr ? " · " + esc(n.names.fr) : ""}</p>
       <div class="fact">${n.daily_need ? `<div><small>Your daily need (${esc(who)})</small><b>${fmtAmt(n.daily_need.amount)}</b></div>` : ""}
         ${n.upper_limit ? `<div><small>Safe upper limit${n.upper_limit.applies_to_food ? "" : " (supplements)"}</small><b>${fmtAmt(n.upper_limit.amount)}</b></div>` : ""}</div>
@@ -1095,36 +1167,8 @@ async function openNutrient(id) {
         ${n.not_proven.map(r => `<li>${esc(r.relationships.join("; "))} <span class="src">— ${esc(r.reason)}</span></li>`).join("")}</ul></div></details>` : ""}
       ${n.note ? `<p class="src">${esc(n.note)}</p>` : ""}
       <h3>Sources</h3><p class="src">${n.sources.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`).join(" · ")}</p>`;
-    body.querySelector("[data-dict-back]").onclick = () => dictNutrients();
+    body.querySelector("[data-dict-back]").onclick = () => renderDict("nutrients");
   } catch (e) { body.innerHTML = `<div class="note">Could not load this nutrient (${esc(e.message)}).</div>`; }
-}
-function dictFoods() {
-  $("dict-body").innerHTML = `<input type="search" id="dq" placeholder="What is… (e.g. emu, bitter gourd, quinoa)"><div id="dq-results" style="margin-top:12px"></div>`;
-  let t;
-  $("dq").addEventListener("input", (e) => {
-    clearTimeout(t); const q = e.target.value.trim();
-    if (q.length < 2) { $("dq-results").innerHTML = ""; return; }
-    t = setTimeout(async () => {
-      const hits = await api("/search?" + qs({ q, limit: 10 }));
-      $("dq-results").innerHTML = hits.map(h => `<div class="card"><button class="row" data-dictfood="${esc(h.food_id)}">
-        <span class="icon">${iconFor(h.food_name + " " + h.category, "")}</span><span><div class="name">${esc(friendlyName(h.food_name))}</div><div class="sub">${esc(h.category)}</div></span></button></div>`).join("")
-        || `<p class="muted">Nothing found.</p>`;
-    }, 250);
-  });
-}
-async function openDictFood(id) {
-  const body = $("dict-body");
-  body.innerHTML = `<div class="loading">Looking it up…</div>`;
-  try {
-    const d = await api(`/dictionary/foods/${encodeURIComponent(id)}`);
-    body.innerHTML = `<button class="back" data-dict-foods>← Food dictionary</button>
-      <div class="hero"><span class="icon">${iconFor(d.name + " " + d.category, d.portion_group)}</span>
-      <div><h1 style="margin:0">${esc(friendlyName(d.name))}</h1><div class="sub">${esc(d.category)}${d.everyday ? "" : " · less common in Europe"}</div></div></div>
-      ${wikiBlock(d)}
-      <p class="src">Nutrient data: ${esc(d.data_source.name)}${d.data_source.licence ? ` (${esc(d.data_source.licence)})` : ""} · full name “${esc(d.name)}” · typical portion ${round(d.portion_g)} g</p>
-      <button class="link" data-food="${esc(d.food_id)}">What one portion gives →</button>`;
-    body.querySelector("[data-dict-foods]").onclick = () => dictFoods();
-  } catch (e) { body.innerHTML = `<div class="note">Could not load this food (${esc(e.message)}).</div>`; }
 }
 function wikiBlock(d) {
   const w = d.wikipedia;
@@ -1142,43 +1186,120 @@ async function dictTerms() {
     + `<p class="src">Definitions written by the FeedForward team, awaiting review by a dietitian.</p>`;
 }
 
-// ---------------------------------------------------------------- shopping list
-// Stored in this browser only (localStorage), so it works without an account.
-const LIST_KEY = "feedforward.list.v1";
+// ---------------------------------------------------------------- list
+// One list: the week's shopping (from the plan) plus foods added from Foods.
+// All of it lives in this browser only (localStorage).
+const LIST_KEY = "feedforward.list.v1";      // foods added by hand
+const SHOP_KEY = "feedforward.shop.v1";      // ticked items, for one plan
+const PANTRY_KEY = "feedforward.pantry.v1";  // ingredients at home, kept from week to week
 function loadList() { try { return JSON.parse(localStorage.getItem(LIST_KEY)) || []; } catch { return []; } }
 function saveList(list) { try { localStorage.setItem(LIST_KEY, JSON.stringify(list)); } catch {} updateCount(); }
 let shopping = loadList();
 function inList(id) { return shopping.some(i => i.id === id); }
 function addBtn(id, name, portion, group) {
-  return inList(id) ? `<button class="add done" disabled>✓ On my list</button>`
-    : `<button class="add" data-add="${esc(id)}" data-name="${esc(name)}" data-portion="${portion || 100}" data-group="${esc(group || "")}">+ My list</button>`;
+  return inList(id) ? `<button class="add done" disabled>✓ On your list</button>`
+    : `<button class="add" data-add="${esc(id)}" data-name="${esc(name)}" data-portion="${portion || 100}" data-group="${esc(group || "")}">+ List</button>`;
 }
 function addToList(id, name, portion, group) {
   if (inList(id)) return;
   shopping.push({ id, name, portion: portion || 100, group: group || "" });
   saveList(shopping);
 }
-function updateCount() {
-  document.querySelectorAll("[data-list-count]").forEach(c => { c.hidden = !shopping.length; c.textContent = shopping.length; });
+function loadPantry() { try { return new Set(JSON.parse(localStorage.getItem(PANTRY_KEY)) || []); } catch { return new Set(); } }
+function savePantry(s) { try { localStorage.setItem(PANTRY_KEY, JSON.stringify([...s])); } catch {} }
+function loadTicks() {
+  try { const t = JSON.parse(localStorage.getItem(SHOP_KEY)); return t && t.key === weekKey ? new Set(t.ids) : new Set(); } catch { return new Set(); }
 }
+function saveTicks(ids) { try { localStorage.setItem(SHOP_KEY, JSON.stringify({ key: weekKey, ids: [...ids] })); } catch {} }
+const sameName = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
+function qty(b) {
+  const g = (x) => b.liquid ? (x >= 1000 ? `${round(x / 1000)} L` : `${round(x)} ml`) : (x >= 1000 ? `${round(x / 1000)} kg` : `${round(x)} g`);
+  if (b.packs) return b.units_per_pack ? `${b.packs} × ${b.units_per_pack}` : `${b.packs} × ${g(b.pack_g)}`;
+  return `${g(b.grams)}${b.about_units ? ` <span class="muted">~${b.about_units}</span>` : ""}`;
+}
+const plannedBasket = () => (weekPlan && weekPlan.feasible ? weekPlan.basket : []);
+function updateCount() {
+  const home = loadPantry(), ticks = loadTicks();
+  const left = plannedBasket().filter(b => !home.has(b.id) && !ticks.has(b.id)).length + shopping.length;
+  document.querySelectorAll("[data-list-count]").forEach(c => { c.hidden = !left; c.textContent = left; });
+}
+
+const HOME_ICON = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5"/><path d="M6 10v9.5h12V10"/></svg>`;
+function shopRow(b, ticks, atHome) {
+  return `<div class="shop-row${atHome ? " home" : ""}">
+    ${atHome ? `<span></span>` : `<input type="checkbox" id="s-${esc(b.id)}" data-shop="${esc(b.id)}" ${ticks.has(b.id) ? "checked" : ""}>`}
+    <label class="nm" ${atHome ? "" : `for="s-${esc(b.id)}"`}>${esc(b.fr)}${sameName(b.fr, b.en) ? "" : ` <span class="muted">· ${esc(b.en)}</span>`}</label>
+    <span class="num">${qty(b)}</span>
+    <span class="num">${atHome ? "" : `${b.estimated ? "≈" : ""}${euro(b.price)}`}</span>
+    <button class="home-btn" data-pantry="${esc(b.id)}" aria-pressed="${atHome}" title="${atHome ? "Need to buy it" : "I have this at home"}" aria-label="${atHome ? `Buy ${esc(b.fr)}` : `${esc(b.fr)}: I have this at home`}">${HOME_ICON}</button>
+  </div>`;
+}
+
 function renderList() {
-  const box = $("tab-list");
-  if (!shopping.length) {
-    box.innerHTML = `<h1>My list</h1><p class="lead">Nothing yet. Add foods with “+ My list” from a goal, a food page or a meal plan.</p>`;
+  const box = $("tab-list"), p = weekPlan && weekPlan.feasible ? weekPlan : null;
+  if (!p && !shopping.length) {
+    box.innerHTML = `<h1>List</h1><div class="empty"><span class="big-ic" aria-hidden="true">🛒</span>
+      <p class="sub">Your shopping list appears here once your week is planned.</p>
+      <button class="primary" data-tab-go="week">Plan my week</button></div>`;
     return;
   }
-  box.innerHTML = `<h1>My list</h1><p class="lead">${shopping.length} food${shopping.length > 1 ? "s" : ""} · saved in this browser only.</p>
-    ${shopping.map((i, n) => `<div class="card"><div class="list-item">
+  const home = loadPantry(), ticks = loadTicks();
+  let html = `<h1>List</h1>`;
+  if (p) {
+    const buy = p.basket.filter(b => !home.has(b.id)), atHome = p.basket.filter(b => home.has(b.id));
+    // The plan's exact total (lines already rounded to add up to it), adjusted only
+    // for items marked "at home" (or un-marked) since the plan was made.
+    const total = p.total_cost
+      - p.basket.filter(b => home.has(b.id) && !b.at_home).reduce((s, b) => s + b.cost, 0)
+      + p.basket.filter(b => !home.has(b.id) && b.at_home).reduce((s, b) => s + b.price, 0);
+    const done = buy.filter(b => ticks.has(b.id)).length;
+    const planned = new Set(p.pantry || []);
+    const notPlanned = atHome.filter(b => !planned.has(b.id)).length;
+    const groups = {};
+    buy.forEach(b => (groups[b.storage] ||= []).push(b));
+    html += `<div class="card budget-card"><div class="bline"><span><b>${euro(total)}</b> <span class="muted">to buy · ${esc(p.chain.label)}</span></span>
+        <span class="chip" id="shop-progress">${done} of ${buy.length}</span></div>
+        <div class="bar big"><i style="width:${buy.length ? 100 * done / buy.length : 0}%"></i></div></div>
+      ${notPlanned ? `<div class="note">You have ${notPlanned} item${notPlanned > 1 ? "s" : ""} at home. <button class="link" data-replan-home>Plan around ${notPlanned > 1 ? "them" : "it"}</button></div>` : ""}
+      <div class="card shop-card">
+      ${["fresh", "bakery", "fridge", "freezer", "pantry"].filter(g => groups[g]).map(g =>
+        `<div class="group-title">${STORAGE_TITLES[g]}</div>${groups[g].map(b => shopRow(b, ticks, false)).join("")}`).join("")}
+      </div>
+      ${atHome.length ? `<details class="sec"><summary>${HOME_ICON} At home · ${atHome.length}</summary><div>${atHome.map(b => shopRow(b, ticks, true)).join("")}</div></details>` : ""}`;
+  }
+  if (shopping.length) {
+    html += `<div class="group-title">Added from Foods</div><div class="card">${shopping.map((i, n) => `<div class="list-item">
       <span class="icon">${iconFor(i.name, i.group)}</span>
-      <span><div class="name" style="cursor:pointer" data-food="${esc(i.id)}">${esc(friendlyName(i.name))}</div><div class="sub">about ${round(i.portion)} g per portion</div></span>
-      <button class="x" data-remove="${n}" aria-label="Remove">×</button></div></div>`).join("")}
-    <div class="actions"><button class="ghost" id="list-copy">Copy as text</button><button class="ghost" id="list-clear">Clear list</button></div>`;
+      <span class="name" style="cursor:pointer" data-food="${esc(i.id)}">${esc(friendlyName(i.name))}</span>
+      <button class="x" data-remove="${n}" aria-label="Remove ${esc(friendlyName(i.name))}">×</button></div>`).join("")}</div>`;
+  }
+  html += `<div class="actions"><button class="ghost" id="list-copy">Copy as text</button></div>`;
+  box.innerHTML = html;
+
+  box.querySelectorAll("[data-shop]").forEach(cb => cb.onchange = () => {
+    const t = loadTicks();
+    cb.checked ? t.add(cb.dataset.shop) : t.delete(cb.dataset.shop);
+    saveTicks(t); renderList(); updateCount();
+  });
   box.querySelectorAll("[data-remove]").forEach(b => b.onclick = () => { shopping.splice(+b.dataset.remove, 1); saveList(shopping); renderList(); });
   $("list-copy").onclick = async () => {
-    const text = shopping.map(i => `- ${friendlyName(i.name)} (${round(i.portion)} g)`).join("\n");
+    const lines = p ? p.basket.filter(b => !home.has(b.id)).map(b => `- ${b.fr}: ${qty(b).replace(/<[^>]+>/g, "")}`) : [];
+    const text = [...lines, ...shopping.map(i => `- ${friendlyName(i.name)}`)].join("\n");
     try { await navigator.clipboard.writeText(text); $("list-copy").textContent = "Copied ✓"; } catch { $("list-copy").textContent = "Copy failed"; }
   };
-  $("list-clear").onclick = () => { if (confirm("Clear your whole list?")) { shopping = []; saveList(shopping); renderList(); } };
+}
+// "At home": out of the list now; "Plan around them" makes them free in a new plan.
+function togglePantry(id) {
+  const home = loadPantry();
+  home.has(id) ? home.delete(id) : home.add(id);
+  savePantry(home); renderList(); updateCount();
+}
+function replanWithPantry() {
+  const v = loadWeekSetup();
+  if (!v) return;
+  v.pantry = [...loadPantry()];
+  saveWeekSetup(v); clearEdits(); weekPlan = null;
+  showTab("week");
 }
 updateCount();
 

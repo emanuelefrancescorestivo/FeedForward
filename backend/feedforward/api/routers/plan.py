@@ -26,6 +26,31 @@ class WeekRequest(BaseModel):
     chain: str = "lidl"
     diet: Literal["vegetarian", "vegan"] | None = None
     equipment: list[Literal["hob", "microwave", "kettle", "blender"]] | None = None   # None = full kitchen
+    pantry: list[str] | None = None       # ingredient ids already at home: free in the plan
+
+
+class DayIn(BaseModel):
+    meals: dict[Literal["breakfast", "lunch", "dinner"], str]
+    snacks: list[str] = []
+
+
+class EditedWeek(WeekRequest):
+    """A week as the app shows it, after the user swapped meals."""
+    days: list[DayIn] = Field(min_length=7, max_length=7)
+
+
+class SwapRequest(EditedWeek):
+    day: int = Field(ge=0, le=6)
+    meal: Literal["breakfast", "lunch", "dinner"]
+
+
+def _profile(req: WeekRequest) -> Profile:
+    return Profile(req.age, req.sex, req.weight_kg, req.height_cm, req.activity, req.pregnant, req.breastfeeding)
+
+
+def _settings(req: WeekRequest) -> dict:
+    return dict(goal=req.goal, budget=req.budget, chain=req.chain, diet=req.diet,
+                equipment=req.equipment, pantry=req.pantry)
 
 
 @router.get("/options")
@@ -36,12 +61,28 @@ def options():
 
 @router.post("/week")
 def week(req: WeekRequest):
-    profile = Profile(req.age, req.sex, req.weight_kg, req.height_cm, req.activity,
-                      req.pregnant, req.breastfeeding)
     try:
-        profile.validate()
-        return wp.plan_week(load_engine(), profile, goal=req.goal, budget=req.budget,
-                            chain=req.chain, diet=req.diet, equipment=req.equipment)
+        return wp.plan_week(load_engine(), _profile(req), **_settings(req))
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+
+@router.post("/evaluate")
+def evaluate(req: EditedWeek):
+    """Recompute a week the user edited: shopping list, cost, coverage, energy."""
+    try:
+        days = [d.model_dump() for d in req.days]
+        return wp.evaluate_week(load_engine(), _profile(req), days, **_settings(req))
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+
+@router.post("/swap-options")
+def swap_options(req: SwapRequest):
+    """Up to three meals to put in place of one, each keeping budget, energy and limits."""
+    try:
+        days = [d.model_dump() for d in req.days]
+        return wp.swap_options(load_engine(), _profile(req), days, req.day, req.meal, **_settings(req))
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
 
