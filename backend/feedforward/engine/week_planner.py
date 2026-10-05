@@ -18,8 +18,22 @@ how many snacks. Solved as a mixed-integer programme (PuLP/CBC):
              y_n * weekly_need_n <= weekly intake_n,   0 <= y_n <= 1
              cost <= budget
 
-  w_n = 1 + GOAL_BONUS * association(n, goal): every nutrient counts, the
-  goal's nutrients (from the EU-claim graph) count more.
+  w_n = 1 + GOAL_BONUS * a(n): every nutrient counts, the goals' nutrients
+  (from the EU-claim graph) count more. a(n) = max_g alpha_g * association(n, g)
+  over the person's goal (alpha 1) and the goals their answers turn on (alpha
+  0.5, engine/profile.py): the maximum keeps a(n) in [0, 1], never counts a
+  nutrient twice, and names the goal that set its weight. With no answers,
+  a(n) is the one goal's association, as before.
+
+  E = Mifflin-St Jeor x activity (engine/needs.py) x the energy goal's factor
+  (maintain 1.0, deficit 0.85, surplus 1.10), never below resting energy; meal
+  portions scale with it. A protein strategy raises the protein need to its g/kg.
+
+The answers also filter the recipes, hard: foods not eaten (ingredient tags and
+recipe tags such as "spicy"), the cooking time (batch recipes may take three
+times as long when batch cooking is fine), recipes marked "not for me", and no
+caffeine at a meal the person keeps caffeine-free. Ingredients at home bring no
+filtered recipe back: they only make the recipes left cheaper.
 
 Costs use the chosen chain's prices (data/ingredient_prices.json). Fridge
 items (eggs, milk, meat, bread...) are bought as whole packs, so a pack of six
@@ -41,12 +55,12 @@ from pathlib import Path
 import pulp
 
 from .milp import solve
-from .needs import Profile, daily_needs, energy_kcal
+from .needs import Profile, daily_needs, energy_kcal, resting_kcal
+from .profile import MEALS, Levers, resolve       # the three main meals are defined in profile.py
 from .taxonomy import get_goal
 from .reference import LIMIT_NUTRIENTS
 
 DATA = Path(__file__).resolve().parent.parent / "data"
-MEALS = ("breakfast", "lunch", "dinner")
 GOAL_BONUS = 3.0
 # Snacks per day grow with the energy need (an athlete eats more often, not
 # only bigger plates); with 3 or more a day a snack may come back daily.
@@ -110,11 +124,14 @@ class Recipe:
     steps: list[str]
     nutrients: dict[str, float] = field(default_factory=dict)
     animal: set = field(default_factory=set)
+    tags: frozenset[str] = frozenset()      # its ingredients' tags and its own ("spicy")
 
 
-def portion_scale(profile: Profile) -> float:
+def portion_scale(profile: Profile, kcal: float | None = None) -> float:
+    """Meal portions for a daily energy target: ``kcal``, or the person's need when not given."""
     lo, hi = PORTION_SCALE
-    return round(min(hi, max(lo, energy_kcal(profile) / REFERENCE_KCAL)), 2)
+    kcal = energy_kcal(profile) if kcal is None else kcal
+    return round(min(hi, max(lo, kcal / REFERENCE_KCAL)), 2)
 
 
 def _recipes(rec, scale: float = 1.0) -> list[Recipe]:
@@ -123,10 +140,12 @@ def _recipes(rec, scale: float = 1.0) -> list[Recipe]:
     for r in raw:
         totals: dict[str, float] = {}
         animal = set()
+        tags = set(r.get("tags", []))
         k = 1.0 if "snack" in r["meals"] else scale
         items = [{"id": i["id"], "g": round(i["g"] * k)} for i in r["ingredients"]]
         for item in items:
             ing = ingredients[item["id"]]
+            tags.update(ing["tags"])
             if ing.get("animal"):
                 animal.add(ing["animal"])
             food = rec.food_by_id.get(f"ciqual-{ing['ciqual']}")
@@ -137,7 +156,7 @@ def _recipes(rec, scale: float = 1.0) -> list[Recipe]:
             if item["id"] in FREE_SUGAR_INGREDIENTS:
                 totals["free-sugars"] = totals.get("free-sugars", 0.0) +                     food.nutrients.get("sugars", 0.0) * item["g"] / 100.0
         out.append(Recipe(r["id"], r["en"], r["fr"], r["meals"], bool(r.get("batch")), r.get("time_min", 0),
-                          r.get("equipment", []), items, r.get("steps", []), totals, animal))
+                          r.get("equipment", []), items, r.get("steps", []), totals, animal, frozenset(tags)))
     return out
 
 
@@ -173,11 +192,25 @@ class _Week:
     snacks_per_day: int
     snack_repeat: int
     pantry: frozenset
+    levers: Levers                                  # what the answers turn on (engine/profile.py)
+    goal_of: dict                                   # goal nutrient -> the goal that set its weight
+    resting_kcal: float                             # per day: the floor under the energy target
     evidence: dict = field(default_factory=dict)   # goal nutrient -> {"grade", "eu_claim"}
 
+    def allowed(self, r: Recipe, meal: str) -> bool:
+        """Whether ``r`` may be served at ``meal``: one of its meals, and no caffeine where the person asked for none."""
+        return meal in r.meals and not ("caffeine" in r.tags and meal in self.levers.no_caffeine_at)
 
-def _context(rec, profile: Profile, *, goal, chain, diet, equipment, pantry, days) -> _Week:
-    ingredients, _raw, prices = _load()
+
+def _within_time(r: Recipe, levers: Levers) -> bool:
+    """Within the cooking time asked; a batch recipe (cooked once for three days) may take three times as long."""
+    limit = levers.max_minutes
+    return limit is None or r.time_min <= (3 * limit if r.batch and levers.batch_ok else limit)
+
+
+def _context(rec, profile: Profile, *, goal, chain, diet, equipment, pantry, days,
+             answers=None, declined=None, avoid_recipes=None) -> _Week:
+    ingredients, raw, prices = _load()
     if chain not in prices["chains"]:
         raise ValueError(f"unknown chain: {chain}")
     # Unknown values are errors, never silently ignored: a misspelt "vegan"
@@ -192,47 +225,73 @@ def _context(rec, profile: Profile, *, goal, chain, diet, equipment, pantry, day
     if unknown:
         raise ValueError(f"unknown pantry ingredients: {sorted(unknown)}")
     profile.validate()
-    scale = portion_scale(profile)
+    # The answers as levers; no answers at all give Levers.none(goal), the planner as before.
+    levers = resolve(answers, declined, profile, goal=goal, known_goals=set(rec.scorer.positive),
+                     avoid_recipes=avoid_recipes)
+    unknown = levers.avoid_recipes - {r["id"] for r in raw}
+    if unknown:
+        raise ValueError(f"unknown recipes in avoid_recipes: {sorted(unknown, key=str)}")
+    resting = resting_kcal(profile)
+    kcal_day = max(resting, energy_kcal(profile) * levers.energy_factor)
+    scale = portion_scale(profile, kcal_day)
     recipes = [r for r in _recipes(rec, scale) if not (r.animal & _EXCLUDED.get(diet or "", set()))]
     if equipment is not None:
         allowed = set(equipment) | {"kettle"}
         recipes = [r for r in recipes if set(r.equipment) <= allowed]
+    # Hard filters from the answers. The pantry only prices what is left: an
+    # excluded recipe stays out whatever is at home.
+    recipes = [r for r in recipes if not (r.tags & levers.exclude) and r.id not in levers.avoid_recipes
+               and _within_time(r, levers)]
     nutrient_ids = sorted({n for r in recipes for n in r.nutrients})
-    weekly = {n: v * days for n, v in daily_needs(profile, nutrient_ids).items()}
-    assoc = {n: a for n, a, _g in rec.scorer.positive.get(goal or "", [])}
-    per_day = next(n for kcal, n in SNACKS_PER_DAY if energy_kcal(profile) <= kcal)
+    daily = daily_needs(profile, nutrient_ids)
+    if levers.protein_g_per_kg:
+        daily["proteins"] = round(max(daily["proteins"], levers.protein_g_per_kg * profile.weight_kg), 1)
+    weekly = {n: v * days for n, v in daily.items()}
+    # a(n) = max_g alpha_g * a_g(n). The person's goal comes first in levers.goals and
+    # keeps the nutrients it ties on; alone (alpha 1) it gives today's associations.
+    assoc, goal_of, grade_of = {}, {}, {}
+    for g, alpha in levers.goals.items():
+        for n, (a, grade) in {n: (a, grade) for n, a, grade in rec.scorer.positive.get(g, [])}.items():
+            if n not in assoc or alpha * a > assoc[n]:
+                assoc[n], goal_of[n], grade_of[n] = alpha * a, g, grade
+    evidence = {}
+    for n, g in goal_of.items():
+        meta = rec.edge_meta.get(f"{n}->{g}", {})
+        evidence[n] = {"grade": meta.get("evidence", grade_of[n]), "eu_claim": bool(meta.get("eu_claim"))}
+    per_day = next(n for kcal, n in SNACKS_PER_DAY if kcal_day <= kcal)
     return _Week(
         profile=profile, goal=goal, chain=chain, diet=diet, days=days, scale=scale,
         by_id={r.id: r for r in recipes},
         meals=[r for r in recipes if any(m in MEALS for m in r.meals)],
         snacks=[r for r in recipes if "snack" in r.meals],
-        weekly=weekly, kcal_target=energy_kcal(profile) * days, assoc=assoc,
+        weekly=weekly, kcal_target=kcal_day * days, assoc=assoc,
         weight={n: 1.0 + GOAL_BONUS * assoc.get(n, 0.0) for n in weekly},
         limits={("free-sugars" if n == "sugars" else n): lim * days for n, lim in LIMIT_NUTRIENTS.items()},
         snacks_per_day=per_day, snack_repeat=SNACK_REPEAT if per_day <= 2 else days,
         pantry=frozenset(pantry or ()),
-        evidence={n: {"grade": rec.edge_meta.get(f"{n}->{goal}", {}).get("evidence", g),
-                      "eu_claim": bool(rec.edge_meta.get(f"{n}->{goal}", {}).get("eu_claim"))}
-                  for n, _a, g in rec.scorer.positive.get(goal or "", [])})
+        levers=levers, goal_of=goal_of, resting_kcal=resting, evidence=evidence)
 
 
 def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: str,
               diet: str | None = None, days: int = 7, equipment: list[str] | None = None,
-              pantry: list[str] | None = None, _cheapest: bool = False, _ignore_energy: bool = False) -> dict:
+              pantry: list[str] | None = None, answers: dict | None = None, declined: list[str] | None = None,
+              avoid_recipes: list[str] | None = None, _cheapest: bool = False, _ignore_energy: bool = False) -> dict:
     """
     The best week within the budget. ``pantry``: ingredients already at home,
-    which cost nothing (the planner then tends to use them).
+    which cost nothing (the planner then tends to use them). ``answers``: the
+    person's answers to the questions (engine/profile.py), ``declined``: the
+    strategy ids they turned down, ``avoid_recipes``: recipes marked "not for me".
     """
     ingredients, _raw, prices = _load()
     ctx = _context(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment,
-                   pantry=pantry, days=days)
+                   pantry=pantry, days=days, answers=answers, declined=declined, avoid_recipes=avoid_recipes)
     by_id, weekly, limits, kcal_target = ctx.by_id, ctx.weekly, ctx.limits, ctx.kcal_target
 
     prob = pulp.LpProblem("week", pulp.LpMaximize)
     x = {}
     for r in ctx.meals:
         for m in MEALS:
-            if m in r.meals:
+            if ctx.allowed(r, m):
                 x[r.id, m] = prob.add_variable(f"x_{r.id}_{m}", 0, days, cat="Integer")
     s = {r.id: prob.add_variable(f"s_{r.id}", 0, ctx.snack_repeat, cat="Integer") for r in ctx.snacks}
     servings = list(x.items()) + [((rid, "snack"), v) for rid, v in s.items()]
@@ -300,7 +359,8 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
              - 0.01 * cost / max(budget, 1)), "objective"
     ok, status = solve(prob, time_limit=SOLVE_SECONDS)
     if not ok:
-        minimum, reason = _minimum_budget(rec, profile, goal, chain, diet, days, equipment, pantry=pantry)
+        minimum, reason = _minimum_budget(rec, profile, goal, chain, diet, days, equipment, pantry=pantry,
+                                          answers=answers, declined=declined, avoid_recipes=avoid_recipes)
         return {"feasible": False, "status": status, "reason": reason, "note": REASONS[reason],
                 "chain": {"id": chain, "label": prices["chains"][chain]["label"]}, "budget": budget,
                 "energy": {"target_per_day": round(kcal_target / days)}, "minimum_budget": minimum}
@@ -483,9 +543,11 @@ def _week_from(ctx: _Week, week: list[dict]) -> list[dict]:
 
 def evaluate_week(rec, profile: Profile, week: list[dict], *, goal: str | None, budget: float, chain: str,
                   diet: str | None = None, equipment: list[str] | None = None,
-                  pantry: list[str] | None = None, days: int = 7) -> dict:
+                  pantry: list[str] | None = None, days: int = 7, answers: dict | None = None,
+                  declined: list[str] | None = None, avoid_recipes: list[str] | None = None) -> dict:
     """The plan for a week the user edited (swapped meals), checked like a solved one."""
-    ctx = _context(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment, pantry=pantry, days=days)
+    ctx = _context(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment, pantry=pantry, days=days,
+                   answers=answers, declined=declined, avoid_recipes=avoid_recipes)
     return _assemble(ctx, _week_from(ctx, week), budget=budget, edited=True)
 
 
@@ -497,7 +559,8 @@ def _goal_score(ctx: _Week, coverage: dict) -> float:
 
 def swap_options(rec, profile: Profile, week: list[dict], day: int, meal: str, *, goal: str | None,
                  budget: float, chain: str, diet: str | None = None, equipment: list[str] | None = None,
-                 pantry: list[str] | None = None, k: int = 3, days: int = 7) -> dict:
+                 pantry: list[str] | None = None, k: int = 3, days: int = 7, answers: dict | None = None,
+                 declined: list[str] | None = None, avoid_recipes: list[str] | None = None) -> dict:
     """
     Up to ``k`` recipes to put in place of one meal. Each keeps the week's
     rules: within budget, energy in the band, no salt / saturated fat / free
@@ -508,7 +571,8 @@ def swap_options(rec, profile: Profile, week: list[dict], day: int, meal: str, *
         raise ValueError(f"meal must be one of {list(MEALS)}")
     if not 0 <= day < days:
         raise ValueError(f"day must be 0 to {days - 1}")
-    ctx = _context(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment, pantry=pantry, days=days)
+    ctx = _context(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment, pantry=pantry, days=days,
+                   answers=answers, declined=declined, avoid_recipes=avoid_recipes)
     week = _week_from(ctx, week)
     base = _assemble(ctx, week, budget=budget)
     current = week[day]["meals"][meal]
@@ -569,14 +633,16 @@ REASONS = {
 }
 
 
-def _minimum_budget(rec, profile, goal, chain, diet, days, equipment, *, pantry=None) -> tuple[float | None, str]:
+def _minimum_budget(rec, profile, goal, chain, diet, days, equipment, *, pantry=None, answers=None,
+                    declined=None, avoid_recipes=None) -> tuple[float | None, str]:
     """
     (minimum budget, reason) when a week does not fit. The cheapest adequate
     week gives the minimum; if even that is impossible, a second solve without
     the energy band tells an energy need out of reach from too few recipes.
+    Both solves keep the person's answers, so the minimum is for their settings.
     """
     kw = dict(goal=goal, budget=0, chain=chain, diet=diet, days=days, equipment=equipment, pantry=pantry,
-              _cheapest=True)
+              answers=answers, declined=declined, avoid_recipes=avoid_recipes, _cheapest=True)
     cheapest = plan_week(rec, profile, **kw)
     if cheapest.get("feasible"):
         return math.ceil(cheapest["total_cost"]), "budget"
