@@ -16,7 +16,8 @@
     "en:oat-flakes"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "rice",
@@ -29,7 +30,8 @@
     "en:basmati-rices"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "pasta",
@@ -42,7 +44,8 @@
     "en:penne"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "wholemeal-pasta",
@@ -54,7 +57,8 @@
     "en:whole-wheat-pastas"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "couscous",
@@ -66,7 +70,8 @@
     "en:durum-wheat-semolinas"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "quinoa",
@@ -77,7 +82,8 @@
     "en:quinoa"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "baguette",
@@ -88,7 +94,8 @@
     "en:baguettes"
    ],
    "fresh": [],
-   "storage": "bakery"
+   "storage": "bakery",
+   "tags": []
   },
   {
    "id": "wholemeal-bread",
@@ -100,7 +107,8 @@
     "en:wholemeal-sliced-breads"
    ],
    "fresh": [],
-   "storage": "bakery"
+   "storage": "bakery",
+   "tags": []
   },
   {
    "id": "potato",
@@ -113,7 +121,8 @@
    "fresh": [
     "en:potatoes"
    ],
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "green-lentils",
@@ -125,7 +134,10 @@
     "en:lentils"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": [
+    "legumes"
+   ]
   },
   {
    "id": "red-lentils",
@@ -137,7 +149,10 @@
     "en:red-lentils"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": [
+    "legumes"
+   ]
   },
   {
    "id": "chickpeas",
@@ -149,7 +164,10 @@
     "en:chickpeas"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": [
+    "legumes"
+   ]
   },
   {
    "id": "kidney-beans",
@@ -161,7 +179,10 @@
     "en:red-kidney-beans"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": [
+    "legumes"
+   ]
   },
   {
    "id": "tofu",
@@ -173,7 +194,8 @@
     "en:tofu"
    ],
    "fresh": [],
-   "storage": "fridge"
+   "storage": "fridge",
+   "tags": []
   },
   {
    "id": "egg",
@@ -188,7 +210,10 @@
    "unit_g": 60,
    "storage": "fridge",
    "animal": "egg",
-   "pack_g": 360
+   "pack_g": 360,
+   "tags": [
+    "eggs"
+   ]
   },
   {
    "id": "sardines",
@@ -202,7 +227,10 @@
    ],
    "fresh": [],
    "storage": "pantry",
-   "animal": "fish"
+   "animal": "fish",
+   "tags": [
+    "fish_seafood"
+   ]
   },
   {
    "id": "tuna",
@@ -216,7 +244,10 @@
    ],
    "fresh": [],
    "storage": "pantry",
-   "animal": "fish"
+   "animal": "fish",
+   "tags": [
+    "fish_seafood"
+   ]
   },
   {
    "id": "mackerel",
@@ -230,7 +261,10 @@
    ],
    "fresh": [],
    "storage": "fridge",
-   "animal": "fish"
+   "animal": "fish",
+   "tags": [
+    "fish_seafood"
+   ]
   },
   {
    "id": "salmon",
@@ -244,7 +278,10 @@
    ],
    "fresh": [],
    "storage": "fridge",
-   "animal": "fish"
+   "animal": "fish",
+   "tags": [
+    "fish_seafood"
+   ]
   },
   {
    "id": "chicken",
@@ -257,7 +294,10 @@
    ],
    "fresh": [],
    "storage": "fridge",
-   "animal": "meat"
+   "animal": "meat",
+   "tags": [
+    "meat"
+   ]
   },
   {
    "id": "minced-beef",
@@ -270,7 +310,10 @@
    ],
    "fresh": [],
    "storage": "fridge",
-   "animal": "meat"
+   "animal": "meat",
+   "tags": [
+    "meat"
+   ]
   },
   {
    "id": "ham",
@@ -283,7 +326,11 @@
    ],
    "fresh": [],
    "storage": "fridge",
-   "animal": "meat"
+   "animal": "meat",
+   "tags": [
+    "meat",
+    "pork"
+   ]
   },
   {
    "id": "yogurt",
@@ -296,7 +343,10 @@
    ],
    "fresh": [],
    "storage": "fridge",
-   "animal": "dairy"
+   "animal": "dairy",
+   "tags": [
+    "dairy"
+   ]
   },
   {
    "id": "fromage-blanc",
@@ -309,7 +359,10 @@
    ],
    "fresh": [],
    "storage": "fridge",
-   "animal": "dairy"
+   "animal": "dairy",
+   "tags": [
+    "dairy"
+   ]
   },
   {
    "id": "milk",
@@ -322,7 +375,10 @@
    "fresh": [],
    "storage": "fridge",
    "animal": "dairy",
-   "liquid": true
+   "liquid": true,
+   "tags": [
+    "dairy"
+   ]
   },
   {
    "id": "soy-drink",
@@ -335,7 +391,8 @@
    ],
    "fresh": [],
    "storage": "fridge",
-   "liquid": true
+   "liquid": true,
+   "tags": []
   },
   {
    "id": "emmental",
@@ -348,7 +405,10 @@
    ],
    "fresh": [],
    "storage": "fridge",
-   "animal": "dairy"
+   "animal": "dairy",
+   "tags": [
+    "dairy"
+   ]
   },
   {
    "id": "butter",
@@ -361,7 +421,10 @@
    ],
    "fresh": [],
    "storage": "fridge",
-   "animal": "dairy"
+   "animal": "dairy",
+   "tags": [
+    "dairy"
+   ]
   },
   {
    "id": "olive-oil",
@@ -373,7 +436,8 @@
     "en:olive-oils"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "rapeseed-oil",
@@ -385,7 +449,8 @@
     "en:colza-oils"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "carrot",
@@ -399,7 +464,8 @@
     "en:carrots"
    ],
    "unit_g": 100,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "onion",
@@ -415,7 +481,8 @@
     "en:onions"
    ],
    "unit_g": 150,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "tomato",
@@ -429,7 +496,8 @@
     "en:tomatoes"
    ],
    "unit_g": 120,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "canned-tomato",
@@ -442,7 +510,8 @@
     "en:canned-tomatoes"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "spinach",
@@ -455,7 +524,8 @@
     "en:spinachs"
    ],
    "fresh": [],
-   "storage": "freezer"
+   "storage": "freezer",
+   "tags": []
   },
   {
    "id": "broccoli",
@@ -470,7 +540,8 @@
     "en:broccoli"
    ],
    "unit_g": 400,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "zucchini",
@@ -485,7 +556,8 @@
     "en:zucchini"
    ],
    "unit_g": 250,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "bell-pepper",
@@ -500,7 +572,8 @@
     "en:red-bell-peppers"
    ],
    "unit_g": 150,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "peas",
@@ -513,7 +586,8 @@
     "en:peas"
    ],
    "fresh": [],
-   "storage": "freezer"
+   "storage": "freezer",
+   "tags": []
   },
   {
    "id": "green-beans",
@@ -524,7 +598,8 @@
     "en:frozen-green-beans"
    ],
    "fresh": [],
-   "storage": "freezer"
+   "storage": "freezer",
+   "tags": []
   },
   {
    "id": "cabbage",
@@ -540,7 +615,8 @@
     "en:white-cabbages"
    ],
    "unit_g": 1000,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "leek",
@@ -554,7 +630,8 @@
     "en:leeks"
    ],
    "unit_g": 200,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "mushroom",
@@ -569,7 +646,10 @@
     "en:mushrooms"
    ],
    "unit_g": 20,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": [
+    "mushrooms"
+   ]
   },
   {
    "id": "lettuce",
@@ -586,7 +666,8 @@
     "en:leaf-salads"
    ],
    "unit_g": 350,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "garlic",
@@ -601,7 +682,8 @@
    ],
    "unit_g": 50,
    "nutrition": false,
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "lemon",
@@ -615,7 +697,8 @@
     "en:lemons"
    ],
    "unit_g": 100,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "banana",
@@ -629,7 +712,8 @@
     "en:bananas"
    ],
    "unit_g": 120,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "apple",
@@ -645,7 +729,8 @@
     "en:golden-delicious-apples"
    ],
    "unit_g": 150,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "orange",
@@ -659,7 +744,8 @@
     "en:oranges"
    ],
    "unit_g": 150,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "kiwi",
@@ -673,7 +759,8 @@
     "en:kiwis"
    ],
    "unit_g": 75,
-   "storage": "fresh"
+   "storage": "fresh",
+   "tags": []
   },
   {
    "id": "blueberries",
@@ -685,7 +772,8 @@
     "en:frozen-red-fruits"
    ],
    "fresh": [],
-   "storage": "freezer"
+   "storage": "freezer",
+   "tags": []
   },
   {
    "id": "raisins",
@@ -696,7 +784,8 @@
     "en:raisins"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "walnuts",
@@ -708,7 +797,10 @@
     "en:walnuts"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": [
+    "nuts"
+   ]
   },
   {
    "id": "sunflower-seeds",
@@ -719,7 +811,8 @@
     "en:sunflower-seeds"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": []
   },
   {
    "id": "peanut-butter",
@@ -730,7 +823,10 @@
     "en:peanut-butters"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": [
+    "nuts"
+   ]
   },
   {
    "id": "honey",
@@ -742,7 +838,8 @@
    ],
    "fresh": [],
    "storage": "pantry",
-   "animal": "honey"
+   "animal": "honey",
+   "tags": []
   },
   {
    "id": "dark-chocolate",
@@ -753,7 +850,10 @@
     "en:dark-chocolates"
    ],
    "fresh": [],
-   "storage": "pantry"
+   "storage": "pantry",
+   "tags": [
+    "caffeine"
+   ]
   }
  ]
 }

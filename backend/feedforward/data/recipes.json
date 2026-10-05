@@ -608,6 +608,9 @@
     "hob"
    ],
    "batch": true,
+   "tags": [
+    "spicy"
+   ],
    "ingredients": [
     {
      "id": "kidney-beans",
@@ -1115,6 +1118,9 @@
     "hob"
    ],
    "batch": true,
+   "tags": [
+    "spicy"
+   ],
    "ingredients": [
     {
      "id": "minced-beef",
@@ -1234,6 +1240,9 @@
     "hob"
    ],
    "batch": true,
+   "tags": [
+    "spicy"
+   ],
    "ingredients": [
     {
      "id": "chickpeas",

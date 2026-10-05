@@ -1,0 +1,405 @@
+{
+ "_note": [
+  "Questions, the goals they turn on, and the strategies and preferences they trigger, for the week planner (engine/profile.py validates this file).",
+  "when: a list of conditions. The list is OR; inside one condition every question is AND; a value is a list of accepted answers, or \"*\" for any answer.",
+  "kind strategy: an edge answer -> strategy -> goal in the knowledge graph, graded A-C with PubMed IDs (A = EU authorised claim, B = systematic review or meta-analysis, C = smaller trials or a position stand).",
+  "kind preference: comfort, taste or kitchen limits, applied as asked; no goal, grade or sources.",
+  "Strategies come before preferences. text and why are shown to people, so they state the limits of the evidence."
+ ],
+ "questions": [
+  {
+   "id": "energy_goal",
+   "text": "Energy: keep it level, a light deficit or a light surplus?",
+   "options": [
+    "maintain",
+    "deficit",
+    "surplus"
+   ]
+  },
+  {
+   "id": "sleep_onset",
+   "text": "Do you take a long time to fall asleep?",
+   "options": [
+    "no",
+    "sometimes",
+    "often"
+   ]
+  },
+  {
+   "id": "training_days",
+   "text": "How many days a week do you train?",
+   "options": [
+    "0",
+    "1-2",
+    "3-4",
+    "5+"
+   ]
+  },
+  {
+   "id": "training_time",
+   "text": "When do you usually train?",
+   "options": [
+    "before_breakfast",
+    "morning",
+    "afternoon",
+    "evening"
+   ]
+  },
+  {
+   "id": "morning_hunger",
+   "text": "Are you hungry in the morning?",
+   "options": [
+    "hungry",
+    "normal",
+    "not_hungry"
+   ]
+  },
+  {
+   "id": "energy_dips",
+   "text": "When does your energy dip?",
+   "options": [
+    "none",
+    "mid_morning",
+    "afternoon"
+   ]
+  },
+  {
+   "id": "study_time",
+   "text": "When do you study or do focused work?",
+   "options": [
+    "rarely",
+    "mornings",
+    "afternoons",
+    "evenings"
+   ]
+  },
+  {
+   "id": "dont_eat",
+   "text": "Foods you don't eat",
+   "options": [
+    "fish_seafood",
+    "meat",
+    "pork",
+    "mushrooms",
+    "legumes",
+    "dairy",
+    "eggs",
+    "nuts",
+    "spicy"
+   ],
+   "multi": true
+  },
+  {
+   "id": "cook_time",
+   "text": "How long can you spend cooking a meal?",
+   "options": [
+    "10",
+    "20",
+    "30",
+    "any"
+   ]
+  },
+  {
+   "id": "batch_ok",
+   "text": "Cook once for three days?",
+   "options": [
+    "yes",
+    "no"
+   ]
+  }
+ ],
+ "goals": [
+  {
+   "when": [
+    {
+     "sleep_onset": [
+      "sometimes",
+      "often"
+     ]
+    }
+   ],
+   "goal": "sleep_support",
+   "alpha": 0.5
+  },
+  {
+   "when": [
+    {
+     "training_days": [
+      "3-4",
+      "5+"
+     ]
+    }
+   ],
+   "goal": "muscle_recovery",
+   "alpha": 0.5
+  },
+  {
+   "when": [
+    {
+     "energy_dips": [
+      "mid_morning",
+      "afternoon"
+     ]
+    }
+   ],
+   "goal": "energy_metabolism",
+   "alpha": 0.5
+  },
+  {
+   "when": [
+    {
+     "study_time": [
+      "mornings",
+      "afternoons",
+      "evenings"
+     ]
+    }
+   ],
+   "goal": "cognitive_function",
+   "alpha": 0.5
+  }
+ ],
+ "strategies": [
+  {
+   "id": "evening_carbs",
+   "kind": "strategy",
+   "when": [
+    {
+     "sleep_onset": [
+      "sometimes",
+      "often"
+     ]
+    }
+   ],
+   "lever": {
+    "type": "meal_carb_share",
+    "meal": "dinner",
+    "min": 0.4
+   },
+   "goal": "sleep_support",
+   "grade": "C",
+   "pmids": [
+    "17284739",
+    "27633109"
+   ],
+   "text": "More of the day's carbohydrates at dinner",
+   "why": "Small studies found people fell asleep faster after a carbohydrate-rich dinner about four hours before bed."
+  },
+  {
+   "id": "no_evening_caffeine",
+   "kind": "strategy",
+   "when": [
+    {
+     "sleep_onset": [
+      "sometimes",
+      "often"
+     ]
+    }
+   ],
+   "lever": {
+    "type": "no_caffeine",
+    "meal": "dinner"
+   },
+   "goal": "sleep_support",
+   "grade": "B",
+   "pmids": [
+    "24235903"
+   ],
+   "text": "No caffeine at dinner",
+   "why": "In a controlled trial, caffeine taken even six hours before bed shortened sleep."
+  },
+  {
+   "id": "protein_target",
+   "kind": "strategy",
+   "when": [
+    {
+     "energy_goal": [
+      "deficit",
+      "surplus"
+     ]
+    },
+    {
+     "training_days": [
+      "3-4",
+      "5+"
+     ]
+    }
+   ],
+   "lever": {
+    "type": "protein_target",
+    "g_per_kg": 1.6
+   },
+   "goal": "muscle_recovery",
+   "grade": "B",
+   "pmids": [
+    "28698222",
+    "24864135"
+   ],
+   "text": "Protein at 1.6 g per kg of body weight",
+   "why": "In a meta-analysis of training studies, gains in muscle levelled off around 1.6 g/kg a day; in a deficit, more protein helps keep muscle."
+  },
+  {
+   "id": "protein_spread",
+   "kind": "strategy",
+   "when": [
+    {
+     "training_days": [
+      "3-4",
+      "5+"
+     ]
+    }
+   ],
+   "lever": {
+    "type": "protein_per_meal",
+    "g_per_kg": 0.3
+   },
+   "goal": "muscle_recovery",
+   "grade": "C",
+   "pmids": [
+    "23459753",
+    "29497353"
+   ],
+   "text": "Protein in every main meal",
+   "why": "Spreading protein over the day's meals supported muscle repair better than one large serving in training studies."
+  },
+  {
+   "id": "post_training_carbs",
+   "kind": "strategy",
+   "when": [
+    {
+     "training_days": [
+      "1-2",
+      "3-4",
+      "5+"
+     ],
+     "training_time": "*"
+    }
+   ],
+   "lever": {
+    "type": "meal_carb_share",
+    "meal_from": "training_time",
+    "map": {
+     "before_breakfast": "breakfast",
+     "morning": "lunch",
+     "afternoon": "dinner",
+     "evening": "dinner"
+    },
+    "min": 0.4
+   },
+   "goal": "recovery",
+   "grade": "C",
+   "pmids": [
+    "28919842"
+   ],
+   "text": "Carbohydrates in the meal after training",
+   "why": "Carbohydrate after exercise refills muscle glycogen; it matters most when the next session is within a day."
+  },
+  {
+   "id": "protein_breakfast",
+   "kind": "strategy",
+   "when": [
+    {
+     "energy_dips": [
+      "mid_morning"
+     ]
+    }
+   ],
+   "lever": {
+    "type": "meal_protein",
+    "meal": "breakfast",
+    "g_per_kg": 0.25
+   },
+   "goal": "energy",
+   "grade": "C",
+   "pmids": [
+    "23446906"
+   ],
+   "text": "A breakfast with more protein",
+   "why": "A higher-protein breakfast reduced hunger and snacking later in the day in a small trial."
+  },
+  {
+   "id": "big_breakfast",
+   "kind": "strategy",
+   "when": [
+    {
+     "morning_hunger": [
+      "hungry"
+     ]
+    }
+   ],
+   "lever": {
+    "type": "meal_energy_share",
+    "meal": "breakfast",
+    "min": 0.3
+   },
+   "goal": "energy",
+   "grade": "C",
+   "pmids": [
+    "36087576"
+   ],
+   "text": "A bigger breakfast",
+   "why": "Eating more of the day's energy in the morning reduced hunger through the day; body weight changed the same either way."
+  },
+  {
+   "id": "light_breakfast",
+   "kind": "preference",
+   "when": [
+    {
+     "morning_hunger": [
+      "not_hungry"
+     ]
+    }
+   ],
+   "lever": {
+    "type": "meal_energy_share",
+    "meal": "breakfast",
+    "max": 0.2
+   },
+   "text": "A lighter breakfast",
+   "why": "You said you're not hungry in the morning."
+  },
+  {
+   "id": "foods_not_eaten",
+   "kind": "preference",
+   "when": [
+    {
+     "dont_eat": "*"
+    }
+   ],
+   "lever": {
+    "type": "exclude_tags",
+    "from": "dont_eat"
+   },
+   "text": "Foods you don't eat"
+  },
+  {
+   "id": "cook_time",
+   "kind": "preference",
+   "when": [
+    {
+     "cook_time": "*"
+    }
+   ],
+   "lever": {
+    "type": "max_minutes",
+    "from": "cook_time"
+   },
+   "text": "Meals that fit your cooking time"
+  },
+  {
+   "id": "batch_cooking",
+   "kind": "preference",
+   "when": [
+    {
+     "batch_ok": [
+      "yes"
+     ]
+    }
+   ],
+   "lever": {
+    "type": "batch_ok"
+   },
+   "text": "Cook once for three days"
+  }
+ ]
+}
