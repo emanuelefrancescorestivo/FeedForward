@@ -12,6 +12,8 @@ PuLP 3.x bundles the CBC solver (``PULP_CBC_CMD``), returns an int from
 """
 from __future__ import annotations
 
+import warnings
+
 import pulp
 
 
@@ -34,6 +36,17 @@ def _cbc(time_limit: float | None):
 # solution is usable. PuLP 3 reported all of these as "Optimal" (status 1);
 # GapLimit in particular is CBC's default optimality tolerance being met.
 _LIMIT_STOPS = ("TimeLimit", "GapLimit", "NodeLimit", "IterationLimit", "SolutionLimit")
+
+
+def replace_objective(prob: pulp.LpProblem, objective, name: str = "objective") -> None:
+    """
+    Replace the objective of a model already solved once, for a second solve
+    (the week planner's needs-first levers). Both PuLP versions take
+    ``prob += expr, name`` and warn that it overwrites; here that is the point.
+    """
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message="Overwriting previously set objective")
+        prob += objective, name
 
 
 def solve(prob: pulp.LpProblem, time_limit: float | None = None) -> tuple[bool, str]:

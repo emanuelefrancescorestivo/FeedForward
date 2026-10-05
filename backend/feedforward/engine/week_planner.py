@@ -34,28 +34,40 @@ week's n from meal m, each slack >= 0 and divided by its normaliser, so that a
 lever missed by its whole threshold costs about its weight:
 
   meal m >= p of the day's carbs   S_m(carbs) + sl >= p * intake(carbs)   p * 0.525 * E / 4
-  breakfast >= p of the energy     S_b(kcal) + sl >= p * intake(kcal)     p * E
-  breakfast <= p of the energy     S_b(kcal) - sl <= p * intake(kcal)     p * E
+  breakfast >= p of the energy     S_b(kcal) + sl >= p * max(intake(kcal), E)   p * E
+  breakfast <= p of the energy     S_b(kcal) - sl <= p * E                      p * E
   protein >= t per main meal       sum_r,m max(0, t - protein_r) / t * x_rm   3 * days
   protein >= t at breakfast        the same, breakfast only                   days
-      all of these weigh PREFERENCE_WEIGHT = 0.3
+      all of these weigh PREFERENCE_WEIGHT = 1
   protein need raised (g/kg)       intake(protein) + sl >= the raised need     the need
-      weighs PROTEIN_NEED_WEIGHT = 3: a need, met before the levers
+      weighs PROTEIN_NEED_WEIGHT = 20: a need, met before the levers
 
-  Needs first, lexicographically: with levers, the week is solved twice. The
-  first solve is the model above without them (with no answers it is the only
-  one, so a plan without answers is exactly today's). The second adds the
-  levers and may take each nutrient at most NEEDS_TOLERANCE (3 points) below
-  the first week's coverage, never below 97 % of the need (nor below the first
-  week where that was lower), and the energy at most 3 % of E further from the
-  target. Measured on the README profile: weights alone could not keep needs
-  first (at 0.3, 0.1 and 0.03 a lever still took riboflavin or iodine below
-  97 %, and the raised protein need stayed at 88-90 %), and lowering the weight
-  only made the levers weaker; with the floors 0.3 is kept.
+  Needs first, lexicographically: with levers the week is solved twice. The
+  first solve is the model above without any lever (with no answers it is the
+  only one, so a plan without answers is exactly today's). The second adds
+  them, and from the first week no nutrient may fall more than NEEDS_TOLERANCE
+  (3 points), nor below 97 % of the need (nor below the first week where that
+  was lower); energy may move at most 3 % of E further from the target; and the
+  week may cost at most LEVER_COST (5 %) more. The levers only trade, then,
+  against coverage above the floors, energy within 3 points, variety and cost
+  within 5 %: so they weigh 1, not the 0.3 first planned. Measured on the
+  README profile: weights alone could not keep needs first (at 0.3, 0.1 and
+  0.03 a lever still took riboflavin or iodine below 97 %, and the raised
+  protein need stayed at 88-90 %); with the floors and the cost cap, 0.3 left
+  evening carbs on 3-4 days and 1 meets them; a protein weight of 3 or 5 left
+  the protein need at 95 %, 10 at 96.8 % with PuLP 4's CBC, 20 meets it with
+  both. A 10 % cap let training weeks reach 1.15 x the plain week's cost (their
+  first week is already 5 % dearer); 4 % and 3 % lost evening carbs or hit the
+  time limit. The second solve is the slow one: up to the 10 s safety net for
+  six answers at once (the best week found by then is planned).
 
   Shares are written on the week; the plan reports them day by day, so after
   the days are laid out, meals and snacks are swapped between days while that
-  meets the levers on more days (same food, cost and coverage).
+  meets the levers on more days (same food, cost and coverage). A swap never
+  takes a day's energy more than 10 % from the daily target (or further, for a
+  day already off), and a breakfast energy share counts only on a day in the
+  energy band, taken of the day or its target (whichever is less favourable):
+  a breakfast lever is never met by eating less.
 
 The answers also filter the recipes, hard: foods not eaten (ingredient tags and
 recipe tags such as "spicy"), the cooking time (batch recipes may take three
@@ -83,7 +95,7 @@ from pathlib import Path
 
 import pulp
 
-from .milp import solve
+from .milp import replace_objective, solve
 from .needs import Profile, daily_needs, energy_kcal, resting_kcal
 from .profile import MEALS, Levers, resolve       # the three main meals are defined in profile.py
 from .taxonomy import get_goal
@@ -119,14 +131,16 @@ SOLVE_SECONDS = 10      # safety net; with the 1% gap (engine/milp.py) plans tak
 CARBS_ENERGY = (0.45, 0.60)
 FAT_ENERGY = (0.20, 0.35)
 MACROS = {"protein": "proteins", "carbs": "carbohydrates", "fat": "fat"}
-# Soft levers from the answers (engine/profile.py) weigh below nutrient coverage:
-# a lever missed by its whole threshold costs PREFERENCE_WEIGHT (see the docstring).
-PREFERENCE_WEIGHT = 0.3
+# Soft levers from the answers (engine/profile.py), behind the needs (see the
+# docstring): a lever missed by its whole threshold costs PREFERENCE_WEIGHT.
+PREFERENCE_WEIGHT = 1.0
 NEEDS_TOLERANCE = 0.03      # what a lever may take from a nutrient's coverage, at most
-PROTEIN_NEED_WEIGHT = 3.0   # a protein strategy raises a need: it comes before the levers
+LEVER_COST = 1.05           # the levers may make the week at most 5 % dearer (within the budget)
+PROTEIN_NEED_WEIGHT = 20.0  # a protein strategy raises a need: it comes before the levers
 # The plan reports each lever day by day: a share counts within half a point of its
 # threshold, a protein amount from 98 % of it.
 SHARE_TOLERANCE = 0.005
+DAY_ENERGY_TOLERANCE = 0.10  # _arrange keeps a day within 10 % of the daily target (or no further off)
 PROTEIN_TOLERANCE = 0.98
 SOFT_LEVERS = ("meal_carb_share", "meal_energy_share", "protein_target", "protein_per_meal", "meal_protein")
 PACKED = {"fridge", "bakery"}   # bought in whole packs; pantry/freezer count the share used
@@ -396,7 +410,6 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
                  - 5 * pulp.lpSum(slack[n] / limits[n] for n in limits)
                  - REPEAT_PENALTY * extra
                  - 0.01 * cost / max(budget, 1))
-    levers = _lever_terms(prob, ctx, x, intake)     # empty with no answers: today's model exactly
     prob += objective, "objective"
     ok, status = solve(prob, time_limit=SOLVE_SECONDS)
     if not ok:
@@ -411,34 +424,48 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
                 {k: int(round(v.value() or 0)) for k, v in s.items()})
 
     counts, snack_counts = chosen()
-    if levers:
-        # Needs first: the week above covers the needs as well as they can be. The
-        # levers may then take each nutrient at most NEEDS_TOLERANCE below that
-        # coverage. The first week stands if this solve finds nothing (it is
-        # feasible by construction).
-        for n in weekly:
-            floor = min(1.0 - NEEDS_TOLERANCE, y[n].value() or 0.0)
-            prob += y[n] >= floor - 1e-6, f"needs_{n}"
-        off = (e_over.value() or 0.0) + (e_under.value() or 0.0)
-        prob += e_over + e_under <= off + NEEDS_TOLERANCE * kcal_target + 1e-6, "needs_energy"
-        prob.setObjective(objective - pulp.lpSum(levers))
-        if solve(prob, time_limit=SOLVE_SECONDS)[0]:
-            counts, snack_counts = chosen()
-    week = _schedule(counts, snack_counts, by_id, days)
-    return _assemble(ctx, _arrange(ctx, week) if levers else week, budget=budget)
+    soft = any(a["lever"]["type"] in SOFT_LEVERS for a in ctx.levers.applied)   # none without answers
+    if soft and _after_needs(prob, ctx, objective, x, y, intake, cost, e_over + e_under):
+        counts, snack_counts = chosen()
+    return _assemble(ctx, _arrange(ctx, _schedule(counts, snack_counts, by_id, days)), budget=budget)
 
 
 def _variety_cap(r: Recipe) -> int:
     return 3 if r.batch else 2
 
 
+def _after_needs(prob: pulp.LpProblem, ctx: _Week, objective, x: dict, y: dict, intake, cost, off) -> bool:
+    """
+    Needs first: the levers' solve, from the week just solved without them, which
+    covers the needs as well as they can be. From here no nutrient may fall more
+    than NEEDS_TOLERANCE below that week's coverage (nor below 97 % of its need,
+    nor below the week where it was lower), the energy may move at most
+    NEEDS_TOLERANCE further from the target, and the week may cost at most
+    LEVER_COST times as much (the cost term alone is below the solver's gap).
+    Within that, a raised protein need weighs PROTEIN_NEED_WEIGHT, the levers
+    PREFERENCE_WEIGHT. True when the model holds a new week to read; else the
+    first week stands (it meets every bound, so this rarely happens).
+    """
+    for n in ctx.weekly:
+        prob += y[n] >= min(1.0 - NEEDS_TOLERANCE, y[n].value() or 0.0) - 1e-6, f"needs_{n}"
+    prob += off <= (pulp.value(off) or 0.0) + NEEDS_TOLERANCE * ctx.kcal_target + 1e-6, "needs_energy"
+    prob += cost <= LEVER_COST * (pulp.value(cost) or 0.0) + 1e-6, "lever_cost"
+    terms = _lever_terms(prob, ctx, x, intake)
+    if ctx.levers.protein_g_per_kg:       # the raised need, held up past what coverage alone would trade away
+        sl = prob.add_variable("lever_protein", 0)
+        prob += intake("proteins") + sl >= ctx.weekly["proteins"], "lever_protein"
+        terms.append(PROTEIN_NEED_WEIGHT * sl / ctx.weekly["proteins"])
+    replace_objective(prob, objective - pulp.lpSum(terms))
+    return solve(prob, time_limit=SOLVE_SECONDS)[0]
+
+
 def _lever_terms(prob: pulp.LpProblem, ctx: _Week, x: dict, intake) -> list:
     """
-    The soft levers as penalties for the objective, each about 1 when the lever is
-    missed by its whole threshold; empty with no answers. Shares are written on the
-    week's totals (S_m(n): the week's n from meal m) and reported day by day
-    (_strategy_report). Protein per meal is a constant per recipe: how far one
-    serving falls short of the threshold.
+    The soft levers as penalties for the objective, each PREFERENCE_WEIGHT when the
+    lever is missed by its whole threshold (added for the second solve only).
+    Shares are written on the week's totals (S_m(n): the week's n from meal m) and
+    reported day by day (_strategy_report). Protein per meal is a constant per
+    recipe: how far one serving falls short of the threshold.
     """
     lv, days, kcal = ctx.levers, ctx.days, ctx.kcal_target
     kg = ctx.profile.weight_kg
@@ -451,23 +478,23 @@ def _lever_terms(prob: pulp.LpProblem, ctx: _Week, x: dict, intake) -> list:
                           for (rid, m), v in x.items() if m in meals)
 
     terms = []
-    if lv.protein_g_per_kg:         # the raised need, held up past what coverage alone would trade away
-        sl = prob.add_variable("lever_protein", 0)
-        prob += intake("proteins") + sl >= ctx.weekly["proteins"], "lever_protein"
-        terms.append(PROTEIN_NEED_WEIGHT * sl / ctx.weekly["proteins"])
     for meal, p in lv.meal_carb_share.items():      # the week's carbs at the reference midpoint
         sl = prob.add_variable(f"lever_carbs_{meal}", 0)
         prob += at(meal, "carbohydrates") + sl >= p * intake("carbohydrates"), f"lever_carbs_{meal}"
         terms.append(PREFERENCE_WEIGHT * sl / (p * sum(CARBS_ENERGY) / 2 * kcal / 4))
+    # A breakfast floor holds against the week's energy and against its target, so
+    # eating less never meets it; a ceiling is taken of the target, so eating more
+    # never does (a ceiling of min(intake, target) made the solve take over 10 s).
     if lv.breakfast_energy_min:
         p = lv.breakfast_energy_min
         sl = prob.add_variable("lever_breakfast_min", 0)
         prob += at("breakfast", "energy-kcal") + sl >= p * intake("energy-kcal"), "lever_breakfast_min"
+        prob += at("breakfast", "energy-kcal") + sl >= p * kcal, "lever_breakfast_min_target"
         terms.append(PREFERENCE_WEIGHT * sl / (p * kcal))
     if lv.breakfast_energy_max:
         p = lv.breakfast_energy_max
         sl = prob.add_variable("lever_breakfast_max", 0)
-        prob += at("breakfast", "energy-kcal") - sl <= p * intake("energy-kcal"), "lever_breakfast_max"
+        prob += at("breakfast", "energy-kcal") - sl <= p * kcal, "lever_breakfast_max"
         terms.append(PREFERENCE_WEIGHT * sl / (p * kcal))
     if lv.protein_per_meal_g_per_kg:
         terms.append(PREFERENCE_WEIGHT * short_of(lv.protein_per_meal_g_per_kg * kg, MEALS) / (len(MEALS) * days))
@@ -582,17 +609,35 @@ def _share(ctx: _Week, d: dict, lever: dict) -> float:
     return _amount(ctx, d["meals"][lever["meal"]], n) / total if total else 0.0
 
 
+def _off_band(ctx: _Week, d: dict) -> float:
+    """How far the day's energy is outside ENERGY_BAND of the daily target, as a fraction of it (0 inside)."""
+    e = _day_total(ctx, d, "energy-kcal") / (ctx.kcal_target / ctx.days)
+    return max(0.0, ENERGY_BAND[0] - e, e - ENERGY_BAND[1])
+
+
 def _shortfall(ctx: _Week, lever: dict, d: dict) -> float:
     """
     How far one day falls short of a soft lever: 0 when the day meets it, else in
     share points or as a fraction of the protein threshold. A share counts within
     SHARE_TOLERANCE of its threshold, a protein amount from PROTEIN_TOLERANCE of it.
+    A breakfast energy share counts only on a day inside the energy band, and is
+    taken of the day's energy or of its target, whichever is less favourable: a
+    day eaten smaller (or bigger) never makes the breakfast count.
     ``lever["meal"]`` is always set: profile.resolve names the meal a "meal_from" lever picked.
     """
     kind, kg = lever["type"], ctx.profile.weight_kg
-    if kind in ("meal_carb_share", "meal_energy_share"):
+    if kind == "meal_carb_share":
         s = _share(ctx, d, lever)
         return max(0.0, lever.get("min", 0.0) - SHARE_TOLERANCE - s, s - lever.get("max", 1.0) - SHARE_TOLERANCE)
+    if kind == "meal_energy_share":
+        meal = _amount(ctx, d["meals"][lever["meal"]], "energy-kcal")
+        day, target = _day_total(ctx, d, "energy-kcal"), ctx.kcal_target / ctx.days
+        gap = 0.0
+        if "min" in lever:          # against the day or its target, the larger: a smaller day never helps
+            gap += max(0.0, lever["min"] - SHARE_TOLERANCE - meal / max(day, target))
+        if "max" in lever:          # and the smaller for a ceiling: a bigger day never helps
+            gap += max(0.0, meal / min(day, target) - lever["max"] - SHARE_TOLERANCE)
+        return gap + _off_band(ctx, d)
     t = lever["g_per_kg"] * kg
     if kind == "protein_target":
         return max(0.0, PROTEIN_TOLERANCE * t - _day_total(ctx, d, "proteins")) / t
@@ -648,8 +693,11 @@ def _arrange(ctx: _Week, week: list[dict]) -> list[dict]:
     The solver chooses the week's meals; the soft levers are read day by day. Swap
     the breakfasts, lunches, dinners or snacks of two days while that meets the
     levers on more days, or brings the days that miss closer: the same food, the
-    same cost and coverage, better days. Batch recipes keep their consecutive days,
-    a recipe is never lunch and dinner on one day, and a snack never twice in one day.
+    same cost and coverage, better days. A swap never takes either day's energy
+    more than DAY_ENERGY_TOLERANCE from the daily target (nor further, for a day
+    already off), and breakfast energy shares are measured so that a smaller day
+    never meets them (_shortfall). Batch recipes keep their consecutive days, a
+    recipe is never lunch and dinner on one day, and a snack never twice in one day.
     """
     levers = [e["lever"] for e in ctx.levers.applied if e["lever"]["type"] in SOFT_LEVERS]
     if not levers:
@@ -660,8 +708,14 @@ def _arrange(ctx: _Week, week: list[dict]) -> list[dict]:
         gaps = [_shortfall(ctx, lever, d) for lever in levers]
         return sum(g == 0 for g in gaps), -sum(gaps)
 
-    def ok(d: dict) -> bool:
-        return d["meals"].get("lunch") != d["meals"].get("dinner") and len(set(d["snacks"])) == len(d["snacks"])
+    per_day = ctx.kcal_target / ctx.days
+
+    def off(d: dict) -> float:                      # the day's energy, as a distance from the daily target
+        return abs(_day_total(ctx, d, "energy-kcal") - per_day)
+
+    def ok(d: dict, was: float) -> bool:
+        return (d["meals"].get("lunch") != d["meals"].get("dinner") and len(set(d["snacks"])) == len(d["snacks"])
+                and off(d) <= max(was, DAY_ENERGY_TOLERANCE * per_day) + 1e-6)
 
     def swaps(i: int, j: int):
         for m in MEALS:
@@ -681,11 +735,12 @@ def _arrange(ctx: _Week, week: list[dict]) -> list[dict]:
             for j in range(i + 1, len(week)):
                 for part, p, q in list(swaps(i, j)):
                     di, dj = week[i][part], week[j][part]
+                    was_i, was_j = off(week[i]), off(week[j])
                     di[p], dj[q] = dj[q], di[p]
                     new_i, new_j = score(week[i]), score(week[j])
                     before = (scores[i][0] + scores[j][0], scores[i][1] + scores[j][1])
                     after = (new_i[0] + new_j[0], new_i[1] + new_j[1])
-                    if ok(week[i]) and ok(week[j]) and after > (before[0], before[1] + 1e-9):
+                    if ok(week[i], was_i) and ok(week[j], was_j) and after > (before[0], before[1] + 1e-9):
                         scores[i], scores[j], improved = new_i, new_j, True
                     else:
                         di[p], dj[q] = dj[q], di[p]

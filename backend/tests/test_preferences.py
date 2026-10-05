@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import dataclasses
 
+import pulp
 import pytest
 
 from feedforward.engine import load_engine
@@ -41,8 +42,19 @@ def _ctx(engine, **kw):
                                            "equipment": None, "pantry": None, "days": 7, **kw})
 
 
+_PLANS: dict = {}
+
+
 def _plan(engine, **kw):
-    return wp.plan_week(engine, STUDENT, goal="cognitive_function", budget=60, chain="lidl", **kw)
+    """The README profile at Lidl, EUR 60. Planning is deterministic: each set of answers is solved once per run."""
+    key = repr(sorted(kw.items()))
+    if key not in _PLANS:
+        _PLANS[key] = wp.plan_week(engine, STUDENT, goal="cognitive_function", budget=60, chain="lidl", **kw)
+    return _PLANS[key]
+
+
+NEEDS_FIRST_ANSWERS = ({"sleep_onset": "often"}, {"morning_hunger": "hungry"}, {"morning_hunger": "not_hungry"},
+                       {"training_days": "5+", "training_time": "before_breakfast"}, {"energy_dips": "mid_morning"})
 
 
 def _strategy(plan, sid):
@@ -132,8 +144,8 @@ def test_evening_carbs_shifts_carbs_to_dinner(engine):
 
 @pytest.mark.xfail(strict=True, reason=(
     "Recipe pool, not weights: the largest breakfast (644 kcal here) is 27.3 % of the energy target even every "
-    "day, so 29 % needs eating under 94 % of the need, which needs-first forbids (measured 26.8 % at "
-    "PREFERENCE_WEIGHT 0.3, 27.7 % at 10). The light breakfast reaches 22.5 % at 0.3 (20.6 % only at 3). Fix: "
+    "day and the 7 largest give 26.6 %, so 29 % could only come from eating less, which the lever does not "
+    "reward (measured 26.5-26.7 %). The light breakfast reaches 22-23 % within the 5 % cost cap. Fix: "
     "breakfast portions that follow the lever, or bigger and smaller breakfast recipes. See task-4-report.md."))
 def test_breakfast_size_follows_morning_hunger(engine):
     big = _plan(engine, answers={"morning_hunger": "hungry"})
@@ -141,13 +153,45 @@ def test_breakfast_size_follows_morning_hunger(engine):
     assert _breakfast_energy_share(big) >= 0.30 - 0.01 and _breakfast_energy_share(light) <= 0.20 + 0.01
 
 
+def _breakfast_kcal(plan):
+    return sum(d["meals"]["breakfast"]["kcal"] for d in plan["days"]) / len(plan["days"])
+
+
 def test_breakfast_levers_move_breakfast_their_way(engine):
-    plain = _breakfast_energy_share(_plan(engine))
+    """A lighter breakfast is smaller food, not a bigger day; a bigger one is bigger food (as far as the recipes go:
+    with PuLP 3's CBC the plain week already has the largest breakfasts, so they tie), never a smaller week."""
+    plain = _plan(engine)
     big = _plan(engine, answers={"morning_hunger": "hungry"})
     light = _plan(engine, answers={"morning_hunger": "not_hungry"})
-    assert _breakfast_energy_share(light) <= plain - 0.03 and _breakfast_energy_share(big) >= plain
+    assert _breakfast_kcal(light) <= _breakfast_kcal(plain) - 50
+    assert _breakfast_energy_share(light) <= _breakfast_energy_share(plain) - 0.03
+    assert _breakfast_kcal(big) >= _breakfast_kcal(plain)
+    assert big["energy"]["planned_per_day"] >= 0.99 * plain["energy"]["planned_per_day"]
     for plan in (big, light):
-        assert plan["energy"]["planned_per_day"] >= 0.96 * plan["energy"]["target_per_day"]     # not by eating less
+        assert plan["energy"]["planned_per_day"] >= 0.96 * plan["energy"]["target_per_day"]
+
+
+def test_a_breakfast_share_is_never_met_by_eating_less(engine):
+    ctx = _ctx(engine, answers={"morning_hunger": "hungry"})
+    big = next(a["lever"] for a in ctx.levers.applied if a["id"] == "big_breakfast")
+    full = PINNED_WEEK[0]                                         # the largest breakfast, 644 kcal
+    small = {"meals": {**full["meals"], "lunch": "jacket-potato-tuna", "dinner": "omelette-spinach-toast"}, "snacks": []}
+    assert _day_kcal(ctx, small) / (ctx.kcal_target / 7) < 0.9 and         wp._amount(ctx, full["meals"]["breakfast"], "energy-kcal") / _day_kcal(ctx, small) > 0.3
+    assert wp._shortfall(ctx, big, small) > 0                     # 42 % of a small day is not a big breakfast
+    plan = _plan(engine, answers={"morning_hunger": "hungry"})
+    target = plan["energy"]["target_per_day"]
+    met = [d for d in plan["days"] if d["meals"]["breakfast"]["kcal"] / max(d["totals"]["kcal"], target) >= 0.295]
+    assert all(0.9 <= d["totals"]["kcal"] / target <= 1.15 for d in met)
+
+
+def _day_kcal(ctx, day):
+    return wp._day_total(ctx, day, "energy-kcal")
+
+
+def test_levers_keep_the_week_near_its_cost(engine):
+    plain = _plan(engine)["total_cost"]
+    for answers in NEEDS_FIRST_ANSWERS:
+        assert _plan(engine, answers=answers)["total_cost"] <= 1.10 * plain + 0.01, answers
 
 
 def test_protein_target_and_spread(engine):
@@ -159,8 +203,7 @@ def test_protein_target_and_spread(engine):
 def test_needs_come_first(engine):
     plain = _plan(engine)
     covered = [n for n, v in plain["coverage"].items() if v >= 100]
-    for answers in ({"sleep_onset": "often"}, {"morning_hunger": "hungry"}, {"morning_hunger": "not_hungry"},
-                    {"training_days": "5+", "training_time": "before_breakfast"}, {"energy_dips": "mid_morning"}):
+    for answers in NEEDS_FIRST_ANSWERS:
         plan = _plan(engine, answers=answers)
         assert all(plan["coverage"][n] >= 97 for n in covered), (answers, {n: plan["coverage"][n] for n in covered})
 
@@ -262,9 +305,25 @@ def test_edits_swaps_and_minimum_budget_use_the_same_settings(engine):
 
 
 # --------------------------------------------------------------- soft levers and what the plan reports
+@pytest.mark.skipif(not hasattr(pulp, "PULP_CBC_CMD"), reason=(
+    "pinned with PuLP 3's bundled CBC; PuLP 4's CBC (cbcbox) picks another week within the 1 % gap "
+    "(EUR 38.91 here); test_no_answers_never_reach_the_levers covers both"))
 def test_no_answers_plan_is_pinned(engine):
     plan = wp.plan_week(engine, STUDENT, goal="cognitive_function", budget=50, chain="lidl")
     assert plan["total_cost"] == 39.33 and _composition(plan) == PINNED_WEEK
+
+
+def test_no_answers_never_reach_the_levers(engine, monkeypatch):
+    """Whatever the solver: without answers (or with hard filters only) there is no lever, no second solve, and
+    the days stay as scheduled."""
+    def never(*_a, **_k):
+        raise AssertionError("lever code reached")
+    monkeypatch.setattr(wp, "_after_needs", never)
+    monkeypatch.setattr(wp, "_lever_terms", never)
+    for answers in (None, {}, {"dont_eat": ["pork"], "cook_time": "30"}):
+        plan = wp.plan_week(engine, STUDENT, goal="cognitive_function", budget=50, chain="lidl", answers=answers)
+        assert plan["feasible"] and all(s["kind"] == "preference" for s in plan["strategies"])
+    assert wp._arrange(_ctx(engine), PINNED_WEEK) is PINNED_WEEK
 
 
 def test_no_answers_report_no_strategies(engine):
@@ -332,4 +391,8 @@ def test_arranging_the_days_keeps_the_food_and_meets_more_days(engine):
     evening = next(a["lever"] for a in ctx.levers.applied if a["id"] == "evening_carbs")
     met = lambda week: sum(wp._shortfall(ctx, evening, d) == 0 for d in week)           # noqa: E731
     assert met(arranged) > met(PINNED_WEEK)
+    per_day = ctx.kcal_target / 7
+    off = lambda d: abs(_day_kcal(ctx, d) - per_day)                                   # noqa: E731
+    assert all(off(a) <= max(off(b), wp.DAY_ENERGY_TOLERANCE * per_day) + 1e-6          # no day pushed off its energy
+               for a, b in zip(arranged, PINNED_WEEK))
     assert wp._arrange(_ctx(engine), PINNED_WEEK) is PINNED_WEEK                       # no levers, no change
