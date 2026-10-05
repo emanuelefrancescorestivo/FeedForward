@@ -396,3 +396,45 @@ def test_arranging_the_days_keeps_the_food_and_meets_more_days(engine):
     assert all(off(a) <= max(off(b), wp.DAY_ENERGY_TOLERANCE * per_day) + 1e-6          # no day pushed off its energy
                for a, b in zip(arranged, PINNED_WEEK))
     assert wp._arrange(_ctx(engine), PINNED_WEEK) is PINNED_WEEK                       # no levers, no change
+
+
+# --------------------------------------------------------------- too few recipes: what to relax
+def test_no_recipe_for_a_meal_says_what_to_relax(engine):
+    breakfasts = [r["id"] for r in wp._load()[1] if "breakfast" in r["meals"]]
+    plan = wp.plan_week(engine, STUDENT, goal=None, budget=80, chain="lidl", avoid_recipes=breakfasts)
+    assert not plan["feasible"] and plan["reason"] == "recipes"
+    assert "avoid_recipes" in {r["filter"] for r in plan["relax"] if r["meal"] == "breakfast"}
+
+
+def test_relax_entries_always_help(engine):
+    plan = wp.plan_week(engine, STUDENT, goal=None, budget=80, chain="lidl", diet="vegan",
+                        answers={"cook_time": "10", "dont_eat": ["legumes", "nuts"]})
+    assert all(r["options"] > r["options_now"] for r in plan["relax"])
+    assert _plan(engine)["relax"] == []
+
+
+def test_relax_keeps_the_best_three_per_meal_most_recipes_first(engine):
+    answers = {"cook_time": "10", "dont_eat": ["meat", "fish_seafood", "pork", "legumes", "nuts", "eggs", "dairy"]}
+    kw = dict(goal="cognitive_function", chain="lidl", diet=None, equipment=None, pantry=None, days=7,
+              answers=answers, declined=None, avoid_recipes=None)
+    relax = wp._relax(engine, STUDENT, **kw, base=_ctx(engine, answers=answers))
+    assert relax == wp._relax(engine, STUDENT, **kw)              # without a context, it builds the same one
+    assert [r["meal"] for r in relax].count("breakfast") == 3 and len(relax) == 9
+    assert [r["options"] for r in relax] == sorted((r["options"] for r in relax), reverse=True)
+    assert set(relax[0]) == {"filter", "now", "try", "meal", "options_now", "options"}
+    assert {r["filter"] for r in relax} <= {"cook_time", "dont_eat", "batch_ok", "avoid_recipes", "diet"}
+    assert {"filter": "cook_time", "now": "10", "try": "20", "meal": "lunch", "options_now": 1,
+            "options": 3} in relax
+
+
+def test_options_are_counted_with_the_plans_own_filter(engine):
+    ctx = _ctx(engine, answers={"sleep_onset": "often"})
+    chocolate = dataclasses.replace(ctx.by_id["snack-bread-chocolate"], meals=["lunch", "dinner"])
+    more = dataclasses.replace(ctx, meals=ctx.meals + [chocolate])
+    before, after = wp._option_counts(ctx), wp._option_counts(more)
+    assert after["lunch"] == before["lunch"] + 1 and after["dinner"] == before["dinner"]   # no caffeine at dinner
+
+
+def test_an_edited_week_has_relax_too(engine):
+    week = _composition(_plan(engine))
+    assert wp.evaluate_week(engine, STUDENT, week, goal="cognitive_function", budget=60, chain="lidl")["relax"] == []

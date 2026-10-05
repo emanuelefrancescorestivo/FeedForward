@@ -75,6 +75,13 @@ times as long when batch cooking is fine), recipes marked "not for me", and no
 caffeine at a meal the person keeps caffeine-free. Ingredients at home bring no
 filtered recipe back: they only make the recipes left cheaper.
 
+When these filters leave a main meal fewer than MIN_OPTIONS (3) recipes, the plan
+lists in `relax` what to loosen: one change at a time (a longer cooking time, a
+food allowed again, batch cooking, the recipes "not for me" at that meal, a looser
+diet), counted with the same filters as the plan, each only if it adds recipes to
+that meal. A meal with none at all has no plan to make: the reason is "recipes",
+found before any solve. `relax` is always on the plan, empty when no meal is short.
+
 Costs use the chosen chain's prices (data/ingredient_prices.json). Fridge
 items (eggs, milk, meat, bread...) are bought as whole packs, so a pack of six
 eggs is paid once and used across meals; pantry and freezer items (rice, oil,
@@ -97,7 +104,7 @@ import pulp
 
 from .milp import replace_objective, solve
 from .needs import Profile, daily_needs, energy_kcal, resting_kcal
-from .profile import MEALS, Levers, resolve       # the three main meals are defined in profile.py
+from .profile import MEALS, Levers, questions, resolve       # the three main meals are defined in profile.py
 from .taxonomy import get_goal
 from .reference import LIMIT_NUTRIENTS
 
@@ -148,6 +155,7 @@ PORTION_SCALE = (0.4, 2.5)
 _EXCLUDED = {"vegetarian": {"meat", "fish"}, "vegan": {"meat", "fish", "dairy", "egg", "honey"}}
 DIETS = (None, "vegetarian", "vegan")
 APPLIANCES = ("hob", "microwave", "kettle", "blender")   # what recipes may need
+MIN_OPTIONS = 3         # a main meal with fewer recipes than this is short: the plan says what to relax
 
 
 @lru_cache(maxsize=1)
@@ -325,6 +333,63 @@ def _context(rec, profile: Profile, *, goal, chain, diet, equipment, pantry, day
         levers=levers, goal_of=goal_of, resting_kcal=resting, evidence=evidence)
 
 
+def _option_counts(ctx: _Week) -> dict[str, int]:
+    """How many recipes the plan may choose from at each main meal: ``ctx.allowed``, the plan's own filter."""
+    return {m: sum(ctx.allowed(r, m) for r in ctx.meals) for m in MEALS}
+
+
+def _looser(answers: dict, diet: str | None, avoid_recipes: list[str], meal: str):
+    """
+    The settings one step looser, one change at a time, in the order they are offered:
+    (filter, now, try, what to change in the context). ``try`` is None where the filter is lifted;
+    the recipes "not for me" come back for ``meal`` only.
+    """
+    levels = next(q["options"] for q in questions() if q["id"] == "cook_time")      # 10, 20, 30, any
+    if answers.get("cook_time") in levels[:-1]:
+        longer = levels[levels.index(answers["cook_time"]) + 1]
+        yield "cook_time", answers["cook_time"], longer, {"answers": {**answers, "cook_time": longer}}
+    for category in answers.get("dont_eat", []):
+        rest = [c for c in answers["dont_eat"] if c != category]
+        yield "dont_eat", category, None, {"answers": {**answers, "dont_eat": rest}}
+    if answers.get("batch_ok") != "yes":
+        yield "batch_ok", answers.get("batch_ok", "no"), "yes", {"answers": {**answers, "batch_ok": "yes"}}
+    meals_of = {r["id"]: r["meals"] for r in _load()[1]}
+    avoided = sorted(i for i in set(avoid_recipes) if meal in meals_of[i])
+    if avoided:
+        yield "avoid_recipes", avoided, [], {"avoid_recipes": [i for i in avoid_recipes if i not in avoided]}
+    if diet:
+        looser = DIETS[DIETS.index(diet) - 1]
+        yield "diet", diet, looser, {"diet": looser}
+
+
+def _relax(rec, profile: Profile, *, goal, chain, diet, equipment, pantry, days, answers, declined, avoid_recipes,
+           base: _Week | None = None) -> list[dict]:
+    """
+    What to loosen, for each main meal with fewer than MIN_OPTIONS recipes (``base``: the context of these
+    settings, built here when not given). Each setting is loosened on its own and the recipes at the meal counted
+    again (no solve): a longer cooking time, a food allowed again, batch cooking, the recipes "not for me" at
+    that meal, the diet one step looser. Only a change that adds recipes is kept: the best three per meal,
+    {"filter", "now", "try", "meal", "options_now", "options"}, most recipes first. [] when no meal is short.
+    """
+    kw = dict(goal=goal, chain=chain, diet=diet, equipment=equipment, pantry=pantry, days=days,
+              answers=answers, declined=declined, avoid_recipes=avoid_recipes)
+    base = _context(rec, profile, **kw) if base is None else base
+    now = _option_counts(base)
+    counted: dict = {}      # the same change asked of several meals is counted once
+    found = []
+    for m in (m for m in MEALS if now[m] < MIN_OPTIONS):
+        entries = []
+        for name, was, then, change in _looser(dict(answers or {}), diet, list(avoid_recipes or ()), m):
+            key = (name, repr(was), repr(then))
+            if key not in counted:
+                counted[key] = _option_counts(_context(rec, profile, **{**kw, **change}))
+            if counted[key][m] > now[m]:
+                entries.append({"filter": name, "now": was, "try": then, "meal": m,
+                                "options_now": now[m], "options": counted[key][m]})
+        found += sorted(entries, key=lambda e: -e["options"])[:3]
+    return sorted(found, key=lambda e: -e["options"])
+
+
 def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: str,
               diet: str | None = None, days: int = 7, equipment: list[str] | None = None,
               pantry: list[str] | None = None, answers: dict | None = None, declined: list[str] | None = None,
@@ -335,9 +400,14 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
     person's answers to the questions (engine/profile.py), ``declined``: the
     strategy ids they turned down, ``avoid_recipes``: recipes marked "not for me".
     """
-    ingredients, _raw, prices = _load()
+    ingredients = _load()[0]
     ctx = _context(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment,
                    pantry=pantry, days=days, answers=answers, declined=declined, avoid_recipes=avoid_recipes)
+    relax = [] if _cheapest else _relax(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment,
+                                        pantry=pantry, days=days, answers=answers, declined=declined,
+                                        avoid_recipes=avoid_recipes, base=ctx)
+    if 0 in _option_counts(ctx).values():       # a meal no recipe fits: nothing to solve, but what to relax
+        return _no_plan(ctx, budget, status="no recipes", reason="recipes", minimum=None, relax=relax)
     by_id, weekly, limits, kcal_target = ctx.by_id, ctx.weekly, ctx.limits, ctx.kcal_target
 
     prob = pulp.LpProblem("week", pulp.LpMaximize)
@@ -415,9 +485,7 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
     if not ok:
         minimum, reason = _minimum_budget(rec, profile, goal, chain, diet, days, equipment, pantry=pantry,
                                           answers=answers, declined=declined, avoid_recipes=avoid_recipes)
-        return {"feasible": False, "status": status, "reason": reason, "note": REASONS[reason],
-                "chain": {"id": chain, "label": prices["chains"][chain]["label"]}, "budget": budget,
-                "energy": {"target_per_day": round(kcal_target / days)}, "minimum_budget": minimum}
+        return _no_plan(ctx, budget, status=status, reason=reason, minimum=minimum, relax=relax)
 
     def chosen() -> tuple[dict, dict]:
         return ({k: int(round(v.value() or 0)) for k, v in x.items()},
@@ -427,7 +495,7 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
     soft = any(a["lever"]["type"] in SOFT_LEVERS for a in ctx.levers.applied)   # none without answers
     if soft and _after_needs(prob, ctx, objective, x, y, intake, cost, e_over + e_under):
         counts, snack_counts = chosen()
-    return _assemble(ctx, _arrange(ctx, _schedule(counts, snack_counts, by_id, days)), budget=budget)
+    return _assemble(ctx, _arrange(ctx, _schedule(counts, snack_counts, by_id, days)), budget=budget, relax=relax)
 
 
 def _variety_cap(r: Recipe) -> int:
@@ -503,12 +571,14 @@ def _lever_terms(prob: pulp.LpProblem, ctx: _Week, x: dict, intake) -> list:
     return terms
 
 
-def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = False) -> dict:
+def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = False,
+              relax: list[dict] | None = None) -> dict:
     """
     A plan from a composed week ([{"meals": {meal: recipe id}, "snacks": [ids]}]):
     shopping list (whole packs for fridge and bakery items, ingredients at home
     free), cost, energy, coverage and limits. Deterministic, so a week the user
-    edited is checked exactly like one the solver chose.
+    edited is checked exactly like one the solver chose. ``relax``: what to loosen
+    for a meal with few recipes (_relax), none when not given.
     """
     ingredients, _raw, prices = _load()
     by_id, days = ctx.by_id, ctx.days
@@ -577,7 +647,7 @@ def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = Fal
         "demographic": ctx.profile.demographic.value,
         "portion_scale": ctx.scale,
         "goal": ctx.goal, "goals": [{"id": g, "alpha": alpha} for g, alpha in ctx.levers.goals.items()],
-        "strategies": _strategy_report(ctx, week),
+        "strategies": _strategy_report(ctx, week), "relax": relax or [],
         "goal_nutrients": [n for n in sorted(ctx.assoc, key=lambda n: -ctx.assoc[n]) if n in coverage],
         "goal_evidence": {n: ctx.evidence[n] for n in ctx.assoc if n in ctx.evidence},
         "coverage": coverage,
@@ -834,7 +904,9 @@ def evaluate_week(rec, profile: Profile, week: list[dict], *, goal: str | None, 
     """The plan for a week the user edited (swapped meals), checked like a solved one."""
     ctx = _context(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment, pantry=pantry, days=days,
                    answers=answers, declined=declined, avoid_recipes=avoid_recipes)
-    return _assemble(ctx, _week_from(ctx, week), budget=budget, edited=True)
+    relax = _relax(rec, profile, goal=goal, chain=chain, diet=diet, equipment=equipment, pantry=pantry, days=days,
+                   answers=answers, declined=declined, avoid_recipes=avoid_recipes, base=ctx)
+    return _assemble(ctx, _week_from(ctx, week), budget=budget, edited=True, relax=relax)
 
 
 def _goal_score(ctx: _Week, coverage: dict) -> float:
@@ -915,8 +987,16 @@ REASONS = {
     "budget": "Enough food for the week does not fit this budget at this shop.",
     "energy": ("Your estimated energy need is outside what these recipes can be portioned for "
                "(tested from about 500 to 6,000 kcal a day). For needs like this, plan with a dietitian."),
-    "recipes": "Too few recipes fit this diet and kitchen to fill a week.",
+    "recipes": "Too few recipes fit these settings to fill a week.",
 }
+
+
+def _no_plan(ctx: _Week, budget: float, *, status: str, reason: str, minimum: float | None, relax: list[dict]) -> dict:
+    """No week: why (a key of REASONS), the minimum budget where that is the reason, and what to relax."""
+    _i, _r, prices = _load()
+    return {"feasible": False, "status": status, "reason": reason, "note": REASONS[reason],
+            "chain": {"id": ctx.chain, "label": prices["chains"][ctx.chain]["label"]}, "budget": budget,
+            "energy": {"target_per_day": round(ctx.kcal_target / ctx.days)}, "minimum_budget": minimum, "relax": relax}
 
 
 def _minimum_budget(rec, profile, goal, chain, diet, days, equipment, *, pantry=None, answers=None,
