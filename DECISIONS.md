@@ -207,6 +207,24 @@ mineral; citing a claim for a trace amount would mislead, and so would
 literature-only (grade D) links such as vitamin K for iron.
 *Where:* [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`recipe_why`)
 
+### 19. A diary-style day, without calorie-counting pressure (branch `dashboard-ui`)
+**Decision.** Each day is a dashboard in the layout people know from diary
+apps: an energy ring with macro bars, meals as cards with an "eaten" tick, four
+tabs (Today, Foods, List, Profile). FeedForward's own parts sit inside it: the
+goal's nutrients for the day with the meal each comes from and an EU badge only
+where an authorised claim backs the link, the recipe sheet (Recipe, Why, Swap),
+the budget and the one shopping list.
+**Why.** The familiar layout makes the app easy to read at a glance; the
+content is what a calorie counter does not have. The ring shows energy
+*planned* against the need: there is no "calories left" countdown, nothing turns
+red above the need, "eaten" counts meals rather than calories, and there is no
+weight goal. Calorie-first interfaces are the part of this category most
+criticised for disordered-eating risk.
+**Cost.** A second interface to maintain; it lives on its own branch until one
+of the two is chosen. Macro targets use the midpoints of EFSA's ranges
+(carbohydrates 45-60 %, fat 20-35 % of energy), which is a simplification.
+*Where:* [`web/index.html`](backend/feedforward/web/index.html), [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`_assemble`: `targets`, per-day `totals`, `goal_today`, `goal_from`)
+
 ### 18. Privacy by construction, and a web app with no build step
 **Decision.** The planner's answers live in the browser (localStorage); the
 server computes the plan per request and stores nothing, including a week the

@@ -391,6 +391,21 @@ def test_what_is_at_home_is_free(engine):
         wp.plan_week(engine, STUDENT, **kw, pantry=["unobtainium"])
 
 
+def test_day_view_adds_up_to_the_week(engine):
+    """Per-meal and per-day numbers for the day dashboard match the week's totals."""
+    plan = wp.plan_week(engine, STUDENT, goal="cognitive_function", budget=50, chain="lidl")
+    t = plan["targets"]
+    assert t["kcal"] == plan["energy"]["target_per_day"]
+    assert t["protein"] >= 0.83 * STUDENT.weight_kg - 0.1                 # never below 0.83 g/kg
+    assert abs(t["carbs"] * 4 / t["kcal"] - 0.525) < 0.01 and abs(t["fat"] * 9 / t["kcal"] - 0.275) < 0.01
+    days = plan["days"]
+    assert abs(sum(d["totals"]["kcal"] for d in days) / 7 - plan["energy"]["planned_per_day"]) <= 1
+    for d in days:
+        parts = list(d["meals"].values()) + d["snacks"]
+        assert abs(sum(x["kcal"] for x in parts) - d["totals"]["kcal"]) <= len(parts)
+        assert set(d["goal_today"]) == set(plan["goal_nutrients"])
+
+
 def test_unknown_chain_is_an_error(engine):
     with pytest.raises(ValueError):
         wp.plan_week(engine, STUDENT, goal=None, budget=50, chain="harrods")

@@ -70,6 +70,12 @@ VEGAN_B12_NOTE = ("Vitamin B12 is found almost only in animal foods: on a vegan 
 REPEAT_PENALTY = 0.03   # objective cost of one repeat beyond the variety cap
 REPEAT_EUR = 1.0        # the same, in euros, for the cheapest-week solve
 SOLVE_SECONDS = 10      # safety net; with the 1% gap (engine/milp.py) plans take well under 1 s
+# Macro targets for the day view: EFSA reference intake ranges as shares of
+# energy (carbohydrates 45-60 %, fat 20-35 %), shown at their midpoints; protein
+# is the person's need (engine/needs.py). Targets to aim for, not limits.
+CARBS_ENERGY = (0.45, 0.60)
+FAT_ENERGY = (0.20, 0.35)
+MACROS = {"protein": "proteins", "carbs": "carbohydrates", "fat": "fat"}
 PACKED = {"fridge", "bakery"}   # bought in whole packs; pantry/freezer count the share used
 PORTION_SCALE = (0.4, 2.5)
 _EXCLUDED = {"vegetarian": {"meat", "fish"}, "vegan": {"meat", "fish", "dairy", "egg", "honey"}}
@@ -167,6 +173,7 @@ class _Week:
     snacks_per_day: int
     snack_repeat: int
     pantry: frozenset
+    evidence: dict = field(default_factory=dict)   # goal nutrient -> {"grade", "eu_claim"}
 
 
 def _context(rec, profile: Profile, *, goal, chain, diet, equipment, pantry, days) -> _Week:
@@ -203,7 +210,10 @@ def _context(rec, profile: Profile, *, goal, chain, diet, equipment, pantry, day
         weight={n: 1.0 + GOAL_BONUS * assoc.get(n, 0.0) for n in weekly},
         limits={("free-sugars" if n == "sugars" else n): lim * days for n, lim in LIMIT_NUTRIENTS.items()},
         snacks_per_day=per_day, snack_repeat=SNACK_REPEAT if per_day <= 2 else days,
-        pantry=frozenset(pantry or ()))
+        pantry=frozenset(pantry or ()),
+        evidence={n: {"grade": rec.edge_meta.get(f"{n}->{goal}", {}).get("evidence", g),
+                      "eu_claim": bool(rec.edge_meta.get(f"{n}->{goal}", {}).get("eu_claim"))}
+                  for n, _a, g in rec.scorer.positive.get(goal or "", [])})
 
 
 def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: str,
@@ -331,10 +341,41 @@ def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = Fal
     extra = sum(max(0, c - _variety_cap(by_id[rid])) for rid, c in served.items())
     planned = intake.get("energy-kcal", 0.0)
 
+    def amounts(r) -> dict:
+        n = r.nutrients
+        return {"kcal": round(n.get("energy-kcal", 0.0)), **{k: round(n.get(v, 0.0), 1) for k, v in MACROS.items()}}
+
     def show(rid, meal=True):
         r = by_id[rid]
-        out = {"id": r.id, "en": r.en, "fr": r.fr}
+        out = {"id": r.id, "en": r.en, "fr": r.fr, **amounts(r)}
         return {**out, "time_min": r.time_min, "batch": r.batch} if meal else out
+
+    goal_ids = [n for n in sorted(ctx.assoc, key=lambda n: -ctx.assoc[n]) if n in ctx.weekly]
+
+    def day_view(i: int, d: dict) -> dict:
+        eaten_today = [by_id[rid] for rid in list(d["meals"].values()) + list(d["snacks"])]
+        total = {"kcal": round(sum(r.nutrients.get("energy-kcal", 0.0) for r in eaten_today)),
+                 **{k: round(sum(r.nutrients.get(v, 0.0) for r in eaten_today), 1) for k, v in MACROS.items()}}
+        goal_today = {n: round(100 * sum(r.nutrients.get(n, 0.0) for r in eaten_today) / (ctx.weekly[n] / days), 1)
+                      for n in goal_ids}
+        # which meal of the day gives most of each goal nutrient: the food -> nutrient
+        # edge of the graph, at a glance
+        slots = [(m, by_id[rid]) for m, rid in d["meals"].items()] + [("snack", by_id[rid]) for rid in d["snacks"]]
+        goal_from = {}
+        for n in goal_ids:
+            meal, r = max(slots, key=lambda mr: mr[1].nutrients.get(n, 0.0))
+            if r.nutrients.get(n, 0.0) > 0:
+                goal_from[n] = {"meal": meal, "id": r.id, "en": r.en}
+        return {"day": i + 1, "meals": {m: show(d["meals"][m]) for m in MEALS if m in d["meals"]},
+                "snacks": [show(rid, meal=False) for rid in d["snacks"]], "totals": total,
+                "goal_today": goal_today, "goal_from": goal_from}
+
+    kcal_day = ctx.kcal_target / days
+    targets = {"kcal": round(kcal_day),
+               "protein": round(ctx.weekly.get("proteins", 0.0) / days, 1),
+               "carbs": round(kcal_day * sum(CARBS_ENERGY) / 2 / 4, 1),
+               "fat": round(kcal_day * sum(FAT_ENERGY) / 2 / 9, 1),
+               "carbs_energy": list(CARBS_ENERGY), "fat_energy": list(FAT_ENERGY)}
 
     return {
         "feasible": True, "edited": edited,
@@ -345,10 +386,11 @@ def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = Fal
         "demographic": ctx.profile.demographic.value,
         "portion_scale": ctx.scale,
         "goal": ctx.goal, "goal_nutrients": [n for n in sorted(ctx.assoc, key=lambda n: -ctx.assoc[n]) if n in coverage],
+        "goal_evidence": {n: ctx.evidence[n] for n in ctx.assoc if n in ctx.evidence},
         "coverage": coverage,
         "limits": {n: round(100 * intake.get(n, 0.0) / lim, 1) for n, lim in ctx.limits.items()},
-        "days": [{"day": i + 1, "meals": {m: show(d["meals"][m]) for m in MEALS if m in d["meals"]},
-                  "snacks": [show(rid, meal=False) for rid in d["snacks"]]} for i, d in enumerate(week)],
+        "days": [day_view(i, d) for i, d in enumerate(week)],
+        "targets": targets,
         "basket": basket, "pantry": sorted(ctx.pantry),
         "diet_note": VEGAN_B12_NOTE if ctx.diet == "vegan" else None,
         "repeats": extra,

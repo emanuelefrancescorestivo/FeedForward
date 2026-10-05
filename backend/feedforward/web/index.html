@@ -11,6 +11,10 @@ Design notes (progressive disclosure, v2):
   Level 2  "Why?" on a food: the EU claim wording, what else it provides, a
            pairing tip, plain-language watch-outs.
   Level 3  "Show the science" (Settings): evidence grades, citations, raw scores.
+Branch dashboard-ui (v4): the day as a diary-style dashboard (energy ring and
+macros, the goal's nutrients today with the meal each comes from, meals in
+cards with an "eaten" tick, the week's budget) and a Profile tab. The ring is
+energy PLANNED against the need, a level to reach: no "calories left", no red.
 Three sections (v3, after a text-density audit: 417 words on the week view,
 317 and 75 actions on the shopping list, 6 overlapping tabs):
   Week   3-step setup, then Today / Week; a meal opens a sheet (Recipe, Why,
@@ -346,12 +350,75 @@ details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
 .graph [data-nutrient] { cursor: pointer; }
 .graph-legend { font-size: 12px; color: var(--muted); margin: -6px 0 12px; }
 
+/* Day dashboard (dashboard-ui) */
+:root { --carbs: #c77c0e; --protein: #2f6fdb; --fat: #c2366f; }
+:root[data-theme="dark"] { --carbs: #f2b456; --protein: #6ea8fe; --fat: #f06292; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --carbs: #f2b456; --protein: #6ea8fe; --fat: #f06292; } }
+.day-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.dash { padding: 16px; margin-bottom: 12px; }
+.energy-card { display: flex; align-items: center; gap: 18px; }
+.ring .track { fill: none; stroke: var(--soft); }
+.ring .fill { fill: none; stroke: var(--accent); stroke-linecap: round; transition: stroke-dasharray .4s; }
+.ring-box { position: relative; width: 132px; height: 132px; flex: none; }
+.ring-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-text b { font-size: 26px; line-height: 1.1; }
+.ring-text small { font-size: 12px; color: var(--muted); }
+.macros { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.mline { display: flex; justify-content: space-between; gap: 6px; font-size: 14px; margin-bottom: 4px; }
+.macro .bar { height: 7px; border-radius: 4px; }
+.macro.carbs .bar i { background: var(--carbs); }
+.macro.protein .bar i { background: var(--protein); }
+.macro.fat .bar i { background: var(--fat); }
+.eaten-line { font-size: 13px; color: var(--muted); }
+.gc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-weight: 600; margin-bottom: 10px; }
+.small { font-size: 13px; font-weight: 400; }
+.minis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.mini { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer;
+  padding: 6px 2px; border-radius: 12px; min-width: 0; }
+.mini:hover { background: var(--soft); }
+.mini-ring { position: relative; width: 64px; height: 64px; }
+.mini-ring b { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.mini-name { font-size: 14px; font-weight: 600; text-align: center; }
+.mini small { font-size: 12px; color: var(--muted); }
+.eu { font-size: 10px; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 0 4px; vertical-align: 2px; }
+.meal-card { padding: 12px 14px 6px; margin-bottom: 10px; }
+.mc-head { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+.mc-head .muted { font-weight: 400; font-size: 15px; }
+.mc-row { display: flex; align-items: center; gap: 10px; }
+.meal-card .meal { border-top: none; padding: 6px 0; min-height: 60px; flex: 1; min-width: 0; }
+.tile-ic { width: 48px; height: 48px; border-radius: 12px; background: var(--soft); display: flex; align-items: center;
+  justify-content: center; font-size: 26px; flex: none; }
+.tile-ic.small { width: 36px; height: 36px; font-size: 20px; border-radius: 10px; }
+.meal-card .what b { font-weight: 600; }
+.meal-card .what small { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
+.meal-card.done .what b { color: var(--muted); }
+.eat { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid #c7c7cc; background: none; color: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; flex: none; }
+.eat[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.mc-row.snack { padding: 6px 0; }
+.mc-row.snack .what { display: flex; flex-direction: column; }
+.mc-row.snack small { color: var(--muted); font-size: 13px; }
+/* Profile */
+.plist { padding: 0 16px; margin-bottom: 12px; }
+.prow { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 48px; width: 100%; background: none;
+  border: none; border-bottom: var(--hair) solid var(--line); font: inherit; color: inherit; text-align: left; }
+.plist .prow:last-child { border-bottom: none; }
+.prow b { font-weight: 500; color: var(--muted); text-align: right; }
+.linkrow { cursor: pointer; }
+.plist input[type=checkbox] { -webkit-appearance: none; appearance: none; flex: none; width: 51px; height: 31px; border-radius: 999px;
+  background: var(--soft); position: relative; cursor: pointer; transition: background .2s; margin: 0; }
+.plist input[type=checkbox]::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%;
+  background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.15), 0 1px 1px rgba(0,0,0,.16); transition: transform .2s; }
+.plist input[type=checkbox]:checked { background: #34c759; }
+.plist input[type=checkbox]:checked::after { transform: translateX(20px); }
+.ghost.wide { width: 100%; margin-bottom: 8px; }
+
 /* Phones: tab bar, bottom sheets, meal label above the dish. Kept last so it wins. */
 @media (max-width: 699px) {
   nav.top-tabs { display: none; }
   .top { padding: 8px 0; }
   .for { max-width: 58vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .tabbar { display: grid; grid-template-columns: repeat(3, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+  .tabbar { display: grid; grid-template-columns: repeat(4, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
     background: var(--bar); border-top: var(--hair) solid var(--line); padding-bottom: env(safe-area-inset-bottom);
     -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px); }
   .tabbar button { background: none; border: none; min-height: 50px; display: flex; flex-direction: column; align-items: center;
@@ -382,13 +449,12 @@ details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
   <div class="wrap">
     <div class="top">
       <div class="brand">Feed<span>Forward</span></div>
-      <button class="icon-btn" id="theme-btn" title="Theme: follows your system" aria-label="Switch light or dark theme" style="margin-left:auto">◐</button>
-      <button class="for" id="for-btn" title="Profile and diet" style="margin-left:0">For: <b id="for-label">adult woman</b> ✎</button>
     </div>
     <nav class="top-tabs" aria-label="Main">
-      <button data-tab="week" class="on">Week</button>
+      <button data-tab="week" class="on">Today</button>
       <button data-tab="foods">Foods</button>
       <button data-tab="list">List<span class="count" data-list-count hidden></span></button>
+      <button data-tab="profile">Profile</button>
     </nav>
   </div>
 </header>
@@ -399,12 +465,14 @@ details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
   <section id="tab-food" hidden><div id="food-detail"></div></section>
   <section id="tab-dict" hidden></section>
   <section id="tab-list" hidden></section>
+  <section id="tab-profile" hidden></section>
 </main>
 
 <nav class="tabbar" aria-label="Main">
-  <button data-tab="week" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Week</button>
+  <button data-tab="week" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Today</button>
   <button data-tab="foods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8.3 5.7-14 14-14 0 8.3-5.7 14-14 14z"/><path d="M5 19l8-8"/></svg>Foods</button>
   <button data-tab="list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6.5h10M9.5 12h10M9.5 17.5h10"/><circle cx="5" cy="6.5" r="1.2"/><circle cx="5" cy="12" r="1.2"/><circle cx="5" cy="17.5" r="1.2"/></svg>List<span class="count" data-list-count hidden></span></button>
+  <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></svg>Profile</button>
 </nav>
 
 <div class="wrap"><footer>
@@ -436,19 +504,6 @@ details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
 </dialog>
 
 
-<dialog id="settings">
-  <form method="dialog" class="sheet">
-    <h2>Personalise</h2>
-    <fieldset><legend>Who is this for?</legend>
-      <div id="profile-summary" hidden></div>
-      <div id="demo-pick"><div id="demo-opts"></div>
-      <div class="hint">Daily needs differ: an adult woman needs 18 mg of iron, an adult man 8 mg.</div></div></fieldset>
-    <fieldset><legend>Diet</legend><div id="diet-opts"></div></fieldset>
-    <fieldset><legend>Detail</legend>
-      <label class="opt"><input type="checkbox" id="science"> Show the science (evidence grades, citations, scores)</label></fieldset>
-    <button class="primary" value="ok">Done</button>
-  </form>
-</dialog>
 
 <script>
 // ---------------------------------------------------------------- config
@@ -524,63 +579,73 @@ async function api(path, body) {
 }
 const qs = (o) => new URLSearchParams(Object.entries(o).flatMap(([k, v]) => Array.isArray(v) ? v.map(x => [k, x]) : [[k, v]])).toString();
 
-// ---------------------------------------------------------------- settings
-$("demo-opts").innerHTML = DEMOS.map(([v, l]) => `<label class="opt"><input type="radio" name="demo" value="${v}" ${v === state.demo ? "checked" : ""}> ${l}</label>`).join("");
-$("diet-opts").innerHTML = DIETS.map(([v, l]) => `<label class="opt"><input type="radio" name="diet" value="${v}" ${v === "" ? "checked" : ""}> ${l}</label>`).join("")
-  + EXTRA.map(([v, l]) => `<label class="opt"><input type="checkbox" name="extra" value="${v}"> ${l}</label>`).join("");
-// One profile: the My week answers, when they exist, set the demographic and
-// diet used everywhere; the sheet then shows them instead of the age groups.
+// ---------------------------------------------------------------- profile
+// One profile: the setup answers set the demographic and diet used everywhere.
+// Preferences for food suggestions live here too, in this browser only.
+const PREFS_KEY = "feedforward.prefs.v1";
 function demoFromSetup(v) {
   if (v.sex === "female" && v.stage === "pregnant") return "pregnancy";
   if (v.sex === "female" && v.stage === "breastfeeding") return "lactation";
   if (+v.age < 19) return "teen";
   return (+v.age >= 51 ? "older_" : "adult_") + (v.sex === "male" ? "male" : "female");
 }
-function profileLabel() {
-  const v = loadWeekSetup();
-  const who = v ? `${v.sex === "male" ? "man" : "woman"}, ${v.age}${v.sex === "female" && v.stage ? " · " + v.stage : ""}`
-    : DEMOS.find(d => d[0] === state.demo)[2];
-  return state.diet ? `${who} · ${state.diet}` : who;
-}
 function syncProfile() {
   const v = loadWeekSetup();
-  if (v) {
-    state.demo = demoFromSetup(v);
-    state.diet = v.diet || "";
-    const d = $("settings").querySelector(`[name=diet][value="${state.diet}"]`); if (d) d.checked = true;
-  }
-  const r = $("settings").querySelector(`[name=demo][value="${state.demo}"]`); if (r) r.checked = true;
-  $("demo-pick").hidden = !!v;
-  $("profile-summary").hidden = !v;
-  if (v) $("profile-summary").innerHTML = `<p style="margin:0 0 8px">${esc(profileLabel())}, from <b>My week</b>.</p>
-    <button type="button" class="ghost" data-week-edit>Edit my profile</button>`;
-  $("for-label").textContent = profileLabel();
+  if (v) { state.demo = demoFromSetup(v); state.diet = v.diet || ""; }
+  try {
+    const p = JSON.parse(localStorage.getItem(PREFS_KEY)) || {};
+    state.extra = new Set(p.extra || []); state.science = !!p.science;
+  } catch {}
+  document.body.classList.toggle("science-on", state.science);
+}
+function savePrefs() {
+  try { localStorage.setItem(PREFS_KEY, JSON.stringify({ extra: [...state.extra], science: state.science })); } catch {}
 }
 function refreshViews() {
   if (state.goal) showGoal(state.goal); else renderHome();
   if (state.food) openFood(state.food);
 }
-$("for-btn").onclick = () => { syncProfile(); $("settings").showModal(); };
-$("settings").addEventListener("close", () => {
-  const f = $("settings");
-  state.demo = f.querySelector("[name=demo]:checked").value;
-  state.diet = f.querySelector("[name=diet]:checked").value;
-  state.extra = new Set([...f.querySelectorAll("[name=extra]:checked")].map(i => i.value));
-  state.science = $("science").checked;
-  document.body.classList.toggle("science-on", state.science);
+function renderProfile() {
   const v = loadWeekSetup();
-  if (v && (v.diet || "") !== state.diet) { v.diet = state.diet; saveWeekSetup(v); weekPlan = null; }
-  syncProfile();
-  refreshViews();
-  if (!$("tab-week").hidden) renderWeek();
-});
+  const chain = (weekChains || []).find(c => c.id === v?.chain)?.label || weekPlan?.chain?.label || v?.chain;
+  const activity = v ? (ACTIVITIES.find(([k]) => k === v.activity) || [, v.activity])[1] : "";
+  const rows = v ? [
+    ["Age", v.age], ["Sex", v.sex === "male" ? "Male" : v.stage ? `Female · ${v.stage}` : "Female"],
+    ["Height", `${v.height} cm`], ["Weight", `${v.weight} kg`], ["Activity", activity],
+    ["Goal", `${goalIcon(v.goal)} ${goalTitle(v.goal)}`], ["Shop", chain], ["Budget", `€${v.budget} a week`],
+    ["Diet", v.diet ? v.diet[0].toUpperCase() + v.diet.slice(1) : "Anything"],
+    ["Kitchen", v.microwave ? "Microwave and kettle" : "Full kitchen"]] : [];
+  const sw = (attr, label, on) => `<label class="prow"><span>${label}</span><input type="checkbox" ${attr} ${on ? "checked" : ""}></label>`;
+  $("tab-profile").innerHTML = `<h1>Profile</h1>
+    ${v ? `<div class="card plist">${rows.map(([k, val]) => `<div class="prow"><span>${k}</span><b>${esc(val)}</b></div>`).join("")}</div>
+      <button class="ghost wide" data-week-edit>Edit your answers</button>`
+      : `<div class="empty"><span class="big-ic" aria-hidden="true">👤</span><p class="sub">Answer three short questions to get your week.</p>
+         <button class="primary" data-week-edit>Set up</button></div>`}
+    <div class="group-title">Food suggestions</div>
+    <div class="card plist">${sw('data-extra="low_sodium"', "Low salt", state.extra.has("low_sodium"))}
+      ${sw('data-extra="low_sugar"', "Low sugar", state.extra.has("low_sugar"))}
+      ${sw("data-science", "Show the science", state.science)}</div>
+    <div class="group-title">Appearance</div>
+    <div class="seg wseg">${[["auto", "Automatic"], ["light", "Light"], ["dark", "Dark"]].map(([k, l]) =>
+      `<button data-theme-set="${k}" class="${theme === k ? "on" : ""}">${l}</button>`).join("")}</div>
+    <div class="group-title">About</div>
+    <div class="card plist"><button class="prow linkrow" data-about><span>Sources and licences</span><span class="chev">›</span></button>
+      <div class="prow"><span>Your answers</span><b>Stay on this device</b></div></div>`;
+  $("tab-profile").querySelectorAll("[data-extra]").forEach(cb => cb.onchange = () => {
+    cb.checked ? state.extra.add(cb.dataset.extra) : state.extra.delete(cb.dataset.extra);
+    savePrefs(); refreshViews();
+  });
+  $("tab-profile").querySelector("[data-science]").onchange = (e) => {
+    state.science = e.target.checked; document.body.classList.toggle("science-on", state.science); savePrefs();
+  };
+}
 // a tap on the dimmed backdrop closes a sheet
 ["recipe-sheet", "about"].forEach(id => $(id).addEventListener("click", (e) => { if (e.target === $(id)) $(id).close(); }));
 
 // ---------------------------------------------------------------- tabs
 document.querySelectorAll("nav button[data-tab]").forEach(b => b.onclick = () => showTab(b.dataset.tab));
 // Pages inside the three sections: Foods shows goals (find), a food (food) or the dictionary (dict).
-const NAV_OF = { week: "week", find: "foods", food: "foods", dict: "foods", list: "list" };
+const NAV_OF = { week: "week", find: "foods", food: "foods", dict: "foods", list: "list", profile: "profile" };
 function showTab(tab) {
   if (tab === "foods") tab = "find";
   document.querySelectorAll("nav button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === NAV_OF[tab]));
@@ -589,6 +654,7 @@ function showTab(tab) {
   if (tab === "find" && !$("tab-find").innerHTML) renderHome();
   if (tab === "dict" && !$("tab-dict").innerHTML) renderDict("nutrients");
   if (tab === "list") renderList();
+  if (tab === "profile") renderProfile();
   window.scrollTo(0, 0);
 }
 
@@ -700,6 +766,8 @@ document.addEventListener("click", (ev) => {
   const closeSheets = () => document.querySelectorAll("dialog[open]").forEach(d => d.close());
   if (t.closest("[data-week-edit]")) { closeSheets(); weekUI.step = 0; showTab("week"); renderWeek(true); return; }
   if (t.closest("[data-about]")) { $("about").showModal(); return; }
+  const eat = t.closest("[data-eat]"); if (eat) { toggleEaten(eat.dataset.eat); return; }
+  const th = t.closest("[data-theme-set]"); if (th) { setTheme(th.dataset.themeSet); renderProfile(); return; }
   if (t.closest("[data-rs-close]")) { $("recipe-sheet").close(); return; }
   const rst = t.closest("[data-rs-tab]"); if (rst) { showSheetTab(rst.dataset.rsTab); return; }
   const swap = t.closest("[data-swap-to]"); if (swap) { chooseSwap(swap.dataset.swapTo); return; }
@@ -912,6 +980,32 @@ async function renderWeekSetup(v) {
   };
 }
 
+// The day as a dashboard: energy ring and macros, the goal's nutrients today
+// (with the meal each comes from), meals in cards, the week's budget.
+// The ring shows energy PLANNED against the need: a level to reach, not a cap.
+// No "calories left", no red when above it: the plan never restricts.
+const EATEN_KEY = "feedforward.eaten.v1";     // meals ticked as eaten, for one plan
+function loadEaten() { try { const e = JSON.parse(localStorage.getItem(EATEN_KEY)); return new Set(e && e.key === weekKey ? e.ids : []); } catch { return new Set(); } }
+function toggleEaten(slot) {
+  const s = loadEaten();
+  s.has(slot) ? s.delete(slot) : s.add(slot);
+  try { localStorage.setItem(EATEN_KEY, JSON.stringify({ key: weekKey, ids: [...s] })); } catch {}
+  renderWeekPlan(loadWeekSetup());
+}
+const MACRO_ROWS = [["carbs", "Carbs"], ["protein", "Protein"], ["fat", "Fat"]];
+const fmt = (n) => Math.round(n).toLocaleString("en");
+function dayDate(i) {
+  const d = new Date(); d.setDate(d.getDate() - todayIdx() + i);
+  return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+}
+function ring(share, size, stroke, cls, label) {
+  const r = (size - stroke) / 2, c = 2 * Math.PI * r, on = Math.max(0, Math.min(1, share));
+  return `<svg class="ring ${cls}" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(label)}">
+    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" class="track" stroke-width="${stroke}"/>
+    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" class="fill" stroke-width="${stroke}" stroke-dasharray="${(on * c).toFixed(1)} ${c.toFixed(1)}"
+      transform="rotate(-90 ${size / 2} ${size / 2})"/></svg>`;
+}
+
 function renderWeekPlan(setup) {
   const box = $("tab-week"), p = weekPlan;
   const chainLabel = p.chain?.label || (weekChains || []).find(c => c.id === setup.chain)?.label || setup.chain;
@@ -930,46 +1024,84 @@ function renderWeekPlan(setup) {
       <button class="ghost" data-week-edit>${p.reason === "budget" ? "Try another shop" : "Change your answers"}</button></div>`;
     return;
   }
-  const share = Math.min(100, 100 * p.total_cost / (p.budget || +setup.budget));
-  const views = [["today", "Today"], ["week", "Week"]];
+  const t = todayIdx(), i = weekUI.day, d = p.days[i], eaten = loadEaten();
   box.innerHTML = `
-    <h1>Your week</h1>
-    <div class="card budget-card">
-      <div class="bline"><span><b>${euro(p.total_cost)}</b> <button class="link quiet" data-week-edit title="Change budget, shop or answers">of €${esc(setup.budget)} · ${esc(chainLabel)} ›</button></span>
-        <span class="chip">${p.energy.planned_per_day.toLocaleString("en")} kcal/day</span></div>
-      <div class="bar big" role="img" aria-label="${Math.round(share)}% of the budget"><i style="width:${share}%"></i></div>
-      ${p.edited ? `<div class="edited">You changed some meals · <button class="link" data-reset-edits>Back to the suggested week</button></div>` : ""}
-    </div>
-    <div class="seg wseg" role="tablist" aria-label="Plan view">${views.map(([k, l]) =>
-      `<button role="tab" aria-selected="${weekUI.view === k}" class="${weekUI.view === k ? "on" : ""}" data-wview="${k}">${l}</button>`).join("")}</div>
-    ${weekUI.view === "week" ? weekView(p) : todayView(p)}`;
-}
-
-function dayCard(i, title) {
-  const d = weekPlan.days[i];
-  return `<div class="day"><h2 class="dayh">${title}</h2>
-    ${["breakfast", "lunch", "dinner"].map(m => d.meals[m] ? `
-      <button class="meal" data-recipe="${esc(d.meals[m].id)}" data-slot="${i}|${m}" aria-haspopup="dialog">
-        <span class="mi" aria-hidden="true">${recipeIcon(d.meals[m].en)}</span>
-        <span class="what"><small class="when">${MEAL_LABEL[m]}</small>${esc(d.meals[m].en)}</span>
-        <span class="t">${d.meals[m].batch ? `<span class="badge-soft" title="Keeps 3 days">3 days</span>` : ""}${d.meals[m].time_min ? `${d.meals[m].time_min} min` : ""}<span class="chev" aria-hidden="true">›</span></span>
-      </button>` : "").join("")}
-    ${d.snacks.length ? `<div class="snackline"><span aria-hidden="true">${recipeIcon(d.snacks[0].en)}</span> ${d.snacks.map(s => esc(s.en)).join(" · ")}</div>` : ""}
-  </div>`;
-}
-
-function todayView(p) {
-  const t = todayIdx(), i = weekUI.day;
-  return `<div class="daystrip" role="tablist" aria-label="Day of the week">${SHORT_DAYS.map((d, k) =>
-      `<button role="tab" aria-selected="${k === i}" aria-label="${WEEKDAYS[k]}${k === t ? " (today)" : ""}" class="${k === i ? "on" : ""} ${k === t ? "today" : ""}" data-day="${k}">${d}</button>`).join("")}</div>
-    ${dayCard(i, i === t ? `Today` : WEEKDAYS[i])}
+    <div class="day-title"><h1>${i === t ? "Today" : WEEKDAYS[i]}</h1><span class="muted">${dayDate(i)}</span></div>
+    <div class="daystrip" role="tablist" aria-label="Day of the week">${SHORT_DAYS.map((s, k) =>
+      `<button role="tab" aria-selected="${k === i}" aria-label="${WEEKDAYS[k]}${k === t ? " (today)" : ""}" class="${k === i ? "on" : ""} ${k === t ? "today" : ""}" data-day="${k}">${s}</button>`).join("")}</div>
+    ${energyCard(p, d, i, eaten)}
+    ${goalCard(p, d)}
+    ${["breakfast", "lunch", "dinner"].map(m => d.meals[m] ? mealCard(i, m, d.meals[m], eaten) : "").join("")}
+    ${d.snacks.length ? snackCard(d) : ""}
+    ${budgetCard(p, setup, chainLabel)}
     ${planNotes(p)}
     ${whyPlan(p)}`;
 }
 
-function weekView(p) {
-  const t = todayIdx();
-  return p.days.map((_d, i) => dayCard(i, WEEKDAYS[i] + (i === t ? " · today" : ""))).join("") + whyPlan(p);
+function energyCard(p, d, i, eaten) {
+  const tg = p.targets, done = ["breakfast", "lunch", "dinner"].filter(m => eaten.has(`${i}|${m}`)).length;
+  return `<div class="card dash energy-card">
+    <div class="ring-box">${ring(d.totals.kcal / tg.kcal, 132, 12, "energy", `${fmt(d.totals.kcal)} kcal planned of ${fmt(tg.kcal)} kcal needed`)}
+      <div class="ring-text"><b>${fmt(d.totals.kcal)}</b><small>of ${fmt(tg.kcal)} kcal</small></div></div>
+    <div class="macros">${MACRO_ROWS.map(([k, l]) => `<div class="macro ${k}"><div class="mline"><span>${l}</span>
+        <span class="muted">${fmt(d.totals[k])} / ${fmt(tg[k])} g</span></div>
+      <div class="bar"><i style="width:${Math.min(100, 100 * d.totals[k] / tg[k])}%"></i></div></div>`).join("")}
+      <div class="eaten-line">${done} of 3 meals eaten</div></div>
+  </div>`;
+}
+
+// Our edge over a calorie counter: what today does for the goal, and from which meal.
+function goalCard(p, d) {
+  if (!p.goal) return "";
+  // evidence A to C only, as in "Why this meal?"; the EU badge only where a claim is authorised
+  const ev = p.goal_evidence || {};
+  const top = p.goal_nutrients.filter(n => (ev[n]?.grade || "D") !== "D").slice(0, 3);
+  if (!top.length) return "";
+  return `<div class="card dash goal-card">
+    <div class="gc-head"><span>${goalIcon(p.goal)} ${esc(goalTitle(p.goal))} today</span><span class="muted small">tap for the evidence</span></div>
+    <div class="minis">${top.map(n => {
+      const pct = d.goal_today[n] || 0, src = d.goal_from[n];
+      return `<button class="mini" data-nutrient="${esc(n)}">
+        <span class="mini-ring">${ring(pct / 100, 64, 7, "goal", `${nName(n)} ${Math.round(pct)}% of today's need`)}<b>${pct >= 200 ? `${Math.round(pct / 100)}×` : `${Math.round(pct)}%`}</b></span>
+        <span class="mini-name">${esc(nName(n))}${ev[n]?.eu_claim ? ` <span class="eu" title="EU authorised health claim">EU</span>` : ""}</span>
+        ${src ? `<small>${recipeIcon(src.en)} ${src.meal === "snack" ? "snack" : MEAL_LABEL[src.meal].toLowerCase()}</small>` : ""}</button>`;
+    }).join("")}</div>
+  </div>`;
+}
+
+function mealCard(i, m, r, eaten) {
+  const slot = `${i}|${m}`, done = eaten.has(slot);
+  return `<div class="card meal-card${done ? " done" : ""}">
+    <div class="mc-head"><span>${MEAL_LABEL[m]}</span><span class="muted">${fmt(r.kcal)} kcal</span></div>
+    <div class="mc-row">
+      <button class="meal" data-recipe="${esc(r.id)}" data-slot="${slot}" aria-haspopup="dialog">
+        <span class="tile-ic" aria-hidden="true">${recipeIcon(r.en)}</span>
+        <span class="what"><b>${esc(r.en)}</b><small>${r.time_min ? `${r.time_min} min · ` : ""}P ${fmt(r.protein)} g · C ${fmt(r.carbs)} g · F ${fmt(r.fat)} g${r.batch ? " · keeps 3 days" : ""}</small></span>
+      </button>
+      <button class="eat" data-eat="${slot}" aria-pressed="${done}" aria-label="${done ? "Eaten" : "Mark as eaten"}: ${esc(r.en)}">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
+    </div>
+  </div>`;
+}
+
+function snackCard(d) {
+  const kcal = d.snacks.reduce((s, x) => s + x.kcal, 0);
+  return `<div class="card meal-card">
+    <div class="mc-head"><span>Snacks</span><span class="muted">${fmt(kcal)} kcal</span></div>
+    ${d.snacks.map(s => `<div class="mc-row snack"><span class="tile-ic small" aria-hidden="true">${recipeIcon(s.en)}</span>
+      <span class="what">${esc(s.en)}<small>${fmt(s.kcal)} kcal</small></span></div>`).join("")}
+  </div>`;
+}
+
+function budgetCard(p, setup, chainLabel) {
+  const share = Math.min(100, 100 * p.total_cost / (p.budget || +setup.budget));
+  return `<div class="card dash budget-card">
+    <div class="bline"><span><span class="muted">This week</span> <b>${euro(p.total_cost)}</b>
+      <button class="link quiet" data-week-edit title="Change budget, shop or answers">of €${esc(setup.budget)} · ${esc(chainLabel)} ›</button></span>
+      <button class="link" data-tab-go="list">List ›</button></div>
+    <div class="bar big"><i style="width:${share}%"></i></div>
+    ${p.edited ? `<div class="edited">You changed some meals · <button class="link" data-reset-edits>Back to the suggested week</button></div>` : ""}
+  </div>`;
 }
 
 function planNotes(p) {
@@ -985,7 +1117,7 @@ function whyPlan(p) {
   const goalName = p.goal ? goalTitle(p.goal).toLowerCase() : "your needs";
   const head = short.length
     ? `${goalIcon(p.goal)} ${esc(goalTitle(p.goal || ""))}: ${short.map(n => `${esc(nName(n))} ${Math.round(p.coverage[n])}%`).join(", ")}`
-    : `${goalIcon(p.goal)} Covers what ${esc(goalName)} needs`;
+    : `${goalIcon(p.goal)} This week covers what ${esc(goalName)} needs`;
   const bar = (n, v) => `<div class="cover-row"><span>${nLink(n, nName(n))}</span><div class="bar"><i style="width:${Math.min(100, v)}%"></i></div><span class="num">${v >= 100 ? "100%+" : Math.round(v) + "%"}</span></div>`;
   const tips = { "vitamin-d": "The skin also makes vitamin D in sunlight.", iodine: "Iodised salt (sel iodé) is the usual source of iodine." };
   return `<details class="sec"><summary>${head}</summary><div>
@@ -1006,7 +1138,7 @@ function openRecipe(btn) {
   sheetSlot = { day: +day, meal, id: r.id };
   $("rs-icon").textContent = recipeIcon(r.en);
   $("rs-title").textContent = r.en;
-  $("rs-sub").textContent = `${MEAL_LABEL[meal]} · ${WEEKDAYS[+day]}${r.time_min ? ` · ${r.time_min} min` : ""}`;
+  $("rs-sub").textContent = `${MEAL_LABEL[meal]} · ${WEEKDAYS[+day]}${r.time_min ? ` · ${r.time_min} min` : ""} · ${r.kcal} kcal`;
   $("recipe-sheet").showModal();
   showSheetTab("recipe");
 }
@@ -1309,16 +1441,14 @@ const THEMES = ["auto", "light", "dark"];
 function applyTheme(t) {
   if (t === "auto") document.documentElement.removeAttribute("data-theme");
   else document.documentElement.setAttribute("data-theme", t);
-  $("theme-btn").textContent = t === "light" ? "☀" : t === "dark" ? "☾" : "◐";
-  $("theme-btn").title = t === "auto" ? "Theme: follows your system" : `Theme: ${t}`;
 }
 let theme = (() => { try { return localStorage.getItem(THEME_KEY) || "auto"; } catch { return "auto"; } })();
 applyTheme(theme);
-$("theme-btn").onclick = () => {
-  theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+function setTheme(t) {
+  theme = THEMES.includes(t) ? t : "auto";
   try { localStorage.setItem(THEME_KEY, theme); } catch {}
   applyTheme(theme);
-};
+}
 
 // ---------------------------------------------------------------- start
 (async () => {
