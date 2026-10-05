@@ -19,7 +19,7 @@ import time
 from collections import defaultdict
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from pathlib import Path
@@ -116,6 +116,20 @@ def explorer():
     # Revalidate on every load (the ETag makes it cheap); without this, browsers
     # cache heuristically and keep showing an old interface after an update.
     return FileResponse(_WEB, headers={"Cache-Control": "no-cache"})
+
+
+_FONTS = (_WEB.parent / "fonts").resolve()
+
+
+@app.get("/app/fonts/{name}", include_in_schema=False)
+def explorer_font(name: str):
+    """The UI typeface (Inter, SIL OFL 1.1, see web/fonts/OFL.txt). Served from
+    here, not from a font CDN, so opening the app sends nothing to a third party."""
+    path = (_FONTS / name).resolve()
+    if path.suffix != ".woff2" or path.parent != _FONTS or not path.is_file():
+        raise HTTPException(status_code=404)
+    return FileResponse(path, media_type="font/woff2",
+                        headers={"Cache-Control": "public, max-age=31536000, immutable"})
 
 
 @app.get("/health", tags=["meta"])

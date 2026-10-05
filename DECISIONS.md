@@ -207,6 +207,26 @@ mineral; citing a claim for a trace amount would mislead, and so would
 literature-only (grade D) links such as vitamin K for iron.
 *Where:* [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`recipe_why`)
 
+### 20. Food first, and a calmer look (branch `dashboard-ui`)
+**Decision.** Each week says how many needs food already covers ("Food covers
+25 of 27 needs"), and for each one still short gives a plain note on why (vitamin D
+is mostly made in sunlight; B12 on a vegan diet needs a supplement or fortified
+foods). The look moves to earthy pastels, one self-hosted typeface (Inter), a
+sidebar on desktop and quiet motion, checked against seven laws of UX: Jakob
+(layouts people know), Fitts (44 px targets), Hick (one summary line per card,
+details on tap), Postel (answers typed as "1,78 m", "160 lb" or "€50" are read
+correctly), peak-end ("Your week is ready", errors that offer a way out),
+aesthetic-usability, and Von Restorff (a single tinted card, the food-first one).
+**Why.** Students buy supplements for needs their plate already meets; the
+planner already knows the week's coverage, so saying it is cheap and useful. It
+must also say where food falls short, or it would be advice by omission. The
+font is served by the app, not a CDN, so opening the page still sends nothing to
+a third party.
+**Cost.** "Covered" means at least 100 % of the reference intake over the week
+as planned; the note for healthy people says so and tells anyone with a
+prescription to keep taking it. 48 KB of font on first load.
+*Where:* [`web/index.html`](backend/feedforward/web/index.html) (`foodFirst`, `readyBanner`, `readNumber`), [`api/main.py`](backend/feedforward/api/main.py) (`/app/fonts`)
+
 ### 19. A diary-style day, without calorie-counting pressure (branch `dashboard-ui`)
 **Decision.** Each day is a dashboard in the layout people know from diary
 apps: an energy ring with macro bars, meals as cards with an "eaten" tick, four

@@ -19,7 +19,7 @@ a path: *food → nutrient → goal*, backed by EU-authorised health claims.
 > says so, with the minimum budget it would take, instead of planning less food.
 
 <p align="center">
-  <img alt="Today on a laptop: an energy ring with carbs, protein and fat bars, the focus nutrients of the day with the meal each comes from and an EU badge, then breakfast, lunch, dinner and snacks as cards" src="docs/screenshots/week-desktop.png" width="66%">
+  <img alt="Today on a laptop, sidebar on the left: an energy ring with carbs, protein and fat bars, the focus nutrients of the day with the meal each comes from and an EU badge, a green card saying food covers 25 of 27 needs this week, then breakfast, lunch and dinner as cards" src="docs/screenshots/week-desktop.png" width="66%">
   &nbsp;
   <img alt="The same day on a phone, with four tabs: Today, Foods, List, Profile" src="docs/screenshots/week-phone.png" width="24%">
 </p>
@@ -71,7 +71,7 @@ says so.
 | **Statistics on messy data** | Crowdsourced receipts → median €/kg per chain, outliers dropped, chains with few receipts shrunk towards national median × chain price index; the index comes out of the data (Lidl 0.67, Carrefour 1.06, Biocoop 1.49) | [`data/ingest/prices.py`](backend/feedforward/data/ingest/prices.py) |
 | **Scientific judgement** | Scoring per realistic portion against reference intakes; heme vs non-heme iron; the EU register as evidence layer (118 authorised links, 62 EFSA rejections removed); no medical conditions collected, on purpose (EU medical-device rules) | [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) |
 | **Design choices** | Eighteen decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
-| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 199 tests on GitHub Actions, including one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
+| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 202 tests on GitHub Actions, including one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
 
 Two bugs the tests caught, as examples of how the project is checked:
 
@@ -184,6 +184,10 @@ nutrition apps; what sits inside is FeedForward's own:
   with carbs, protein and fat bars (EFSA reference ranges); a card shows the
   goal's nutrients for the day, each with the meal it mostly comes from and an
   **EU** badge where an authorised claim backs the link (evidence A to C only);
+  **Food first** says how many of the week's needs food already covers (25 of
+  27 in the example), lists the ones still short with an honest note (vitamin D
+  comes mostly from sunlight; B12 on a vegan diet needs a supplement or fortified
+  foods), so nobody buys a supplement for a need their plate already meets;
   the meals come as cards with an "eaten" tick. The ring is a level to reach,
   not a cap: there is no "calories left" and nothing turns red, because the
   plan never restricts. A meal opens a sheet with three tabs:
@@ -200,12 +204,24 @@ nutrition apps; what sits inside is FeedForward's own:
 - **Profile**: the setup answers, food-suggestion switches (low salt, low sugar,
   show the science), theme, sources. Everything stays in the browser.
 
+The look: earthy pastels on oat and cream, one typeface (Inter, served by the
+app itself so the page makes no request to a font CDN), a sidebar on desktop
+and a tab bar on phones, quiet motion that switches off with the system's
+"reduce motion". Every text colour passes WCAG AA in both themes. Answers are
+read the way people type them: "1,78 m", "5'10", "160 lb" or "€50" all work.
+
 <p align="center">
+  <img alt="Food first, opened on a phone: vitamin D 81 % with a note that the skin makes it in sunlight, calcium 97 % as almost there, and 25 nutrients covered by food" src="docs/screenshots/food-first-phone.png" width="24%">
+  &nbsp;
   <img alt="Swap on a phone: three dinners that keep the budget and limits, each with its cooking time, price difference and effect on focus" src="docs/screenshots/swap-phone.png" width="24%">
   &nbsp;
   <img alt="The shopping list on a phone: €39.33 to buy at Lidl, grouped by aisle, each line with a tick and an at-home button" src="docs/screenshots/list-phone.png" width="24%">
   &nbsp;
   <img alt="The profile on a phone: age, sex, height, weight, activity, goal, shop, budget, diet and kitchen, an Edit button and switches for food suggestions" src="docs/screenshots/profile-phone.png" width="24%">
+</p>
+
+<p align="center">
+  <img alt="The same day in the dark theme: forest and soil tones instead of black" src="docs/screenshots/week-dark.png" width="66%">
 </p>
 
 The **dictionary**
@@ -358,7 +374,7 @@ This is a personal project and a working prototype, not a product in use.
 Nothing here has been reviewed by a dietitian or tested with users yet.
 What exists today:
 
-- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 199 tests (pytest, run on every push by GitHub Actions).
+- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 202 tests (pytest, run on every push by GitHub Actions).
 - ✅ FastAPI backend: recommend / explain / meal-plan / week plan / food detail / dictionary / auth with tiered access.
 - ✅ Web app (`/app`): Today (day dashboard, recipe sheet, swap), Foods (search, goals, dictionary), List (one shopping list with "at home"), Profile; works on phones. The single-meal optimiser stays in the engine and the API (`/meal-plan`), not in the interface.
 - 🟡 Expo mobile prototype (`mobile/`): early screens against the recommend API; it does not have My week.

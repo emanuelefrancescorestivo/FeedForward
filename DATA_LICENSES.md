@@ -5,6 +5,10 @@ The **code** in this repository is MIT-licensed ([`LICENSE`](LICENSE)). The
 are derived from them, and keep those licences. If you reuse a data file,
 reuse it under the licence listed here and keep the attribution.
 
+The web app's typeface, `web/fonts/inter-latin-wght-normal.woff2`, is Inter
+(© The Inter Project Authors) under the SIL Open Font License 1.1; the licence
+is next to it in [`web/fonts/OFL.txt`](backend/feedforward/web/fonts/OFL.txt).
+
 Raw downloads (`data/ingest/cache/`) and the original Open Food Facts crawl
 (`data/raw/`) are not in the repository; the importers in `data/ingest/`
 rebuild the derived files from the public sources.
