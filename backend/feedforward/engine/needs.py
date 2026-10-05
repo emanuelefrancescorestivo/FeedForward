@@ -63,9 +63,14 @@ class Profile:
         return Demographic.ADULT_MALE if self.sex == "male" else Demographic.ADULT_FEMALE
 
 
+def resting_kcal(p: Profile) -> float:
+    """Mifflin-St Jeor resting energy: no activity factor, no pregnancy or breastfeeding add-on.
+    The floor under every energy target, however light a deficit is asked for."""
+    return 10 * p.weight_kg + 6.25 * p.height_cm - 5 * p.age + (5 if p.sex == "male" else -161)
+
+
 def energy_kcal(p: Profile) -> float:
-    bmr = 10 * p.weight_kg + 6.25 * p.height_cm - 5 * p.age + (5 if p.sex == "male" else -161)
-    kcal = bmr * ACTIVITY[p.activity]
+    kcal = resting_kcal(p) * ACTIVITY[p.activity]
     if p.pregnant:
         kcal += 340
     elif p.breastfeeding:
