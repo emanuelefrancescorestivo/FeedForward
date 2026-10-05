@@ -29,6 +29,34 @@ how many snacks. Solved as a mixed-integer programme (PuLP/CBC):
   (maintain 1.0, deficit 0.85, surplus 1.10), never below resting energy; meal
   portions scale with it. A protein strategy raises the protein need to its g/kg.
 
+Soft levers (strategies and preferences from the answers), with S_m(n) the
+week's n from meal m, each slack >= 0 and divided by its normaliser, so that a
+lever missed by its whole threshold costs about its weight:
+
+  meal m >= p of the day's carbs   S_m(carbs) + sl >= p * intake(carbs)   p * 0.525 * E / 4
+  breakfast >= p of the energy     S_b(kcal) + sl >= p * intake(kcal)     p * E
+  breakfast <= p of the energy     S_b(kcal) - sl <= p * intake(kcal)     p * E
+  protein >= t per main meal       sum_r,m max(0, t - protein_r) / t * x_rm   3 * days
+  protein >= t at breakfast        the same, breakfast only                   days
+      all of these weigh PREFERENCE_WEIGHT = 0.3
+  protein need raised (g/kg)       intake(protein) + sl >= the raised need     the need
+      weighs PROTEIN_NEED_WEIGHT = 3: a need, met before the levers
+
+  Needs first, lexicographically: with levers, the week is solved twice. The
+  first solve is the model above without them (with no answers it is the only
+  one, so a plan without answers is exactly today's). The second adds the
+  levers and may take each nutrient at most NEEDS_TOLERANCE (3 points) below
+  the first week's coverage, never below 97 % of the need (nor below the first
+  week where that was lower), and the energy at most 3 % of E further from the
+  target. Measured on the README profile: weights alone could not keep needs
+  first (at 0.3, 0.1 and 0.03 a lever still took riboflavin or iodine below
+  97 %, and the raised protein need stayed at 88-90 %), and lowering the weight
+  only made the levers weaker; with the floors 0.3 is kept.
+
+  Shares are written on the week; the plan reports them day by day, so after
+  the days are laid out, meals and snacks are swapped between days while that
+  meets the levers on more days (same food, cost and coverage).
+
 The answers also filter the recipes, hard: foods not eaten (ingredient tags and
 recipe tags such as "spicy"), the cooking time (batch recipes may take three
 times as long when batch cooking is fine), recipes marked "not for me", and no
@@ -46,6 +74,7 @@ Recipes are drafts (data/recipes.json, status "draft").
 """
 from __future__ import annotations
 
+import copy
 import json
 import math
 from dataclasses import dataclass, field
@@ -90,6 +119,16 @@ SOLVE_SECONDS = 10      # safety net; with the 1% gap (engine/milp.py) plans tak
 CARBS_ENERGY = (0.45, 0.60)
 FAT_ENERGY = (0.20, 0.35)
 MACROS = {"protein": "proteins", "carbs": "carbohydrates", "fat": "fat"}
+# Soft levers from the answers (engine/profile.py) weigh below nutrient coverage:
+# a lever missed by its whole threshold costs PREFERENCE_WEIGHT (see the docstring).
+PREFERENCE_WEIGHT = 0.3
+NEEDS_TOLERANCE = 0.03      # what a lever may take from a nutrient's coverage, at most
+PROTEIN_NEED_WEIGHT = 3.0   # a protein strategy raises a need: it comes before the levers
+# The plan reports each lever day by day: a share counts within half a point of its
+# threshold, a protein amount from 98 % of it.
+SHARE_TOLERANCE = 0.005
+PROTEIN_TOLERANCE = 0.98
+SOFT_LEVERS = ("meal_carb_share", "meal_energy_share", "protein_target", "protein_per_meal", "meal_protein")
 PACKED = {"fridge", "bakery"}   # bought in whole packs; pantry/freezer count the share used
 PORTION_SCALE = (0.4, 2.5)
 _EXCLUDED = {"vegetarian": {"meat", "fish"}, "vegan": {"meat", "fish", "dairy", "egg", "honey"}}
@@ -352,11 +391,13 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
     prob += cost <= budget, "budget"
 
     total_w = sum(ctx.weight.values()) or 1.0
-    prob += (pulp.lpSum(ctx.weight[n] * y[n] for n in weekly) / total_w
-             - (e_over + e_under) / kcal_target
-             - 5 * pulp.lpSum(slack[n] / limits[n] for n in limits)
-             - REPEAT_PENALTY * extra
-             - 0.01 * cost / max(budget, 1)), "objective"
+    objective = (pulp.lpSum(ctx.weight[n] * y[n] for n in weekly) / total_w
+                 - (e_over + e_under) / kcal_target
+                 - 5 * pulp.lpSum(slack[n] / limits[n] for n in limits)
+                 - REPEAT_PENALTY * extra
+                 - 0.01 * cost / max(budget, 1))
+    levers = _lever_terms(prob, ctx, x, intake)     # empty with no answers: today's model exactly
+    prob += objective, "objective"
     ok, status = solve(prob, time_limit=SOLVE_SECONDS)
     if not ok:
         minimum, reason = _minimum_budget(rec, profile, goal, chain, diet, days, equipment, pantry=pantry,
@@ -365,13 +406,74 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
                 "chain": {"id": chain, "label": prices["chains"][chain]["label"]}, "budget": budget,
                 "energy": {"target_per_day": round(kcal_target / days)}, "minimum_budget": minimum}
 
-    counts = {k: int(round(v.value() or 0)) for k, v in x.items()}
-    snack_counts = {k: int(round(v.value() or 0)) for k, v in s.items()}
-    return _assemble(ctx, _schedule(counts, snack_counts, by_id, days), budget=budget)
+    def chosen() -> tuple[dict, dict]:
+        return ({k: int(round(v.value() or 0)) for k, v in x.items()},
+                {k: int(round(v.value() or 0)) for k, v in s.items()})
+
+    counts, snack_counts = chosen()
+    if levers:
+        # Needs first: the week above covers the needs as well as they can be. The
+        # levers may then take each nutrient at most NEEDS_TOLERANCE below that
+        # coverage. The first week stands if this solve finds nothing (it is
+        # feasible by construction).
+        for n in weekly:
+            floor = min(1.0 - NEEDS_TOLERANCE, y[n].value() or 0.0)
+            prob += y[n] >= floor - 1e-6, f"needs_{n}"
+        off = (e_over.value() or 0.0) + (e_under.value() or 0.0)
+        prob += e_over + e_under <= off + NEEDS_TOLERANCE * kcal_target + 1e-6, "needs_energy"
+        prob.setObjective(objective - pulp.lpSum(levers))
+        if solve(prob, time_limit=SOLVE_SECONDS)[0]:
+            counts, snack_counts = chosen()
+    week = _schedule(counts, snack_counts, by_id, days)
+    return _assemble(ctx, _arrange(ctx, week) if levers else week, budget=budget)
 
 
 def _variety_cap(r: Recipe) -> int:
     return 3 if r.batch else 2
+
+
+def _lever_terms(prob: pulp.LpProblem, ctx: _Week, x: dict, intake) -> list:
+    """
+    The soft levers as penalties for the objective, each about 1 when the lever is
+    missed by its whole threshold; empty with no answers. Shares are written on the
+    week's totals (S_m(n): the week's n from meal m) and reported day by day
+    (_strategy_report). Protein per meal is a constant per recipe: how far one
+    serving falls short of the threshold.
+    """
+    lv, days, kcal = ctx.levers, ctx.days, ctx.kcal_target
+    kg = ctx.profile.weight_kg
+
+    def at(meal: str, n: str):
+        return pulp.lpSum(ctx.by_id[rid].nutrients.get(n, 0.0) * v for (rid, m), v in x.items() if m == meal)
+
+    def short_of(t: float, meals) -> pulp.LpAffineExpression:
+        return pulp.lpSum(max(0.0, t - ctx.by_id[rid].nutrients.get("proteins", 0.0)) / t * v
+                          for (rid, m), v in x.items() if m in meals)
+
+    terms = []
+    if lv.protein_g_per_kg:         # the raised need, held up past what coverage alone would trade away
+        sl = prob.add_variable("lever_protein", 0)
+        prob += intake("proteins") + sl >= ctx.weekly["proteins"], "lever_protein"
+        terms.append(PROTEIN_NEED_WEIGHT * sl / ctx.weekly["proteins"])
+    for meal, p in lv.meal_carb_share.items():      # the week's carbs at the reference midpoint
+        sl = prob.add_variable(f"lever_carbs_{meal}", 0)
+        prob += at(meal, "carbohydrates") + sl >= p * intake("carbohydrates"), f"lever_carbs_{meal}"
+        terms.append(PREFERENCE_WEIGHT * sl / (p * sum(CARBS_ENERGY) / 2 * kcal / 4))
+    if lv.breakfast_energy_min:
+        p = lv.breakfast_energy_min
+        sl = prob.add_variable("lever_breakfast_min", 0)
+        prob += at("breakfast", "energy-kcal") + sl >= p * intake("energy-kcal"), "lever_breakfast_min"
+        terms.append(PREFERENCE_WEIGHT * sl / (p * kcal))
+    if lv.breakfast_energy_max:
+        p = lv.breakfast_energy_max
+        sl = prob.add_variable("lever_breakfast_max", 0)
+        prob += at("breakfast", "energy-kcal") - sl <= p * intake("energy-kcal"), "lever_breakfast_max"
+        terms.append(PREFERENCE_WEIGHT * sl / (p * kcal))
+    if lv.protein_per_meal_g_per_kg:
+        terms.append(PREFERENCE_WEIGHT * short_of(lv.protein_per_meal_g_per_kg * kg, MEALS) / (len(MEALS) * days))
+    if lv.breakfast_protein_g_per_kg:
+        terms.append(PREFERENCE_WEIGHT * short_of(lv.breakfast_protein_g_per_kg * kg, ("breakfast",)) / days)
+    return terms
 
 
 def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = False) -> dict:
@@ -442,10 +544,14 @@ def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = Fal
         "chain": {"id": ctx.chain, "label": prices["chains"][ctx.chain]["label"]},
         "budget": budget, "total_cost": total_cost, "within_budget": total_cost <= budget + 1e-9,
         "energy": {"target_per_day": round(ctx.kcal_target / days), "planned_per_day": round(planned / days),
-                   "in_band": ENERGY_BAND[0] * ctx.kcal_target - 1e-6 <= planned <= ENERGY_BAND[1] * ctx.kcal_target + 1e-6},
+                   "in_band": ENERGY_BAND[0] * ctx.kcal_target - 1e-6 <= planned <= ENERGY_BAND[1] * ctx.kcal_target + 1e-6,
+                   "goal": ctx.levers.energy_goal, "resting": round(ctx.resting_kcal)},
+        "protein_target_g": targets["protein"],
         "demographic": ctx.profile.demographic.value,
         "portion_scale": ctx.scale,
-        "goal": ctx.goal, "goal_nutrients": [n for n in sorted(ctx.assoc, key=lambda n: -ctx.assoc[n]) if n in coverage],
+        "goal": ctx.goal, "goals": [{"id": g, "alpha": alpha} for g, alpha in ctx.levers.goals.items()],
+        "strategies": _strategy_report(ctx, week),
+        "goal_nutrients": [n for n in sorted(ctx.assoc, key=lambda n: -ctx.assoc[n]) if n in coverage],
         "goal_evidence": {n: ctx.evidence[n] for n in ctx.assoc if n in ctx.evidence},
         "coverage": coverage,
         "limits": {n: round(100 * intake.get(n, 0.0) / lim, 1) for n, lim in ctx.limits.items()},
@@ -459,6 +565,131 @@ def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = Fal
                   "Ingredients you have at home cost nothing in this plan.",
                   "Recipes are drafts awaiting review by a dietitian."],
     }
+
+
+def _amount(ctx: _Week, rid: str, n: str) -> float:
+    return ctx.by_id[rid].nutrients.get(n, 0.0)
+
+
+def _day_total(ctx: _Week, d: dict, n: str) -> float:
+    return sum(_amount(ctx, rid, n) for rid in list(d["meals"].values()) + list(d["snacks"]))
+
+
+def _share(ctx: _Week, d: dict, lever: dict) -> float:
+    """A share lever's meal's share of the day's carbohydrates or energy."""
+    n = "carbohydrates" if lever["type"] == "meal_carb_share" else "energy-kcal"
+    total = _day_total(ctx, d, n)
+    return _amount(ctx, d["meals"][lever["meal"]], n) / total if total else 0.0
+
+
+def _shortfall(ctx: _Week, lever: dict, d: dict) -> float:
+    """
+    How far one day falls short of a soft lever: 0 when the day meets it, else in
+    share points or as a fraction of the protein threshold. A share counts within
+    SHARE_TOLERANCE of its threshold, a protein amount from PROTEIN_TOLERANCE of it.
+    ``lever["meal"]`` is always set: profile.resolve names the meal a "meal_from" lever picked.
+    """
+    kind, kg = lever["type"], ctx.profile.weight_kg
+    if kind in ("meal_carb_share", "meal_energy_share"):
+        s = _share(ctx, d, lever)
+        return max(0.0, lever.get("min", 0.0) - SHARE_TOLERANCE - s, s - lever.get("max", 1.0) - SHARE_TOLERANCE)
+    t = lever["g_per_kg"] * kg
+    if kind == "protein_target":
+        return max(0.0, PROTEIN_TOLERANCE * t - _day_total(ctx, d, "proteins")) / t
+    meals = MEALS if kind == "protein_per_meal" else ("breakfast",)
+    return sum(max(0.0, PROTEIN_TOLERANCE * t - _amount(ctx, d["meals"][m], "proteins")) for m in meals) / t
+
+
+def _strategy_report(ctx: _Week, week: list[dict]) -> list[dict]:
+    """
+    Each strategy and preference the answers turned on, with its evidence, the
+    number of days of the composed week that meet it (``met_days``) and the week's
+    mean as text (``value``). Measured on the days, so an edited week is reported
+    like a solved one. The hard filters (no caffeine at a meal, foods not eaten,
+    cooking time, batch cooking) hold on every day: no recipe outside them can be
+    planned.
+    """
+    days, kg = ctx.days, ctx.profile.weight_kg
+    out = []
+    for entry in ctx.levers.applied:
+        lever, kind = entry["lever"], entry["lever"]["type"]
+        met = sum(_shortfall(ctx, lever, d) == 0 for d in week) if kind in SOFT_LEVERS else days
+        if kind in ("meal_carb_share", "meal_energy_share"):
+            mean = round(100 * sum(_share(ctx, d, lever) for d in week) / days)
+            value = (f"{lever['meal']} carbs {mean} %" if kind == "meal_carb_share"
+                     else f"{lever['meal']} {mean} % of energy")
+        elif kind == "protein_target":
+            value = f"protein {sum(_day_total(ctx, d, 'proteins') for d in week) / days / kg:.1f} g/kg"
+        elif kind in ("protein_per_meal", "meal_protein"):
+            label = "main meals" if kind == "protein_per_meal" else "breakfast"
+            value = f"{label} ≥ {round(lever['g_per_kg'] * kg)} g protein on {met} of {days} days"
+        else:
+            value = _filter_value(ctx, lever, week)
+        out.append({**{k: copy.deepcopy(v) for k, v in entry.items() if k != "lever"}, "met_days": met, "value": value})
+    return out
+
+
+def _filter_value(ctx: _Week, lever: dict, week: list[dict]) -> str:
+    """What a hard filter did to the week, as text."""
+    lv, kind = ctx.levers, lever["type"]
+    if kind == "no_caffeine":
+        return f"no caffeine at {lever['meal']}"
+    if kind == "exclude_tags":
+        return "none in the plan: " + ", ".join(c.replace("_", " or ") for c in sorted(lv.exclude))
+    if kind == "max_minutes":
+        batch = f", batch recipes within {3 * lv.max_minutes} min" if lv.batch_ok else ""
+        return f"every meal within {lv.max_minutes} min{batch}"
+    batch_meals = sum(ctx.by_id[rid].batch for d in week for rid in d["meals"].values())
+    return f"{batch_meals} batch-cooked meals"          # batch_ok
+
+
+def _arrange(ctx: _Week, week: list[dict]) -> list[dict]:
+    """
+    The solver chooses the week's meals; the soft levers are read day by day. Swap
+    the breakfasts, lunches, dinners or snacks of two days while that meets the
+    levers on more days, or brings the days that miss closer: the same food, the
+    same cost and coverage, better days. Batch recipes keep their consecutive days,
+    a recipe is never lunch and dinner on one day, and a snack never twice in one day.
+    """
+    levers = [e["lever"] for e in ctx.levers.applied if e["lever"]["type"] in SOFT_LEVERS]
+    if not levers:
+        return week
+    week = [{"meals": dict(d["meals"]), "snacks": list(d["snacks"])} for d in week]
+
+    def score(d: dict) -> tuple[int, float]:
+        gaps = [_shortfall(ctx, lever, d) for lever in levers]
+        return sum(g == 0 for g in gaps), -sum(gaps)
+
+    def ok(d: dict) -> bool:
+        return d["meals"].get("lunch") != d["meals"].get("dinner") and len(set(d["snacks"])) == len(d["snacks"])
+
+    def swaps(i: int, j: int):
+        for m in MEALS:
+            a, b = week[i]["meals"].get(m), week[j]["meals"].get(m)
+            if a and b and a != b and not (ctx.by_id[a].batch or ctx.by_id[b].batch):
+                yield "meals", m, m
+        for p in range(len(week[i]["snacks"])):
+            for q in range(len(week[j]["snacks"])):
+                if week[i]["snacks"][p] != week[j]["snacks"][q]:
+                    yield "snacks", p, q
+
+    scores = [score(d) for d in week]
+    improved = True
+    while improved:
+        improved = False
+        for i in range(len(week)):
+            for j in range(i + 1, len(week)):
+                for part, p, q in list(swaps(i, j)):
+                    di, dj = week[i][part], week[j][part]
+                    di[p], dj[q] = dj[q], di[p]
+                    new_i, new_j = score(week[i]), score(week[j])
+                    before = (scores[i][0] + scores[j][0], scores[i][1] + scores[j][1])
+                    after = (new_i[0] + new_j[0], new_i[1] + new_j[1])
+                    if ok(week[i]) and ok(week[j]) and after > (before[0], before[1] + 1e-9):
+                        scores[i], scores[j], improved = new_i, new_j, True
+                    else:
+                        di[p], dj[q] = dj[q], di[p]
+    return week
 
 
 def _schedule(counts: dict, snack_counts: dict, by_id: dict, days: int) -> list[dict]:

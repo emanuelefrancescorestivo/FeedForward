@@ -168,9 +168,12 @@ def resolve(answers: dict | None, declined: list[str] | None, p: Profile, *, goa
         if entry["id"] in declined:
             continue
         _fold(entry["lever"], answers, acc)
+        lever = copy.deepcopy(entry["lever"])
+        if "meal_from" in lever:                       # the meal the answer picked, for the plan to measure
+            lever["meal"] = lever["map"][answers[lever["meal_from"]]]
         applied.append({"id": entry["id"], "kind": entry["kind"], "text": entry["text"], "why": entry.get("why"),
                         "grade": entry.get("grade"), "goal": entry.get("goal"), "pmids": list(entry.get("pmids", [])),
-                        "because": because, "lever": copy.deepcopy(entry["lever"])})
+                        "because": because, "lever": lever})
     return Levers(goals=goals, energy_goal=energy_goal, energy_factor=ENERGY_FACTORS[energy_goal],
                   no_caffeine_at=frozenset(acc.pop("no_caffeine_at")), exclude=frozenset(acc.pop("exclude")),
                   avoid_recipes=frozenset(avoid_recipes or ()), applied=tuple(applied), **acc)
