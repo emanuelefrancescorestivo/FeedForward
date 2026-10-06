@@ -35,6 +35,18 @@ def test_strategies_file_is_valid(engine):
             assert s["grade"] in "ABC" and s["pmids"] and s["goal"] in engine.scorer.positive
 
 
+def test_strategy_wording_matches_its_sources():
+    """What people read: each strategy's grade, sources and why, worded as its sources support (final review)."""
+    by_id = {s["id"]: s for s in profile.load_strategies()["strategies"]}
+    expected = {
+        "no_evening_caffeine": ("B", ["36870101", "24235903"],
+                                "A meta-analysis of 24 studies found caffeine shortened sleep by about 45 minutes; in one "
+                                "trial, caffeine even six hours before bed cut sleep."),
+    }
+    for sid, (grade, pmids, why) in expected.items():
+        assert (by_id[sid]["grade"], by_id[sid]["pmids"], by_id[sid]["why"]) == (grade, pmids, why), sid
+
+
 def test_validation_rejects_bad_entries(engine):
     data = profile.load_strategies()
     goals = set(engine.scorer.positive)
@@ -238,7 +250,8 @@ def test_applied_entries_have_the_same_keys_for_strategies_and_preferences():
     keys = {"id", "kind", "text", "why", "grade", "goal", "pmids", "because", "lever"}
     assert all(set(a) == keys for a in lv.applied) and lv.avoid_recipes == frozenset({"a", "b"})
     strategy = next(a for a in lv.applied if a["id"] == "no_evening_caffeine")
-    assert (strategy["kind"], strategy["grade"], strategy["goal"], strategy["pmids"]) == ("strategy", "B", "sleep_support", ["24235903"])
+    assert (strategy["kind"], strategy["grade"], strategy["goal"], strategy["pmids"]) == \
+        ("strategy", "B", "sleep_support", ["36870101", "24235903"])
     assert strategy["because"] == {"question": "sleep_onset", "answer": "sometimes"}
     assert strategy["lever"] == {"type": "no_caffeine", "meal": "dinner"}
     light = next(a for a in lv.applied if a["id"] == "light_breakfast")

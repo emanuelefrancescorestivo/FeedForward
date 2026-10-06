@@ -203,10 +203,11 @@
    "goal": "sleep_support",
    "grade": "B",
    "pmids": [
+    "36870101",
     "24235903"
    ],
    "text": "No caffeine at dinner",
-   "why": "In a controlled trial, caffeine taken even six hours before bed shortened sleep."
+   "why": "A meta-analysis of 24 studies found caffeine shortened sleep by about 45 minutes; in one trial, caffeine even six hours before bed cut sleep."
   },
   {
    "id": "protein_target",

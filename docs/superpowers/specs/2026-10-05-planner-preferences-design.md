@@ -75,7 +75,7 @@ A strategy links an answer to a goal through one planner lever:
 | Strategy | Triggered by | Lever | Goal | Grade | Sources (PMID) |
 |---|---|---|---|---|---|
 | `evening_carbs` | slow to fall asleep | dinner carbs >= 40 % of the day's | `sleep_support` | C | 17284739 (Afaghi 2007), 27633109 (St-Onge 2016) |
-| `no_evening_caffeine` | slow to fall asleep | no caffeine at dinner (hard) | `sleep_support` | B | 24235903 (Drake 2013) |
+| `no_evening_caffeine` | slow to fall asleep | no caffeine at dinner (hard) | `sleep_support` | B | 36870101 (Gardiner 2023, meta-analysis), 24235903 (Drake 2013) |
 | `protein_target` | deficit, surplus, or trains >= 3 days | protein need 1.6 g/kg/day | `muscle_recovery` | B | 28698222 (Morton 2018), 24864135 (Helms 2014) |
 | `protein_spread` | trains >= 3 days | each main meal >= 0.3 g/kg protein | `muscle_recovery` | C | 23459753 (Areta 2013), 29497353 (Schoenfeld 2018) |
 | `post_training_carbs` | trains, and when | the meal after training >= 40 % of the day's carbs | `recovery` | C | 28919842 (Kerksick 2017) |
