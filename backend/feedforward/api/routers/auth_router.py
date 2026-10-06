@@ -5,9 +5,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from ...engine.reference import Demographic
-from ..auth import authenticate, create_token, create_user, require_user
-from ..models import ProfileUpdate, Token, UserCreate, UserOut
-from ...db.repository import delete_user, export_user, update_profile
+import re
+
+from ..auth import (authenticate, create_token, create_user, dev_login_enabled, google_client_id,
+                    require_user, user_for_email, verify_google)
+from ..models import DevLogin, GoogleLogin, ProfileUpdate, Token, UserCreate, UserOut
+from ...db.repository import delete_user, export_user, get_user_state, update_profile
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -29,6 +32,32 @@ def login(form: OAuth2PasswordRequestForm = Depends()):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED,
                             "Incorrect email or password")
     return _token(user)
+
+
+@router.get("/config")
+def config():
+    """How this server lets people sign in: the Google client ID (public; empty when not set up)
+    and whether the local test sign-in is on (never in production)."""
+    return {"google_client_id": google_client_id() or None, "dev_login": dev_login_enabled()}
+
+
+@router.post("/google", response_model=Token)
+def google(payload: GoogleLogin):
+    """Sign in with the ID token Google's button returns. The account is created on first sign-in."""
+    claims = verify_google(payload.credential)
+    return _token(user_for_email(claims["email"]))
+
+
+@router.post("/dev", response_model=Token)
+def dev(payload: DevLogin):
+    """Test sign-in for a developer's machine: a name, no password, as if it were a new person.
+    The same name is the same account. Off in production (FEEDFORWARD_ENV=production)."""
+    if not dev_login_enabled():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Not found")
+    slug = re.sub(r"[^a-z0-9]+", "-", payload.name.strip().lower()).strip("-")
+    if not slug:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Type a name")
+    return _token(user_for_email(f"{slug[:40]}@test.local"))
 
 
 @router.get("/me", response_model=UserOut)
@@ -76,7 +105,7 @@ def export_me(user=Depends(require_user)):
     exported = export_user(user["sub"])
     if not exported:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "User no longer exists")
-    return {"user": exported}
+    return {"user": exported, "app": get_user_state(user["sub"]) or {}}
 
 
 @router.delete("/me")

@@ -235,3 +235,11 @@ class MealAnalysisResponse(BaseModel):
     foods: list[str]
     minerals: dict[str, MineralDeliveryOut]
     total_kcal: float
+
+
+class GoogleLogin(BaseModel):
+    credential: str = Field(min_length=20, max_length=8192)   # the ID token from Google's button
+
+
+class DevLogin(BaseModel):
+    name: str = Field(min_length=1, max_length=60)

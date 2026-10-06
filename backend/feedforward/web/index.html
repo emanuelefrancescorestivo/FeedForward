@@ -4,10 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FeedForward</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2345693e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20v-8'/%3E%3Cpath d='M12 12c0-4 3-6.5 7-6.5 0 4-3 6.5-7 6.5z'/%3E%3Cpath d='M12 14.5c0-3-2.3-5-5.5-5 0 3 2.3 5 5.5 5z'/%3E%3C/svg%3E">
 <meta name="theme-color" content="#f5f2ea" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#161914" media="(prefers-color-scheme: dark)">
 <!--
-Design notes. v5 (branch dashboard-ui): "food first". Earthy pastels on oat and
+Design notes. v6 (branch dashboard-ui): accounts and an empty start. Sign-in
+(Google, or a local test sign-in), then a few questions one topic per screen
+(two can be skipped) and the strategies they turn on, each with its evidence
+and a switch. Today is a diary that starts empty: per meal "+ Add" or "Ideas"
+(three recipes with their reasons). A planned week and the shopping list come
+only when asked for. Answers, diary and list are saved in the account
+(/me/state); only the theme stays in this browser. DECISIONS.md, decision 22.
+v5: "food first". Earthy pastels on oat and
 cream, one typeface (Inter, served by this app), a sidebar on desktop, quiet
 motion, and the 7 laws of UX: Jakob (sidebar, tab bar, diary day: layouts people
 know), Fitts (44 px targets), Hick (one summary line per card, details on tap),
@@ -510,6 +518,100 @@ dialog[open]::backdrop { animation: fade-in .25s ease; }
 dialog.closing { animation: sheet-out .18s ease forwards; }
 dialog.closing::backdrop { animation: fade-out .18s ease forwards; }
 
+/* v6: accounts. A sign-in page, getting to know you, the day as a diary, ideas per meal */
+body.gated header, body.gated main, body.gated .tabbar, body.gated footer { display: none !important; }
+body.gated { padding-left: 0 !important; }
+#gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32px 16px; }
+.gate-card { width: min(440px, 100%); }
+.brand.big { font-size: 22px; margin-bottom: 28px; }
+.brand.big svg { width: 30px; height: 30px; }
+.gate-card h1 { font-size: 34px; }
+.gate-points { list-style: none; padding: 0; margin: 0 0 26px; display: flex; flex-direction: column; gap: 12px; }
+.gate-points li { display: flex; gap: 12px; align-items: flex-start; }
+.gate-points li > span:first-child { font-size: 20px; width: 28px; text-align: center; flex: none; }
+.g-btn { display: flex; justify-content: center; min-height: 44px; margin-bottom: 18px; }
+.dev { background: var(--surface); box-shadow: var(--shadow); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 16px; }
+.dev-row { display: flex; gap: 8px; }
+.dev-row input { flex: 1; min-width: 0; font: inherit; color: var(--text); background: var(--soft); border: none; border-radius: 10px; padding: 10px 12px; min-height: 44px; }
+.dev-row .primary { min-height: 44px; padding: 10px 16px; }
+.dev .src { margin: 8px 0 0; }
+.options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.opt-card { display: flex; gap: 14px; align-items: center; background: var(--surface); box-shadow: var(--shadow); border-radius: var(--radius);
+  padding: 14px 16px; cursor: pointer; position: relative; }
+.opt-card input { position: absolute; opacity: 0; pointer-events: none; }
+.opt-card .ic { font-size: 26px; width: 34px; text-align: center; }
+.opt-card .what { display: flex; flex-direction: column; }
+.opt-card small { color: var(--muted); font-size: 13px; }
+.opt-card:has(input:checked) { background: var(--accent-soft); box-shadow: inset 0 0 0 2px var(--accent); }
+.opt-card:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.opt-card.off { opacity: .55; cursor: not-allowed; }
+.setup .field.q { margin: 0 0 18px; }
+.choice label:has(input[type=checkbox]:checked) { background: var(--accent); color: var(--on-accent); font-weight: 600; }
+.shake { animation: shake .35s; }
+@keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.strat { padding: 4px 16px; }
+.strat-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; cursor: pointer; }
+.strat-row .what { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.strat-row small { color: var(--muted); font-size: 13px; }
+.strat input[type=checkbox] { -webkit-appearance: none; appearance: none; flex: none; width: 51px; height: 31px; border-radius: 999px;
+  background: var(--soft); position: relative; cursor: pointer; transition: background .2s; margin: 0; box-shadow: inset 0 0 0 1.5px var(--control); }
+.strat input[type=checkbox]::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%;
+  background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.15), 0 1px 1px rgba(0,0,0,.16); transition: transform .2s; }
+.strat input[type=checkbox]:checked { background: var(--accent); box-shadow: none; }
+.strat input[type=checkbox]:checked::after { transform: translateX(20px); }
+.strat-why { border-top: var(--hair) solid var(--line); padding: 8px 0 10px; font-size: 15px; }
+.strat-why summary { cursor: pointer; color: var(--accent); font-weight: 600; font-size: 14px; }
+.strat-why p { margin: 8px 0 0; }
+.grade { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 4px; padding: 0 5px; line-height: 17px; vertical-align: 1px;
+  background: var(--soft); color: var(--muted); }
+.grade.gA, .grade.gB { background: var(--accent-soft); color: var(--accent); }
+.note.soft { background: var(--soft); color: var(--text); }
+.daynav { display: flex; align-items: center; gap: 4px; }
+.daynav .icon-btn { width: 36px; height: 36px; font-size: 20px; background: none; }
+.levers { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 8px; }
+.chip.lever { border: none; cursor: pointer; background: var(--accent-soft); color: var(--accent); min-height: 30px; }
+.chip.lever-on { background: var(--note-soft); color: var(--note); }
+.slot .entry { gap: 4px; }
+.slot .entry .x { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 22px; min-width: 40px; min-height: 40px; }
+.slot-actions { display: flex; gap: 8px; padding: 6px 0 8px; }
+.add.soft { background: var(--soft); color: var(--text); }
+.share { margin: 2px 0 4px; }
+.plan-week { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 14px 16px; border: none; cursor: pointer;
+  font: inherit; color: inherit; margin-top: 6px; }
+.plan-week.static { cursor: default; }
+.plan-week .what { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.plan-week small { color: var(--muted); font-size: 13px; }
+.plan-week .chev { font-size: 22px; }
+dialog#log-sheet { width: min(520px, 94vw); }
+#log-sheet .sheet { max-height: 86vh; overflow: auto; }
+#log-body .group-title { margin-left: 4px; }
+.log-hint { padding: 24px 0 8px; }
+.pick { display: flex; align-items: center; gap: 12px; width: 100%; padding: 8px 2px; background: none; border: none;
+  border-bottom: var(--hair) solid var(--line); text-align: left; cursor: pointer; font: inherit; color: inherit; }
+.pick .what { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pick small { color: var(--muted); font-size: 13px; }
+#log-results { margin-top: 10px; min-height: 120px; }
+.amount { display: flex; align-items: center; gap: 12px; margin: 4px 0 8px; font-size: 18px; }
+#amount-form .money input { font-size: 24px; font-weight: 600; width: 6ch; }
+#amount-form .primary { width: 100%; margin-top: 8px; }
+.idea { border-bottom: var(--hair) solid var(--line); padding: 10px 0; }
+.idea-main { display: flex; gap: 12px; align-items: flex-start; width: 100%; background: none; border: none; text-align: left;
+  padding: 0; cursor: pointer; font: inherit; color: inherit; }
+.idea-main .what { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.idea-main small { color: var(--muted); font-size: 13px; }
+.reasons { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.reasons .chip { font-size: 12px; }
+.idea-actions { display: flex; gap: 14px; align-items: center; padding: 8px 0 2px 60px; }
+.list-add { display: flex; gap: 8px; margin: 4px 0 14px; }
+.list-add input { flex: 1; min-width: 0; font: inherit; color: var(--text); background: var(--surface); box-shadow: var(--shadow);
+  border: none; border-radius: 12px; padding: 10px 14px; min-height: 46px; }
+.shop-row.item { grid-template-columns: 28px 1fr auto 0 40px; }
+.shop-row.item .home-btn { font-size: 22px; }
+.danger, .danger span { color: #b3412e; }
+.primary.danger-btn { background: #b3412e; color: #fff; }
+#tab-today.anim > * { animation: rise .45s var(--ease) both; }
+@media (max-width: 699px) { .idea-actions { padding-left: 0; } }
+
 /* Desktop: the sections move into a sidebar (Notion-style), with the tagline and sources at the foot */
 @media (min-width: 1024px) {
   body { padding-left: 248px; }
@@ -570,7 +672,7 @@ dialog.closing::backdrop { animation: fade-out .18s ease forwards; }
       <p class="tagline">Reach your daily needs with food first, within your budget.</p>
     </div>
     <nav class="top-tabs" aria-label="Main">
-      <button data-tab="week" class="on" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Today</span></button>
+      <button data-tab="today" class="on" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span>Today</span></button>
       <button data-tab="foods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8.3 5.7-14 14-14 0 8.3-5.7 14-14 14z"/><path d="M5 19l8-8"/></svg><span>Foods</span></button>
       <button data-tab="list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6.5h10M9.5 12h10M9.5 17.5h10"/><circle cx="5" cy="6.5" r="1.2"/><circle cx="5" cy="12" r="1.2"/><circle cx="5" cy="17.5" r="1.2"/></svg><span>List</span><span class="count" data-list-count hidden></span></button>
       <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></svg><span>Profile</span></button>
@@ -579,8 +681,11 @@ dialog.closing::backdrop { animation: fade-out .18s ease forwards; }
   </div>
 </header>
 
+<section id="gate" hidden></section>
+
 <main class="wrap">
-  <section id="tab-week"><div class="loading" role="status"><span class="loading-text">Opening FeedForward…</span><i class="sk sk-title"></i><i class="sk sk-strip"></i><i class="sk sk-card tall"></i><i class="sk sk-card"></i></div></section>
+  <section id="tab-today"><div class="loading" role="status"><span class="loading-text">Opening FeedForward…</span><i class="sk sk-title"></i><i class="sk sk-strip"></i><i class="sk sk-card tall"></i><i class="sk sk-card"></i></div></section>
+  <section id="tab-week" hidden></section>
   <section id="tab-find" hidden></section>
   <section id="tab-food" hidden><div id="food-detail"></div></section>
   <section id="tab-dict" hidden></section>
@@ -589,7 +694,7 @@ dialog.closing::backdrop { animation: fade-out .18s ease forwards; }
 </main>
 
 <nav class="tabbar" aria-label="Main">
-  <button data-tab="week" class="on" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Today</button>
+  <button data-tab="today" class="on" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Today</button>
   <button data-tab="foods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8.3 5.7-14 14-14 0 8.3-5.7 14-14 14z"/><path d="M5 19l8-8"/></svg>Foods</button>
   <button data-tab="list"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6.5h10M9.5 12h10M9.5 17.5h10"/><circle cx="5" cy="6.5" r="1.2"/><circle cx="5" cy="12" r="1.2"/><circle cx="5" cy="17.5" r="1.2"/></svg>List<span class="count" data-list-count hidden></span></button>
   <button data-tab="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.8 4.2-5.6 7.5-5.6s6.3 1.8 7.5 5.6"/></svg>Profile</button>
@@ -625,6 +730,20 @@ dialog.closing::backdrop { animation: fade-out .18s ease forwards; }
 </dialog>
 
 
+
+<dialog id="log-sheet" aria-labelledby="log-title">
+  <div class="sheet">
+    <div class="rs-head"><div class="rs-titles"><h2 id="log-title"></h2></div><button class="icon-btn" data-close-sheet aria-label="Close">✕</button></div>
+    <div id="log-body"></div>
+  </div>
+</dialog>
+
+<dialog id="info" aria-labelledby="info-title">
+  <div class="sheet">
+    <h2 id="info-title"></h2>
+    <div id="info-body"></div>
+  </div>
+</dialog>
 
 <script>
 // ---------------------------------------------------------------- config
@@ -663,6 +782,7 @@ const GENERIC_HEADS = /^(fish|mollusks|crustaceans|beverages|cereals|cereals rea
 // ---------------------------------------------------------------- state
 const state = { demo: "adult_female", diet: "", extra: new Set(), science: false, goals: {}, nutrients: {},
   coverage: {}, goal: null, results: [], shown: 5, food: null };
+
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const round = (x) => x >= 100 ? Math.round(x / 10) * 10 : x >= 10 ? Math.round(x) : Math.round(x * 10) / 10;
@@ -671,7 +791,8 @@ const nLower = (id) => { const n = nName(id); return /^[A-Z]{2}|^Vitamin|^EPA|^A
 const constraints = () => [state.diet, ...state.extra].filter(Boolean);
 const mainGoal = (id) => MAIN_GOALS.find(g => g[0] === id);
 const goalTitle = (id) => mainGoal(id)?.[2] || state.goals[id]?.label || id.replace(/_/g, " ");
-const goalIcon = (id) => mainGoal(id)?.[1] || "•";
+const EXTRA_GOAL_ICONS = { muscle_recovery: "💪" };     // goals the answers can turn on
+const goalIcon = (id) => mainGoal(id)?.[1] || EXTRA_GOAL_ICONS[id] || "•";
 
 function friendlyName(raw) {
   const parts = String(raw).split(",").map(p => p.trim()).filter(Boolean);
@@ -699,18 +820,316 @@ function loading(text, kind = "lines") {
     : `<i class="sk sk-line"></i><i class="sk sk-line"></i><i class="sk sk-line short"></i>`;
   return `<div class="loading" role="status"><span class="loading-text">${esc(text)}</span>${blocks}</div>`;
 }
-async function api(path, body) {
-  const opts = body ? { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body) } : {};
+
+async function api(path, body, method) {
+  const headers = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const opts = { method: method || (body !== undefined ? "POST" : "GET"), headers };
+  if (body !== undefined) { headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(body); }
   const res = await fetch(path, opts);
-  if (!res.ok) throw new Error(`${res.status}`);
+  if (res.status === 401 && token && /^\/(me|auth\/me|auth\/export)/.test(path)) { signOut(); throw new Error("Signed out"); }
+  if (!res.ok) {
+    let msg = `${res.status}`;
+    try {
+      const j = await res.json();
+      if (typeof j.detail === "string") msg = j.detail;
+      else if (Array.isArray(j.detail) && j.detail[0]) msg = `${(j.detail[0].loc || []).slice(-1)[0] || "input"}: ${j.detail[0].msg}`;
+    } catch {}
+    throw new Error(msg);
+  }
   return res.json();
 }
 const qs = (o) => new URLSearchParams(Object.entries(o).flatMap(([k, v]) => Array.isArray(v) ? v.map(x => [k, x]) : [[k, v]])).toString();
 
-// ---------------------------------------------------------------- profile
-// One profile: the setup answers set the demographic and diet used everywhere.
-// Preferences for food suggestions live here too, in this browser only.
-const PREFS_KEY = "feedforward.prefs.v1";
+// ---------------------------------------------------------------- account and saved data
+// Signing in gives a token (Google, or the test sign-in on a developer's machine).
+// Everything the person keeps (answers, diary, list) is ONE document in their
+// account (GET/PUT /me/state), so it follows them to any device. The theme is
+// the only thing kept in this browser alone.
+const TOKEN_KEY = "feedforward.token";
+let token = (() => { try { return localStorage.getItem(TOKEN_KEY); } catch { return null; } })();
+let app = null;                 // the saved document
+let account = null;             // {email}
+let authConfig = { google_client_id: null, dev_login: false };
+const blankApp = () => ({ v: 1, onboarded: false, setup: {}, answers: {}, declined: [], avoid: [], diary: {}, list: [],
+  pantry: [], ticks: null, edits: null, weekList: null, prefs: { extra: [], science: false }, introSeen: false });
+
+let saveTimer = null;
+function save() { clearTimeout(saveTimer); saveTimer = setTimeout(flush, 400); }
+function flush() {
+  clearTimeout(saveTimer); saveTimer = null;
+  if (!token || !app) return;
+  const body = JSON.stringify({ data: app });
+  fetch("/me/state", { method: "PUT", keepalive: body.length < 60000, body,
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` } }).catch(() => {});
+}
+document.addEventListener("visibilitychange", () => { if (document.hidden && saveTimer) flush(); });
+
+function setToken(t) {
+  token = t;
+  try { t ? localStorage.setItem(TOKEN_KEY, t) : localStorage.removeItem(TOKEN_KEY); } catch {}
+}
+function signOut() {
+  if (saveTimer) flush();
+  setToken(null); app = null; account = null; weekPlan = null; weekKey = null; dayView = null; onb.draft = null;
+  try { window.google?.accounts?.id?.disableAutoSelect(); } catch {}
+  renderGate();
+}
+async function signIn(path, body) {
+  const t = await api(path, body);
+  setToken(t.access_token);
+  await enterApp();
+}
+
+// The person as the engine takes it, and the preferences every plan and suggestion follows.
+function personReq(src = app) {
+  const v = src.setup;
+  return { age: +v.age, sex: v.sex, weight_kg: +v.weight, height_cm: +v.height, activity: v.activity,
+    pregnant: v.sex === "female" && v.stage === "pregnant", breastfeeding: v.sex === "female" && v.stage === "breastfeeding" };
+}
+function cleanAnswers(a) {
+  const out = {};
+  for (const [k, v] of Object.entries(a || {})) if (v !== undefined && v !== null && v !== "" && !(Array.isArray(v) && !v.length)) out[k] = v;
+  return Object.keys(out).length ? out : null;
+}
+function prefsReq(src = app) {
+  const v = src.setup;
+  return { goal: v.goal || null, diet: v.diet || null, equipment: v.microwave ? ["microwave"] : null,
+    answers: cleanAnswers(src.answers), declined: src.declined?.length ? src.declined : null,
+    avoid_recipes: src.avoid?.length ? src.avoid : null };
+}
+
+// ---------------------------------------------------------------- sign-in
+function renderGate() {
+  document.body.classList.add("gated");
+  const g = authConfig.google_client_id, dev = authConfig.dev_login;
+  $("gate").hidden = false;
+  $("gate").innerHTML = `<div class="gate-card">
+    <div class="brand big">${SPROUT_SVG}<div>Feed<span>Forward</span></div></div>
+    <h1>Eat well, at your pace.</h1>
+    <p class="lead">Log what you eat, ask for ideas that fit your goals, and see the science behind every suggestion.</p>
+    <ul class="gate-points">
+      <li><span aria-hidden="true">🌱</span><span><b>Starts empty.</b> Nothing is planned until you ask.</span></li>
+      <li><span aria-hidden="true">🧭</span><span><b>Yours.</b> Your goal, your habits, the food you like and can make.</span></li>
+      <li><span aria-hidden="true">🔬</span><span><b>Honest.</b> Every suggestion shows its evidence.</span></li>
+    </ul>
+    ${g ? `<div id="g-btn" class="g-btn"></div>` : ""}
+    ${dev ? `<form id="dev-form" class="dev">
+        <label class="flabel" for="dev-name">${g ? "Or a test account" : "Test sign-in"} · this computer only</label>
+        <div class="dev-row"><input id="dev-name" name="name" type="text" autocomplete="off" placeholder="Any name, e.g. Anna" required maxlength="60">
+          <button class="primary" type="submit">Continue</button></div>
+        <p class="src">The same name brings back the same account.${g ? "" : " Google sign-in appears here once it is set up (README, “Sign in with Google”)."}</p>
+      </form>` : ""}
+    ${!g && !dev ? `<div class="note">Sign-in is not set up on this server yet.</div>` : ""}
+    <p class="gate-err note" id="gate-err" hidden></p>
+    <p class="src center">Information, not medical advice.</p>
+  </div>`;
+  const err = (m) => { $("gate-err").hidden = false; $("gate-err").textContent = m; };
+  if (dev) $("dev-form").onsubmit = async (e) => {
+    e.preventDefault();
+    const name = $("dev-name").value.trim();
+    if (!name) return;
+    try { await signIn("/auth/dev", { name }); } catch (x) { err(`Could not sign in (${x.message}).`); }
+  };
+  if (g) loadGoogle().then(() => {
+    google.accounts.id.initialize({ client_id: g, callback: async (r) => {
+      try { await signIn("/auth/google", { credential: r.credential }); } catch (x) { err(`Could not sign in with Google (${x.message}).`); }
+    } });
+    google.accounts.id.renderButton($("g-btn"), { theme: theme === "dark" ? "filled_black" : "outline", size: "large",
+      shape: "pill", text: "continue_with", width: 300 });
+  }).catch(() => err("Could not load Google sign-in. Check the connection and try again."));
+}
+let googleScript = null;
+function loadGoogle() {
+  return googleScript ||= new Promise((ok, fail) => {
+    const s = document.createElement("script");
+    s.src = "https://accounts.google.com/gsi/client"; s.async = true; s.onload = ok; s.onerror = () => { googleScript = null; fail(); };
+    document.head.appendChild(s);
+  });
+}
+
+// ---------------------------------------------------------------- getting to know you
+// One topic per screen. Only "About you", the goal and the energy goal are
+// needed; "Your day" and "Your food" can be skipped. The last screen shows
+// what the answers turn on, each strategy with its evidence, and any can be
+// switched off. Every screen can be reopened from Profile.
+const Q = {
+  sleep_onset: ["Do you take long to fall asleep?", { no: "Rarely", sometimes: "Sometimes", often: "Often" }],
+  morning_hunger: ["Are you hungry in the morning?", { hungry: "Yes", normal: "Normal", not_hungry: "Not really" }],
+  energy_dips: ["When does your energy dip?", { none: "It doesn't", mid_morning: "Mid-morning", afternoon: "Afternoon" }],
+  study_time: ["When do you study or do focused work?", { rarely: "Rarely", mornings: "Mornings", afternoons: "Afternoons", evenings: "Evenings" }],
+  training_days: ["How many days a week do you train?", { "0": "None", "1-2": "1–2", "3-4": "3–4", "5+": "5 or more" }],
+  training_time: ["When do you usually train?", { before_breakfast: "Before breakfast", morning: "Morning", afternoon: "Afternoon", evening: "Evening" }],
+  dont_eat: ["Anything you don't eat?", { fish_seafood: "Fish & seafood", meat: "Meat", pork: "Pork", mushrooms: "Mushrooms",
+    legumes: "Beans & lentils", dairy: "Dairy", eggs: "Eggs", nuts: "Nuts", spicy: "Spicy food" }],
+  cook_time: ["How long can you spend cooking a meal?", { "10": "10 min", "20": "20 min", "30": "30 min", any: "No limit" }],
+  batch_ok: ["Cook once for three days?", { yes: "Happy to", no: "Rather not" }],
+  energy_goal: ["Your energy", { maintain: "Keep steady", deficit: "Lose a little", surplus: "Gain a little" }],
+};
+const ENERGY_CHOICES = [
+  ["maintain", "⚖️", "Keep steady", "Eat to your needs"],
+  ["deficit", "🍃", "Lose a little", "About 15% less energy, never below what your body uses at rest"],
+  ["surplus", "💪", "Gain a little", "About 10% more energy"],
+];
+const STEPS = [
+  { id: "you", title: "About you", lead: "To work out your daily needs. You can change these any time." },
+  { id: "goal", title: "What should food help with?", lead: "Pick one to start. Your suggestions will lean towards it." },
+  { id: "energy", title: "Your energy", lead: "A light, safe change at most. Your needs always come first." },
+  { id: "day", title: "Your day", lead: "Optional. A few habits FeedForward can plan around.", optional: true },
+  { id: "food", title: "Your food", lead: "Optional. So suggestions are food you'd eat and can make.", optional: true },
+  { id: "plan", title: "Your plan", lead: "What your answers turn on. Each comes with its evidence; switch off any you don't want." },
+];
+const onb = { step: 0, draft: null, edit: false, box: "today", info: null };
+const clone = (x) => JSON.parse(JSON.stringify(x));
+
+function startOnboarding(stepId = "you", edit = false) {
+  onb.step = Math.max(0, STEPS.findIndex(s => s.id === stepId));
+  onb.edit = edit; onb.box = edit ? "profile" : "today"; onb.info = null;
+  onb.draft = clone({ setup: app.setup, answers: app.answers, declined: app.declined, avoid: app.avoid });
+  showTab(onb.box);
+}
+
+async function renderOnboarding() {
+  const box = $(`tab-${onb.box}`), st = STEPS[onb.step], d = onb.draft, v = d.setup, a = d.answers;
+  const chip = (name, value, label, checked, type = "radio") =>
+    `<label><input type="${type}" name="${name}" value="${esc(value)}" ${checked ? "checked" : ""}><span>${esc(label)}</span></label>`;
+  const qChips = (id) => `<div class="field q" data-q="${id}"><span class="flabel">${esc(Q[id][0])}</span><div class="choice">${
+    Object.entries(Q[id][1]).map(([k, l]) => chip(id, k, l, a[id] === k)).join("")}</div></div>`;
+  let body = "";
+  if (st.id === "you") {
+    const female = (v.sex || "female") === "female", act = v.activity || "light";
+    body = `<fieldset><div class="grid2">
+        <label class="f">Age<input type="text" name="age" inputmode="numeric" autocomplete="off" value="${esc(v.age || "")}" required></label>
+        <label class="f">Height (cm)<input type="text" name="height" inputmode="decimal" autocomplete="off" value="${esc(v.height || "")}" required></label>
+        <label class="f">Weight (kg)<input type="text" name="weight" inputmode="decimal" autocomplete="off" value="${esc(v.weight || "")}" required></label></div>
+      <div class="field"><span class="flabel">Sex</span><div class="choice">${chip("sex", "female", "Female", female)}${chip("sex", "male", "Male", !female)}</div></div>
+      <div class="field" id="stage-f" ${female ? "" : "hidden"}><span class="flabel">Pregnant or breastfeeding?</span><div class="choice">
+        ${chip("stage", "", "No", !v.stage)}${chip("stage", "pregnant", "Pregnant", v.stage === "pregnant")}${chip("stage", "breastfeeding", "Breastfeeding", v.stage === "breastfeeding")}</div></div>
+      <div class="field"><span class="flabel">Activity</span><div class="choice">${ACTIVITIES.map(([k, l]) => chip("activity", k, l, act === k)).join("")}</div>
+        <p class="hint" id="act-hint">${ACTIVITY_HINT[act]}</p></div></fieldset>`;
+  } else if (st.id === "goal") {
+    body = `<div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) => `<label class="tile pick"><input type="radio" name="goal" value="${id}" ${(v.goal || "") === id ? "checked" : ""}>
+      <span class="ic">${ic}</span><b>${title}</b><small>${sub}</small></label>`).join("")}</div>`;
+  } else if (st.id === "energy") {
+    if (!onb.info) {
+      box.innerHTML = loading("One moment…");
+      try { onb.info = await api("/plan/strategies", { ...personReq(d), ...prefsReq(d), answers: null, declined: null }); }
+      catch (e) { box.innerHTML = `<h1>${st.title}</h1><div class="note">Could not load the choices (${esc(e.message)}).</div>
+        <div class="actions"><button class="ghost" data-onb-back>Back</button></div>`; return; }
+      if (STEPS[onb.step].id !== "energy") return;
+    }
+    const closed = onb.info.unavailable || {}, cur = a.energy_goal || "maintain";
+    body = `<div class="options">${ENERGY_CHOICES.map(([k, ic, title, sub]) => {
+      const why = closed[`energy_goal=${k}`];
+      return `<label class="opt-card ${why ? "off" : ""}"><input type="radio" name="energy_goal" value="${k}" ${cur === k && !why ? "checked" : ""} ${why ? "disabled" : ""}>
+        <span class="ic" aria-hidden="true">${ic}</span><span class="what"><b>${title}</b><small>${esc(why || sub)}</small></span></label>`; }).join("")}</div>
+      <p class="src">Energy is planned from your needs (Mifflin-St Jeor and your activity). A change is never offered under 18, in pregnancy or while breastfeeding, and no deficit under a BMI of 18.5.</p>`;
+  } else if (st.id === "day") {
+    const trains = a.training_days && a.training_days !== "0";
+    body = `${qChips("sleep_onset")}${qChips("morning_hunger")}${qChips("energy_dips")}${qChips("study_time")}${qChips("training_days")}
+      <div id="tt-f" ${trains ? "" : "hidden"}>${qChips("training_time")}</div>`;
+  } else if (st.id === "food") {
+    const no = new Set(a.dont_eat || []);
+    body = `<div class="field"><span class="flabel">Diet</span><div class="choice">${chip("diet", "", "Anything", !v.diet)}${chip("diet", "vegetarian", "Vegetarian", v.diet === "vegetarian")}${chip("diet", "vegan", "Vegan", v.diet === "vegan")}</div></div>
+      <div class="field"><span class="flabel">${esc(Q.dont_eat[0])}</span><div class="choice">${Object.entries(Q.dont_eat[1]).map(([k, l]) => chip("dont_eat", k, l, no.has(k), "checkbox")).join("")}</div></div>
+      ${qChips("cook_time")}${qChips("batch_ok")}
+      <fieldset class="field"><label class="opt">Only a microwave and a kettle<input type="checkbox" name="microwave" ${v.microwave ? "checked" : ""}></label></fieldset>`;
+  } else if (st.id === "plan") {
+    box.innerHTML = loading("Putting your plan together…");
+    let p;
+    try { p = await api("/plan/strategies", { ...personReq(d), ...prefsReq(d) }); }
+    catch (e) { box.innerHTML = `<h1>${st.title}</h1><div class="note">Could not load your plan (${esc(e.message)}).</div>
+      <div class="actions"><button class="ghost" data-onb-back>Back</button></div>`; return; }
+    if (STEPS[onb.step].id !== "plan") return;
+    const declined = new Set(d.declined || []);
+    const energy = ENERGY_CHOICES.find(c => c[0] === (a.energy_goal || "maintain"));
+    const because = (b) => b && Q[b.question] ? `You said “${Q[b.question][1][b.answer] || b.answer}” to “${Q[b.question][0]}”` : "";
+    body = `<div class="card plist">
+        <div class="prow"><span>${goalIcon(v.goal)} Goal</span><b>${esc(goalTitle(v.goal))}</b></div>
+        <div class="prow"><span>${energy[1]} Energy</span><b>${energy[2]}</b></div>
+        ${p.goals.filter(g => g.id !== v.goal).map(g => `<div class="prow"><span>${goalIcon(g.id)} Also</span><b>${esc(goalTitle(g.id))}</b></div>`).join("")}</div>
+      ${p.strategies.length ? `<div class="group-title">Turned on by your answers</div>
+        ${p.strategies.map(s => `<div class="card strat">
+          <label class="strat-row"><span class="what"><b>${esc(s.text)}</b>
+            <small>${s.grade ? `<span class="grade g${s.grade}" title="Evidence grade">${s.grade}</span> ` : ""}${esc(because(s.because))}</small></span>
+            <input type="checkbox" data-strat="${esc(s.id)}" ${declined.has(s.id) ? "" : "checked"} aria-label="${esc(s.text)}"></label>
+          ${s.why ? `<details class="strat-why"><summary>Why?</summary><p>${esc(s.why)}</p>${(s.pmids || []).length ? `<p class="src">${s.pmids.map(id => `<a href="https://pubmed.ncbi.nlm.nih.gov/${esc(id)}/" target="_blank" rel="noopener">PubMed ${esc(id)}</a>`).join(" · ")}</p>` : ""}</details>` : ""}
+        </div>`).join("")}
+        <p class="src">Evidence grades: A strong, B good, C limited. Only strategies graded A to C are offered.</p>`
+      : `<div class="note soft">Nothing extra: your suggestions follow your goal and your daily needs.</div>`}`;
+  }
+  const n = STEPS.length, last = onb.step === n - 1;
+  box.innerHTML = `
+    ${onb.edit ? `<button class="back" data-onb-cancel>← Profile</button>` : ""}
+    <h1>${esc(st.title)}</h1><p class="lead">${esc(st.lead)}</p>
+    ${onb.edit ? "" : `<div class="steps" role="progressbar" aria-valuemin="1" aria-valuemax="${n}" aria-valuenow="${onb.step + 1}" aria-label="Step ${onb.step + 1} of ${n}">${STEPS.map((_, i) => `<i class="${i <= onb.step ? "on" : ""}"></i>`).join("")}</div>`}
+    <form class="setup" id="onb-form" novalidate>${body}
+      <div class="actions wizard">
+        ${onb.edit ? `<button type="button" class="ghost" data-onb-cancel>Cancel</button>` : onb.step > 0 ? `<button type="button" class="ghost" data-onb-back>Back</button>` : ""}
+        ${st.optional && !onb.edit ? `<button type="button" class="ghost" data-onb-skip>Skip</button>` : ""}
+        <button type="submit" class="primary">${onb.edit ? "Save" : last ? "Start" : "Next"}</button>
+      </div>
+      ${onb.step === 0 && !onb.edit ? `<p class="src center">Saved in your account, so it follows you to any device.</p>` : ""}
+    </form>`;
+  const form = $("onb-form");
+  form.querySelectorAll("[name=sex]").forEach(r => r.onchange = () => { $("stage-f").hidden = r.value === "male"; });
+  form.querySelectorAll("[name=activity]").forEach(r => r.onchange = () => { $("act-hint").textContent = ACTIVITY_HINT[r.value]; });
+  form.querySelectorAll("[name=training_days]").forEach(r => r.onchange = () => { $("tt-f").hidden = r.value === "0"; });
+  form.querySelectorAll("input[type=text]").forEach(i => i.oninput = () => i.setCustomValidity(""));
+  // a chosen answer can be un-chosen: optional questions stay optional
+  form.querySelectorAll(".q input[type=radio]").forEach(r => r.onclick = () => {
+    if (r.dataset.was === "1") { r.checked = false; r.dataset.was = ""; } else {
+      form.querySelectorAll(`[name="${r.name}"]`).forEach(o => o.dataset.was = ""); r.dataset.was = "1"; } });
+  form.querySelectorAll(".q input[type=radio]:checked").forEach(r => r.dataset.was = "1");
+  form.onsubmit = (e) => { e.preventDefault(); if (collectStep(form, st.id)) nextStep(); };
+}
+
+// Read the screen into the draft. False (with the field marked) when something needed is missing.
+function collectStep(form, id) {
+  const d = onb.draft;
+  // numbers are checked (and rewritten in the units the planner needs) before the form is read
+  if (id === "you" && ![...form.querySelectorAll("input[type=text]")].every(i => checkNumber(i) && i.reportValidity())) return false;
+  const f = new FormData(form);
+  if (id === "you") {
+    Object.assign(d.setup, { age: f.get("age"), height: f.get("height"), weight: f.get("weight"), sex: f.get("sex") || "female",
+      stage: f.get("sex") === "male" ? "" : f.get("stage") || "", activity: f.get("activity") || "light" });
+    onb.info = null;                                     // the energy choices depend on age, BMI, pregnancy
+  } else if (id === "goal") {
+    if (!f.get("goal")) { form.querySelector(".tiles").classList.add("shake"); return false; }
+    d.setup.goal = f.get("goal");
+  } else if (id === "energy") {
+    d.answers.energy_goal = f.get("energy_goal") || "maintain";
+  } else if (id === "day") {
+    for (const q of ["sleep_onset", "morning_hunger", "energy_dips", "study_time", "training_days", "training_time"]) {
+      const val = f.get(q);
+      if (val) d.answers[q] = val; else delete d.answers[q];
+    }
+    if (!d.answers.training_days || d.answers.training_days === "0") delete d.answers.training_time;
+  } else if (id === "food") {
+    d.setup.diet = f.get("diet") || ""; d.setup.microwave = !!f.get("microwave");
+    d.answers.dont_eat = f.getAll("dont_eat");
+    for (const q of ["cook_time", "batch_ok"]) { const val = f.get(q); if (val) d.answers[q] = val; else delete d.answers[q]; }
+  } else if (id === "plan") {
+    d.declined = [...form.querySelectorAll("[data-strat]")].filter(c => !c.checked).map(c => c.dataset.strat)
+      .concat((d.declined || []).filter(x => !form.querySelector(`[data-strat="${x}"]`)));
+  }
+  return true;
+}
+function nextStep() {
+  if (onb.edit || onb.step === STEPS.length - 1) return finishOnboarding();
+  onb.step++; renderOnboarding(); window.scrollTo(0, 0);
+}
+function finishOnboarding() {
+  const d = onb.draft;
+  Object.assign(app, { setup: d.setup, answers: d.answers, declined: d.declined, avoid: d.avoid });
+  const first = !app.onboarded;
+  app.onboarded = true; onb.draft = null;
+  save(); syncProfile(); dayView = null; weekPlan = null; recipeCache.clear();
+  if ($("tab-find").innerHTML) refreshViews();
+  showTab(first ? "today" : "profile");
+}
+
+// One profile: the answers set the demographic and diet used everywhere (Foods included).
 function demoFromSetup(v) {
   if (v.sex === "female" && v.stage === "pregnant") return "pregnancy";
   if (v.sex === "female" && v.stage === "breastfeeding") return "lactation";
@@ -718,37 +1137,42 @@ function demoFromSetup(v) {
   return (+v.age >= 51 ? "older_" : "adult_") + (v.sex === "male" ? "male" : "female");
 }
 function syncProfile() {
-  const v = loadWeekSetup();
-  if (v) { state.demo = demoFromSetup(v); state.diet = v.diet || ""; }
-  try {
-    const p = JSON.parse(localStorage.getItem(PREFS_KEY)) || {};
-    state.extra = new Set(p.extra || []); state.science = !!p.science;
-  } catch {}
+  const v = app?.setup || {};
+  if (v.age) state.demo = demoFromSetup(v);
+  state.diet = v.diet || "";
+  state.extra = new Set(app?.prefs?.extra || []); state.science = !!app?.prefs?.science;
   document.body.classList.toggle("science-on", state.science);
-}
-function savePrefs() {
-  try { localStorage.setItem(PREFS_KEY, JSON.stringify({ extra: [...state.extra], science: state.science })); } catch {}
 }
 function refreshViews() {
   if (state.goal) showGoal(state.goal); else renderHome();
   if (state.food) openFood(state.food);
 }
+
+// ---------------------------------------------------------------- profile
 function renderProfile() {
-  const v = loadWeekSetup();
-  const chain = (weekChains || []).find(c => c.id === v?.chain)?.label || weekPlan?.chain?.label || v?.chain;
-  const activity = v ? (ACTIVITIES.find(([k]) => k === v.activity) || [, v.activity])[1] : "";
-  const rows = v ? [
-    ["Age", v.age], ["Sex", v.sex === "male" ? "Male" : v.stage ? `Female · ${v.stage}` : "Female"],
-    ["Height", `${v.height} cm`], ["Weight", `${v.weight} kg`], ["Activity", activity],
-    ["Goal", `${goalIcon(v.goal)} ${goalTitle(v.goal)}`], ["Shop", chain], ["Budget", `€${v.budget} a week`],
-    ["Diet", v.diet ? v.diet[0].toUpperCase() + v.diet.slice(1) : "Anything"],
-    ["Kitchen", v.microwave ? "Microwave and kettle" : "Full kitchen"]] : [];
+  if (onb.draft && onb.box === "profile") return renderOnboarding();
+  const v = app.setup, a = app.answers;
+  const activity = (ACTIVITIES.find(([k]) => k === v.activity) || [, v.activity])[1];
+  const dayCount = ["sleep_onset", "morning_hunger", "energy_dips", "study_time", "training_days"].filter(q => a[q]).length;
+  const notEaten = (a.dont_eat || []).length;
+  const chain = (weekChains || []).find(c => c.id === v.chain)?.label || v.chain;
+  const row = (step, label, value) => `<button class="prow linkrow" data-edit-step="${step}"><span>${label}</span><b>${esc(value)} <span class="chev">›</span></b></button>`;
   const sw = (attr, label, on) => `<label class="prow"><span>${label}</span><input type="checkbox" ${attr} ${on ? "checked" : ""}></label>`;
   $("tab-profile").innerHTML = `<h1>Profile</h1>
-    ${v ? `<div class="card plist">${rows.map(([k, val]) => `<div class="prow"><span>${k}</span><b>${esc(val)}</b></div>`).join("")}</div>
-      <button class="ghost wide" data-week-edit>Edit your answers</button>`
-      : `<div class="empty"><span class="big-ic" aria-hidden="true">👤</span><p class="sub">Answer three short questions to get your week.</p>
-         <button class="primary" data-week-edit>Set up</button></div>`}
+    <div class="card plist"><div class="prow"><span>Signed in as</span><b>${esc(account?.email || "")}</b></div>
+      <button class="prow linkrow" data-signout><span>Sign out</span><span class="chev">›</span></button></div>
+    <div class="group-title">You</div>
+    <div class="card plist">
+      ${row("you", "About you", `${v.age} · ${v.sex === "male" ? "male" : "female"} · ${v.height} cm · ${v.weight} kg · ${activity}`)}
+      ${row("goal", "Goal", `${goalIcon(v.goal)} ${goalTitle(v.goal)}`)}
+      ${row("energy", "Energy", Q.energy_goal[1][a.energy_goal || "maintain"])}
+      ${row("day", "Your day", dayCount ? `${dayCount} answered` : "Not answered")}
+      ${row("food", "Your food", [v.diet ? v.diet[0].toUpperCase() + v.diet.slice(1) : "Anything", notEaten ? `${notEaten} not eaten` : ""].filter(Boolean).join(" · "))}
+      ${row("plan", "Your plan", "Strategies and evidence")}
+      ${app.avoid.length ? `<button class="prow linkrow" data-clear-avoid><span>Meals marked “not for me”</span><b>${app.avoid.length} · show them again <span class="chev">›</span></b></button>` : ""}
+    </div>
+    <div class="group-title">Planning a week</div>
+    <div class="card plist"><button class="prow linkrow" data-week-shop><span>Shop and budget</span><b>${v.chain ? `${esc(chain)} · €${esc(v.budget)}` : "Not set"} <span class="chev">›</span></b></button></div>
     <div class="group-title">Food suggestions</div>
     <div class="card plist">${sw('data-extra="low_sodium"', "Low salt", state.extra.has("low_sodium"))}
       ${sw('data-extra="low_sugar"', "Low sugar", state.extra.has("low_sugar"))}
@@ -756,17 +1180,45 @@ function renderProfile() {
     <div class="group-title">Appearance</div>
     <div class="seg wseg">${[["auto", "Automatic"], ["light", "Light"], ["dark", "Dark"]].map(([k, l]) =>
       `<button data-theme-set="${k}" class="${theme === k ? "on" : ""}">${l}</button>`).join("")}</div>
+    <div class="group-title">Your data</div>
+    <div class="card plist"><button class="prow linkrow" data-export><span>Download my data</span><span class="chev">›</span></button>
+      <button class="prow linkrow danger" data-delete-account><span>Delete my account</span><span class="chev">›</span></button></div>
     <div class="group-title">About</div>
-    <div class="card plist"><button class="prow linkrow" data-about><span>Sources and licences</span><span class="chev">›</span></button>
-      <div class="prow"><span>Your answers</span><b>Stay on this device</b></div></div>`;
+    <div class="card plist"><button class="prow linkrow" data-about><span>Sources and licences</span><span class="chev">›</span></button></div>`;
   $("tab-profile").querySelectorAll("[data-extra]").forEach(cb => cb.onchange = () => {
     cb.checked ? state.extra.add(cb.dataset.extra) : state.extra.delete(cb.dataset.extra);
-    savePrefs(); refreshViews();
+    app.prefs.extra = [...state.extra]; save(); refreshViews();
   });
   $("tab-profile").querySelector("[data-science]").onchange = (e) => {
-    state.science = e.target.checked; document.body.classList.toggle("science-on", state.science); savePrefs();
+    state.science = e.target.checked; document.body.classList.toggle("science-on", state.science);
+    app.prefs.science = state.science; save();
   };
 }
+async function exportData() {
+  try {
+    const data = await api("/auth/export");
+    const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
+    const link = Object.assign(document.createElement("a"), { href: url, download: "feedforward-my-data.json" });
+    document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (e) { showInfo("Download", `<p>Could not download your data (${esc(e.message)}).</p>`); }
+}
+function confirmDelete() {
+  showInfo("Delete your account?", `<p>Your answers, diary and list are deleted from the server, now and for good. This cannot be undone.</p>
+    <div class="actions"><button class="ghost" data-close-sheet>Keep my account</button><button class="primary danger-btn" data-delete-confirm>Delete</button></div>`, true);
+}
+async function deleteAccount() {
+  try { await api("/auth/me", undefined, "DELETE"); closeSheet($("info")); clearTimeout(saveTimer); saveTimer = null; app = null; signOut(); }
+  catch (e) { $("info-body").innerHTML = `<div class="note">Could not delete the account (${esc(e.message)}).</div>`; }
+}
+
+// A small sheet for explanations and confirmations.
+function showInfo(title, html, noClose = false) {
+  $("info-title").textContent = title;
+  $("info-body").innerHTML = html + (noClose ? "" : `<button class="primary" type="button" data-close-sheet>Close</button>`);
+  if (!$("info").open) $("info").showModal();
+}
+
+// ---------------------------------------------------------------- sheets and tabs
 // Sheets slide away instead of vanishing (dialog.close() alone is instant):
 // the close button, a tap on the dimmed backdrop and Esc all go through here.
 function closeSheet(d) {
@@ -775,23 +1227,26 @@ function closeSheet(d) {
   d.classList.add("closing");
   setTimeout(() => { d.classList.remove("closing"); d.close(); }, 190);
 }
-["recipe-sheet", "about"].forEach(id => {
+["recipe-sheet", "about", "log-sheet", "info"].forEach(id => {
   $(id).addEventListener("click", (e) => { if (e.target === $(id)) closeSheet($(id)); });
   $(id).addEventListener("cancel", (e) => { e.preventDefault(); closeSheet($(id)); });
 });
 
-// ---------------------------------------------------------------- tabs
 document.querySelectorAll("nav button[data-tab]").forEach(b => b.onclick = () => showTab(b.dataset.tab));
-// Pages inside the three sections: Foods shows goals (find), a food (food) or the dictionary (dict).
-const NAV_OF = { week: "week", find: "foods", food: "foods", dict: "foods", list: "list", profile: "profile" };
+// Pages inside the four sections: Today holds the planned week; Foods shows goals
+// (find), a food (food) or the dictionary (dict).
+const NAV_OF = { today: "today", week: "today", find: "foods", food: "foods", dict: "foods", list: "list", profile: "profile" };
 function showTab(tab) {
   if (tab === "foods") tab = "find";
+  if (!app) return;
+  if (onb.draft && !app.onboarded) tab = "today";            // finish getting to know you first
   document.querySelectorAll("nav button[data-tab]").forEach(b => {
     const on = b.dataset.tab === NAV_OF[tab];
     b.classList.toggle("on", on);
     on ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current");
   });
   Object.keys(NAV_OF).forEach(t => $("tab-" + t).hidden = t !== tab);
+  if (tab === "today") renderToday();
   if (tab === "week") renderWeek();
   if (tab === "find" && !$("tab-find").innerHTML) renderHome();
   if (tab === "dict" && !$("tab-dict").innerHTML) renderDict("nutrients");
@@ -799,6 +1254,89 @@ function showTab(tab) {
   if (tab === "profile") renderProfile();
   window.scrollTo(0, 0);
 }
+
+document.addEventListener("click", (ev) => {
+  const t = ev.target;
+  if (!(t instanceof Element)) return;
+  const closeSheets = () => document.querySelectorAll("dialog[open]").forEach(d => d.close());
+  const on = (sel) => t.closest(sel);
+  let el;
+  if (on("[data-about]")) { $("about").showModal(); return; }
+  if (on("[data-rs-close]")) { closeSheet($("recipe-sheet")); return; }
+  if ((el = on("[data-close-sheet]"))) { closeSheet(el.closest("dialog")); return; }
+  if ((el = on("[data-theme-set]"))) { setTheme(el.dataset.themeSet); renderProfile(); return; }
+  if ((el = on("[data-ready-close]"))) { el.closest(".ready").remove(); return; }
+  if (on("[data-reload]")) { location.reload(); return; }
+  // getting to know you, profile
+  if (on("[data-onb-back]")) { onb.step = Math.max(0, onb.step - 1); renderOnboarding(); return; }
+  if (on("[data-onb-skip]")) { nextStep(); return; }
+  if (on("[data-onb-cancel]")) { onb.draft = null; renderProfile(); return; }
+  if ((el = on("[data-edit-step]"))) { startOnboarding(el.dataset.editStep, true); return; }
+  if (on("[data-signout]")) { signOut(); return; }
+  if (on("[data-export]")) { exportData(); return; }
+  if (on("[data-delete-account]")) { confirmDelete(); return; }
+  if (on("[data-delete-confirm]")) { deleteAccount(); return; }
+  if (on("[data-clear-avoid]")) { app.avoid = []; save(); renderProfile(); return; }
+  // today
+  if ((el = on("[data-day-shift]"))) { dayISO = shiftDay(dayISO, +el.dataset.dayShift); renderToday(); return; }
+  if (on("[data-reload-day]")) { dayView = null; renderToday(); return; }
+  if ((el = on("[data-intro-close]"))) { app.introSeen = true; save(); el.closest(".ready").remove(); return; }
+  if ((el = on("[data-log]"))) { openLog(el.dataset.log); return; }
+  if ((el = on("[data-ideas]"))) { openIdeas(el.dataset.ideas); return; }
+  if ((el = on("[data-unlog]"))) { unlog(el.dataset.unlog); return; }
+  if ((el = on("[data-lever]"))) { showLever(el.dataset.lever); return; }
+  if ((el = on("[data-pick]"))) { pickAmount(JSON.parse(el.dataset.pick)); return; }
+  if (on("[data-log-back]")) { openLog(logMeal); return; }
+  if (on("[data-ideas-more]")) { openIdeas(ideas.meal, true); return; }
+  if (on("[data-ideas-reset]")) { openIdeas(ideas.meal); return; }
+  if ((el = on("[data-idea-take]"))) { takeIdea(el.dataset.ideaTake); return; }
+  if ((el = on("[data-idea-nope]"))) { notForMe(el.dataset.ideaNope); return; }
+  if ((el = on("[data-idea-open]"))) {
+    const o = ideaById(el.dataset.ideaOpen);
+    closeSheet($("log-sheet"));
+    if (o) setTimeout(() => openRecipeSheet({ ...o, ctx: "idea" }), 200);
+    return;
+  }
+  if ((el = on("[data-open-entry]"))) {
+    const e = entriesOf(dayISO).find(x => x.uid === el.dataset.openEntry);
+    if (e) openRecipeSheet({ id: e.id, en: e.name, kcal: e.kcal, meal: e.meal, ctx: "diary" });
+    return;
+  }
+  if ((el = on("[data-ingredients-to-list]"))) { addIngredients(el.dataset.ingredientsToList); return; }
+  // the planned week
+  if (on("[data-week-shop]")) { closeSheets(); weekUI.shop = true; showTab("week"); return; }
+  if (on("[data-week-cancel]")) { weekUI.shop = false; renderWeek(); return; }
+  if (on("[data-week-retry]")) { weekPlan = null; renderWeek(); return; }
+  if (on("[data-week-clear]")) { stopWeek(); return; }
+  if (on("[data-week-to-list]")) { addWeekToList(); if ($("tab-list").hidden) renderWeekPlan(); else renderList(); return; }
+  if (on("[data-week-unlist]")) { app.weekList = null; save(); renderList(); updateCount(); return; }
+  if ((el = on("[data-eat]"))) { toggleEaten(el.dataset.eat); return; }
+  if ((el = on("[data-rs-tab]"))) { showSheetTab(el.dataset.rsTab); return; }
+  if ((el = on("[data-swap-to]"))) { chooseSwap(el.dataset.swapTo); return; }
+  if (on("[data-reset-edits]")) { app.edits = null; save(); weekPlan = null; renderWeek(); return; }
+  if ((el = on("[data-wday]"))) { weekUI.day = +el.dataset.wday; animateDay = true; renderWeekPlan(); return; }
+  if ((el = on("[data-week-budget]"))) { app.setup.budget = el.dataset.weekBudget; save(); renderWeek(); return; }
+  if ((el = on("[data-recipe]"))) { openWeekRecipe(el); return; }
+  // list
+  if ((el = on("[data-pantry]"))) { togglePantry(el.dataset.pantry); return; }
+  if (on("[data-replan-home]")) { replanWithPantry(); return; }
+  if ((el = on("[data-remove]"))) { app.list = app.list.filter(i => i.uid !== el.dataset.remove); save(); renderList(); updateCount(); return; }
+  if (on("[data-clear-done]")) { app.list = app.list.filter(i => !i.done); save(); renderList(); return; }
+  // foods and the dictionary
+  if ((el = on("[data-tab-go]"))) { closeSheets(); showTab(el.dataset.tabGo); return; }
+  if ((el = on("[data-dict-open]"))) { showTab("dict"); renderDict(el.dataset.dictOpen); return; }
+  if (on("[data-foods-home]")) { state.food = null; showTab("find"); renderHome(); return; }
+  if ((el = on("[data-nutrient]"))) { ev.stopPropagation(); closeSheets(); showTab("dict"); openNutrient(el.dataset.nutrient); return; }
+  if ((el = on("[data-add]"))) { const d = el.dataset; addToList(d.add, d.name, +d.portion, d.group); el.outerHTML = addBtn(d.add, d.name, +d.portion, d.group); return; }
+  if ((el = on("[data-goal]"))) { showTab("find"); showGoal(el.dataset.goal); return; }
+  if (on("[data-home]")) { renderHome(); return; }
+  if (on("[data-more]")) { state.shown += 5; renderResults(); return; }
+  if ((el = on("[data-food]"))) { closeSheets(); showTab("food"); openFood(el.dataset.food); return; }
+  if ((el = on("[data-toggle]"))) {
+    const card = el.closest(".card"); card.classList.toggle("open");
+    el.querySelector(".chev").textContent = card.classList.contains("open") ? "Less ▴" : "Why? ▾";
+  }
+});
 
 // ---------------------------------------------------------------- find foods
 function renderHome() {
@@ -903,48 +1441,6 @@ function foodCard(r) {
   </div>`;
 }
 
-document.addEventListener("click", (ev) => {
-  const t = ev.target;
-  const closeSheets = () => document.querySelectorAll("dialog[open]").forEach(d => d.close());
-  if (t.closest("[data-week-edit]")) { closeSheets(); weekUI.step = 0; showTab("week"); renderWeek(true); return; }
-  if (t.closest("[data-about]")) { $("about").showModal(); return; }
-  const eat = t.closest("[data-eat]"); if (eat) { toggleEaten(eat.dataset.eat); return; }
-  const th = t.closest("[data-theme-set]"); if (th) { setTheme(th.dataset.themeSet); renderProfile(); return; }
-  if (t.closest("[data-rs-close]")) { closeSheet($("recipe-sheet")); return; }
-  const cs = t.closest("[data-close-sheet]"); if (cs) { closeSheet(cs.closest("dialog")); return; }
-  const rc = t.closest("[data-ready-close]"); if (rc) { rc.closest(".ready").remove(); return; }
-  if (t.closest("[data-week-retry]")) { weekPlan = null; renderWeek(); return; }
-  if (t.closest("[data-reload]")) { location.reload(); return; }
-  const rst = t.closest("[data-rs-tab]"); if (rst) { showSheetTab(rst.dataset.rsTab); return; }
-  const swap = t.closest("[data-swap-to]"); if (swap) { chooseSwap(swap.dataset.swapTo); return; }
-  if (t.closest("[data-reset-edits]")) { clearEdits(); weekPlan = null; renderWeek(); return; }
-  const pantry = t.closest("[data-pantry]"); if (pantry) { togglePantry(pantry.dataset.pantry); return; }
-  if (t.closest("[data-replan-home]")) { replanWithPantry(); return; }
-  const go = t.closest("[data-tab-go]"); if (go) { showTab(go.dataset.tabGo); return; }
-  const dict = t.closest("[data-dict-open]"); if (dict) { showTab("dict"); renderDict(dict.dataset.dictOpen); return; }
-  if (t.closest("[data-foods-home]")) { state.food = null; showTab("find"); renderHome(); return; }
-  const wv = t.closest("[data-wview]");
-  if (wv) { weekUI.view = wv.dataset.wview; renderWeekPlan(loadWeekSetup()); return; }
-  const wd = t.closest("[data-day]");
-  if (wd) { weekUI.day = +wd.dataset.day; animateDay = true; renderWeekPlan(loadWeekSetup()); return; }
-  const wb = t.closest("[data-week-budget]");
-  if (wb) { const v = loadWeekSetup(); v.budget = wb.dataset.weekBudget; saveWeekSetup(v); renderWeek(); return; }
-  const meal = t.closest("[data-recipe]");
-  if (meal) { openRecipe(meal); return; }
-  const nut = t.closest("[data-nutrient]");
-  if (nut) { ev.stopPropagation(); closeSheets(); showTab("dict"); openNutrient(nut.dataset.nutrient); return; }
-  const add = t.closest("[data-add]");
-  if (add) { const d = add.dataset; addToList(d.add, d.name, +d.portion, d.group); add.outerHTML = addBtn(d.add, d.name, +d.portion, d.group); return; }
-  const goalBtn = t.closest("[data-goal]"); if (goalBtn) { showTab("find"); showGoal(goalBtn.dataset.goal); return; }
-  if (t.closest("[data-home]")) { renderHome(); return; }
-  if (t.closest("[data-more]")) { state.shown += 5; renderResults(); return; }
-  const food = t.closest("[data-food]"); if (food) { closeSheets(); showTab("food"); openFood(food.dataset.food); return; }
-  const tog = t.closest("[data-toggle]"); if (tog) {
-    const card = tog.closest(".card"); card.classList.toggle("open");
-    tog.querySelector(".chev").textContent = card.classList.contains("open") ? "Less ▴" : "Why? ▾";
-  }
-});
-
 // ---------------------------------------------------------------- a food
 async function openFood(id) {
   state.food = id;
@@ -995,28 +1491,296 @@ async function loadWhatIsIt(id) {
   catch { slot.innerHTML = ""; }
 }
 
-// ---------------------------------------------------------------- my week
-// Setup answers stay in this browser only (localStorage); the server gets them
-// only to compute the plan and does not store them.
-const WEEK_KEY = "feedforward.week.v1";
-const EDITS_KEY = "feedforward.edits.v1";    // a week the user changed (swapped meals), for one plan
+// ---------------------------------------------------------------- today: the diary
+// The day starts empty. Each meal has two ways in: log what you ate ("+ Add")
+// or ask for a few ideas that fit the day so far, the goal and the answers
+// ("Ideas"). The ring is energy EATEN against the day's target: a level to
+// reach, not a cap; nothing turns red. Strategies that apply to a meal show
+// as a chip on it, with their evidence one tap away.
+const SLOT_LABEL = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", snack: "Snacks" };
+const SLOTS = ["breakfast", "lunch", "dinner", "snack"];
+const LEVER_CHIP = { evening_carbs: ["🌙", "More carbs here"], no_evening_caffeine: ["☕", "No caffeine"],
+  protein_spread: ["💪", "Protein here"], protein_breakfast: ["🥚", "More protein"], big_breakfast: ["🍳", "A bigger breakfast"],
+  light_breakfast: ["🍃", "A lighter breakfast"], post_training_carbs: ["🏃", "Carbs after training"] };
+const REASON_TEXT = { evening_carbs: "Carb-rich, for your evenings", protein_spread: "Protein for this meal",
+  protein_breakfast: "Protein-rich breakfast", post_training_carbs: "Carbs after training" };
+let dayISO = isoDate(new Date());
+let dayView = null, dayToken = 0;
+
+function isoDate(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; }
+function shiftDay(iso, n) { const d = new Date(`${iso}T12:00:00`); d.setDate(d.getDate() + n); return isoDate(d); }
+function dayLabel(iso) {
+  const today = isoDate(new Date());
+  if (iso === today) return "Today";
+  if (iso === shiftDay(today, -1)) return "Yesterday";
+  if (iso === shiftDay(today, 1)) return "Tomorrow";
+  return new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { weekday: "long" });
+}
+const entriesOf = (iso) => app.diary[iso] || [];
+const uid = () => Math.random().toString(36).slice(2, 10);
+const toEntry = (e) => ({ kind: e.kind, id: e.id, meal: e.meal, servings: e.servings || 1, grams: e.grams || 0 });
+const dayReq = (entries) => ({ ...personReq(), ...prefsReq(), chain: app.setup.chain || "lidl", entries: entries.map(toEntry) });
+
+async function renderToday() {
+  if (!app.onboarded || (onb.draft && onb.box === "today")) return renderOnboarding();
+  const box = $("tab-today"), my = ++dayToken, entries = entriesOf(dayISO);
+  if (!dayView || dayView.iso !== dayISO) box.innerHTML = loading("Opening your day…", "week");
+  try {
+    const sum = await api("/diary/day", dayReq(entries));
+    if (my !== dayToken) return;
+    dayView = { iso: dayISO, sum };
+    drawToday(sum, entries);
+  } catch (e) {
+    if (my !== dayToken) return;
+    box.innerHTML = `<h1>${dayLabel(dayISO)}</h1><div class="note">Could not open this day (${esc(e.message)}).</div>
+      <div class="actions"><button class="primary" data-reload-day>Try again</button><button class="ghost" data-tab-go="profile">Check your answers</button></div>`;
+  }
+}
+
+function drawToday(sum, entries) {
+  const box = $("tab-today"), first = !app.introSeen;
+  const date = new Date(`${dayISO}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  box.innerHTML = `
+    <div class="day-title"><h1>${dayLabel(dayISO)}</h1>
+      <span class="daynav"><button class="icon-btn" data-day-shift="-1" aria-label="Previous day">‹</button>
+        <span class="muted">${date}</span><button class="icon-btn" data-day-shift="1" aria-label="Next day">›</button></span></div>
+    ${first ? `<div class="ready intro" role="status"><span class="ready-ic" aria-hidden="true">${SPROUT_SVG}</span>
+      <span class="ready-text"><b>Your day starts empty</b><small>Log what you eat with <b>+ Add</b>, or tap <b>Ideas</b> on any meal for suggestions that fit your goal and your answers.</small></span>
+      <button class="icon-btn" data-intro-close aria-label="Dismiss">✕</button></div>` : ""}
+    ${dayEnergyCard(sum, entries)}
+    ${entries.length ? dayGoalCard(sum) : ""}
+    ${SLOTS.map(m => slotCard(m, sum, entries)).join("")}
+    <button class="card plan-week" data-tab-go="week">
+      <span class="tile-ic" aria-hidden="true">🗓️</span>
+      <span class="what"><b>${app.weekOn ? "Your planned week" : "Plan a whole week?"}</b>
+        <small>${app.weekOn ? (weekPlan?.feasible ? `${euro(weekPlan.total_cost)} at ${esc(weekPlan.chain.label)} · open it` : "Open it")
+          : "Optional: seven days of meals within a budget, with the shopping list."}</small></span>
+      <span class="chev" aria-hidden="true">›</span></button>`;
+}
+
+function dayEnergyCard(sum, entries) {
+  const tg = sum.targets, t = sum.totals;
+  const goalNote = { deficit: "A light deficit", surplus: "A light surplus" }[sum.energy.goal];
+  return `<div class="card dash energy-card">
+    <div class="ring-box">${ring(t.kcal / tg.kcal, 132, 12, "energy", `${fmt(t.kcal)} kcal eaten of ${fmt(tg.kcal)} kcal`)}
+      <div class="ring-text"><b>${fmt(t.kcal)}</b><small>of ${fmt(tg.kcal)} kcal</small></div></div>
+    <div class="macros">${MACRO_ROWS.map(([k, l]) => `<div class="macro ${k}"><div class="mline"><span>${l}</span>
+        <span class="muted">${fmt(t[k])} / ${fmt(tg[k])} g</span></div>
+      <div class="bar"><i style="width:${Math.min(100, 100 * t[k] / tg[k])}%"></i></div></div>`).join("")}
+      <div class="eaten-line">${entries.length ? `${entries.length} logged` : "Nothing logged yet"}${goalNote ? ` · ${goalNote}` : ""}</div></div>
+  </div>`;
+}
+
+function dayGoalCard(sum) {
+  const top = sum.goal_nutrients.slice(0, 3);
+  if (!sum.goal || !top.length) return "";
+  // other goals the answers turned on can share the card: then it is about all of them
+  const mixed = top.some(g => g.goal && g.goal !== sum.goal);
+  return `<div class="card dash goal-card">
+    <div class="gc-head"><span>${mixed ? "🎯 Your goals today" : `${goalIcon(sum.goal)} ${esc(goalTitle(sum.goal))} today`}</span><span class="muted small">tap for the evidence</span></div>
+    <div class="minis">${top.map(g => `<button class="mini" data-nutrient="${esc(g.nutrient)}">
+      <span class="mini-ring">${ring(g.percent / 100, 64, 7, "goal", `${nName(g.nutrient)} ${Math.round(g.percent)}% of today's need`)}<b>${g.percent >= 200 ? `${Math.round(g.percent / 100)}×` : `${Math.round(g.percent)}%`}</b></span>
+      <span class="mini-name">${esc(nName(g.nutrient))}${g.eu_claim ? ` <span class="eu" title="EU authorised health claim">EU</span>` : ""}</span>
+      ${g.from ? `<small>${SLOT_LABEL[g.from.meal].toLowerCase()}</small>` : ""}</button>`).join("")}</div>
+  </div>`;
+}
+
+function leverChips(levers) {
+  return levers.length ? `<div class="levers">${levers.map(l => {
+    const [ic, txt] = LEVER_CHIP[l.id] || ["•", l.text];
+    return `<button class="chip lever" data-lever="${esc(l.id)}" title="${esc(l.text)}">${ic} ${esc(txt)}${l.grade ? ` <span class="grade g${l.grade}">${l.grade}</span>` : ""}</button>`;
+  }).join("")}</div>` : "";
+}
+
+function slotCard(m, sum, entries) {
+  const mine = entries.filter(e => e.meal === m), kcal = sum.meals[m]?.kcal || 0;
+  const levers = sum.meal_levers[m] || [];
+  const carbsLever = levers.find(l => l.id === "evening_carbs" || l.id === "post_training_carbs");
+  const share = carbsLever && mine.length && entries.filter(e => e.meal !== m && e.meal !== "snack").length
+    ? `<p class="src share">${sum.meal_shares[m].carbs}% of today's carbohydrates so far (your plan: 40% or more)</p>` : "";
+  return `<div class="card meal-card slot">
+    <div class="mc-head"><span>${SLOT_LABEL[m]}</span><span class="muted">${kcal ? `${fmt(kcal)} kcal` : ""}</span></div>
+    ${leverChips(levers)}
+    ${mine.map(e => `<div class="mc-row entry">
+      <button class="meal" ${e.kind === "recipe" ? `data-open-entry="${esc(e.uid)}"` : `data-food="${esc(e.id)}"`}>
+        <span class="tile-ic small" aria-hidden="true">${e.kind === "recipe" ? recipeIcon(e.name) : iconFor(e.name, e.group || "")}</span>
+        <span class="what"><b>${esc(e.kind === "food" ? friendlyName(e.name) : e.name)}</b>
+          <small>${e.kind === "food" ? `${round(e.grams)} g` : e.servings === 1 ? "1 portion" : `${e.servings} portions`} · ${fmt(e.kcal || 0)} kcal</small></span></button>
+      <button class="x" data-unlog="${esc(e.uid)}" aria-label="Remove ${esc(e.name)}">×</button></div>`).join("")}
+    ${share}
+    <div class="slot-actions"><button class="add" data-log="${m}">+ Add</button><button class="add soft" data-ideas="${m}">✨ Ideas</button></div>
+  </div>`;
+}
+
+function logEntry(meal, item) {
+  (app.diary[dayISO] ||= []).push({ uid: uid(), meal, ...item });
+  app.introSeen = true; save();
+}
+function unlog(id) {
+  app.diary[dayISO] = entriesOf(dayISO).filter(e => e.uid !== id);
+  if (!app.diary[dayISO].length) delete app.diary[dayISO];
+  save(); renderToday();
+}
+function showLever(id) {
+  const all = Object.values(dayView?.sum.meal_levers || {}).flat();
+  const l = all.find(x => x.id === id);
+  if (!l) return;
+  showInfo(l.text, `${l.grade ? `<p><span class="grade g${l.grade}">${l.grade}</span> <span class="muted">Evidence grade: ${{ A: "strong", B: "good", C: "limited" }[l.grade]}</span></p>` : ""}
+    <p>${esc(l.why || "")}</p>
+    ${(l.pmids || []).length ? `<p class="src">${l.pmids.map(p => `<a href="https://pubmed.ncbi.nlm.nih.gov/${esc(p)}/" target="_blank" rel="noopener">PubMed ${esc(p)}</a>`).join(" · ")}</p>` : ""}
+    <p class="src">From your answers. You can switch it off in Profile › Your plan.</p>`);
+}
+
+// ---------------------------------------------------------------- log sheet: add what you ate
+let logMeal = null;
+function openLog(meal) {
+  logMeal = meal;
+  $("log-title").textContent = `Add to ${SLOT_LABEL[meal].toLowerCase()}`;
+  $("log-body").innerHTML = `<input type="search" id="log-q" placeholder="Search a food or a recipe" autocomplete="off" aria-label="Search a food or a recipe">
+    <div id="log-results">${recentList()}</div>`;
+  $("log-sheet").showModal();
+  let timer;
+  $("log-q").addEventListener("input", (e) => {
+    clearTimeout(timer);
+    const q = e.target.value.trim();
+    if (q.length < 2) { $("log-results").innerHTML = recentList(); return; }
+    timer = setTimeout(async () => {
+      try {
+        const r = await api("/diary/search?" + qs({ q, scale: dayView?.sum.portion_scale || 1 }));
+        if ($("log-q")?.value.trim() !== q) return;
+        $("log-results").innerHTML = (r.recipes.length || r.foods.length)
+          ? `${r.recipes.length ? `<div class="group-title">Recipes</div>${r.recipes.map(x => pickRow(x)).join("")}` : ""}
+             ${r.foods.length ? `<div class="group-title">Foods</div>${r.foods.map(x => pickRow(x)).join("")}` : ""}`
+          : `<p class="muted">Nothing found. Try a simpler word, like “yogurt” or “rice”.</p>`;
+      } catch (x) { $("log-results").innerHTML = `<div class="note">Search failed (${esc(x.message)}).</div>`; }
+    }, 220);
+  });
+  setTimeout(() => $("log-q")?.focus(), 50);
+}
+// What was logged before, newest first: most meals repeat.
+function recentList() {
+  const seen = new Set(), out = [];
+  for (const iso of Object.keys(app.diary).sort().reverse()) {
+    for (const e of [...app.diary[iso]].reverse()) {
+      const k = `${e.kind}|${e.id}`;
+      if (seen.has(k)) continue;
+      seen.add(k); out.push(e);
+      if (out.length >= 8) break;
+    }
+    if (out.length >= 8) break;
+  }
+  if (!out.length) return `<p class="muted center log-hint">Type to search foods and recipes.</p>`;
+  return `<div class="group-title">Recent</div>${out.map(e => pickRow(e.kind === "recipe"
+    ? { kind: "recipe", id: e.id, name: e.name, kcal: Math.round((e.kcal || 0) / (e.servings || 1)) }
+    : { kind: "food", id: e.id, name: e.name, group: e.group, portion_g: e.grams, kcal_100g: e.grams ? Math.round(100 * (e.kcal || 0) / e.grams) : 0 })).join("")}`;
+}
+function pickRow(x) {
+  const data = esc(JSON.stringify(x));
+  const sub = x.kind === "recipe" ? `${fmt(x.kcal)} kcal a portion${x.time_min ? ` · ${x.time_min} min` : ""}`
+    : `${round(x.portion_g)} g · ${fmt(x.kcal_100g * x.portion_g / 100)} kcal`;
+  const name = x.kind === "food" ? friendlyName(x.name) : x.name;
+  return `<button class="pick" data-pick="${data}"><span class="tile-ic small" aria-hidden="true">${x.kind === "recipe" ? recipeIcon(x.name) : iconFor(x.name + " " + (x.category || ""), x.group || "")}</span>
+    <span class="what"><b>${esc(name)}</b><small>${sub}</small></span><span class="add">Add</span></button>`;
+}
+// One tap on a result asks only the amount, with its usual portion already in.
+function pickAmount(x) {
+  const recipe = x.kind === "recipe", name = recipe ? x.name : friendlyName(x.name);
+  const kcalFor = (v) => recipe ? x.kcal * v : x.kcal_100g * v / 100;
+  $("log-body").innerHTML = `<button class="back" data-log-back>← Search</button>
+    <div class="amount"><span class="tile-ic" aria-hidden="true">${recipe ? recipeIcon(x.name) : iconFor(x.name, x.group || "")}</span><b>${esc(name)}</b></div>
+    <form id="amount-form" class="setup">
+      ${recipe ? `<div class="field"><span class="flabel">Portions</span><div class="choice">${[0.5, 1, 1.5, 2].map(v =>
+          `<label><input type="radio" name="amt" value="${v}" ${v === 1 ? "checked" : ""}><span>${v === 0.5 ? "½" : v}</span></label>`).join("")}</div></div>`
+        : `<div class="field"><span class="flabel">Grams</span><div class="money"><input type="text" name="amt" inputmode="decimal" value="${round(x.portion_g)}" aria-label="Grams"><span class="muted">g</span></div>
+          <div class="choice">${[0.5, 1, 2].map(k => `<button type="button" class="pill-btn" data-grams="${Math.round(x.portion_g * k)}">${k === 1 ? "1 portion" : k === 0.5 ? "½ portion" : "2 portions"} · ${Math.round(x.portion_g * k)} g</button>`).join("")}</div></div>`}
+      <p class="sub" id="amt-kcal">${fmt(kcalFor(recipe ? 1 : x.portion_g))} kcal</p>
+      <button class="primary" type="submit">Add to ${SLOT_LABEL[logMeal].toLowerCase()}</button>
+    </form>`;
+  const form = $("amount-form"), value = () => recipe ? +new FormData(form).get("amt") : parseFloat(String(form.amt.value).replace(",", ".")) || 0;
+  const update = () => { $("amt-kcal").textContent = `${fmt(kcalFor(value()))} kcal`; };
+  form.querySelectorAll("input").forEach(i => i.oninput = i.onchange = update);
+  form.querySelectorAll("[data-grams]").forEach(b => b.onclick = () => { form.amt.value = b.dataset.grams; update(); });
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const v = value();
+    if (!(v > 0) || (!recipe && v > 3000)) { form.amt?.setCustomValidity?.("Between 1 and 3000 g."); form.amt?.reportValidity?.(); return; }
+    logEntry(logMeal, recipe ? { kind: "recipe", id: x.id, name: x.name, servings: v, kcal: Math.round(kcalFor(v)) }
+      : { kind: "food", id: x.id, name: x.name, group: x.group || "", grams: v, kcal: Math.round(kcalFor(v)) });
+    closeSheet($("log-sheet")); renderToday();
+  };
+}
+
+// ---------------------------------------------------------------- ideas for one meal
+let ideas = { meal: null, shown: [], last: null };
+async function openIdeas(meal, more = false) {
+  if (!more) ideas = { meal, shown: [], last: null };
+  $("log-title").textContent = `Ideas for ${SLOT_LABEL[meal].toLowerCase()}`;
+  if (!$("log-sheet").open) $("log-sheet").showModal();
+  $("log-body").innerHTML = loading("Finding ideas that fit your day…");
+  try {
+    const r = await api("/diary/suggest", { ...dayReq(entriesOf(dayISO)), meal, k: 3, exclude: ideas.shown });
+    ideas.last = r; ideas.shown.push(...r.options.map(o => o.id));
+    drawIdeas(r);
+  } catch (e) { $("log-body").innerHTML = `<div class="note">Could not find ideas (${esc(e.message)}).</div>`; }
+}
+function reasonChip(rz) {
+  if (rz.kind === "nutrient") return `<span class="chip good" title="of your daily need">${esc(nName(rz.nutrient))} ${rz.percent}%${rz.eu_claim ? ` <span class="eu">EU</span>` : ""}</span>`;
+  return `<span class="chip lever-on">${esc(REASON_TEXT[rz.id] || rz.text)}${rz.grade ? ` <span class="grade g${rz.grade}">${rz.grade}</span>` : ""}</span>`;
+}
+function drawIdeas(r) {
+  const meal = r.meal;
+  if (!r.options.length) {
+    $("log-body").innerHTML = `<p class="sub">${ideas.shown.length ? "No more ideas for this meal with your answers." : "No recipe fits this meal with your answers yet."}</p>
+      <p class="src">Your food answers (diet, foods you don't eat, cooking time) set what can be suggested. You can change them in Profile.</p>
+      ${ideas.shown.length ? `<button class="ghost wide" data-ideas-reset>Start again</button>` : ""}`;
+    return;
+  }
+  $("log-body").innerHTML = `<p class="sub">About ${fmt(r.energy_for_meal)} kcal fits this meal today.</p>
+    ${leverChips(r.levers)}
+    ${r.options.map(o => `<div class="idea">
+      <button class="idea-main" data-idea-open="${esc(o.id)}"><span class="tile-ic" aria-hidden="true">${recipeIcon(o.en)}</span>
+        <span class="what"><b>${esc(o.en)}</b><small>${fmt(o.kcal)} kcal${o.time_min ? ` · ${o.time_min} min` : ""} · about ${euro(o.cost)}${o.batch ? " · keeps 3 days" : ""}</small>
+        <span class="reasons">${o.reasons.slice(0, 3).map(reasonChip).join("")}</span></span></button>
+      <div class="idea-actions"><button class="add" data-idea-take="${esc(o.id)}">I'll have this</button>
+        <button class="link" data-idea-open="${esc(o.id)}">Recipe</button>
+        <button class="link quiet small" data-idea-nope="${esc(o.id)}">Not for me</button></div>
+    </div>`).join("")}
+    ${r.more ? `<button class="showmore" data-ideas-more>Show other ideas</button>` : ""}
+    <p class="src">Ranked by what each adds to today's needs (your goal's nutrients first), the energy that fits this meal, and your plan for it.</p>`;
+}
+function ideaById(id) { return ideas.last?.options.find(o => o.id === id); }
+function takeIdea(id) {
+  const o = ideaById(id) || (sheet?.id === id ? sheet : null);
+  if (!o) return;
+  logEntry(ideas.meal, { kind: "recipe", id: o.id, name: o.en, servings: 1, kcal: Math.round(o.kcal) });
+  closeSheet($("log-sheet")); closeSheet($("recipe-sheet")); renderToday();
+}
+function notForMe(id) {
+  if (!app.avoid.includes(id)) app.avoid.push(id);
+  save();
+  // the other ideas on screen stay; one new idea takes this one's place
+  const onScreen = (ideas.last?.options || []).map(o => o.id);
+  ideas.shown = ideas.shown.filter(x => !onScreen.includes(x));
+  openIdeas(ideas.meal, true);
+}
+
+// ---------------------------------------------------------------- a planned week (optional)
+// Only when the person asks for it (Today › "Plan a whole week?"): seven days
+// within a budget at their shop, with the same answers as everything else.
+// Ticking a meal as eaten logs it in the diary for that day. The shopping it
+// needs goes to the List only when they add it.
 const ACTIVITIES = [["sedentary", "Sitting"], ["light", "Light"], ["moderate", "Moderate"], ["active", "Active"], ["very_active", "Very active"]];
 const ACTIVITY_HINT = { sedentary: "Mostly sitting", light: "Walking, some stairs", moderate: "Sport 2–3 times a week",
   active: "Sport 4–5 times a week", very_active: "Training most days" };
-const STEP_TITLES = ["About you", "Your goal", "Shop and budget"];
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const SHORT_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MEAL_LABEL = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
 const STORAGE_TITLES = { fresh: "Fruit & vegetables", bakery: "Bakery", fridge: "Fridge", freezer: "Freezer", pantry: "Cupboard" };
-function loadWeekSetup() { try { return JSON.parse(localStorage.getItem(WEEK_KEY)); } catch { return null; } }
-function saveWeekSetup(v) { try { localStorage.setItem(WEEK_KEY, JSON.stringify(v)); } catch {} }
-function loadEdits(key) { try { const e = JSON.parse(localStorage.getItem(EDITS_KEY)); return e && e.key === key ? e.days : null; } catch { return null; } }
-function saveEdits(key, days) { try { localStorage.setItem(EDITS_KEY, JSON.stringify({ key, days })); } catch {} }
-function clearEdits() { try { localStorage.removeItem(EDITS_KEY); } catch {} }
 let weekChains = null, weekPlan = null, weekKey = null, weekToken = 0;
 const todayIdx = () => (new Date().getDay() + 6) % 7;     // plan day 1 = Monday
-const weekUI = { view: "today", day: todayIdx(), step: 0 };
+const weekUI = { day: todayIdx(), shop: false };
 const recipeCache = new Map();
+const planDayISO = (i) => shiftDay(isoDate(new Date()), i - todayIdx());
 
 // Dishes first, then the main ingredient: a picture says "pasta" faster than a name.
 const RECIPE_ICONS = [[/pasta|spaghetti|bolognese/i, "🍝"], [/soup|\bdal\b/i, "🍲"], [/curry/i, "🍛"], [/chili/i, "🌶️"],
@@ -1028,36 +1792,34 @@ const RECIPE_ICONS = [[/pasta|spaghetti|bolognese/i, "🍝"], [/soup|\bdal\b/i, 
 const recipeIcon = (name) => (RECIPE_ICONS.find(([re]) => re.test(name)) || [, "🍽️"])[1];
 const euro = (x) => `€${x.toFixed(2)}`;
 
-function weekRequest(v) {
-  return { age: +v.age, sex: v.sex, weight_kg: +v.weight, height_cm: +v.height, activity: v.activity,
-    pregnant: v.sex === "female" && v.stage === "pregnant", breastfeeding: v.sex === "female" && v.stage === "breastfeeding",
-    goal: v.goal, budget: +v.budget, chain: v.chain, diet: v.diet || null, equipment: v.microwave ? ["microwave"] : null,
-    pantry: v.pantry && v.pantry.length ? v.pantry : null };
+function weekRequest() {
+  const v = app.setup;
+  return { ...personReq(), ...prefsReq(), budget: +v.budget, chain: v.chain, pantry: app.pantry.length ? app.pantry : null };
 }
 // The week as the server takes it back: recipe ids per meal and snacks, day by day.
 const composition = (p) => p.days.map(d => ({
   meals: Object.fromEntries(Object.entries(d.meals).map(([m, r]) => [m, r.id])), snacks: d.snacks.map(s => s.id) }));
 
-async function renderWeek(forceSetup = false) {
-  const my = ++weekToken;
-  const setup = loadWeekSetup();
-  if (!setup || forceSetup) return renderWeekSetup(setup || {});
-  const req = weekRequest(setup), key = JSON.stringify(req);
-  if (weekPlan && weekKey === key) return renderWeekPlan(setup);      // no re-solve on tab switches
+async function renderWeek() {
+  const my = ++weekToken, v = app.setup;
+  if (!v.chain || !v.budget || weekUI.shop || !app.weekOn) return renderWeekShop();
+  const req = weekRequest(), key = JSON.stringify(req);
+  if (weekPlan && weekKey === key) return renderWeekPlan();      // no re-solve on tab switches
   const box = $("tab-week");
-  box.innerHTML = loading("Planning your week…", "week");
+  box.innerHTML = `<button class="back" data-tab-go="today">← Today</button>${loading("Planning your week…", "week")}`;
   try {
     let plan = null;
-    const edits = loadEdits(key);                                       // meals the user swapped
-    if (edits) { try { plan = await api("/plan/evaluate", { ...req, days: edits }); } catch { clearEdits(); } }
+    const edits = app.edits && app.edits.key === key ? app.edits.days : null;   // meals the person swapped
+    if (edits) { try { plan = await api("/plan/evaluate", { ...req, days: edits }); } catch { app.edits = null; save(); } }
     if (!plan) plan = await api("/plan/week", req);
-    if (my !== weekToken) return;                                      // user moved on
+    if (my !== weekToken) return;
     weekPlan = plan; weekPlan._req = req; weekKey = key;
-    renderWeekPlan(setup); updateCount();
+    justPlanned = animateDay = true;
+    renderWeekPlan(); updateCount();
   } catch (e) {
-    if (my === weekToken) box.innerHTML = `<h1>Your week</h1>
-      <div class="note">We couldn't plan your week just now (${esc(e.message)}). Your answers are saved on this device.</div>
-      <div class="actions"><button class="primary" data-week-retry>Try again</button><button class="ghost" data-week-edit>Change your answers</button></div>`;
+    if (my === weekToken) box.innerHTML = `<button class="back" data-tab-go="today">← Today</button><h1>Your week</h1>
+      <div class="note">We couldn't plan your week just now (${esc(e.message)}).</div>
+      <div class="actions"><button class="primary" data-week-retry>Try again</button><button class="ghost" data-week-shop>Change shop or budget</button></div>`;
   }
 }
 
@@ -1084,122 +1846,80 @@ function checkNumber(input) {
   return ok;
 }
 
-// Three short steps instead of one long form: you, your goal, shop and budget.
-async function renderWeekSetup(v) {
-  const my = ++weekToken;
+// The only two things a week needs beyond the profile: where you shop and how much a week.
+async function renderWeekShop() {
+  const my = ++weekToken, v = app.setup;
   if (!weekChains) weekChains = (await api("/plan/options")).chains;
   if (my !== weekToken) return;
-  const step = weekUI.step || 0;
   const tierSign = (c) => c.price_index < 0.8 ? "€" : c.price_index < 1.15 ? "€€" : "€€€";
-  const chip = (name, value, label, checked) => `<label><input type="radio" name="${name}" value="${value}" ${checked ? "checked" : ""}><span>${label}</span></label>`;
-  const act = v.activity || "light", female = (v.sex || "female") === "female";
-  $("tab-week").innerHTML = `
-    <h1>${STEP_TITLES[step]}</h1>
-    ${step === 0 && !loadWeekSetup() ? `<p class="lead">A week of meals that reaches your daily needs with food first, within your budget.</p>` : ""}
-    <div class="steps" role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="${step + 1}" aria-label="Step ${step + 1} of 3">${[0, 1, 2].map(i => `<i class="${i <= step ? "on" : ""}"></i>`).join("")}</div>
-    <form class="setup" id="week-form" novalidate>
-      <div class="step" data-step="0" ${step === 0 ? "" : "hidden"}><fieldset>
-        <div class="grid2">
-          <label class="f">Age<input type="text" name="age" inputmode="numeric" autocomplete="off" value="${esc(v.age || "")}" required></label>
-          <label class="f">Height (cm)<input type="text" name="height" inputmode="decimal" autocomplete="off" value="${esc(v.height || "")}" required></label>
-          <label class="f">Weight (kg)<input type="text" name="weight" inputmode="decimal" autocomplete="off" value="${esc(v.weight || "")}" required></label>
-        </div>
-        <div class="field"><span class="flabel">Sex</span><div class="choice">${chip("sex", "female", "Female", female)}${chip("sex", "male", "Male", !female)}</div></div>
-        <div class="field" id="stage-f" ${female ? "" : "hidden"}><span class="flabel">Pregnant or breastfeeding?</span><div class="choice">
-          ${chip("stage", "", "No", !v.stage)}${chip("stage", "pregnant", "Pregnant", v.stage === "pregnant")}${chip("stage", "breastfeeding", "Breastfeeding", v.stage === "breastfeeding")}</div></div>
-        <div class="field"><span class="flabel">Activity</span><div class="choice">${ACTIVITIES.map(([k, l]) => chip("activity", k, l, act === k)).join("")}</div>
-          <p class="hint" id="act-hint">${ACTIVITY_HINT[act]}</p></div>
-      </fieldset></div>
-      <div class="step" data-step="1" ${step === 1 ? "" : "hidden"}>
-        <div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) => `<label class="tile pick"><input type="radio" name="goal" value="${id}" ${(v.goal || "cognitive_function") === id ? "checked" : ""}>
-          <span class="ic">${ic}</span><b>${title}</b><small>${sub}</small></label>`).join("")}</div>
-      </div>
-      <div class="step" data-step="2" ${step === 2 ? "" : "hidden"}><fieldset>
-        <label class="f">Shop<select name="chain">${weekChains.map(c => `<option value="${c.id}" ${(v.chain || "lidl") === c.id ? "selected" : ""}>${esc(c.label)} · ${tierSign(c)}</option>`).join("")}</select></label>
-        <div class="field"><span class="flabel">Budget for the week</span>
-          <div class="money"><span aria-hidden="true">€</span><input type="text" name="budget" inputmode="decimal" autocomplete="off" aria-label="Budget in euros" value="${esc(v.budget || 50)}" required></div>
-          <div class="choice">${[30, 40, 50, 60, 80].map(b => `<button type="button" class="pill-btn" data-budget-pick="${b}">€${b}</button>`).join("")}</div></div>
-        <div class="field"><span class="flabel">Diet</span><div class="choice">${chip("diet", "", "Anything", !v.diet)}${chip("diet", "vegetarian", "Vegetarian", v.diet === "vegetarian")}${chip("diet", "vegan", "Vegan", v.diet === "vegan")}</div></div>
-        <label class="opt">Only a microwave and a kettle<input type="checkbox" name="microwave" ${v.microwave ? "checked" : ""}></label>
-      </fieldset></div>
-      <div class="actions wizard">
-        ${step > 0 ? `<button type="button" class="ghost" id="ws-back">Back</button>` : ""}
-        <button type="${step === 2 ? "submit" : "button"}" class="primary" id="ws-next">${step === 2 ? "Plan my week" : "Next"}</button>
-      </div>
-      <p class="src center">Your answers stay on this device.</p>
-    </form>`;
-  const form = $("week-form");
-  // keep what was typed when moving between steps
-  const collect = () => {
-    const f = new FormData(form), get = (k, d) => f.get(k) ?? d;
-    return { ...v, age: get("age", v.age), height: get("height", v.height), weight: get("weight", v.weight),
-      sex: get("sex", v.sex || "female"), stage: get("sex", v.sex) === "female" ? get("stage", v.stage || "") : "",
-      activity: get("activity", act), goal: get("goal", v.goal || "cognitive_function"), chain: get("chain", v.chain || "lidl"),
-      budget: get("budget", v.budget || 50), diet: get("diet", v.diet || ""),
-      microwave: step === 2 ? !!f.get("microwave") : !!v.microwave };
-  };
-  form.querySelectorAll("[name=sex]").forEach(r => r.onchange = () => { $("stage-f").hidden = r.value === "male"; });
-  form.querySelectorAll("[name=activity]").forEach(r => r.onchange = () => { $("act-hint").textContent = ACTIVITY_HINT[r.value]; });
+  $("tab-week").innerHTML = `<button class="back" data-tab-go="today">← Today</button>
+    <h1>Plan a week</h1>
+    <p class="lead">Seven days of meals for your needs, your goal and your answers, within a budget at your shop, with the shopping list. You can swap any meal.</p>
+    <form class="setup" id="shop-form" novalidate><fieldset>
+      <label class="f">Shop<select name="chain">${weekChains.map(c => `<option value="${c.id}" ${(v.chain || "lidl") === c.id ? "selected" : ""}>${esc(c.label)} · ${tierSign(c)}</option>`).join("")}</select></label>
+      <div class="field"><span class="flabel">Budget for the week</span>
+        <div class="money"><span aria-hidden="true">€</span><input type="text" name="budget" inputmode="decimal" autocomplete="off" aria-label="Budget in euros" value="${esc(v.budget || 50)}" required></div>
+        <div class="choice">${[30, 40, 50, 60, 80].map(b => `<button type="button" class="pill-btn" data-budget-pick="${b}">€${b}</button>`).join("")}</div></div>
+    </fieldset>
+    <div class="actions wizard">${app.weekOn && weekPlan ? `<button type="button" class="ghost" data-week-cancel>Cancel</button>` : ""}<button type="submit" class="primary">Plan my week</button></div></form>`;
+  const form = $("shop-form");
   form.querySelectorAll("[data-budget-pick]").forEach(b => b.onclick = () => { form.budget.value = b.dataset.budgetPick; });
-  form.querySelectorAll("input[type=text]").forEach(i => i.oninput = () => i.setCustomValidity(""));
-  const valid = () => [...form.querySelector(`[data-step="${step}"]`).querySelectorAll("input, select")]
-    .every(i => { if (NUM_LIMITS[i.name]) checkNumber(i); return i.reportValidity(); });
-  if ($("ws-back")) $("ws-back").onclick = () => { weekUI.step = step - 1; renderWeekSetup(collect()); };
-  if (step < 2) $("ws-next").onclick = () => { if (valid()) { weekUI.step = step + 1; renderWeekSetup(collect()); } };
+  form.budget.oninput = () => form.budget.setCustomValidity("");
   form.onsubmit = (e) => {
     e.preventDefault();
-    if (!valid()) return;
-    saveWeekSetup(collect());
-    weekUI.step = 0; weekUI.view = "today"; weekUI.day = todayIdx();
-    justPlanned = animateDay = true;
-    syncProfile(); refreshViews();
+    if (!checkNumber(form.budget) || !form.budget.reportValidity()) return;
+    app.setup.chain = form.chain.value; app.setup.budget = form.budget.value; app.weekOn = true; save();
+    weekUI.shop = false; weekUI.day = todayIdx();
     renderWeek();
   };
 }
 
-// The day as a dashboard: energy ring and macros, the goal's nutrients today
-// (with the meal each comes from), what food covers this week, meals in cards,
-// the week's budget. The ring shows energy PLANNED against the need: a level to
-// reach, not a cap. No "calories left", no red when above it: the plan never restricts.
-const EATEN_KEY = "feedforward.eaten.v1";     // meals ticked as eaten, for one plan
+// The day of a planned week: energy ring and macros, the goal's nutrients, what food
+// covers this week, meals in cards, the week's budget. The ring is energy PLANNED
+// against the need: a level to reach, not a cap.
 let animateDay = true;                        // cards rise in for a new plan or another day, not on every tick
 let justPlanned = false;                      // a new week gets one line of its own when it appears
 const LEAF_SVG = `<svg class="leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-8.3 5.7-14 14-14 0 8.3-5.7 14-14 14z"/><path d="M5 19l8-8"/></svg>`;
 const SPROUT_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20v-8"/><path d="M12 12c0-4 3-6.5 7-6.5 0 4-3 6.5-7 6.5z"/><path d="M12 14.5c0-3-2.3-5-5.5-5 0 3 2.3 5 5.5 5z"/></svg>`;
-function loadEaten() { try { const e = JSON.parse(localStorage.getItem(EATEN_KEY)); return new Set(e && e.key === weekKey ? e.ids : []); } catch { return new Set(); } }
+// A planned meal counts as eaten when it is in the diary of its day.
+function plannedEntry(i, m) {
+  const r = weekPlan.days[i].meals[m];
+  return entriesOf(planDayISO(i)).find(e => e.src === "week" && e.meal === m && e.id === r.id);
+}
 function toggleEaten(slot) {
-  const s = loadEaten(), on = !s.has(slot);
-  on ? s.add(slot) : s.delete(slot);
-  try { localStorage.setItem(EATEN_KEY, JSON.stringify({ key: weekKey, ids: [...s] })); } catch {}
-  // updated in place, not re-rendered: nothing else on the page moves
+  const [i, m] = [+slot.split("|")[0], slot.split("|")[1]], r = weekPlan.days[i].meals[m], iso = planDayISO(i);
+  const found = plannedEntry(i, m), on = !found;
+  if (found) { app.diary[iso] = entriesOf(iso).filter(e => e !== found); if (!app.diary[iso].length) delete app.diary[iso]; }
+  else (app.diary[iso] ||= []).push({ uid: uid(), kind: "recipe", id: r.id, meal: m, servings: 1, name: r.en, kcal: r.kcal, src: "week" });
+  save(); dayView = null;
   const btn = document.querySelector(`[data-eat="${slot}"]`), line = document.querySelector(".eaten-line");
-  if (!btn || !line) return renderWeekPlan(loadWeekSetup());
+  if (!btn || !line) return renderWeekPlan();
   btn.setAttribute("aria-pressed", on);
   btn.classList.toggle("just", on);
   btn.closest(".meal-card").classList.toggle("done", on);
-  line.innerHTML = eatenLine(+slot.split("|")[0], s);
+  line.innerHTML = eatenLine(i);
 }
-function eatenLine(i, eaten) {
-  const done = ["breakfast", "lunch", "dinner"].filter(m => eaten.has(`${i}|${m}`)).length;
-  return done === 3 ? `${LEAF_SVG} All three meals today` : `${done} of 3 meals eaten`;
+function eatenLine(i) {
+  const done = ["breakfast", "lunch", "dinner"].filter(m => weekPlan.days[i].meals[m] && plannedEntry(i, m)).length;
+  return done === 3 ? `${LEAF_SVG} All three meals logged` : `${done} of 3 meals logged`;
 }
 const MACRO_ROWS = [["carbs", "Carbs"], ["protein", "Protein"], ["fat", "Fat"]];
 const fmt = (n) => Math.round(n).toLocaleString("en");
-function dayDate(i) {
-  const d = new Date(); d.setDate(d.getDate() - todayIdx() + i);
-  return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+function weekDayDate(i) {
+  return new Date(`${planDayISO(i)}T12:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
 }
 function ring(share, size, stroke, cls, label) {
   const r = (size - stroke) / 2, c = 2 * Math.PI * r, on = Math.max(0, Math.min(1, share));
   return `<svg class="ring ${cls}" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="${esc(label)}">
     <circle cx="${size / 2}" cy="${size / 2}" r="${r}" class="track" stroke-width="${stroke}"/>
-    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" class="fill" stroke-width="${stroke}" stroke-dasharray="${(on * c).toFixed(1)} ${c.toFixed(1)}"
-      transform="rotate(-90 ${size / 2} ${size / 2})"/></svg>`;
+    ${on > 0 ? `<circle cx="${size / 2}" cy="${size / 2}" r="${r}" class="fill" stroke-width="${stroke}" stroke-dasharray="${(on * c).toFixed(1)} ${c.toFixed(1)}"
+      transform="rotate(-90 ${size / 2} ${size / 2})"/>` : ""}</svg>`;
 }
 
-function renderWeekPlan(setup) {
-  const box = $("tab-week"), p = weekPlan;
+function renderWeekPlan() {
+  const box = $("tab-week"), p = weekPlan, setup = app.setup;
   const chainLabel = p.chain?.label || (weekChains || []).find(c => c.id === setup.chain)?.label || setup.chain;
+  const back = `<button class="back" data-tab-go="today">← Today</button>`;
   if (!p.feasible) {
     // The engine says why: budget (with the minimum), energy need out of reach, or too few recipes.
     const MAX_BUDGET = 500;     // the API's limit
@@ -1211,23 +1931,24 @@ function renderWeekPlan(setup) {
         : esc(p.note || "No week fits these settings.");
     const useMin = p.reason === "budget" && p.minimum_budget && p.minimum_budget <= MAX_BUDGET;
     box.classList.remove("anim");
-    box.innerHTML = `<h1>Your week</h1><div class="note">${msg}</div>
+    box.innerHTML = `${back}<h1>Your week</h1><div class="note">${msg}</div>
       <div class="actions">${useMin ? `<button class="primary" data-week-budget="${p.minimum_budget}">Use €${p.minimum_budget}</button>` : ""}
-      <button class="ghost" data-week-edit>${p.reason === "budget" ? "Try another shop" : "Change your answers"}</button></div>`;
+      <button class="ghost" data-week-shop>${p.reason === "budget" ? "Try another shop" : "Change shop or budget"}</button>
+      ${p.reason !== "budget" ? `<button class="ghost" data-tab-go="profile">Check your answers</button>` : ""}</div>`;
     return;
   }
-  const t = todayIdx(), i = weekUI.day, d = p.days[i], eaten = loadEaten();
+  const t = todayIdx(), i = weekUI.day, d = p.days[i];
   const anim = animateDay, ready = justPlanned;
   animateDay = justPlanned = false;
-  box.innerHTML = `
-    <div class="day-title"><h1>${i === t ? "Today" : WEEKDAYS[i]}</h1><span class="muted">${dayDate(i)}</span></div>
+  box.innerHTML = `${back}
+    <div class="day-title"><h1>${i === t ? "This week · today" : WEEKDAYS[i]}</h1><span class="muted">${weekDayDate(i)}</span></div>
     <div class="daystrip" role="tablist" aria-label="Day of the week">${SHORT_DAYS.map((s, k) =>
-      `<button role="tab" aria-selected="${k === i}" aria-label="${WEEKDAYS[k]}${k === t ? " (today)" : ""}" class="${k === i ? "on" : ""} ${k === t ? "today" : ""}" data-day="${k}">${s}</button>`).join("")}</div>
+      `<button role="tab" aria-selected="${k === i}" aria-label="${WEEKDAYS[k]}${k === t ? " (today)" : ""}" class="${k === i ? "on" : ""} ${k === t ? "today" : ""}" data-wday="${k}">${s}</button>`).join("")}</div>
     ${ready ? readyBanner(p, setup, chainLabel) : ""}
-    ${energyCard(p, d, i, eaten)}
+    ${energyCard(p, d, i)}
     ${goalCard(p, d)}
     ${foodFirst(p)}
-    ${["breakfast", "lunch", "dinner"].map(m => d.meals[m] ? mealCard(i, m, d.meals[m], eaten) : "").join("")}
+    ${["breakfast", "lunch", "dinner"].map(m => d.meals[m] ? mealCard(i, m, d.meals[m]) : "").join("")}
     ${d.snacks.length ? snackCard(d) : ""}
     ${budgetCard(p, setup, chainLabel)}
     ${planNotes(p)}`;
@@ -1246,7 +1967,7 @@ function readyBanner(p, setup, chainLabel) {
     <button class="icon-btn" data-ready-close aria-label="Dismiss">✕</button></div>`;
 }
 
-function energyCard(p, d, i, eaten) {
+function energyCard(p, d, i) {
   const tg = p.targets;
   return `<div class="card dash energy-card">
     <div class="ring-box">${ring(d.totals.kcal / tg.kcal, 132, 12, "energy", `${fmt(d.totals.kcal)} kcal planned of ${fmt(tg.kcal)} kcal needed`)}
@@ -1254,7 +1975,7 @@ function energyCard(p, d, i, eaten) {
     <div class="macros">${MACRO_ROWS.map(([k, l]) => `<div class="macro ${k}"><div class="mline"><span>${l}</span>
         <span class="muted">${fmt(d.totals[k])} / ${fmt(tg[k])} g</span></div>
       <div class="bar"><i style="width:${Math.min(100, 100 * d.totals[k] / tg[k])}%"></i></div></div>`).join("")}
-      <div class="eaten-line" aria-live="polite">${eatenLine(i, eaten)}</div></div>
+      <div class="eaten-line" aria-live="polite">${eatenLine(i)}</div></div>
   </div>`;
 }
 
@@ -1266,11 +1987,11 @@ function goalCard(p, d) {
   const top = p.goal_nutrients.filter(n => (ev[n]?.grade || "D") !== "D").slice(0, 3);
   if (!top.length) return "";
   return `<div class="card dash goal-card">
-    <div class="gc-head"><span>${goalIcon(p.goal)} ${esc(goalTitle(p.goal))} today</span><span class="muted small">tap for the evidence</span></div>
+    <div class="gc-head"><span>${goalIcon(p.goal)} ${esc(goalTitle(p.goal))} this day</span><span class="muted small">tap for the evidence</span></div>
     <div class="minis">${top.map(n => {
       const pct = d.goal_today[n] || 0, src = d.goal_from[n];
       return `<button class="mini" data-nutrient="${esc(n)}">
-        <span class="mini-ring">${ring(pct / 100, 64, 7, "goal", `${nName(n)} ${Math.round(pct)}% of today's need`)}<b>${pct >= 200 ? `${Math.round(pct / 100)}×` : `${Math.round(pct)}%`}</b></span>
+        <span class="mini-ring">${ring(pct / 100, 64, 7, "goal", `${nName(n)} ${Math.round(pct)}% of the day's need`)}<b>${pct >= 200 ? `${Math.round(pct / 100)}×` : `${Math.round(pct)}%`}</b></span>
         <span class="mini-name">${esc(nName(n))}${ev[n]?.eu_claim ? ` <span class="eu" title="EU authorised health claim">EU</span>` : ""}</span>
         ${src ? `<small>${recipeIcon(src.en)} ${src.meal === "snack" ? "snack" : MEAL_LABEL[src.meal].toLowerCase()}</small>` : ""}</button>`;
     }).join("")}</div>
@@ -1315,8 +2036,8 @@ function foodFirst(p) {
   </details>`;
 }
 
-function mealCard(i, m, r, eaten) {
-  const slot = `${i}|${m}`, done = eaten.has(slot);
+function mealCard(i, m, r) {
+  const slot = `${i}|${m}`, done = !!plannedEntry(i, m);
   return `<div class="card meal-card${done ? " done" : ""}">
     <div class="mc-head"><span>${MEAL_LABEL[m]}</span><span class="muted">${fmt(r.kcal)} kcal</span></div>
     <div class="mc-row">
@@ -1324,7 +2045,7 @@ function mealCard(i, m, r, eaten) {
         <span class="tile-ic" aria-hidden="true">${recipeIcon(r.en)}</span>
         <span class="what"><b>${esc(r.en)}</b><small>${r.time_min ? `${r.time_min} min · ` : ""}P ${fmt(r.protein)} g · C ${fmt(r.carbs)} g · F ${fmt(r.fat)} g${r.batch ? " · keeps 3 days" : ""}</small></span>
       </button>
-      <button class="eat" data-eat="${slot}" aria-pressed="${done}" aria-label="Eaten: ${esc(r.en)}">
+      <button class="eat" data-eat="${slot}" aria-pressed="${done}" aria-label="Eaten (logs it in your diary): ${esc(r.en)}" title="Eaten: log it in your diary">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></button>
     </div>
   </div>`;
@@ -1341,10 +2062,11 @@ function snackCard(d) {
 
 function budgetCard(p, setup, chainLabel) {
   const share = Math.min(100, 100 * p.total_cost / (p.budget || +setup.budget));
+  const listed = app.weekList === weekKey;
   return `<div class="card dash budget-card">
     <div class="bline"><span><span class="muted">This week</span> <b>${euro(p.total_cost)}</b>
-      <button class="link quiet" data-week-edit title="Change budget, shop or answers">of €${esc(setup.budget)} · ${esc(chainLabel)} ›</button></span>
-      <button class="link" data-tab-go="list">List ›</button></div>
+      <button class="link quiet" data-week-shop title="Change shop or budget">of €${esc(setup.budget)} · ${esc(chainLabel)} ›</button></span>
+      ${listed ? `<button class="link" data-tab-go="list">On your list ›</button>` : `<button class="add" data-week-to-list>Add shopping to list</button>`}</div>
     <div class="bar big"><i style="width:${share}%"></i></div>
     ${p.edited ? `<div class="edited">You changed some meals · <button class="link" data-reset-edits>Back to the suggested week</button></div>` : ""}
   </div>`;
@@ -1352,48 +2074,79 @@ function budgetCard(p, setup, chainLabel) {
 
 function planNotes(p) {
   return [p.diet_note, p.repeats ? "Some meals come back more often, to fit your budget and settings." : ""]
-    .filter(Boolean).map(n => `<p class="src" style="margin:4px 4px 10px">${esc(n)}</p>`).join("");
+    .filter(Boolean).map(n => `<p class="src" style="margin:4px 4px 10px">${esc(n)}</p>`).join("")
+    + `<p class="center"><button class="link quiet small" data-week-clear>Stop planning this week</button></p>`;
+}
+
+// The plan behind the List and Today when the person planned a week but has not opened it this session.
+async function ensureWeekPlan() {
+  if (!app.weekOn || !app.setup.chain || !app.setup.budget) return null;
+  const req = weekRequest(), key = JSON.stringify(req);
+  if (weekPlan && weekKey === key) return weekPlan;
+  try {
+    const edits = app.edits && app.edits.key === key ? app.edits.days : null;
+    const plan = edits ? await api("/plan/evaluate", { ...req, days: edits }) : await api("/plan/week", req);
+    weekPlan = plan; weekPlan._req = req; weekKey = key;
+    return plan;
+  } catch { return null; }
+}
+function stopWeek() {
+  app.weekOn = false; app.weekList = null; app.edits = null; app.ticks = null; save();
+  weekPlan = null; weekKey = null; updateCount(); showTab("today");
+}
+function addWeekToList() {
+  if (!weekPlan?.feasible) return;
+  app.weekList = weekKey; app.ticks = { key: weekKey, ids: [] }; save(); updateCount();
 }
 
 // ---------------------------------------------------------------- recipe sheet
-// A meal opens in a sheet with three tabs (recipe, why, swap) instead of
-// growing the page. Swapping keeps the week's rules: the server only offers
-// meals that stay within budget, energy band and limits.
-let sheetSlot = null;
-const SHEET_TABS = [["recipe", "Recipe"], ["why", "Why"], ["swap", "Swap"]];
-function openRecipe(btn) {
+// A recipe opens in a sheet instead of growing the page: Recipe and Why, plus
+// Swap when it is a meal of a planned week. It opens from an idea (with
+// "I'll have this"), from the diary, or from the week.
+let sheet = null;          // {id, en, kcal, time_min, meal, ctx: "week" | "idea" | "diary", day?}
+function openRecipeSheet(info) {
+  sheet = info;
+  $("rs-icon").textContent = recipeIcon(info.en);
+  $("rs-title").textContent = info.en;
+  const when = info.ctx === "week" ? `${MEAL_LABEL[info.meal]} · ${WEEKDAYS[info.day]}` : SLOT_LABEL[info.meal] || "";
+  $("rs-sub").textContent = [when, info.time_min ? `${info.time_min} min` : "", info.kcal ? `${fmt(info.kcal)} kcal` : ""].filter(Boolean).join(" · ");
+  if (!$("recipe-sheet").open) $("recipe-sheet").showModal();
+  showSheetTab("recipe");
+}
+function openWeekRecipe(btn) {
   const [day, meal] = btn.dataset.slot.split("|");
   const r = weekPlan.days[+day].meals[meal];
-  sheetSlot = { day: +day, meal, id: r.id };
-  $("rs-icon").textContent = recipeIcon(r.en);
-  $("rs-title").textContent = r.en;
-  $("rs-sub").textContent = `${MEAL_LABEL[meal]} · ${WEEKDAYS[+day]}${r.time_min ? ` · ${r.time_min} min` : ""} · ${r.kcal} kcal`;
-  $("recipe-sheet").showModal();
-  showSheetTab("recipe");
+  openRecipeSheet({ id: r.id, en: r.en, kcal: r.kcal, time_min: r.time_min, meal, day: +day, ctx: "week" });
 }
 async function cached(key, load) {
   if (!recipeCache.has(key)) recipeCache.set(key, await load());
   return recipeCache.get(key);
 }
+const sheetScale = () => sheet.ctx === "week" ? weekPlan.portion_scale : dayView?.sum.portion_scale || 1;
 async function showSheetTab(tab) {
-  const { id, day, meal } = sheetSlot, req = weekPlan._req, body = $("rs-body");
-  $("rs-tabs").innerHTML = SHEET_TABS.map(([k, l]) =>
+  const { id } = sheet, body = $("rs-body"), chain = app.setup.chain || "lidl", scale = sheetScale();
+  const tabs = [["recipe", "Recipe"], ["why", "Why"], ...(sheet.ctx === "week" ? [["swap", "Swap"]] : [])];
+  $("rs-tabs").innerHTML = tabs.map(([k, l]) =>
     `<button role="tab" aria-selected="${k === tab}" class="${k === tab ? "on" : ""}" data-rs-tab="${k}">${l}</button>`).join("");
   body.innerHTML = `${loading("Loading…")}`;
   try {
     if (tab === "recipe") {
-      const r = await cached(`r|${id}|${req.chain}|${weekPlan.portion_scale}`, () =>
-        api(`/plan/recipes/${encodeURIComponent(id)}?` + qs({ chain: req.chain, scale: weekPlan.portion_scale })));
+      const r = await cached(`r|${id}|${chain}|${scale}`, () => api(`/plan/recipes/${encodeURIComponent(id)}?` + qs({ chain, scale })));
       const amount = (i) => i.liquid ? `${round(i.g)} ml` : `${round(i.g)} g`;
       body.innerHTML = `<p class="sub fr">${esc(r.fr)} · about ${euro(r.cost_per_serving)} a portion</p>
         <ul class="ingredients">${r.ingredients.map(i => `<li><b>${amount(i)}</b> ${esc(i.fr)}${sameName(i.fr, i.en) ? "" : ` <span class="muted">${esc(i.en)}</span>`}</li>`).join("")}</ul>
-        ${r.steps.length ? `<ol class="steps-list">${r.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}`;
+        ${r.steps.length ? `<ol class="steps-list">${r.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
+        <div class="actions">${sheet.ctx === "idea" ? `<button class="primary" data-idea-take="${esc(id)}">I'll have this</button>` : ""}
+          <button class="ghost" data-ingredients-to-list="${esc(id)}">+ Ingredients to list</button></div>
+        <p class="src">Recipes are drafts, not yet reviewed by a dietitian.</p>`;
     } else if (tab === "why") {
-      const w = await cached(`w|${id}|${weekPlan.goal}|${weekPlan.portion_scale}|${state.demo}`, () =>
-        api(`/plan/recipes/${encodeURIComponent(id)}/why?` + qs({ goal: weekPlan.goal, scale: weekPlan.portion_scale, demographic: state.demo })));
-      body.innerHTML = whyMeal(w, weekPlan.days[day].meals[meal].en);
+      const goal = app.setup.goal;
+      if (!goal) { body.innerHTML = `<p class="sub">Choose a goal in Profile to see what this meal does for it.</p>`; return; }
+      const w = await cached(`w|${id}|${goal}|${scale}|${state.demo}`, () =>
+        api(`/plan/recipes/${encodeURIComponent(id)}/why?` + qs({ goal, scale, demographic: state.demo })));
+      body.innerHTML = whyMeal(w, sheet.en);
     } else {
-      const res = await api("/plan/swap-options", { ...req, days: composition(weekPlan), day, meal });
+      const res = await api("/plan/swap-options", { ...weekPlan._req, days: composition(weekPlan), day: sheet.day, meal: sheet.meal });
       body.innerHTML = swapView(res);
     }
   } catch (e) { body.innerHTML = `<div class="note">Could not load this (${esc(e.message)}).</div>`; }
@@ -1410,16 +2163,16 @@ function swapView(res) {
       <button class="add" data-swap-to="${esc(o.id)}">Choose</button></div>`).join("")}`;
 }
 async function chooseSwap(newId) {
-  const { day, meal } = sheetSlot, req = weekPlan._req;
+  const { day, meal } = sheet, req = weekPlan._req;
   const days = composition(weekPlan);
   days[day].meals[meal] = newId;
   $("rs-body").innerHTML = `${loading("Updating your week…")}`;
   try {
     const plan = await api("/plan/evaluate", { ...req, days });
     weekPlan = { ...plan, _req: req };
-    saveEdits(weekKey, days);
+    app.edits = { key: weekKey, days }; save();
     closeSheet($("recipe-sheet"));
-    renderWeekPlan(loadWeekSetup()); updateCount();
+    renderWeekPlan(); updateCount();
   } catch (e) { $("rs-body").innerHTML = `<div class="note">Could not swap this meal (${esc(e.message)}).</div>`; }
 }
 
@@ -1548,121 +2301,153 @@ async function dictTerms() {
 }
 
 // ---------------------------------------------------------------- list
-// One list: the week's shopping (from the plan) plus foods added from Foods.
-// All of it lives in this browser only (localStorage).
-const LIST_KEY = "feedforward.list.v1";      // foods added by hand
-const SHOP_KEY = "feedforward.shop.v1";      // ticked items, for one plan
-const PANTRY_KEY = "feedforward.pantry.v1";  // ingredients at home, kept from week to week
-function loadList() { try { return JSON.parse(localStorage.getItem(LIST_KEY)) || []; } catch { return []; } }
-function saveList(list) { try { localStorage.setItem(LIST_KEY, JSON.stringify(list)); } catch {} updateCount(); }
-let shopping = loadList();
-function inList(id) { return shopping.some(i => i.id === id); }
+// Starts empty. Things get on it only when the person puts them there: typed,
+// a food ("+ List"), a recipe's ingredients, or a planned week's shopping.
+// Saved in their account with everything else.
+const sameName = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
+const inList = (kind, id) => app.list.some(i => i.kind === kind && i.id === id);
 function addBtn(id, name, portion, group) {
-  return inList(id) ? `<button class="add done" disabled>✓ On your list</button>`
+  return inList("food", id) ? `<button class="add done" disabled>✓ On your list</button>`
     : `<button class="add" data-add="${esc(id)}" data-name="${esc(name)}" data-portion="${portion || 100}" data-group="${esc(group || "")}">+ List</button>`;
 }
 function addToList(id, name, portion, group) {
-  if (inList(id)) return;
-  shopping.push({ id, name, portion: portion || 100, group: group || "" });
-  saveList(shopping);
+  if (inList("food", id)) return;
+  app.list.push({ uid: uid(), kind: "food", id, name, portion: portion || 100, group: group || "", done: false });
+  save(); updateCount();
 }
-function loadPantry() { try { return new Set(JSON.parse(localStorage.getItem(PANTRY_KEY)) || []); } catch { return new Set(); } }
-function savePantry(s) { try { localStorage.setItem(PANTRY_KEY, JSON.stringify([...s])); } catch {} }
-function loadTicks() {
-  try { const t = JSON.parse(localStorage.getItem(SHOP_KEY)); return t && t.key === weekKey ? new Set(t.ids) : new Set(); } catch { return new Set(); }
+async function addIngredients(recipeId) {
+  const chain = app.setup.chain || "lidl", scale = sheet ? sheetScale() : 1;
+  try {
+    const r = await cached(`r|${recipeId}|${chain}|${scale}`, () => api(`/plan/recipes/${encodeURIComponent(recipeId)}?` + qs({ chain, scale })));
+    for (const i of r.ingredients) {
+      const have = app.list.find(x => x.kind === "ingredient" && x.id === i.id && !x.done);
+      if (have) have.g = Math.round((have.g || 0) + i.g);
+      else app.list.push({ uid: uid(), kind: "ingredient", id: i.id, name: i.en, fr: i.fr, g: i.g, liquid: i.liquid, done: false });
+    }
+    save(); updateCount();
+    const btn = document.querySelector(`[data-ingredients-to-list="${CSS.escape(recipeId)}"]`);
+    if (btn) { btn.outerHTML = `<button class="ghost" data-tab-go="list">✓ On your list ›</button>`; }
+  } catch (e) { showInfo("List", `<p>Could not add the ingredients (${esc(e.message)}).</p>`); }
 }
-function saveTicks(ids) { try { localStorage.setItem(SHOP_KEY, JSON.stringify({ key: weekKey, ids: [...ids] })); } catch {} }
-const sameName = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
 function qty(b) {
   const g = (x) => b.liquid ? (x >= 1000 ? `${round(x / 1000)} L` : `${round(x)} ml`) : (x >= 1000 ? `${round(x / 1000)} kg` : `${round(x)} g`);
   if (b.packs) return b.units_per_pack ? `${b.packs} × ${b.units_per_pack}` : `${b.packs} × ${g(b.pack_g)}`;
   return `${g(b.grams)}${b.about_units ? ` <span class="muted">~${b.about_units}</span>` : ""}`;
 }
-const plannedBasket = () => (weekPlan && weekPlan.feasible ? weekPlan.basket : []);
+const weekBasket = () => (weekPlan?.feasible && app.weekList === weekKey ? weekPlan.basket : []);
+const ticks = () => new Set(app.ticks && app.ticks.key === weekKey ? app.ticks.ids : []);
+const pantry = () => new Set(app.pantry);
 function updateCount() {
-  const home = loadPantry(), ticks = loadTicks();
-  const left = plannedBasket().filter(b => !home.has(b.id) && !ticks.has(b.id)).length + shopping.length;
+  if (!app) return;
+  const home = pantry(), t = ticks();
+  const left = weekBasket().filter(b => !home.has(b.id) && !t.has(b.id)).length + app.list.filter(i => !i.done).length;
   document.querySelectorAll("[data-list-count]").forEach(c => { c.hidden = !left; c.textContent = left; });
 }
 
 const HOME_ICON = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5"/><path d="M6 10v9.5h12V10"/></svg>`;
-function shopRow(b, ticks, atHome) {
+function shopRow(b, t, atHome) {
   return `<div class="shop-row${atHome ? " home" : ""}">
-    ${atHome ? `<span></span>` : `<input type="checkbox" id="s-${esc(b.id)}" data-shop="${esc(b.id)}" ${ticks.has(b.id) ? "checked" : ""}>`}
+    ${atHome ? `<span></span>` : `<input type="checkbox" id="s-${esc(b.id)}" data-shop="${esc(b.id)}" ${t.has(b.id) ? "checked" : ""}>`}
     <label class="nm" ${atHome ? "" : `for="s-${esc(b.id)}"`}>${esc(b.fr)}${sameName(b.fr, b.en) ? "" : ` <span class="muted">· ${esc(b.en)}</span>`}</label>
     <span class="num">${qty(b)}</span>
     <span class="num">${atHome ? "" : `${b.estimated ? "≈" : ""}${euro(b.price)}`}</span>
     <button class="home-btn" data-pantry="${esc(b.id)}" aria-pressed="${atHome}" title="${atHome ? "Need to buy it" : "I have this at home"}" aria-label="${atHome ? `Buy ${esc(b.fr)}` : `${esc(b.fr)}: I have this at home`}">${HOME_ICON}</button>
   </div>`;
 }
+function itemRow(i) {
+  const label = i.kind === "food" ? friendlyName(i.name) : i.kind === "ingredient" ? (i.fr || i.name) : i.name;
+  const extra = i.kind === "ingredient" ? `${sameName(i.fr || "", i.name) ? "" : ` <span class="muted">· ${esc(i.name)}</span>`}` : "";
+  const amount = i.kind === "ingredient" && i.g ? qty({ grams: i.g, liquid: i.liquid }) : "";
+  return `<div class="shop-row item">
+    <input type="checkbox" id="i-${esc(i.uid)}" data-item="${esc(i.uid)}" ${i.done ? "checked" : ""}>
+    <label class="nm" for="i-${esc(i.uid)}">${esc(label)}${extra}</label>
+    <span class="num">${amount}</span><span></span>
+    <button class="home-btn" data-remove="${esc(i.uid)}" aria-label="Remove ${esc(label)}" title="Remove">×</button></div>`;
+}
 
-function renderList() {
-  const box = $("tab-list"), p = weekPlan && weekPlan.feasible ? weekPlan : null;
-  if (!p && !shopping.length) {
-    box.innerHTML = `<h1>List</h1><div class="empty"><span class="big-ic" aria-hidden="true">🛒</span>
-      <p class="sub">Your shopping list appears here once your week is planned.</p>
-      <button class="primary" data-tab-go="week">Plan my week</button></div>`;
-    return;
+async function renderList() {
+  const box = $("tab-list");
+  if (app.weekOn && app.weekList && !weekPlan) { box.innerHTML = `<h1>List</h1>${loading("Loading…")}`; await ensureWeekPlan(); }
+  const p = weekPlan?.feasible ? weekPlan : null, listed = p && app.weekList === weekKey;
+  const home = pantry(), t = ticks();
+  let html = `<h1>List</h1>
+    <form id="list-add" class="list-add"><input type="text" name="item" placeholder="Add an item" autocomplete="off" aria-label="Add an item" maxlength="80">
+      <button class="add" type="submit">Add</button></form>`;
+  if (p && !listed) {
+    html += `<div class="card plan-week static"><span class="tile-ic" aria-hidden="true">🗓️</span>
+      <span class="what"><b>Your planned week</b><small>${p.basket.length} items · ${euro(p.total_cost)} at ${esc(p.chain.label)}</small></span>
+      <button class="add" data-week-to-list>Add</button></div>`;
   }
-  const home = loadPantry(), ticks = loadTicks();
-  let html = `<h1>List</h1>`;
-  if (p) {
+  if (!app.list.length && !listed) {
+    html += `<div class="empty"><span class="big-ic" aria-hidden="true">🛒</span>
+      <p class="sub">Your list is empty.<br>Type an item above, or add a food or a recipe's ingredients from the app.</p></div>`;
+  }
+  if (app.list.length) {
+    const open = app.list.filter(i => !i.done), done = app.list.filter(i => i.done);
+    html += `<div class="card shop-card">${open.map(itemRow).join("")}${done.map(itemRow).join("")}</div>
+      ${done.length ? `<p class="center"><button class="link quiet small" data-clear-done>Clear ${done.length} ticked</button></p>` : ""}`;
+  }
+  if (listed) {
     const buy = p.basket.filter(b => !home.has(b.id)), atHome = p.basket.filter(b => home.has(b.id));
     // The plan's exact total (lines already rounded to add up to it), adjusted only
     // for items marked "at home" (or un-marked) since the plan was made.
     const total = p.total_cost
       - p.basket.filter(b => home.has(b.id) && !b.at_home).reduce((s, b) => s + b.cost, 0)
       + p.basket.filter(b => !home.has(b.id) && b.at_home).reduce((s, b) => s + b.price, 0);
-    const done = buy.filter(b => ticks.has(b.id)).length;
+    const done = buy.filter(b => t.has(b.id)).length;
     const planned = new Set(p.pantry || []);
     const notPlanned = atHome.filter(b => !planned.has(b.id)).length;
     const groups = {};
     buy.forEach(b => (groups[b.storage] ||= []).push(b));
-    html += `<div class="card budget-card"><div class="bline"><span><b>${euro(total)}</b> <span class="muted">to buy · ${esc(p.chain.label)}</span></span>
+    html += `<div class="group-title">Your planned week</div>
+      <div class="card budget-card"><div class="bline"><span><b>${euro(total)}</b> <span class="muted">to buy · ${esc(p.chain.label)}</span></span>
         <span class="chip" id="shop-progress">${done} of ${buy.length}</span></div>
         <div class="bar big"><i style="width:${buy.length ? 100 * done / buy.length : 0}%"></i></div></div>
       ${notPlanned ? `<div class="note">You have ${notPlanned} item${notPlanned > 1 ? "s" : ""} at home. <button class="link" data-replan-home>Plan around ${notPlanned > 1 ? "them" : "it"}</button></div>` : ""}
       <div class="card shop-card">
       ${["fresh", "bakery", "fridge", "freezer", "pantry"].filter(g => groups[g]).map(g =>
-        `<div class="group-title">${STORAGE_TITLES[g]}</div>${groups[g].map(b => shopRow(b, ticks, false)).join("")}`).join("")}
+        `<div class="group-title">${STORAGE_TITLES[g]}</div>${groups[g].map(b => shopRow(b, t, false)).join("")}`).join("")}
       </div>
-      ${atHome.length ? `<details class="sec"><summary>${HOME_ICON} At home · ${atHome.length}</summary><div>${atHome.map(b => shopRow(b, ticks, true)).join("")}</div></details>` : ""}`;
+      ${atHome.length ? `<details class="sec"><summary>${HOME_ICON} At home · ${atHome.length}</summary><div>${atHome.map(b => shopRow(b, t, true)).join("")}</div></details>` : ""}
+      <p class="center"><button class="link quiet small" data-week-unlist>Take the week's shopping off the list</button></p>`;
   }
-  if (shopping.length) {
-    html += `<div class="group-title">Added from Foods</div><div class="card">${shopping.map((i, n) => `<div class="list-item">
-      <span class="icon">${iconFor(i.name, i.group)}</span>
-      <span class="name" style="cursor:pointer" data-food="${esc(i.id)}">${esc(friendlyName(i.name))}</span>
-      <button class="x" data-remove="${n}" aria-label="Remove ${esc(friendlyName(i.name))}">×</button></div>`).join("")}</div>`;
-  }
-  html += `<div class="actions"><button class="ghost" id="list-copy">Copy as text</button></div>`;
+  if (app.list.length || listed) html += `<div class="actions"><button class="ghost" id="list-copy">Copy as text</button></div>`;
   box.innerHTML = html;
 
+  $("list-add").onsubmit = (e) => {
+    e.preventDefault();
+    const text = e.target.item.value.trim();
+    if (!text) return;
+    app.list.push({ uid: uid(), kind: "text", name: text, done: false }); save(); renderList(); updateCount();
+    setTimeout(() => $("list-add")?.item.focus(), 0);
+  };
   box.querySelectorAll("[data-shop]").forEach(cb => cb.onchange = () => {
-    const t = loadTicks();
-    cb.checked ? t.add(cb.dataset.shop) : t.delete(cb.dataset.shop);
-    saveTicks(t); renderList(); updateCount();
+    const s = ticks();
+    cb.checked ? s.add(cb.dataset.shop) : s.delete(cb.dataset.shop);
+    app.ticks = { key: weekKey, ids: [...s] }; save(); renderList(); updateCount();
   });
-  box.querySelectorAll("[data-remove]").forEach(b => b.onclick = () => { shopping.splice(+b.dataset.remove, 1); saveList(shopping); renderList(); });
-  $("list-copy").onclick = async () => {
-    const lines = p ? p.basket.filter(b => !home.has(b.id)).map(b => `- ${b.fr}: ${qty(b).replace(/<[^>]+>/g, "")}`) : [];
-    const text = [...lines, ...shopping.map(i => `- ${friendlyName(i.name)}`)].join("\n");
-    try { await navigator.clipboard.writeText(text); $("list-copy").textContent = "Copied ✓"; } catch { $("list-copy").textContent = "Copy failed"; }
+  box.querySelectorAll("[data-item]").forEach(cb => cb.onchange = () => {
+    const i = app.list.find(x => x.uid === cb.dataset.item); if (i) i.done = cb.checked;
+    save(); renderList(); updateCount();
+  });
+  if ($("list-copy")) $("list-copy").onclick = async () => {
+    const lines = [...app.list.filter(i => !i.done).map(i => `- ${i.kind === "food" ? friendlyName(i.name) : i.fr || i.name}${i.g ? `: ${qty({ grams: i.g, liquid: i.liquid })}` : ""}`),
+      ...(listed ? p.basket.filter(b => !home.has(b.id) && !t.has(b.id)).map(b => `- ${b.fr}: ${qty(b).replace(/<[^>]+>/g, "")}`) : [])];
+    try { await navigator.clipboard.writeText(lines.join("\n")); $("list-copy").textContent = "Copied ✓"; } catch { $("list-copy").textContent = "Copy failed"; }
   };
 }
 // "At home": out of the list now; "Plan around them" makes them free in a new plan.
 function togglePantry(id) {
-  const home = loadPantry();
+  const home = pantry();
   home.has(id) ? home.delete(id) : home.add(id);
-  savePantry(home); renderList(); updateCount();
+  app.pantry = [...home]; save(); renderList(); updateCount();
 }
-function replanWithPantry() {
-  const v = loadWeekSetup();
-  if (!v) return;
-  v.pantry = [...loadPantry()];
-  saveWeekSetup(v); clearEdits(); weekPlan = null;
-  showTab("week");
+async function replanWithPantry() {
+  app.edits = null; weekPlan = null; save();
+  const plan = await ensureWeekPlan();
+  if (plan) { app.weekList = weekKey; app.ticks = { key: weekKey, ids: [] }; save(); }
+  renderList(); updateCount();
 }
-updateCount();
 
 // ---------------------------------------------------------------- theme
 const THEME_KEY = "feedforward.theme";
@@ -1680,21 +2465,47 @@ function setTheme(t) {
 }
 
 // ---------------------------------------------------------------- start
-(async () => {
+// Signed out: the sign-in page. Signed in: the saved document, then either the
+// first questions (a new account) or Today.
+let basics = false;
+async function loadBasics() {
+  if (basics) return;
+  const [systems, coverage, nutrients] = await Promise.all([api("/goals/by-system"), api("/analysis/coverage"), api("/analysis/nutrients")]);
+  systems.forEach(s => s.goals.forEach(g => state.goals[g.id] = g));
+  nutrients.forEach(n => state.nutrients[n.id] = n);
+  state.coverage = coverage;
+  basics = true;
+}
+async function enterApp() {
+  document.body.classList.remove("gated");
+  $("gate").hidden = true; $("gate").innerHTML = "";
+  Object.keys(NAV_OF).forEach(t => { $("tab-" + t).hidden = t !== "today"; if (t !== "today") $("tab-" + t).innerHTML = ""; });
+  $("tab-today").innerHTML = loading("Opening FeedForward…", "week");
   try {
-    const [systems, coverage, nutrients] = await Promise.all([api("/goals/by-system"), api("/analysis/coverage"), api("/analysis/nutrients")]);
-    systems.forEach(s => s.goals.forEach(g => state.goals[g.id] = g));
-    nutrients.forEach(n => state.nutrients[n.id] = n);
-    state.coverage = coverage;
-    syncProfile();
-    renderHome();
-    renderWeek();
+    const [saved, me] = await Promise.all([api("/me/state"), api("/auth/me"), loadBasics()]);
+    account = me;
+    app = Object.assign(blankApp(), saved.data || {});
+    app.prefs = Object.assign({ extra: [], science: false }, app.prefs || {});
+    dayISO = isoDate(new Date()); dayView = null; weekPlan = null; weekKey = null;
+    syncProfile(); updateCount();
+    if (!app.onboarded) startOnboarding("you"); else showTab("today");
   } catch (e) {
-    const msg = `<h1>FeedForward</h1><div class="note">Could not reach the FeedForward server. Is the backend running?</div>
-      <div class="actions"><button class="primary" data-reload>Try again</button></div>`;
-    $("tab-find").innerHTML = msg; $("tab-week").innerHTML = msg;
+    if (!token) return;                                   // signed out on the way (expired token)
+    $("tab-today").innerHTML = `<h1>FeedForward</h1><div class="note">Could not open your account (${esc(e.message)}).</div>
+      <div class="actions"><button class="primary" data-reload>Try again</button><button class="ghost" data-signout>Sign out</button></div>`;
   }
+}
+(async () => {
+  try { authConfig = await api("/auth/config"); }
+  catch {
+    document.body.classList.add("gated"); $("gate").hidden = false;
+    $("gate").innerHTML = `<div class="gate-card"><h1>FeedForward</h1><div class="note">Could not reach the FeedForward server. Is the backend running?</div>
+      <div class="actions"><button class="primary" data-reload>Try again</button></div></div>`;
+    return;
+  }
+  if (token) enterApp(); else renderGate();
 })();
+
 </script>
 </body>
 </html>

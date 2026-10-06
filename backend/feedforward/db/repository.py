@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from .models import (
     EvidenceCitationRow, FoodNameRow, FoodNutrientRow, FoodRow, GoalEdgeRow, GoalRow,
-    InteractionRow, NutrientAliasRow, NutrientRow, SourceRow, UserRow,
+    InteractionRow, NutrientAliasRow, NutrientRow, SourceRow, UserRow, UserStateRow,
 )
 from .session import session_scope
 
@@ -464,6 +464,10 @@ def delete_user(email: str) -> bool:
         row = s.scalar(select(UserRow).where(UserRow.email == email.strip().lower()))
         if row is None:
             return False
+        # explicit: SQLite does not enforce ON DELETE CASCADE without a pragma
+        state = s.get(UserStateRow, row.id)
+        if state is not None:
+            s.delete(state)
         s.delete(row)
         return True
 
@@ -479,3 +483,34 @@ def export_user(email: str) -> dict | None:
         "dietary_restrictions": user.dietary_restrictions,
         "created_at": user.created_at.isoformat() if user.created_at else None,
     }
+
+
+def get_user_state(email: str) -> dict | None:
+    """The app's saved document for this user: {} before the first save, None for no such user."""
+    with session_scope() as s:
+        row = s.scalar(select(UserRow).where(UserRow.email == email.strip().lower()))
+        if row is None:
+            return None
+        state = s.get(UserStateRow, row.id)
+        if state is None:
+            return {}
+        try:
+            value = json.loads(state.data or "{}")
+        except json.JSONDecodeError:
+            return {}
+        return value if isinstance(value, dict) else {}
+
+
+def save_user_state(email: str, data: dict) -> bool:
+    """Replace the saved document. False when the user no longer exists."""
+    with session_scope() as s:
+        row = s.scalar(select(UserRow).where(UserRow.email == email.strip().lower()))
+        if row is None:
+            return False
+        state = s.get(UserStateRow, row.id)
+        if state is None:
+            s.add(UserStateRow(user_id=row.id, data=json.dumps(data)))
+        else:
+            state.data = json.dumps(data)
+            state.updated_at = datetime.now(timezone.utc)
+        return True

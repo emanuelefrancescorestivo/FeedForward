@@ -7,7 +7,7 @@ pulp[cbc]>=3.3         # MILP: meal + week planner (engine/milp.py); the cbc ext
 fastapi>=0.111
 uvicorn[standard]>=0.30
 pydantic>=2.7
-pyjwt>=2.8
+pyjwt[crypto]>=2.8     # crypto: RS256, to check Google sign-in tokens
 python-multipart>=0.0.9   # form parsing for OAuth2 login
 
 # --- Persistence (PostgreSQL in production; SQLite is the test double) ---

@@ -116,6 +116,61 @@ def load_user(email: str) -> User | None:
 
 
 # ---------------------------------------------------------------------------
+# Sign-in without a password: Google, and a local test sign-in
+# ---------------------------------------------------------------------------
+# The Google client ID is public (it is in every page that shows the button);
+# without one (FEEDFORWARD_GOOGLE_CLIENT_ID unset), the app offers no Google button.
+GOOGLE_ISSUERS = ("accounts.google.com", "https://accounts.google.com")
+GOOGLE_CERTS = "https://www.googleapis.com/oauth2/v3/certs"
+NO_PASSWORD = "!"          # stored hash of an account that signs in with Google: verify_password never matches it
+_google_keys = None
+
+
+def google_client_id() -> str:
+    return os.getenv("FEEDFORWARD_GOOGLE_CLIENT_ID", "").strip()
+
+
+def dev_login_enabled() -> bool:
+    """The test sign-in (a name, no password) is for a developer's own machine: never in production,
+    and off when FEEDFORWARD_DEV_LOGIN=0."""
+    if os.getenv("FEEDFORWARD_ENV", "development").lower() == "production":
+        return False
+    return os.getenv("FEEDFORWARD_DEV_LOGIN", "1") != "0"
+
+
+def verify_google(credential: str) -> dict:
+    """The claims of a Google ID token, checked: Google's signature, this app as audience, Google as
+    issuer, not expired, and a verified email. 401 otherwise; 503 when no client ID is configured."""
+    global _google_keys
+    client_id = google_client_id()
+    if not client_id:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "Google sign-in is not configured")
+    try:
+        if _google_keys is None:
+            _google_keys = jwt.PyJWKClient(GOOGLE_CERTS, cache_keys=True)
+        key = _google_keys.get_signing_key_from_jwt(credential).key
+        claims = jwt.decode(credential, key, algorithms=["RS256"], audience=client_id,
+                            options={"require": ["exp", "iss", "aud", "email"]})
+    except (jwt.PyJWTError, ValueError) as exc:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid Google sign-in") from exc
+    if claims.get("iss") not in GOOGLE_ISSUERS or not claims.get("email_verified"):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid Google sign-in")
+    return claims
+
+
+def user_for_email(email: str) -> User:
+    """The account for a verified email, created on first sign-in (with no password)."""
+    from ..db.repository import create_stored_user
+    user = load_user(email)
+    if user is not None:
+        return user
+    try:
+        return _from_stored(create_stored_user(email, NO_PASSWORD))
+    except ValueError:              # created by a parallel request in between
+        return load_user(email)
+
+
+# ---------------------------------------------------------------------------
 # JWT
 # ---------------------------------------------------------------------------
 def create_token(user: User) -> str:

@@ -28,7 +28,7 @@ from ..db.models import Base
 from ..db.session import assert_production_database, get_engine
 from ..engine import load_engine
 from .auth import assert_production_secret
-from .routers import goals, recommend, auth_router, analysis, dictionary, plan
+from .routers import goals, recommend, auth_router, analysis, dictionary, plan, me, diary
 from . import __doc__ as _pkg_doc  # noqa
 
 
@@ -95,6 +95,8 @@ app.include_router(recommend.router)
 app.include_router(analysis.router)
 app.include_router(dictionary.router)
 app.include_router(plan.router)
+app.include_router(me.router)
+app.include_router(diary.router)
 
 
 @app.get("/", tags=["meta"])

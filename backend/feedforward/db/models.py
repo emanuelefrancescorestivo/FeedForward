@@ -57,6 +57,22 @@ class UserRow(Base):
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
 
 
+class UserStateRow(Base):
+    """
+    What a person keeps in the app: profile answers, preferences, food diary,
+    shopping list. One JSON document per user, written whole by the app; the
+    server checks its size and shape, not its meaning (the engine does that
+    when the answers reach it). A table of its own, so the users table and its
+    migrations stay as they are.
+    """
+    __tablename__ = "user_state"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    data: Mapped[str] = mapped_column(Text, default="{}")
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+
 class SourceRow(Base):
     __tablename__ = "sources"
 

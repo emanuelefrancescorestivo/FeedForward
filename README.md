@@ -70,8 +70,8 @@ says so.
 | **Optimisation** | Two mixed-integer programs (PuLP/CBC): one meal that covers a goal, and a whole week under a budget, with energy as a hard constraint and WHO limits on salt, saturated fat and free sugars | [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py), [`engine/meal_optimizer.py`](backend/feedforward/engine/meal_optimizer.py) |
 | **Statistics on messy data** | Crowdsourced receipts → median €/kg per chain, outliers dropped, chains with few receipts shrunk towards national median × chain price index; the index comes out of the data (Lidl 0.67, Carrefour 1.06, Biocoop 1.49) | [`data/ingest/prices.py`](backend/feedforward/data/ingest/prices.py) |
 | **Scientific judgement** | Scoring per realistic portion against reference intakes; heme vs non-heme iron; the EU register as evidence layer (118 authorised links, 62 EFSA rejections removed); no medical conditions collected, on purpose (EU medical-device rules) | [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) |
-| **Design choices** | Twenty-one decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
-| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 273 tests on GitHub Actions, including one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
+| **Design choices** | Twenty-two decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
+| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 297 tests on GitHub Actions, including one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
 
 Two bugs the tests caught, as examples of how the project is checked:
 
@@ -101,9 +101,30 @@ uvicorn feedforward.api.main:app --reload
 pytest -q               # the test suite
 ```
 
-The first start builds the engine (a few seconds). Your answers in "My week"
-stay in your browser; the server uses them to compute the plan and stores
-nothing.
+The first start builds the engine (a few seconds). The app opens on a sign-in
+page. On your own machine a **test sign-in** asks only for a name (the same name
+brings back the same account), so you can try it as a new person at once; it is
+off in production (`FEEDFORWARD_ENV=production`) or with `FEEDFORWARD_DEV_LOGIN=0`.
+
+### Sign in with Google
+
+1. In [Google Cloud Console](https://console.cloud.google.com/apis/credentials),
+   create a project, then **Create credentials › OAuth client ID**, type
+   **Web application** (the consent screen asks for an app name and your email).
+2. Under **Authorised JavaScript origins** add `http://localhost:8000` (and your
+   real domain later). No redirect URI is needed.
+3. Copy the client ID (`….apps.googleusercontent.com`; it is public, not a
+   secret) and start the server with it:
+   ```bash
+   FEEDFORWARD_GOOGLE_CLIENT_ID=….apps.googleusercontent.com uvicorn feedforward.api.main:app --reload
+   ```
+   (PowerShell: `$env:FEEDFORWARD_GOOGLE_CLIENT_ID="…"` on the line before.)
+
+The button then appears on the sign-in page. The server checks each Google ID
+token (Google's signature, this client ID as audience, a verified email) and
+creates the account on first sign-in. What a person keeps in the app (answers,
+diary, list) is stored in their account (`/me/state`); Profile has
+"Download my data" and "Delete my account".
 
 ---
 
@@ -179,30 +200,42 @@ Sanity benchmark on the EU-grounded engine: 0.68 mean top-20 hit rate (v2 lists,
 earlier three-section version). The layout follows the conventions of diary-style
 nutrition apps; what sits inside is FeedForward's own:
 
-- **Today**: a 3-step setup (you, your goal, shop and budget), then each day as
-  a dashboard. An energy ring shows the energy **planned** against the need,
-  with carbs, protein and fat bars (EFSA reference ranges); a card shows the
-  goal's nutrients for the day, each with the meal it mostly comes from and an
-  **EU** badge where an authorised claim backs the link (evidence A to C only);
-  **Food first** says how many of the week's needs food already covers (25 of
-  27 in the example), lists the ones still short with an honest note (vitamin D
-  comes mostly from sunlight; B12 on a vegan diet needs a supplement or fortified
-  foods), so nobody buys a supplement for a need their plate already meets;
-  the meals come as cards with an "eaten" tick. The ring is a level to reach,
-  not a cap: there is no "calories left" and nothing turns red, because the
-  plan never restricts. A meal opens a sheet with three tabs:
-  **Recipe**, **Why** (below) and **Swap**, which offers up to three meals that
-  keep the week's budget, energy band and limits, with the price difference
-  and the effect on the goal. The edited week is recomputed by the server
-  (`POST /plan/evaluate`) and kept in the browser.
+- **Sign-in and a few questions.** Google (or the local test sign-in), then
+  one topic per screen: about you, one goal, the energy goal (keep steady, lose
+  a little, gain a little, with the safety limits); "your day" (sleep, morning
+  hunger, energy dips, study, training) and "your food" (diet, foods you don't
+  eat, cooking time, batch cooking, kitchen) can be skipped. The last screen
+  lists what the answers turn on, each strategy with its evidence grade, the
+  answer behind it and PubMed links, with a switch to turn it off.
+- **Today** starts empty: a diary. Each meal has **+ Add** (search a food or a
+  recipe; its usual portion is filled in) and **Ideas**: three recipes for that
+  meal, ranked by what they add to the needs still open today (the goal's
+  nutrients first), the energy that fits the meal and the strategies for it,
+  each with its reasons ("Magnesium 32%", "Carb-rich, for your evenings · C").
+  Strategies show as chips on their meal, with the evidence one tap away. The
+  ring shows energy **eaten** against the day's target, a level to reach, not a
+  cap: there is no "calories left" and nothing turns red. A card shows the
+  goal's nutrients so far, with the meal each mostly comes from and an **EU**
+  badge where an authorised claim backs the link (evidence A to C only).
+- **A planned week, if you ask** (Today › "Plan a whole week?"): choose a shop
+  and a budget and get seven days with
+  **Food first** (how many of the week's needs food already covers, and an
+  honest note on the ones still short: vitamin D comes mostly from sunlight; B12
+  on a vegan diet needs a supplement or fortified foods). A meal opens a sheet
+  with **Recipe**, **Why** (below) and **Swap**, which offers up to three meals
+  that keep the week's budget, energy band and limits. Ticking a meal logs it in
+  the diary.
 - **Foods**: one search for foods and nutrients above the goal tiles; 5 everyday
   foods at a time, "Why?" with the food → nutrient → goal graph, food pages and
   the nutrient dictionary open inside it.
-- **List**: one list. The week's shopping, ticked off in the shop or marked
-  **at home**; "Plan around them" re-plans with those ingredients free.
-  Foods added by hand join the same list.
-- **Profile**: the setup answers, food-suggestion switches (low salt, low sugar,
-  show the science), theme, sources. Everything stays in the browser.
+- **List**: starts empty and holds only what you put on it: items you type,
+  foods ("+ List"), a recipe's ingredients ("+ Ingredients to list", amounts
+  added up), and a planned week's shopping if you add it (ticked off in the
+  shop or marked **at home**; "Plan around them" re-plans with those
+  ingredients free).
+- **Profile**: every answer, one tap to change it; shop and budget for a
+  planned week; food-suggestion switches (low salt, low sugar, show the
+  science); theme; download my data, delete my account; sources.
 
 **Preferences.** The planner can ask about sleep, training, mornings, study,
 foods you don't eat and how long you can cook (`GET /plan/questions`). Answers
@@ -248,10 +281,10 @@ an attributed Wikipedia summary (cached in `data/wikipedia_cache.json`); terms
 from `data/glossary.json` (draft, awaiting dietitian review).
 
 ### My week — a budgeted plan for Paris / France (prototype)
-The default tab of `/app`. You give age, sex, height, weight, activity, one goal,
-a shop, a weekly budget and a diet; you get 7 days of breakfast, lunch and
-dinner (+ snacks), and a shopping list priced at that shop. Your answers stay
-in the browser (localStorage) and are sent only to compute the plan.
+Optional, from Today › "Plan a whole week?". Your answers (age, sex, height,
+weight, activity, goal, diet and the rest) come from your profile; you add a
+shop and a weekly budget, and get 7 days of breakfast, lunch and dinner
+(+ snacks), and a shopping list priced at that shop.
 
 - **Food composition:** ANSES-CIQUAL 2020 (3,185 French foods, Licence Ouverte),
   [`data/ingest/ciqual.py`](backend/feedforward/data/ingest/ciqual.py); energy
@@ -390,9 +423,9 @@ This is a personal project and a working prototype, not a product in use.
 Nothing here has been reviewed by a dietitian or tested with users yet.
 What exists today:
 
-- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 273 tests (pytest, run on every push by GitHub Actions).
-- ✅ FastAPI backend: recommend / explain / meal-plan / week plan / food detail / dictionary / auth with tiered access.
-- ✅ Web app (`/app`): Today (day dashboard, recipe sheet, swap), Foods (search, goals, dictionary), List (one shopping list with "at home"), Profile; works on phones. The single-meal optimiser stays in the engine and the API (`/meal-plan`), not in the interface.
+- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 297 tests (pytest, run on every push by GitHub Actions).
+- ✅ FastAPI backend: recommend / explain / meal-plan / week plan / diary (day totals, ideas per meal) / food detail / dictionary / auth (Google ID tokens, tiered access) / saved app data per account.
+- ✅ Web app (`/app`): sign-in (Google, or a local test sign-in), a few questions with the strategies they turn on, Today (a diary: log a food or a recipe, ideas per meal with their reasons), an optional planned week (recipe sheet, swap), Foods (search, goals, dictionary), List (empty until you add to it), Profile; works on phones; data saved in the account. The single-meal optimiser stays in the engine and the API (`/meal-plan`), not in the interface.
 - 🟡 Expo mobile prototype (`mobile/`): early screens against the recommend API; it does not have My week.
 
 Known limitations, stated plainly:

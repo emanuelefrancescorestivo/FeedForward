@@ -207,6 +207,42 @@ mineral; citing a claim for a trace amount would mislead, and so would
 literature-only (grade D) links such as vitamin K for iron.
 *Where:* [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`recipe_why`)
 
+### 22. An account, an empty start, and the day as a diary (branch `dashboard-ui`)
+**Decision.** The app opens on a sign-in page (Google; on a developer's machine
+also a test sign-in by name). A new account answers a few questions, one topic
+per screen: about you, one goal and the energy goal are needed; "your day" and
+"your food" can be skipped; the last screen lists what the answers turn on,
+each strategy with its grade, the answer that triggered it and its sources, and
+any can be switched off. Today then starts **empty**: each meal has "+ Add"
+(log a food in grams or a recipe in portions) and "Ideas" (three recipes for
+that meal, `POST /diary/suggest`). A planned week, the shopping list and the
+shop and budget come only when the person asks for them. Everything they keep
+(answers, diary, list) is one document in their account (`/me/state`), with
+download and deletion in Profile.
+**Why.** The first screen of the previous version was a plan and a shopping list
+the person had not asked for, with meals they might not like or know how to
+cook: a sense of being decided for, not helped. A diary with ideas on demand
+keeps the person in charge and still puts the engine to work for each meal. An
+account lets the diary follow them from phone to laptop, which a browser-only
+store cannot do. Ideas follow the same answers as the week planner (one
+`_context`, days = 1), so the two never disagree: foods not eaten, cooking time,
+kitchen, "not for me" are hard filters; the strategies for that meal steer the
+ranking and show as reasons.
+**Instead.** Keeping data in the browser only (decision 18): more private, but
+a diary that vanishes with a cleared browser, and no second device.
+Email-and-password accounts: the backend already has them, but a password is
+one more thing to create and leak; Google sign-in (an ID token checked against
+Google's keys, this app as audience, a verified email) asks for nothing new.
+**Cost.** The server now stores personal data: what someone eats and their
+answers about sleep or training (no medical conditions, as before). It is kept
+to one document per account, sent to no one else, downloadable, and deleted with
+the account. A strategy that is about the whole day ("40 % of the day's
+carbohydrates at dinner") cannot be judged on one meal, so an idea is marked
+"carb-rich" when half its energy or more comes from carbohydrates, and the day
+shows the real share once the meals are logged. A Google client ID must be
+created once per deployment (README).
+*Where:* [`engine/diary.py`](backend/feedforward/engine/diary.py), [`api/routers/diary.py`](backend/feedforward/api/routers/diary.py), [`api/routers/me.py`](backend/feedforward/api/routers/me.py), [`api/auth.py`](backend/feedforward/api/auth.py) (`verify_google`, `dev_login_enabled`), [`web/index.html`](backend/feedforward/web/index.html) (`renderGate`, `renderOnboarding`, `renderToday`, `openIdeas`)
+
 ### 21. Preferences from questions, grounded in the graph
 **Decision.** A few plain questions shape the week: sleep, training, mornings,
 study, foods you don't eat, how long you can cook, and an energy goal. The
@@ -289,7 +325,8 @@ of the two is chosen. Macro targets use the midpoints of EFSA's ranges
 *Where:* [`web/index.html`](backend/feedforward/web/index.html), [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`_assemble`: `targets`, per-day `totals`, `goal_today`, `goal_from`)
 
 ### 18. Privacy by construction, and a web app with no build step
-**Decision.** The planner's answers live in the browser (localStorage); the
+**Decision.** *(Superseded in part by 22: answers, diary and list now live in
+the person's account.)* The planner's answers live in the browser (localStorage); the
 server computes the plan per request and stores nothing, including a week the
 user edited, which is sent back and recomputed (`/plan/evaluate`). The web app
 is one HTML file with no framework or build step, designed for progressive

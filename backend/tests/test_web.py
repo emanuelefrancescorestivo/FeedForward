@@ -23,3 +23,11 @@ def test_font_is_served_from_the_app_itself():
 def test_font_route_serves_only_font_files():
     for bad in ("nope.woff2", "OFL.txt", "..%2Findex.html", "%2E%2E", "..\\index.html"):
         assert client.get(f"/app/fonts/{bad}").status_code == 404, bad
+
+
+def test_app_opens_on_sign_in_and_plans_nothing_by_itself():
+    """A new person meets the sign-in page; no week, list or diet is made before they ask."""
+    page = client.get("/app").text
+    assert 'id="gate"' in page and "/auth/config" in page
+    start = page[page.index("// ---------------------------------------------------------------- start"):]
+    assert "/plan/week" not in start and "renderWeek(" not in start
