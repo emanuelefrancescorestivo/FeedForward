@@ -238,11 +238,12 @@ than the week planned for the needs alone.
 **Cost.** It revisits the "no weight goal" part of decision 19: there is now an
 energy goal, optional and bounded, instead of none. The strategies work on the
 week, so a single day can miss one, and the plan says on how many of the seven
-days each is met. With strategies on, the week is solved twice: across 25
-random sets of answers the median plan took about a second and the slowest
-under seven. Grade C is the weakest grade a strategy may carry (smaller trials
-or a position stand), and the plan shows the grade and the sources next to each
-strategy.
+days each is met. With strategies on, the week is solved twice, and the second
+solve stops after 3 s with the best week found by then (with none, the first
+week stands): across the 25 random sets of answers of the input-space test the
+median plan took about a second and the slowest 3.8 s. Grade C is the weakest
+grade a strategy may carry (smaller trials or a position stand), and the plan
+shows the grade and the sources next to each strategy.
 *Where:* [`data/strategies.json`](backend/feedforward/data/strategies.json), [`engine/profile.py`](backend/feedforward/engine/profile.py) (`resolve`, `propose`, `energy_options`), [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`_after_needs`, `_strategy_report`, `_relax`), [`api/routers/plan.py`](backend/feedforward/api/routers/plan.py) (`/plan/questions`, `/plan/strategies`)
 
 ### 20. Food first, and a calmer look (branch `dashboard-ui`)

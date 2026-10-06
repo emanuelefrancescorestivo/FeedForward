@@ -141,8 +141,10 @@ def test_evening_carbs_shifts_carbs_to_dinner(engine):
     plain = _plan(engine)
     sleep = _plan(engine, answers={"sleep_onset": "often"})
     assert _dinner_carb_share(sleep) > _dinner_carb_share(plain)
+    # 5 of 7 days measured with PuLP 3's CBC; the second solve is time-limited (STAGE2_SECONDS), so another
+    # CBC or a slower machine may stop at another week: 4 days leaves room for one, and the share must still rise
     s = _strategy(sleep, "evening_carbs")
-    assert s["met_days"] >= 5 and s["grade"] == "C" and s["pmids"] == ["17284739", "27633109"]
+    assert s["met_days"] >= 4 and s["grade"] == "C" and s["pmids"] == ["17284739", "27633109"]
 
 
 @pytest.mark.xfail(strict=True, reason=(
@@ -191,10 +193,19 @@ def _day_kcal(ctx, day):
     return wp._day_total(ctx, day, "energy-kcal")
 
 
-def test_levers_keep_the_week_near_its_cost(engine):
+def test_levers_keep_the_week_near_its_cost(engine, monkeypatch):
+    """The levers may make the week at most LEVER_COST (5 %) dearer than the week planned for the needs alone (the
+    first solve, read here by skipping the second); measured up to 4.9 % (light breakfast). The cap holds on the
+    model's cost, whose packs the 1 % gap may leave one too many, while the basket buys the fewest: hence a 1 %
+    tolerance. Against today's plain week (other goals can reweight the first week) training weeks measure 6.9 %."""
     plain = _plan(engine)["total_cost"]
-    for answers in NEEDS_FIRST_ANSWERS:
-        assert _plan(engine, answers=answers)["total_cost"] <= 1.10 * plain + 0.01, answers
+    for answers in NEEDS_FIRST_ANSWERS + ({"energy_goal": "deficit"},):
+        with monkeypatch.context() as m:
+            m.setattr(wp, "_after_needs", lambda *_a, **_k: False)
+            first = wp.plan_week(engine, STUDENT, goal="cognitive_function", budget=60, chain="lidl", answers=answers)
+        cost = _plan(engine, answers=answers)["total_cost"]
+        assert cost <= wp.LEVER_COST * first["total_cost"] * 1.01, (answers, cost, first["total_cost"])
+        assert cost <= 1.10 * plain, (answers, cost, plain)
 
 
 def test_protein_target_and_spread(engine):
@@ -215,7 +226,33 @@ def test_needs_come_first(engine):
     for base, answers in cases:
         covered = [n for n, v in base["coverage"].items() if v >= 100]
         plan = _plan(engine, answers=answers)
+        # No tolerance: the second solve holds each nutrient at 97 % of its need or more where the first week
+        # (the needs alone) had it so (a hard bound, y_n >= min(0.97, first week)); a second solve that finds no
+        # week in time leaves the first week. Coverage is shown to 0.1 point.
         assert all(plan["coverage"][n] >= 97 for n in covered), (answers, {n: plan["coverage"][n] for n in covered})
+
+
+def test_a_second_solve_without_a_week_keeps_the_first(engine, monkeypatch):
+    """The levers' solve has STAGE2_SECONDS. When it returns no usable week (none found in time, a solver error),
+    the first week, planned for the needs, is the plan, and the strategies are reported on it."""
+    answers = {"sleep_onset": "often"}
+    kw = dict(goal="cognitive_function", budget=60, chain="lidl", answers=answers)
+    both = _plan(engine, answers=answers)                       # the levers' week, solved as usual
+    with monkeypatch.context() as m:
+        m.setattr(wp, "_after_needs", lambda *_a, **_k: False)
+        first = wp.plan_week(engine, STUDENT, **kw)
+    calls, real = [], wp.solve
+
+    def second_fails(prob, time_limit=None):
+        calls.append(time_limit)
+        result = real(prob, time_limit)          # the solver runs and writes its week into the model...
+        return result if len(calls) == 1 else (False, "Not Solved")    # ...but reports it unusable
+    monkeypatch.setattr(wp, "solve", second_fails)
+    plan = wp.plan_week(engine, STUDENT, **kw)
+    assert calls == [wp.SOLVE_SECONDS, wp.STAGE2_SECONDS]
+    assert _composition(plan) == _composition(first) and plan["total_cost"] == first["total_cost"]
+    assert _composition(plan) != _composition(both)             # the second solve's week was not read
+    assert [s["id"] for s in plan["strategies"]] == ["evening_carbs", "no_evening_caffeine"]
 
 
 def test_conflicting_answers_still_plan(engine):                  # Review Focus 2

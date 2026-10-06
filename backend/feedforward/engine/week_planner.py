@@ -65,8 +65,12 @@ lever missed by its whole threshold costs about its weight:
   or the cost cap (5 % or 50 %): there the energy bound, not the weight, limits
   it. A 10 % cap let training weeks reach 1.15 x the plain week's cost (their
   first week was then 5 % dearer); 4 % and 3 % lost evening carbs or hit the
-  time limit. The second solve is the slow one: up to the 10 s safety net for
-  six answers at once (the best week found by then is planned).
+  time limit. The second solve is the slow one, so it stops at STAGE2_SECONDS
+  (3 s) and plans the best week found by then (none found: the first week
+  stands). Over the sweep's 25 random sets of answers (test_week.py) it took a
+  median 1.05 s and at most 3.1 s (5.1 s with the 10 s limit); a whole plan, a
+  median 0.97 s and at most 3.8 s. No warm start from the first week: PuLP 3's
+  bundled CBC misreads a warm start's objective sign when maximising.
 
   Shares are written on the week; the plan reports them day by day, so after
   the days are laid out, meals and snacks are swapped between days while that
@@ -148,6 +152,9 @@ VEGAN_B12_NOTE = ("Vitamin B12 is found almost only in animal foods: on a vegan 
 REPEAT_PENALTY = 0.03   # objective cost of one repeat beyond the variety cap
 REPEAT_EUR = 1.0        # the same, in euros, for the cheapest-week solve
 SOLVE_SECONDS = 10      # safety net; with the 1% gap (engine/milp.py) plans take well under 1 s
+# The levers' solve (_after_needs) stops here and plans the best week found by then;
+# with none found, the first week stands. Measured: see the docstring.
+STAGE2_SECONDS = 3
 # Macro targets for the day view: EFSA reference intake ranges as shares of
 # energy (carbohydrates 45-60 %, fat 20-35 %), shown at their midpoints; protein
 # is the person's need (engine/needs.py). Targets to aim for, not limits.
@@ -542,9 +549,10 @@ def _after_needs(prob: pulp.LpProblem, ctx: _Week, objective, x: dict, y: dict, 
     nor below the week where it was lower), the energy may move at most
     NEEDS_TOLERANCE further from the target, and the week may cost at most
     LEVER_COST times as much (the cost term alone is below the solver's gap).
-    Within that, a raised protein need weighs PROTEIN_NEED_WEIGHT, the levers
-    PREFERENCE_WEIGHT. True when the model holds a new week to read; else the
-    first week stands (it meets every bound, so this rarely happens).
+    Within that, a protein target weighs PROTEIN_NEED_WEIGHT, the levers
+    PREFERENCE_WEIGHT. The solve has STAGE2_SECONDS and keeps the best week found
+    by then. True when the model holds a new week to read; else (no week found in
+    time, a solver error) the first week stands: it meets every bound.
     """
     for n in ctx.weekly:
         prob += y[n] >= min(1.0 - NEEDS_TOLERANCE, y[n].value() or 0.0) - 1e-6, f"needs_{n}"
@@ -556,7 +564,7 @@ def _after_needs(prob: pulp.LpProblem, ctx: _Week, objective, x: dict, y: dict, 
         prob += intake("proteins") + sl >= ctx.protein_target, "lever_protein"
         terms.append(PROTEIN_NEED_WEIGHT * sl / ctx.protein_target)
     replace_objective(prob, objective - pulp.lpSum(terms))
-    return solve(prob, time_limit=SOLVE_SECONDS)[0]
+    return solve(prob, time_limit=STAGE2_SECONDS)[0]
 
 
 def _lever_terms(prob: pulp.LpProblem, ctx: _Week, x: dict, intake) -> list:
