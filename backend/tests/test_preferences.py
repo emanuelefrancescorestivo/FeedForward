@@ -232,6 +232,24 @@ def test_needs_come_first(engine):
         assert all(plan["coverage"][n] >= 97 for n in covered), (answers, {n: plan["coverage"][n] for n in covered})
 
 
+def test_levers_never_trade_the_who_limits(engine, monkeypatch):
+    """Salt, saturated fat and free sugars stay where the week planned for the needs alone had them: under the
+    limit, or no further over (the second solve holds each limit's slack). Even at a lever weight of 30 (it is 1),
+    which without that bound bought the levers with saturated fat here (78 % -> 103 % of the limit)."""
+    person = Profile(22, "female", 60, 165, "moderate")
+    kw = dict(goal="cognitive_function", budget=60, chain="carrefour",
+              answers={"training_days": "5+", "training_time": "before_breakfast"})
+    with monkeypatch.context() as m:
+        m.setattr(wp, "_after_needs", lambda *_a, **_k: False)
+        first = wp.plan_week(engine, person, **kw)
+    for weight in (wp.PREFERENCE_WEIGHT, 30.0):
+        monkeypatch.setattr(wp, "PREFERENCE_WEIGHT", weight)
+        plan = wp.plan_week(engine, person, **kw)
+        assert _composition(plan) != _composition(first), weight                  # the second solve gave a week
+        assert all(v <= max(100.0, first["limits"][n]) + 0.5 for n, v in plan["limits"].items()), \
+            (weight, plan["limits"], first["limits"])
+
+
 def test_a_second_solve_without_a_week_keeps_the_first(engine, monkeypatch):
     """The levers' solve has STAGE2_SECONDS. When it returns no usable week (none found in time, a solver error),
     the first week, planned for the needs, is the plan, and the strategies are reported on it."""

@@ -232,9 +232,11 @@ evidence behind what an answer triggered, lets them judge it. A light, bounded
 energy goal is what many students want, and putting needs first keeps it safe:
 the week is first planned for the needs alone (the reference intakes, protein
 included), and the strategies may only trade a little of it: a nutrient may
-fall to 97 % of its need at most (one already short does not fall further), the
-energy may move 3 % further from the target, and the week may cost 5 % more
-than the week planned for the needs alone.
+fall to 97 % of its need at most (one already short does not fall further),
+salt, saturated fat and free sugars may not go over their limits (nor further
+over, where that week already was), the energy may move 3 % further from the
+target, and the week may cost 5 % more than the week planned for the needs
+alone.
 **Cost.** It revisits the "no weight goal" part of decision 19: there is now an
 energy goal, optional and bounded, instead of none. The strategies work on the
 week, so a single day can miss one, and the plan says on how many of the seven

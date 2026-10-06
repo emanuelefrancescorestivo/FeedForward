@@ -52,8 +52,9 @@ lever missed by its whole threshold costs about its weight:
   only one, so a plan without answers is exactly today's). The second adds
   them, and from the first week no nutrient may fall more than NEEDS_TOLERANCE
   (3 points), nor below 97 % of the need (nor below the first week where that
-  was lower); energy may move at most 3 % of E further from the target; and the
-  week may cost at most LEVER_COST (5 %) more. The levers only trade, then,
+  was lower); no WHO limit may go over where the first week was under it (nor
+  further over); energy may move at most 3 % of E further from the target; and
+  the week may cost at most LEVER_COST (5 %) more. The levers only trade, then,
   against coverage above the floors, energy within 3 points, variety and cost
   within 5 %: so they weigh 1, not the 0.3 first planned. Measured on the
   README profile: weights alone could not keep needs first (at 0.3, 0.1 and
@@ -531,7 +532,7 @@ def plan_week(rec, profile: Profile, *, goal: str | None, budget: float, chain: 
 
     counts, snack_counts = chosen()
     soft = any(a["lever"]["type"] in SOFT_LEVERS for a in ctx.levers.applied)   # none without answers
-    if soft and _after_needs(prob, ctx, objective, x, y, intake, cost, e_over + e_under):
+    if soft and _after_needs(prob, ctx, objective, x, y, intake, cost, e_over + e_under, slack):
         counts, snack_counts = chosen()
     week = _balance(ctx, _schedule(counts, snack_counts, by_id, days))
     return _assemble(ctx, _arrange(ctx, week), budget=budget, relax=relax)
@@ -541,14 +542,17 @@ def _variety_cap(r: Recipe) -> int:
     return 3 if r.batch else 2
 
 
-def _after_needs(prob: pulp.LpProblem, ctx: _Week, objective, x: dict, y: dict, intake, cost, off) -> bool:
+def _after_needs(prob: pulp.LpProblem, ctx: _Week, objective, x: dict, y: dict, intake, cost, off,
+                 slack: dict) -> bool:
     """
     Needs first: the levers' solve, from the week just solved without them, which
     covers the needs as well as they can be. From here no nutrient may fall more
     than NEEDS_TOLERANCE below that week's coverage (nor below 97 % of its need,
-    nor below the week where it was lower), the energy may move at most
-    NEEDS_TOLERANCE further from the target, and the week may cost at most
-    LEVER_COST times as much (the cost term alone is below the solver's gap).
+    nor below the week where it was lower), no limit (salt, saturated fat, free
+    sugars: ``slack``) may go over where that week was under it, nor further over
+    where it was over, the energy may move at most NEEDS_TOLERANCE further from
+    the target, and the week may cost at most LEVER_COST times as much (the cost
+    term alone is below the solver's gap).
     Within that, a protein target weighs PROTEIN_NEED_WEIGHT, the levers
     PREFERENCE_WEIGHT. The solve has STAGE2_SECONDS and keeps the best week found
     by then. True when the model holds a new week to read; else (no week found in
@@ -556,6 +560,8 @@ def _after_needs(prob: pulp.LpProblem, ctx: _Week, objective, x: dict, y: dict, 
     """
     for n in ctx.weekly:
         prob += y[n] >= min(1.0 - NEEDS_TOLERANCE, y[n].value() or 0.0) - 1e-6, f"needs_{n}"
+    for n, over in slack.items():
+        prob += over <= (over.value() or 0.0) + 1e-6, f"needs_limit_{n}"
     prob += off <= (pulp.value(off) or 0.0) + NEEDS_TOLERANCE * ctx.kcal_target + 1e-6, "needs_energy"
     prob += cost <= LEVER_COST * (pulp.value(cost) or 0.0) + 1e-6, "lever_cost"
     terms = _lever_terms(prob, ctx, x, intake)
