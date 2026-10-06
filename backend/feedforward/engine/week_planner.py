@@ -876,7 +876,11 @@ def _basket(grams_by_ingredient: dict, chain: str, ingredients: dict, pantry: fr
 
 # ---------------------------------------------------------------- edits
 def _week_from(ctx: _Week, week: list[dict]) -> list[dict]:
-    """Validate a week sent back by the app: 7 days, allowed recipes, in the right meals."""
+    """
+    Validate a week sent back by the app: 7 days, and every recipe one the settings
+    allow at its meal. A recipe the preferences or the avoided list took out of the
+    context is refused like one that is not a dinner.
+    """
     if len(week) != ctx.days:
         raise ValueError(f"a week has {ctx.days} days, got {len(week)}")
     out = []
@@ -886,11 +890,11 @@ def _week_from(ctx: _Week, week: list[dict]) -> list[dict]:
             raise ValueError(f"day {i + 1} needs breakfast, lunch and dinner")
         for m, rid in meals.items():
             r = ctx.by_id.get(rid)
-            if r is None or m not in r.meals:
-                raise ValueError(f"day {i + 1}: '{rid}' is not a {m} for this diet and kitchen")
+            if r is None or not ctx.allowed(r, m):
+                raise ValueError(f"day {i + 1}: '{rid}' is not a {m} for these settings")
         for rid in snacks:
-            if rid not in ctx.by_id or "snack" not in ctx.by_id[rid].meals:
-                raise ValueError(f"day {i + 1}: '{rid}' is not a snack for this diet")
+            if rid not in ctx.by_id or not ctx.allowed(ctx.by_id[rid], "snack"):
+                raise ValueError(f"day {i + 1}: '{rid}' is not a snack for these settings")
         if len(snacks) > ctx.snacks_per_day:
             raise ValueError(f"day {i + 1}: at most {ctx.snacks_per_day} snacks")
         out.append({"meals": meals, "snacks": snacks})
@@ -924,6 +928,7 @@ def swap_options(rec, profile: Profile, week: list[dict], day: int, meal: str, *
     rules: within budget, energy in the band, no salt / saturated fat / free
     sugar limit worse than now, not the other main meal of that day, and no
     extra repeat while non-repeating options exist. Best for the goal first.
+    ``breaks`` names the strategies that the swap would meet on fewer days.
     """
     if meal not in MEALS:
         raise ValueError(f"meal must be one of {list(MEALS)}")
@@ -939,10 +944,11 @@ def swap_options(rec, profile: Profile, week: list[dict], day: int, meal: str, *
     for d in week:
         served[d["meals"][meal]] = served.get(d["meals"][meal], 0) + 1
     base_score = _goal_score(ctx, base["coverage"])
+    base_met = {s["id"]: s["met_days"] for s in base["strategies"]}
 
     fresh, repeated = [], []
     for r in ctx.meals:
-        if meal not in r.meals or r.id == current or r.id in other:
+        if not ctx.allowed(r, meal) or r.id == current or r.id in other:
             continue
         trial = [{"meals": dict(d["meals"]), "snacks": list(d["snacks"])} for d in week]
         trial[day]["meals"][meal] = r.id
@@ -956,6 +962,7 @@ def swap_options(rec, profile: Profile, week: list[dict], day: int, meal: str, *
         option = {"id": r.id, "en": r.en, "fr": r.fr, "time_min": r.time_min, "batch": r.batch,
                   "total_cost": plan["total_cost"], "cost_delta": round(plan["total_cost"] - base["total_cost"], 2),
                   "effect": "better" if delta > 0.005 else "less" if delta < -0.005 else "same",
+                  "breaks": [s["id"] for s in plan["strategies"] if s["met_days"] < base_met[s["id"]]],
                   "_score": score}
         (repeated if served.get(r.id, 0) + 1 > _variety_cap(r) else fresh).append(option)
     ranked = sorted(fresh, key=lambda o: (-o["_score"], o["total_cost"]))

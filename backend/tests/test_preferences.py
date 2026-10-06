@@ -438,3 +438,41 @@ def test_options_are_counted_with_the_plans_own_filter(engine):
 def test_an_edited_week_has_relax_too(engine):
     week = _composition(_plan(engine))
     assert wp.evaluate_week(engine, STUDENT, week, goal="cognitive_function", budget=60, chain="lidl")["relax"] == []
+
+
+# --------------------------------------------------------------- edited weeks and swaps keep the preferences
+def test_edited_week_with_an_avoided_recipe_is_refused(engine):      # Review Focus 4
+    plan = _plan(engine)
+    rid = plan["days"][0]["meals"]["dinner"]["id"]
+    with pytest.raises(ValueError, match=rid):
+        wp.evaluate_week(engine, STUDENT, _composition(plan), goal="cognitive_function", budget=60, chain="lidl",
+                         avoid_recipes=[rid])
+
+
+def test_swaps_keep_filters_and_say_what_they_break(engine):
+    answers = {"sleep_onset": "often", "dont_eat": ["fish_seafood"]}
+    plan = _plan(engine, answers=answers)
+    opts = wp.swap_options(engine, STUDENT, _composition(plan), 2, "dinner", goal="cognitive_function",
+                           budget=60, chain="lidl", answers=answers)
+    assert opts["options"] and all("breaks" in o for o in opts["options"])
+    assert not _tags_of({o["id"] for o in opts["options"]}) & {"fish_seafood"}
+
+
+def test_an_edited_week_is_checked_at_each_meal_for_these_settings(engine):
+    answers = {"sleep_onset": "often"}                   # no caffeine at dinner
+    week = _composition(_plan(engine, answers=answers))
+    kw = dict(goal="cognitive_function", budget=60, chain="lidl", answers=answers)
+    week[3]["meals"]["dinner"] = "porridge-banana-walnut"        # a breakfast, not a dinner
+    with pytest.raises(ValueError, match="day 4: 'porridge-banana-walnut' is not a dinner for these settings"):
+        wp.evaluate_week(engine, STUDENT, week, **kw)
+    with pytest.raises(ValueError, match="day 4: 'porridge-banana-walnut' is not a dinner for these settings"):
+        wp.swap_options(engine, STUDENT, week, 0, "lunch", **kw)
+    ctx = _ctx(engine, answers=answers)                          # a caffeinated dinner, as the app could send it
+    chocolate = dataclasses.replace(ctx.by_id["snack-bread-chocolate"], meals=["snack", "lunch", "dinner"])
+    ctx = dataclasses.replace(ctx, by_id={**ctx.by_id, chocolate.id: chocolate})
+    week = _composition(_plan(engine, answers=answers))
+    week[2]["meals"]["lunch"] = chocolate.id
+    assert wp._week_from(ctx, week)[2]["meals"]["lunch"] == chocolate.id
+    week[2]["meals"]["dinner"] = chocolate.id
+    with pytest.raises(ValueError, match=f"day 3: '{chocolate.id}' is not a dinner for these settings"):
+        wp._week_from(ctx, week)
