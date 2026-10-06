@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 from ...engine import load_engine
 from ...engine.needs import ACTIVITY, Profile, energy_kcal
+from ...engine import profile as prefs
 from ...engine import week_planner as wp
 
 router = APIRouter(prefix="/plan", tags=["plan"])
@@ -27,6 +28,9 @@ class WeekRequest(BaseModel):
     diet: Literal["vegetarian", "vegan"] | None = None
     equipment: list[Literal["hob", "microwave", "kettle", "blender"]] | None = None   # None = full kitchen
     pantry: list[str] | None = None       # ingredient ids already at home: free in the plan
+    answers: dict[str, str | list[str]] | None = None   # the person's answers to GET /plan/questions
+    declined: list[str] | None = None                   # strategy ids they turned down
+    avoid_recipes: list[str] | None = None              # recipe ids marked "not for me"
 
 
 class DayIn(BaseModel):
@@ -50,13 +54,30 @@ def _profile(req: WeekRequest) -> Profile:
 
 def _settings(req: WeekRequest) -> dict:
     return dict(goal=req.goal, budget=req.budget, chain=req.chain, diet=req.diet,
-                equipment=req.equipment, pantry=req.pantry)
+                equipment=req.equipment, pantry=req.pantry,
+                answers=req.answers, declined=req.declined, avoid_recipes=req.avoid_recipes)
 
 
 @router.get("/options")
 def options():
     return {"chains": wp.chains(), "activities": list(ACTIVITY),
             "diets": [None, "vegetarian", "vegan"]}
+
+
+@router.get("/questions")
+def questions():
+    """The questionnaire, and the food categories a person can say they do not eat."""
+    return {"questions": prefs.questions(), "categories": list(prefs.CATEGORIES)}
+
+
+@router.post("/strategies")
+def strategies(req: WeekRequest):
+    """What these answers would turn on, for the person to accept or decline, and what is closed to them."""
+    try:
+        return prefs.propose(req.answers or {}, _profile(req), goal=req.goal,
+                             known_goals=set(load_engine().scorer.positive))
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
 
 
 @router.post("/week")

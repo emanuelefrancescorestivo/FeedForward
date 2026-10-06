@@ -476,3 +476,24 @@ def test_an_edited_week_is_checked_at_each_meal_for_these_settings(engine):
     week[2]["meals"]["dinner"] = chocolate.id
     with pytest.raises(ValueError, match=f"day 3: '{chocolate.id}' is not a dinner for these settings"):
         wp._week_from(ctx, week)
+
+
+# --------------------------------------------------------------- API
+def test_preferences_api_round_trip():
+    from fastapi.testclient import TestClient
+    from feedforward.api.main import app
+
+    with TestClient(app) as client:
+        q = client.get("/plan/questions").json()
+        assert {x["id"] for x in q["questions"]} >= {"energy_goal", "sleep_onset", "dont_eat", "cook_time"}
+        body = {"age": 24, "sex": "male", "weight_kg": 72, "height_cm": 178, "goal": "cognitive_function",
+                "budget": 60, "chain": "lidl"}
+        prop = client.post("/plan/strategies", json={**body, "answers": {"sleep_onset": "often"}}).json()
+        assert "evening_carbs" in {s["id"] for s in prop["strategies"]}
+        plan = client.post("/plan/week", json={**body, "answers": {"sleep_onset": "often"}, "declined": ["no_evening_caffeine"]}).json()
+        assert {s["id"] for s in plan["strategies"]} >= {"evening_carbs"} and "no_evening_caffeine" not in {s["id"] for s in plan["strategies"]}
+        teen = {**body, "age": 16, "answers": {"energy_goal": "deficit"}}
+        assert client.post("/plan/week", json=teen).status_code == 400
+        assert client.post("/plan/strategies", json={**body, "age": 16}).json()["unavailable"]["energy_goal=deficit"]
+        assert client.post("/plan/week", json={**body, "answers": {"sleep_onset": "never"}}).status_code == 400
+        assert client.post("/plan/week", json={**body, "avoid_recipes": ["nope"]}).status_code == 400
