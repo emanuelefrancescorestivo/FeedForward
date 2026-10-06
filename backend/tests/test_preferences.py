@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import dataclasses
+import math
 
 import pulp
 import pytest
@@ -9,9 +10,11 @@ import pytest
 from feedforward.engine import load_engine
 from feedforward.engine import profile
 from feedforward.engine import week_planner as wp
-from feedforward.engine.needs import Profile, resting_kcal
+from feedforward.engine.needs import Profile, daily_needs, energy_kcal, resting_kcal
 
 STUDENT = Profile(24, "male", 72, 178, "light")
+# Sedentary: resting 1,239 kcal, maintenance 1,487, a deficit target of 1,264, only 2 % above resting energy.
+WOMAN = Profile(30, "female", 55, 160, "sedentary")
 
 
 @pytest.fixture(scope="module")
@@ -198,12 +201,19 @@ def test_protein_target_and_spread(engine):
     plan = _plan(engine, answers={"training_days": "5+", "training_time": "afternoon"})
     assert plan["protein_target_g"] == pytest.approx(1.6 * 72, abs=0.5) == plan["targets"]["protein"]
     assert _strategy(plan, "protein_spread")["met_days"] >= 5
+    # coverage is against the reference need (0.83 g/kg), not the strategy's 1.6 g/kg target
+    eaten = sum(d["totals"]["protein"] for d in plan["days"])
+    assert plan["coverage"]["proteins"] == pytest.approx(100 * eaten / (7 * daily_needs(STUDENT, [])["proteins"]), abs=0.5)
 
 
 def test_needs_come_first(engine):
-    plain = _plan(engine)
-    covered = [n for n, v in plain["coverage"].items() if v >= 100]
-    for answers in NEEDS_FIRST_ANSWERS:
+    """Each strategy against the week planned without it: the plain week, and for a deficit the deficit week with
+    protein_target declined (the 1.6 g/kg is a target of the second solve, not a need of the first)."""
+    deficit = {"energy_goal": "deficit"}
+    cases = [(_plan(engine), answers) for answers in NEEDS_FIRST_ANSWERS]
+    cases.append((_plan(engine, answers=deficit, declined=["protein_target"]), deficit))
+    for base, answers in cases:
+        covered = [n for n, v in base["coverage"].items() if v >= 100]
         plan = _plan(engine, answers=answers)
         assert all(plan["coverage"][n] >= 97 for n in covered), (answers, {n: plan["coverage"][n] for n in covered})
 
@@ -243,13 +253,13 @@ def test_an_answer_goal_adds_nutrients_at_half_weight(engine):
         assert ctx.evidence[n] == {"grade": meta["evidence"], "eu_claim": bool(meta.get("eu_claim"))}
 
 
-def test_protein_target_raises_the_weekly_need(engine):
+def test_protein_target_raises_the_target_not_the_need(engine):
+    """The first solve plans the reference needs; 1.6 g/kg is the second solve's target (needs first)."""
     plain = _ctx(engine)
     trained = _ctx(engine, answers={"training_days": "5+"})
-    assert trained.weekly["proteins"] == pytest.approx(1.6 * 72 * 7, abs=0.5)
-    assert plain.weekly["proteins"] < trained.weekly["proteins"]
-    assert {n: v for n, v in trained.weekly.items() if n != "proteins"} == \
-           {n: v for n, v in plain.weekly.items() if n != "proteins"}
+    assert trained.weekly == plain.weekly
+    assert trained.protein_target == pytest.approx(1.6 * 72 * 7, abs=0.5)
+    assert plain.protein_target == plain.weekly["proteins"] < trained.protein_target
 
 
 def test_energy_never_below_resting(engine, monkeypatch):
@@ -258,6 +268,77 @@ def test_energy_never_below_resting(engine, monkeypatch):
     ctx = _ctx(engine, answers={"energy_goal": "deficit"})
     assert ctx.kcal_target == pytest.approx(7 * resting_kcal(STUDENT)) and ctx.resting_kcal == resting_kcal(STUDENT)
     assert ctx.scale == wp.portion_scale(STUDENT, resting_kcal(STUDENT))
+
+
+def test_the_energy_band_never_reaches_below_resting_energy(engine):
+    """The week's lower bound: 90 % of the target (97 % in a deficit), and never below resting energy x days.
+    Without answers it is today's 90 % (PAL >= 1.2 keeps 0.9 x the target above resting energy)."""
+    def ctx_of(person, answers):
+        return wp._context(engine, person, goal=None, chain="lidl", diet=None, equipment=None, pantry=None, days=7,
+                           answers=answers)
+
+    for answers, lower in ((None, 0.9), ({"energy_goal": "surplus"}, 0.9), ({"energy_goal": "deficit"}, 0.97)):
+        for person in (STUDENT, WOMAN):
+            ctx = ctx_of(person, answers)
+            assert wp._energy_band(ctx) == (max(lower * ctx.kcal_target, 7 * resting_kcal(person)), 1.15 * ctx.kcal_target)
+    assert wp._energy_band(_ctx(engine))[0] == 0.9 * _ctx(engine).kcal_target          # exactly today's bound
+    woman = ctx_of(WOMAN, {"energy_goal": "deficit"})
+    assert wp._energy_band(woman)[0] == 7 * resting_kcal(WOMAN) > 0.97 * woman.kcal_target
+
+
+def test_a_deficit_week_never_goes_below_resting_energy(engine):
+    """A sedentary deficit (target 2 % above resting energy) at EUR 80: the week is at resting energy or above
+    (a hard bound of the solve), and the days are balanced so that none falls below it."""
+    resting = resting_kcal(WOMAN)
+    plan = wp.plan_week(engine, WOMAN, goal=None, budget=80, chain="lidl", answers={"energy_goal": "deficit"})
+    assert plan["feasible"] and plan["energy"]["in_band"] and plan["energy"]["resting"] == round(resting)
+    assert plan["energy"]["planned_per_day"] >= resting - 0.5
+    assert plan["energy"]["days_below_resting"] == 0
+    assert all(d["totals"]["kcal"] >= resting - 0.5 for d in plan["days"])
+
+
+def test_a_deficit_stays_light_at_its_minimum_budget(engine):
+    """The cheapest deficit week plans at least 97 % of its target: at most about 18 % below maintenance."""
+    kw = dict(goal=None, chain="lidl", answers={"energy_goal": "deficit"}, declined=["protein_target"])
+    cheapest = wp.plan_week(engine, STUDENT, budget=0, _cheapest=True, **kw)
+    plan = wp.plan_week(engine, STUDENT, budget=math.ceil(cheapest["total_cost"]), **kw)
+    e = plan["energy"]
+    assert plan["feasible"] and e["planned_per_day"] >= 0.97 * e["target_per_day"] - 0.5
+    assert e["planned_per_day"] >= 0.82 * energy_kcal(STUDENT) and e["days_below_resting"] == 0
+
+
+def _scheduled(ctx, plan):
+    """The plan's food as the solver's counts, laid out by _schedule alone (before any balancing)."""
+    counts, snacks = {}, {}
+    for d in _composition(plan):
+        for m, rid in d["meals"].items():
+            counts[rid, m] = counts.get((rid, m), 0) + 1
+        for rid in d["snacks"]:
+            snacks[rid] = snacks.get(rid, 0) + 1
+    return wp._schedule(counts, snacks, ctx.by_id, 7)
+
+
+def test_balancing_lifts_days_below_resting_with_the_same_food(engine):
+    kw = dict(goal=None, chain="lidl", diet=None, equipment=None, pantry=None, days=7)
+    ctx = wp._context(engine, WOMAN, **kw, answers={"energy_goal": "deficit"}, declined=["protein_target"])
+    plan = wp.plan_week(engine, WOMAN, goal=None, budget=80, chain="lidl", answers={"energy_goal": "deficit"},
+                        declined=["protein_target"])
+    week = _scheduled(ctx, plan)
+    balanced = wp._balance(ctx, week)
+    kcal = [wp._day_total(ctx, d, "energy-kcal") for d in week]
+    after = [wp._day_total(ctx, d, "energy-kcal") for d in balanced]
+    below = lambda days: sum(k < ctx.resting_kcal - 1e-6 for k in days)                  # noqa: E731
+    assert below(kcal) > 0 and below(after) == 0
+    assert all(a >= ctx.resting_kcal - 1e-6 for k, a in zip(kcal, after) if k >= ctx.resting_kcal - 1e-6)
+    for meal in ("breakfast", "lunch", "dinner"):
+        assert sorted(d["meals"][meal] for d in balanced) == sorted(d["meals"][meal] for d in week)
+        for b, d in zip(balanced, week):                          # batch recipes keep their days
+            assert ctx.by_id[d["meals"][meal]].batch is False or b["meals"][meal] == d["meals"][meal]
+    assert sorted(s for d in balanced for s in d["snacks"]) == sorted(s for d in week for s in d["snacks"])
+    assert all(d["meals"]["lunch"] != d["meals"]["dinner"] and len(set(d["snacks"])) == len(d["snacks"])
+               for d in balanced)
+    maintain = _ctx(engine)
+    assert wp._balance(maintain, PINNED_WEEK) is PINNED_WEEK                         # only deficit weeks
 
 
 def test_batch_recipes_get_three_times_the_cooking_time(engine):

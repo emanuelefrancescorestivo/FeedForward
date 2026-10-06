@@ -10,7 +10,7 @@ from feedforward.data.ingest.ciqual import column_map
 from feedforward.data.ingest.prices import chain_of, pack_grams
 from feedforward.engine import load_engine
 from feedforward.engine import week_planner as wp
-from feedforward.engine.needs import Profile, daily_needs, energy_kcal
+from feedforward.engine.needs import Profile, daily_needs, energy_kcal, resting_kcal
 
 DATA = Path(__file__).resolve().parent.parent / "feedforward" / "data"
 STUDENT = Profile(24, "male", 72, 178, "light")
@@ -257,6 +257,8 @@ def _violations(plan, profile, budget, diet, kitchen, answers=None, declined=())
         target, got = plan["energy"]["target_per_day"], plan["energy"]["planned_per_day"]
         if not 0.895 * target <= got <= 1.155 * target:
             bad.append(f"energy {got} for a need of {target}")
+        if got < resting_kcal(profile) - 0.5:                     # the week, on average: never below resting energy
+            bad.append(f"energy {got} below resting energy {resting_kcal(profile):.0f}")
         reported = {s["id"] for s in plan["strategies"]}
         if sleepless and "no_evening_caffeine" not in declined and "no_evening_caffeine" not in reported:
             bad.append("sleep answers did not turn on no_evening_caffeine")

@@ -215,19 +215,26 @@ knowledge graph, at half the weight of the person's own goal (alpha 0.5).
 Answers also trigger strategies graded A to C with PubMed IDs, such as "no
 caffeine at dinner" for people who sometimes or often take a long time to fall
 asleep, or "protein at 1.6 g per kg" for people who train three or more days a
-week or have chosen a deficit or a surplus. Foods not eaten, cooking time and
+week or have chosen a deficit or a surplus; that 1.6 g/kg is a target the plan
+aims for, not a need: coverage stays measured against the reference intake
+(0.83 g/kg). Foods not eaten, cooking time and
 batch cooking are applied as asked and carry no grade. The plan shows each
 strategy with its grade and sources, and the person can decline any of them. The
-energy goal is to maintain, a deficit of 15 % or a surplus of 10 %, never below
-resting energy; it is not offered under 18, in pregnancy or while breastfeeding,
-and a deficit is not offered under a BMI of 18.5.
+energy goal is to maintain, a deficit of 15 % or a surplus of 10 %; it is not
+offered under 18, in pregnancy or while breastfeeding, and a deficit is not
+offered under a BMI of 18.5. The week's energy is never planned below resting
+energy, and a deficit week is planned at 97 % of its target or more, so never
+more than 18 % below maintenance. In a deficit week, meals and snacks are moved
+between days so that no day falls below resting energy where the recipes allow;
+the plan counts any day left below.
 **Why.** A plan people did not choose feels imposed; asking, and showing the
 evidence behind what an answer triggered, lets them judge it. A light, bounded
 energy goal is what many students want, and putting needs first keeps it safe:
-the week is first planned for the needs alone, and the strategies may only
-trade a little of it: a nutrient may fall to 97 % of its need at most (one
-already short does not fall further), the energy may move 3 % further from the
-target, and the week may cost 5 % more.
+the week is first planned for the needs alone (the reference intakes, protein
+included), and the strategies may only trade a little of it: a nutrient may
+fall to 97 % of its need at most (one already short does not fall further), the
+energy may move 3 % further from the target, and the week may cost 5 % more
+than the week planned for the needs alone.
 **Cost.** It revisits the "no weight goal" part of decision 19: there is now an
 energy goal, optional and bounded, instead of none. The strategies work on the
 week, so a single day can miss one, and the plan says on how many of the seven

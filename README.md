@@ -211,8 +211,11 @@ sources, which you accept or decline (`POST /plan/strategies`); the plan reports
 on how many days of the week each one is met, and needs come first: the week
 is planned for your needs, and strategies only shape what is left. You can also
 pick an energy goal: keep level, a light deficit (−15 %) or a light surplus
-(+10 %), never below resting energy, not under 18, not in pregnancy or
-breastfeeding, and no deficit under a BMI of 18.5. When your filters leave too few recipes for a
+(+10 %); not under 18, not in pregnancy or breastfeeding, and no deficit under
+a BMI of 18.5. The week's energy never goes below resting energy, and a deficit
+week is never planned more than 18 % below maintenance; in a deficit week the
+planner moves meals and snacks between days so that no day falls below resting
+energy where the recipes allow, and the plan counts any day left below. When your filters leave too few recipes for a
 meal, the plan says what to relax (a longer cooking time, a food allowed again,
 batch cooking). The screens for these questions come in the next step; for now
 they live in the engine and the API.
