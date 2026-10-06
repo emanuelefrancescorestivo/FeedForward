@@ -234,53 +234,92 @@ def test_why_this_meal_lists_only_meaningful_supported_nutrients(engine):
         wp.recipe_why(engine, "sardine-tartines", goal="no_such_goal")
 
 
-def _violations(plan, profile, budget, diet, kitchen):
+def _violations(plan, profile, budget, diet, kitchen, answers=None, declined=()):
     """Invariants every answer must keep, whatever the input."""
     _i, recipes, _p = wp._load()
     ingredients = _i
     by_id = {r["id"]: r for r in recipes}
     banned = {"vegetarian": {"meat", "fish"}, "vegan": {"meat", "fish", "dairy", "egg", "honey"}}.get(diet, set())
+    answers = answers or {}
+    not_eaten = set(answers.get("dont_eat", []))
+    minutes = answers.get("cook_time", "any")
+    limit = None if minutes == "any" else int(minutes)
+    batch_ok = answers.get("batch_ok") == "yes"
+    sleepless = answers.get("sleep_onset") in ("sometimes", "often")
     bad = []
+
+    def tags(r):                                       # as the planner reads them: its ingredients' and its own
+        return set(r.get("tags", [])).union(*(ingredients[i["id"]]["tags"] for i in r["ingredients"]))
+
     if plan["feasible"]:
         if plan["total_cost"] > budget:
             bad.append(f"cost {plan['total_cost']} over budget {budget}")
         target, got = plan["energy"]["target_per_day"], plan["energy"]["planned_per_day"]
         if not 0.895 * target <= got <= 1.155 * target:
             bad.append(f"energy {got} for a need of {target}")
+        reported = {s["id"] for s in plan["strategies"]}
+        if sleepless and "no_evening_caffeine" not in declined and "no_evening_caffeine" not in reported:
+            bad.append("sleep answers did not turn on no_evening_caffeine")
         for d in plan["days"]:
             if set(d["meals"]) != {"breakfast", "lunch", "dinner"}:
                 bad.append(f"day {d['day']} incomplete")
-            for m in list(d["meals"].values()) + d["snacks"]:
+            for meal, m in list(d["meals"].items()) + [("snack", s) for s in d["snacks"]]:
                 r = by_id[m["id"]]
                 if {ingredients[i["id"]].get("animal") for i in r["ingredients"]} & banned:
                     bad.append(f"{m['id']} breaks {diet}")
                 if kitchen and not set(r.get("equipment", [])) <= set(kitchen) | {"kettle"}:
                     bad.append(f"{m['id']} needs more than {kitchen}")
+                if tags(r) & not_eaten:
+                    bad.append(f"{m['id']} has {sorted(tags(r) & not_eaten)}, which {answers['dont_eat']} rules out")
+                if meal != "snack" and limit and r["time_min"] > (3 * limit if r.get("batch") and batch_ok else limit):
+                    bad.append(f"{m['id']} takes {r['time_min']} min for a limit of {limit}")
+                if meal == "dinner" and "no_evening_caffeine" in reported and "caffeine" in tags(r):
+                    bad.append(f"{m['id']} has caffeine at dinner")
     elif plan["reason"] == "budget":
         if not plan["minimum_budget"] or plan["minimum_budget"] <= budget:
             bad.append(f"minimum budget {plan['minimum_budget']} for budget {budget}")
     elif plan["reason"] == "energy":
-        if 500 <= energy_kcal(profile) <= 6000:
-            bad.append(f"no plan for {round(energy_kcal(profile))} kcal, inside the promised range")
+        if 500 <= plan["energy"]["target_per_day"] <= 6000:        # the plan's own target: a goal moves it
+            bad.append(f"no plan for {plan['energy']['target_per_day']} kcal, inside the promised range")
+    elif plan["reason"] == "recipes":
+        if not plan["relax"]:
+            bad.append("too few recipes, and nothing to relax")
     else:
         bad.append(f"no plan: {plan['reason']}")
     return bad
 
 
 def test_planner_handles_the_input_space(engine):
-    """Not just the demo: small and athlete-sized needs, every diet and kitchen, cheap and dear shops."""
+    """Not just the demo: small and athlete-sized needs, every diet and kitchen, cheap and dear shops,
+    and the answers to the questions (foods not eaten, cooking time, sleep, goals of energy)."""
     import random
+    from feedforward.engine.profile import energy_options, questions
     small = Profile(75, "female", 45, 150, "sedentary")        # ~1,000 kcal a day
     typical = Profile(22, "female", 60, 165, "moderate")
     athlete = Profile(20, "male", 90, 190, "very_active")      # ~4,000 kcal a day
     failures = []
 
-    def run(profile, budget, chain, diet=None, kitchen=None):
+    def run(profile, budget, chain, diet=None, kitchen=None, answers=None):
         plan = wp.plan_week(engine, profile, goal="energy_metabolism", budget=budget, chain=chain,
-                            diet=diet, equipment=kitchen)
-        failures.extend(f"{profile} {chain} {diet} {kitchen} €{budget}: {b}"
-                        for b in _violations(plan, profile, budget, diet, kitchen))
+                            diet=diet, equipment=kitchen, answers=answers)
+        failures.extend(f"{profile} {chain} {diet} {kitchen} €{budget} {answers}: {b}"
+                        for b in _violations(plan, profile, budget, diet, kitchen, answers))
         return plan
+
+    def random_profile(rng):
+        return Profile(rng.randint(14, 90), rng.choice(["female", "male"]), round(rng.uniform(40, 140), 1),
+                       round(rng.uniform(145, 205), 1), rng.choice(["sedentary", "light", "moderate", "active", "very_active"]))
+
+    def random_answers(rng, profile):
+        """Each question unanswered or answered with one of its options; foods not eaten: 0 to 3 categories."""
+        refused = {g for g, why in energy_options(profile).items() if why}
+        answers = {}
+        for q in questions():
+            if q.get("multi"):
+                answers[q["id"]] = rng.sample(q["options"], rng.randint(0, 3))
+            elif rng.random() < 0.5:
+                answers[q["id"]] = rng.choice([o for o in q["options"] if o not in refused])
+        return answers
 
     for profile in (small, typical, athlete):
         for chain in ("lidl", "biocoop"):
@@ -294,9 +333,15 @@ def test_planner_handles_the_input_space(engine):
             assert run(typical, low["minimum_budget"], chain, diet)["feasible"], (chain, diet)
     rng = random.Random(42)
     for _ in range(15):
-        p = Profile(rng.randint(14, 90), rng.choice(["female", "male"]), round(rng.uniform(40, 140), 1),
-                    round(rng.uniform(145, 205), 1), rng.choice(["sedentary", "light", "moderate", "active", "very_active"]))
+        p = random_profile(rng)
         run(p, 500, rng.choice(["lidl", "carrefour", "naturalia"]), rng.choice([None, "vegetarian", "vegan"]))
+    rng = random.Random(7)                                      # the same with answers: 25 cases
+    plans = []
+    for _ in range(25):
+        p = rng.choice((small, typical, athlete, random_profile(rng)))
+        plans.append(run(p, rng.choice((500, 60)), rng.choice(("lidl", "carrefour", "naturalia")),
+                         answers=random_answers(rng, p)))
+    assert any(plan["feasible"] and plan["strategies"] for plan in plans)     # the answers did turn something on
     assert not failures, failures[:10]
 
 

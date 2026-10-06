@@ -23,7 +23,7 @@ rebuild the derived files from the public sources.
 | `wikipedia_cache.json` | Wikipedia page summaries (REST API) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) for the text | Stored with each page's URL, which the app shows next to the text. Images are not stored: the app links the Wikimedia Commons thumbnail, whose own licence is on its `image_page` |
 | `goal_edges_scraped.json` | Nutrient roles described on Wikipedia | Facts; weights are ours (MIT) | Weights assigned by FeedForward; shown as grade D unless an EU claim confirms them |
 | `evidence_pubmed.json` | PubMed (NCBI) search counts and PMIDs | Bibliographic facts (no abstracts stored) | Counts and first PMIDs per query, used to grade evidence |
-| `ingredients.json`, `recipes.json`, `interactions.json`, `goal_edges_curated.json`, `portions.json`, `glossary.json`, `benchmark_goals.json`, `eu_claim_rules.json`, `sources.json` | FeedForward | MIT | Written for this project; citations (PMIDs, CIQUAL codes, Open Food Facts tags) point at the sources above. Recipes are drafts, not reviewed by a dietitian |
+| `ingredients.json`, `recipes.json`, `strategies.json`, `interactions.json`, `goal_edges_curated.json`, `portions.json`, `glossary.json`, `benchmark_goals.json`, `eu_claim_rules.json`, `sources.json` | FeedForward | MIT | Written for this project; citations (PMIDs, CIQUAL codes, Open Food Facts tags) point at the sources above. The strategies in `strategies.json` cite PubMed IDs (bibliographic facts, no abstracts stored). Recipes are drafts, not reviewed by a dietitian |
 
 ## Attribution to show in anything built on this data
 

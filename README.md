@@ -70,8 +70,8 @@ says so.
 | **Optimisation** | Two mixed-integer programs (PuLP/CBC): one meal that covers a goal, and a whole week under a budget, with energy as a hard constraint and WHO limits on salt, saturated fat and free sugars | [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py), [`engine/meal_optimizer.py`](backend/feedforward/engine/meal_optimizer.py) |
 | **Statistics on messy data** | Crowdsourced receipts → median €/kg per chain, outliers dropped, chains with few receipts shrunk towards national median × chain price index; the index comes out of the data (Lidl 0.67, Carrefour 1.06, Biocoop 1.49) | [`data/ingest/prices.py`](backend/feedforward/data/ingest/prices.py) |
 | **Scientific judgement** | Scoring per realistic portion against reference intakes; heme vs non-heme iron; the EU register as evidence layer (118 authorised links, 62 EFSA rejections removed); no medical conditions collected, on purpose (EU medical-device rules) | [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) |
-| **Design choices** | Eighteen decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
-| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 202 tests on GitHub Actions, including one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
+| **Design choices** | Twenty-one decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
+| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 263 tests on GitHub Actions, including one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
 
 Two bugs the tests caught, as examples of how the project is checked:
 
@@ -203,6 +203,19 @@ nutrition apps; what sits inside is FeedForward's own:
   Foods added by hand join the same list.
 - **Profile**: the setup answers, food-suggestion switches (low salt, low sugar,
   show the science), theme, sources. Everything stays in the browser.
+
+**Preferences.** The planner can ask about sleep, training, mornings, study,
+foods you don't eat and how long you can cook (`GET /plan/questions`). Answers
+turn on strategies, each shown with its evidence grade (A to C) and its PubMed
+sources, which you accept or decline (`POST /plan/strategies`); the plan reports
+on how many days of the week each one is met, and needs come first: the week
+is planned for your needs, and strategies only shape what is left. You can also
+pick an energy goal: keep level, a light deficit (-15 %) or a light surplus
+(+10 %), never below resting energy, not under 18, not in pregnancy or
+breastfeeding, and no deficit under a BMI of 18.5. When your filters leave too few recipes for a
+meal, the plan says what to relax (a longer cooking time, a food allowed again,
+batch cooking). The screens for these questions come in the next step; for now
+they live in the engine and the API.
 
 The look: earthy pastels on oat and cream, one typeface (Inter, served by the
 app itself so the page makes no request to a font CDN), a sidebar on desktop
@@ -374,7 +387,7 @@ This is a personal project and a working prototype, not a product in use.
 Nothing here has been reviewed by a dietitian or tested with users yet.
 What exists today:
 
-- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 202 tests (pytest, run on every push by GitHub Actions).
+- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 263 tests (pytest, run on every push by GitHub Actions).
 - ✅ FastAPI backend: recommend / explain / meal-plan / week plan / food detail / dictionary / auth with tiered access.
 - ✅ Web app (`/app`): Today (day dashboard, recipe sheet, swap), Foods (search, goals, dictionary), List (one shopping list with "at home"), Profile; works on phones. The single-meal optimiser stays in the engine and the API (`/meal-plan`), not in the interface.
 - 🟡 Expo mobile prototype (`mobile/`): early screens against the recommend API; it does not have My week.
