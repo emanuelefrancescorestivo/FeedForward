@@ -217,19 +217,20 @@ caffeine at dinner" for people who sometimes or often take a long time to fall
 asleep, or "protein at 1.6 g per kg" for people who train three or more days a
 week or have chosen a deficit or a surplus; that 1.6 g/kg is a target the plan
 aims for, not a need: coverage stays measured against the reference intake
-(0.83 g/kg). Foods not eaten, cooking time and
-batch cooking are applied as asked and carry no grade. The plan shows each
-strategy with its grade and sources, and the person can decline any of them. The
-energy goal is to maintain, a deficit of 15 % or a surplus of 10 %; it is not
-offered under 18, in pregnancy or while breastfeeding, and a deficit is not
-offered under a BMI of 18.5. The week's energy is never planned below resting
-energy, and a deficit week is planned at 97 % of its target or more, so never
-more than 18 % below maintenance. In a deficit week, meals and snacks are moved
-between days so that no day falls below resting energy where the recipes allow;
-the plan counts any day left below.
+(0.83 g/kg). Foods not eaten, cooking time, batch cooking and a lighter
+breakfast (for people not hungry in the morning) are applied as asked and carry
+no grade. The plan shows each strategy with its grade and sources, and the
+person can decline any of them. The energy goal is to maintain, a deficit of
+15 % or a surplus of 10 %; it is not offered under 18, in pregnancy or while
+breastfeeding, and a deficit is not offered under a BMI of 18.5. The week's
+energy is never planned below resting energy, and a deficit week is planned at
+97 % of its target or more, so never more than 18 % below maintenance. In a
+deficit week, meals and snacks are moved between days so that no day falls
+below resting energy where the recipes allow; the plan counts any day left
+below.
 **Why.** A plan people did not choose feels imposed; asking, and showing the
 evidence behind what an answer triggered, lets them judge it. A light, bounded
-energy goal is what many students want, and putting needs first keeps it safe:
+energy goal is a common request, and putting needs first keeps it safe:
 the week is first planned for the needs alone (the reference intakes, protein
 included), and the strategies may only trade a little of it: a nutrient may
 fall to 97 % of its need at most (one already short does not fall further),
@@ -242,11 +243,12 @@ energy goal, optional and bounded, instead of none. The strategies work on the
 week, so a single day can miss one, and the plan says on how many of the seven
 days each is met. With strategies on, the week is solved twice, and the second
 solve stops after 3 s with the best week found by then (with none, the first
-week stands): across the 25 random sets of answers of the input-space test the
-median plan took about a second and the slowest 3.8 s. Grade C is the weakest
-grade a strategy may carry (smaller trials or a position stand), and the plan
-shows the grade and the sources next to each strategy.
-*Where:* [`data/strategies.json`](backend/feedforward/data/strategies.json), [`engine/profile.py`](backend/feedforward/engine/profile.py) (`resolve`, `propose`, `energy_options`), [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`_after_needs`, `_strategy_report`, `_relax`), [`api/routers/plan.py`](backend/feedforward/api/routers/plan.py) (`/plan/questions`, `/plan/strategies`)
+week stands): across the 25 random sets of answers (some strategies declined)
+of the input-space test the median plan took 0.7 s and the slowest 3.5 s, the
+second solve at most 3.1 s (6.1 s before it had a limit of its own). Grade C is
+the weakest grade a strategy may carry (smaller trials or a position stand), and
+the plan shows the grade and the sources next to each strategy.
+*Where:* [`data/strategies.json`](backend/feedforward/data/strategies.json), [`engine/profile.py`](backend/feedforward/engine/profile.py) (`resolve`, `propose`, `energy_options`), [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`_energy_band`, `_after_needs`, `_balance`, `_strategy_report`, `_relax`), [`api/routers/plan.py`](backend/feedforward/api/routers/plan.py) (`/plan/questions`, `/plan/strategies`)
 
 ### 20. Food first, and a calmer look (branch `dashboard-ui`)
 **Decision.** Each week says how many needs food already covers ("Food covers
