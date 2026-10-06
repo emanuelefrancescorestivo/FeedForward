@@ -209,16 +209,18 @@ literature-only (grade D) links such as vitamin K for iron.
 
 ### 21. Preferences from questions, grounded in the graph
 **Decision.** A few plain questions shape the week: sleep, training, mornings,
-study, foods you don't eat, how long you can cook, and an energy goal. Each
-answer can turn on goals in the knowledge graph (at half the weight of the
-person's own goal, alpha 0.5) and strategies graded A to C with PubMed IDs, such
-as "no caffeine at dinner" for people who fall asleep slowly or "protein at
-1.6 g per kg" for people who train. Foods not eaten, cooking time and batch
-cooking are applied as asked and carry no grade. The plan shows each strategy
-with its grade and sources, and the person can decline any of them. The energy
-goal is to maintain, a deficit of 15 % or a surplus of 10 %, never below resting
-energy; it is not offered under 18, in pregnancy or while breastfeeding, and a
-deficit is not offered under a BMI of 18.5.
+study, foods you don't eat, how long you can cook, and an energy goal. The
+answers about sleep, training days, energy dips and study turn on goals in the
+knowledge graph, at half the weight of the person's own goal (alpha 0.5).
+Answers also trigger strategies graded A to C with PubMed IDs, such as "no
+caffeine at dinner" for people who sometimes or often take a long time to fall
+asleep, or "protein at 1.6 g per kg" for people who train three or more days a
+week or have chosen a deficit or a surplus. Foods not eaten, cooking time and
+batch cooking are applied as asked and carry no grade. The plan shows each
+strategy with its grade and sources, and the person can decline any of them. The
+energy goal is to maintain, a deficit of 15 % or a surplus of 10 %, never below
+resting energy; it is not offered under 18, in pregnancy or while breastfeeding,
+and a deficit is not offered under a BMI of 18.5.
 **Why.** A plan people did not choose feels imposed; asking, and showing the
 evidence behind what an answer triggered, lets them judge it. A light, bounded
 energy goal is what many students want, and putting needs first keeps it safe:
@@ -231,8 +233,9 @@ energy goal, optional and bounded, instead of none. The strategies work on the
 week, so a single day can miss one, and the plan says on how many of the seven
 days each is met. With strategies on, the week is solved twice: across 25
 random sets of answers the median plan took about a second and the slowest
-under seven. Grade C strategies come from small trials, and their wording says
-so.
+under seven. Grade C is the weakest grade a strategy may carry (smaller trials
+or a position stand), and the plan shows the grade and the sources next to each
+strategy.
 *Where:* [`data/strategies.json`](backend/feedforward/data/strategies.json), [`engine/profile.py`](backend/feedforward/engine/profile.py) (`resolve`, `propose`, `energy_options`), [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py) (`_after_needs`, `_strategy_report`, `_relax`), [`api/routers/plan.py`](backend/feedforward/api/routers/plan.py) (`/plan/questions`, `/plan/strategies`)
 
 ### 20. Food first, and a calmer look (branch `dashboard-ui`)
