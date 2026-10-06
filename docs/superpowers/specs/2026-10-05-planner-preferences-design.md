@@ -184,7 +184,7 @@ is made, with repeats, and the same `relax` list comes as a note.
      "lever": {"type": "meal_carb_share", "meal": "dinner", "min": 0.40},
      "goal": "sleep_support", "grade": "C", "pmids": ["17284739", "27633109"],
      "text": "More of the day's carbohydrates at dinner",
-     "why": "Small studies found people fell asleep faster after a carbohydrate-rich dinner about four hours before bed."}
+     "why": "In small trials, a carbohydrate-rich evening meal with a high glycaemic index, eaten about four hours before bed, shortened the time to fall asleep. The evidence is limited."}
   ]
 }
 ```

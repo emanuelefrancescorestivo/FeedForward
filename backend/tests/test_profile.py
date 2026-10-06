@@ -42,6 +42,18 @@ def test_strategy_wording_matches_its_sources():
         "no_evening_caffeine": ("B", ["36870101", "24235903"],
                                 "A meta-analysis of 24 studies found caffeine shortened sleep by about 45 minutes; in one "
                                 "trial, caffeine even six hours before bed cut sleep."),
+        "evening_carbs": ("C", ["17284739", "27633109"],
+                          "In small trials, a carbohydrate-rich evening meal with a high glycaemic index, eaten about "
+                          "four hours before bed, shortened the time to fall asleep. The evidence is limited."),
+        "protein_breakfast": ("C", ["23446906"],
+                              "In a small trial, a higher-protein breakfast kept people fuller and reduced evening "
+                              "snacking."),
+        "protein_spread": ("C", ["23459753", "29497353"],
+                           "In a training study, 20 g of protein every three hours built muscle protein better than "
+                           "fewer large servings or many small ones."),
+        "post_training_carbs": ("C", ["28919842"],
+                                "Carbohydrate after exercise refills muscle glycogen; it matters most when the next "
+                                "session is only a few hours away."),
     }
     for sid, (grade, pmids, why) in expected.items():
         assert (by_id[sid]["grade"], by_id[sid]["pmids"], by_id[sid]["why"]) == (grade, pmids, why), sid

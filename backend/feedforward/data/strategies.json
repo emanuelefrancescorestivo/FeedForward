@@ -183,7 +183,7 @@
     "27633109"
    ],
    "text": "More of the day's carbohydrates at dinner",
-   "why": "Small studies found people fell asleep faster after a carbohydrate-rich dinner about four hours before bed."
+   "why": "In small trials, a carbohydrate-rich evening meal with a high glycaemic index, eaten about four hours before bed, shortened the time to fall asleep. The evidence is limited."
   },
   {
    "id": "no_evening_caffeine",
@@ -261,7 +261,7 @@
     "29497353"
    ],
    "text": "Protein in every main meal",
-   "why": "Spreading protein over the day's meals supported muscle repair better than one large serving in training studies."
+   "why": "In a training study, 20 g of protein every three hours built muscle protein better than fewer large servings or many small ones."
   },
   {
    "id": "post_training_carbs",
@@ -293,7 +293,7 @@
     "28919842"
    ],
    "text": "Carbohydrates in the meal after training",
-   "why": "Carbohydrate after exercise refills muscle glycogen; it matters most when the next session is within a day."
+   "why": "Carbohydrate after exercise refills muscle glycogen; it matters most when the next session is only a few hours away."
   },
   {
    "id": "protein_breakfast",
@@ -316,7 +316,7 @@
     "23446906"
    ],
    "text": "A breakfast with more protein",
-   "why": "A higher-protein breakfast reduced hunger and snacking later in the day in a small trial."
+   "why": "In a small trial, a higher-protein breakfast kept people fuller and reduced evening snacking."
   },
   {
    "id": "big_breakfast",
