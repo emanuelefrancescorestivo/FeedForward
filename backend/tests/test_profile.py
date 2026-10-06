@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import dataclasses
 
 import pytest
 
@@ -235,8 +236,25 @@ def test_more_bad_input_is_an_error():
     for declined in ("evening_carbs", [1], ["evening_carbs", "levitation"]):
         with pytest.raises(ValueError):
             profile.resolve({"sleep_onset": "often"}, declined, STUDENT, goal=None, known_goals=GOALS)
-    with pytest.raises(ValueError):                              # goals not in the graph are the file's fault
-        profile.resolve({}, None, STUDENT, goal=None, known_goals={"sleep_support"})
+    for answers, declined in (({"sleep_onset": "no"}, None), (None, ["evening_carbs"])):
+        with pytest.raises(ValueError):                          # goals not in the graph are the file's fault
+            profile.resolve(answers, declined, STUDENT, goal=None, known_goals={"sleep_support"})
+    for answers, declined in (([], None), ("", None), (None, "")):
+        with pytest.raises(ValueError):                          # empty, but not a dict / a list: still an error
+            profile.resolve(answers, declined, STUDENT, goal=None, known_goals=GOALS)
+
+
+def test_no_answers_do_not_depend_on_the_strategies_file(engine, monkeypatch):
+    """Without answers or declined strategies the file is never read: a plan as before, whatever it holds."""
+    def unreadable():
+        raise AssertionError("strategies.json read")
+    monkeypatch.setattr(profile, "load_strategies", unreadable)
+    for answers, declined in ((None, None), ({}, None), (None, []), ({}, [])):
+        assert profile.resolve(answers, declined, STUDENT, goal="sleep_support", known_goals=set()) == \
+            profile.Levers.none("sleep_support")
+    lv = profile.resolve(None, None, STUDENT, goal=None, known_goals=set(), avoid_recipes=["a"])
+    assert lv == dataclasses.replace(profile.Levers.none(None), avoid_recipes=frozenset({"a"}))
+    assert wp.plan_week(engine, STUDENT, goal="cognitive_function", budget=50, chain="lidl")["feasible"]
 
 
 def test_declined_ids_cover_strategies_and_preferences():

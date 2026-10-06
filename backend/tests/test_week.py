@@ -235,16 +235,17 @@ def test_why_this_meal_lists_only_meaningful_supported_nutrients(engine):
 
 
 def _violations(plan, profile, budget, diet, kitchen, answers=None, declined=()):
-    """Invariants every answer must keep, whatever the input."""
+    """Invariants every answer must keep, whatever the input. A declined preference is not applied: foods not
+    eaten, the cooking time and batch cooking are checked only when the person kept them."""
     _i, recipes, _p = wp._load()
     ingredients = _i
     by_id = {r["id"]: r for r in recipes}
     banned = {"vegetarian": {"meat", "fish"}, "vegan": {"meat", "fish", "dairy", "egg", "honey"}}.get(diet, set())
     answers = answers or {}
-    not_eaten = set(answers.get("dont_eat", []))
-    minutes = answers.get("cook_time", "any")
+    not_eaten = set() if "foods_not_eaten" in declined else set(answers.get("dont_eat", []))
+    minutes = "any" if "cook_time" in declined else answers.get("cook_time", "any")
     limit = None if minutes == "any" else int(minutes)
-    batch_ok = answers.get("batch_ok") == "yes"
+    batch_ok = answers.get("batch_ok") == "yes" and "batch_cooking" not in declined
     sleepless = answers.get("sleep_onset") in ("sometimes", "often")
     bad = []
 
@@ -262,6 +263,8 @@ def _violations(plan, profile, budget, diet, kitchen, answers=None, declined=())
         reported = {s["id"] for s in plan["strategies"]}
         if sleepless and "no_evening_caffeine" not in declined and "no_evening_caffeine" not in reported:
             bad.append("sleep answers did not turn on no_evening_caffeine")
+        if reported & set(declined):
+            bad.append(f"declined {sorted(reported & set(declined))} still applied")
         for d in plan["days"]:
             if set(d["meals"]) != {"breakfast", "lunch", "dinner"}:
                 bad.append(f"day {d['day']} incomplete")
@@ -295,17 +298,17 @@ def test_planner_handles_the_input_space(engine):
     """Not just the demo: small and athlete-sized needs, every diet and kitchen, cheap and dear shops,
     and the answers to the questions (foods not eaten, cooking time, sleep, goals of energy)."""
     import random
-    from feedforward.engine.profile import energy_options, questions
+    from feedforward.engine.profile import energy_options, propose, questions
     small = Profile(75, "female", 45, 150, "sedentary")        # ~1,000 kcal a day
     typical = Profile(22, "female", 60, 165, "moderate")
     athlete = Profile(20, "male", 90, 190, "very_active")      # ~4,000 kcal a day
     failures = []
 
-    def run(profile, budget, chain, diet=None, kitchen=None, answers=None):
+    def run(profile, budget, chain, diet=None, kitchen=None, answers=None, declined=()):
         plan = wp.plan_week(engine, profile, goal="energy_metabolism", budget=budget, chain=chain,
-                            diet=diet, equipment=kitchen, answers=answers)
-        failures.extend(f"{profile} {chain} {diet} {kitchen} €{budget} {answers}: {b}"
-                        for b in _violations(plan, profile, budget, diet, kitchen, answers))
+                            diet=diet, equipment=kitchen, answers=answers, declined=list(declined))
+        failures.extend(f"{profile} {chain} {diet} {kitchen} €{budget} {answers} declined {declined}: {b}"
+                        for b in _violations(plan, profile, budget, diet, kitchen, answers, declined))
         return plan
 
     def random_profile(rng):
@@ -338,12 +341,19 @@ def test_planner_handles_the_input_space(engine):
         p = random_profile(rng)
         run(p, 500, rng.choice(["lidl", "carrefour", "naturalia"]), rng.choice([None, "vegetarian", "vegan"]))
     rng = random.Random(7)                                      # the same with answers: 25 cases
-    plans = []
+    pick = random.Random(11)                                    # and 0-2 of the strategies they trigger declined
+    plans, declined_any = [], False
     for _ in range(25):
         p = rng.choice((small, typical, athlete, random_profile(rng)))
-        plans.append(run(p, rng.choice((500, 60)), rng.choice(("lidl", "carrefour", "naturalia")),
-                         answers=random_answers(rng, p)))
+        budget, chain = rng.choice((500, 60)), rng.choice(("lidl", "carrefour", "naturalia"))
+        answers = random_answers(rng, p)
+        triggered = [s["id"] for s in propose(answers, p, goal="energy_metabolism",
+                                              known_goals=set(engine.scorer.positive))["strategies"]]
+        declined = pick.sample(triggered, pick.randint(0, min(2, len(triggered))))
+        declined_any |= bool(declined)
+        plans.append(run(p, budget, chain, answers=answers, declined=declined))
     assert any(plan["feasible"] and plan["strategies"] for plan in plans)     # the answers did turn something on
+    assert declined_any
     assert not failures, failures[:10]
 
 

@@ -68,10 +68,11 @@ lever missed by its whole threshold costs about its weight:
   first week was then 5 % dearer); 4 % and 3 % lost evening carbs or hit the
   time limit. The second solve is the slow one, so it stops at STAGE2_SECONDS
   (3 s) and plans the best week found by then (none found: the first week
-  stands). Over the sweep's 25 random sets of answers (test_week.py) it took a
-  median 1.05 s and at most 3.1 s (5.1 s with the 10 s limit); a whole plan, a
-  median 0.97 s and at most 3.8 s. No warm start from the first week: PuLP 3's
-  bundled CBC misreads a warm start's objective sign when maximising.
+  stands). Over the sweep's 25 random sets of answers and declined strategies
+  (test_week.py) it took a median 1.0 s and at most 3.1 s (6.1 s with the 10 s
+  limit); a whole plan, a median 0.7 s and at most 3.5 s. No warm start from the
+  first week: PuLP 3's bundled CBC misreads a warm start's objective sign when
+  maximising.
 
   Shares are written on the week; the plan reports them day by day, so after
   the days are laid out, meals and snacks are swapped between days while that
@@ -409,6 +410,9 @@ def _relax(rec, profile: Profile, *, goal, chain, diet, equipment, pantry, days,
     that meal, the diet one step looser. Only a change that adds recipes is kept: the best three per meal,
     {"filter", "now", "try", "meal", "options_now", "options"}, most recipes first. [] when no meal is short.
     """
+    answers = dict(answers or {})
+    if isinstance(answers.get("dont_eat"), list):       # each food once, as profile.resolve reads them
+        answers["dont_eat"] = list(dict.fromkeys(answers["dont_eat"]))
     kw = dict(goal=goal, chain=chain, diet=diet, equipment=equipment, pantry=pantry, days=days,
               answers=answers, declined=declined, avoid_recipes=avoid_recipes)
     base = _context(rec, profile, **kw) if base is None else base
@@ -417,7 +421,7 @@ def _relax(rec, profile: Profile, *, goal, chain, diet, equipment, pantry, days,
     found = []
     for m in (m for m in MEALS if now[m] < MIN_OPTIONS):
         entries = []
-        for name, was, then, change in _looser(dict(answers or {}), diet, list(avoid_recipes or ()), m):
+        for name, was, then, change in _looser(answers, diet, list(avoid_recipes or ()), m):
             key = (name, repr(was), repr(then))
             if key not in counted:
                 counted[key] = _option_counts(_context(rec, profile, **{**kw, **change}))
@@ -645,6 +649,7 @@ def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = Fal
             served[rid] = served.get(rid, 0) + 1
     extra = sum(max(0, c - _variety_cap(by_id[rid])) for rid, c in served.items())
     planned = intake.get("energy-kcal", 0.0)
+    below_resting = sum(_day_total(ctx, d, "energy-kcal") < ctx.resting_kcal - 1e-6 for d in week)
 
     def amounts(r) -> dict:
         n = r.nutrients
@@ -690,7 +695,7 @@ def _assemble(ctx: _Week, week: list[dict], *, budget: float, edited: bool = Fal
         "energy": {"target_per_day": round(ctx.kcal_target / days), "planned_per_day": round(planned / days),
                    "in_band": low - 1e-6 <= planned <= high + 1e-6,
                    "goal": ctx.levers.energy_goal, "resting": round(ctx.resting_kcal),
-                   "days_below_resting": sum(_day_total(ctx, d, "energy-kcal") < ctx.resting_kcal - 1e-6 for d in week)},
+                   "days_below_resting": below_resting},
         "protein_target_g": targets["protein"],
         "demographic": ctx.profile.demographic.value,
         "portion_scale": ctx.scale,

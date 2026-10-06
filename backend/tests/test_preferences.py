@@ -545,8 +545,17 @@ def test_no_recipe_for_a_meal_says_what_to_relax(engine):
 def test_relax_entries_always_help(engine):
     plan = wp.plan_week(engine, STUDENT, goal=None, budget=80, chain="lidl", diet="vegan",
                         answers={"cook_time": "10", "dont_eat": ["legumes", "nuts"]})
-    assert all(r["options"] > r["options_now"] for r in plan["relax"])
+    assert plan["relax"] and all(r["options"] > r["options_now"] for r in plan["relax"])
     assert _plan(engine)["relax"] == []
+
+
+def test_relax_reads_each_food_once(engine):
+    """A category named twice in the answers is one food to allow again, as resolve reads it: no twin entries."""
+    kw = dict(goal=None, chain="lidl", diet="vegan", equipment=None, pantry=None, days=7, declined=None,
+              avoid_recipes=None)
+    once = wp._relax(engine, STUDENT, **kw, answers={"cook_time": "10", "dont_eat": ["legumes", "nuts"]})
+    twice = wp._relax(engine, STUDENT, **kw, answers={"cook_time": "10", "dont_eat": ["legumes", "nuts", "legumes"]})
+    assert twice == once and any(r["filter"] == "dont_eat" and r["now"] == "legumes" for r in once)
 
 
 def test_relax_keeps_the_best_three_per_meal_most_recipes_first(engine):

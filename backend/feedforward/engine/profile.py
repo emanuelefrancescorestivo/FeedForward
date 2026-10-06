@@ -28,6 +28,7 @@ was before preferences existed.
 from __future__ import annotations
 
 import copy
+import dataclasses
 import json
 from dataclasses import dataclass
 from functools import lru_cache
@@ -149,11 +150,15 @@ def resolve(answers: dict | None, declined: list[str] | None, p: Profile, *, goa
     Raises ValueError for an unknown question, an answer a question does not offer, an unknown declined id
     or an energy goal this profile may not choose (the message is the reason). A declined id the answers
     do not trigger is ignored. Recipe ids are not checked here (this module knows no recipes).
+    Nothing answered or declined (None or empty) gives Levers.none(goal) without reading the strategies
+    file: a request without answers does not depend on it.
     """
-    data, answers = _prepare(answers, p, known_goals)
-    declined = _check_declined(declined, data)
     if isinstance(avoid_recipes, str):
         raise ValueError("avoid_recipes must be a list of recipe ids")
+    if _empty(answers, dict) and _empty(declined, (list, tuple, set, frozenset)):
+        return dataclasses.replace(Levers.none(goal), avoid_recipes=frozenset(avoid_recipes or ()))
+    data, answers = _prepare(answers, p, known_goals)
+    declined = _check_declined(declined, data)
 
     goals = {goal: 1.0} if goal else {}
     for g, (alpha, _) in _goals_turned_on(data, answers, goal).items():
@@ -177,6 +182,11 @@ def resolve(answers: dict | None, declined: list[str] | None, p: Profile, *, goa
     return Levers(goals=goals, energy_goal=energy_goal, energy_factor=ENERGY_FACTORS[energy_goal],
                   no_caffeine_at=frozenset(acc.pop("no_caffeine_at")), exclude=frozenset(acc.pop("exclude")),
                   avoid_recipes=frozenset(avoid_recipes or ()), applied=tuple(applied), **acc)
+
+
+def _empty(value, kinds) -> bool:
+    """None, or an empty value of the expected kind (an empty value of another kind is checked, and refused)."""
+    return value is None or (isinstance(value, kinds) and not value)
 
 
 def _prepare(answers: dict | None, p: Profile, known_goals: set[str]) -> tuple[dict, dict]:
