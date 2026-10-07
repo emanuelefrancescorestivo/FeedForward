@@ -386,6 +386,17 @@ dialog#recipe-sheet { width: min(560px, 94vw); }
 details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
 .empty { text-align: center; padding: 32px 16px; }
 .big-ic { font-size: 48px; display: block; margin-bottom: 8px; color: var(--accent); }
+.est { font-size: 11px; font-weight: 700; color: var(--note); background: var(--note-soft); border-radius: 4px; padding: 0 5px;
+  vertical-align: 1px; }
+.pick-row { display: flex; align-items: center; gap: 10px; }
+.pick-row .pick { flex: 1; min-width: 0; }
+/* a round tick, as on the shopping list (the sheet's switches are for settings) */
+.sheet input[type=checkbox].pick-check { flex: none; width: 24px; height: 24px; border-radius: 50%; margin: 0; cursor: pointer;
+  background: none; box-shadow: inset 0 0 0 1.5px var(--control); transition: none; }
+.sheet input[type=checkbox].pick-check::after { content: none; }
+.sheet input[type=checkbox].pick-check:checked { box-shadow: none; background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7.5l2.8 2.8L11 4.5'/%3E%3C/svg%3E") center no-repeat; }
+.multi-bar { position: sticky; bottom: 0; background: var(--surface); padding: 10px 0 4px; }
+.multi-bar .primary { width: 100%; }
 .unsaved { margin: -2px 0 6px 46px; font-size: 13px; color: var(--note); }
 .unsaved .link { font-size: 13px; min-height: 32px; font-weight: 600; }
 /* photos: a similar dish, served by this app (data/photos.json) */
@@ -893,6 +904,7 @@ const TOKEN_KEY = "feedforward.token";
 let token = (() => { try { return localStorage.getItem(TOKEN_KEY); } catch { return null; } })();
 let app = null;                 // the saved document
 let photos = { recipes: {}, foods: {}, ingredients: {} };   // GET /photos: which photo shows what, with its credit
+let presetList = [];            // GET /diary/presets: meals logged in one tap as an estimate (the CROUS lunch)
 let account = null;             // {email}
 let authConfig = { google_client_id: null, dev_login: false };
 const blankApp = () => ({ v: 1, onboarded: false, setup: {}, answers: {}, declined: [], avoid: [], list: [],
@@ -1332,6 +1344,9 @@ document.addEventListener("click", (ev) => {
   if ((el = on("[data-retry-entry]"))) { retryEntry(el.dataset.retryEntry); return; }
   if ((el = on("[data-lever]"))) { showLever(el.dataset.lever); return; }
   if ((el = on("[data-pick]"))) { pickAmount(JSON.parse(el.dataset.pick)); return; }
+  if ((el = on("[data-again]"))) { repeatMeal(el.dataset.again); return; }
+  if ((el = on("[data-preset]"))) { const x = presetList.find(p => p.id === el.dataset.preset); if (x) pickAmount(x); return; }
+  if ((el = on("[data-add-picked]"))) { addPicked(); return; }
   if (on("[data-log-back]")) { openLog(logMeal); return; }
   if (on("[data-ideas-more]")) { openIdeas(ideas.meal, true); return; }
   if (on("[data-ideas-reset]")) { openIdeas(ideas.meal); return; }
@@ -1674,10 +1689,10 @@ function slotCard(m, sum, entries) {
     <div class="mc-head"><span>${SLOT_LABEL[m]}</span><span class="muted">${kcal ? `${fmt(kcal)} kcal` : ""}</span></div>
     ${leverChips(levers)}
     ${mine.map(e => `<div class="mc-row entry">
-      <button class="meal" ${e.kind === "recipe" ? `data-open-entry="${esc(e.uid)}"` : `data-food="${esc(e.id)}"`}>
-        <span class="tile-ic small" aria-hidden="true">${thumbFor(e.kind, e.id, e.name)}</span>
-        <span class="what"><b>${esc(e.kind === "food" ? friendlyName(e.name) : e.name)}</b>
-          <small>${e.kind === "food" ? `${round(e.grams)} g` : e.servings === 1 ? "1 portion" : `${e.servings} portions`} · ${fmt(e.kcal || 0)} kcal</small></span></button>
+      <button class="meal" ${e.kind === "recipe" ? `data-open-entry="${esc(e.uid)}"` : e.kind === "food" ? `data-food="${esc(e.id)}"` : ""}>
+        <span class="tile-ic small" aria-hidden="true">${e.kind === "preset" ? icon("tray") : thumbFor(e.kind, e.id, e.name)}</span>
+        <span class="what"><b>${esc(e.kind === "food" ? friendlyName(e.name) : e.name)}${e.estimate ? ` <span class="est" title="An estimate">≈</span>` : ""}</b>
+          <small>${e.kind === "food" ? `${round(e.grams)} g` : e.servings === 1 ? "1 portion" : `${e.servings} portions`} · ${e.estimate ? "≈ " : ""}${fmt(e.kcal || 0)} kcal</small></span></button>
       <button class="x" data-unlog="${esc(e.uid)}" aria-label="Remove ${esc(e.name)}">×</button></div>
       ${e.failed ? `<p class="unsaved" role="status">Not saved · <button class="link" data-retry-entry="${esc(e.uid)}">Retry</button></p>`
         : e.note ? `<p class="unsaved" role="status">${esc(e.note)}</p>` : ""}`).join("")}
@@ -1740,13 +1755,15 @@ function openLog(meal) {
   logMeal = meal;
   $("log-title").textContent = `Add to ${SLOT_LABEL[meal].toLowerCase()}`;
   $("log-body").innerHTML = `<input type="search" id="log-q" placeholder="Search a food or a recipe" autocomplete="off" aria-label="Search a food or a recipe">
-    <div id="log-results">${recentList()}</div>`;
+    <div id="log-results">${quickRows(meal)}${recentList()}</div>
+    <div class="multi-bar" id="multi-bar" hidden><button class="primary" type="button" data-add-picked></button></div>`;
   $("log-sheet").showModal();
+  $("log-body").onchange = (e) => { if (e.target.matches(".pick-check")) updateMultiBar(); };
   let timer;
   $("log-q").addEventListener("input", (e) => {
     clearTimeout(timer);
     const q = e.target.value.trim();
-    if (q.length < 2) { $("log-results").innerHTML = recentList(); return; }
+    if (q.length < 2) { $("log-results").innerHTML = quickRows(meal) + recentList(); updateMultiBar(); return; }
     timer = setTimeout(async () => {
       try {
         const r = await api("/diary/search?" + qs({ q, scale: dayView?.sum.portion_scale || 1 }));
@@ -1760,11 +1777,51 @@ function openLog(meal) {
   });
   setTimeout(() => $("log-q")?.focus(), 50);
 }
+// "Again?": the same meal as on the latest earlier day that had it, in one tap; and presets (the CROUS meal).
+function quickRows(meal) {
+  let again = "";
+  for (const d of [...diaryCache.keys()].filter(d => d < dayISO).sort().reverse()) {
+    const items = entriesOf(d).filter(e => e.meal === meal && !e.failed);
+    if (!items.length) continue;
+    const when = dayLabel(d) === "Yesterday" ? "yesterday" : dayLabel(d);
+    const names = items.slice(0, 2).map(e => e.kind === "food" ? friendlyName(e.name) : e.name).join(", ")
+      + (items.length > 2 ? ` +${items.length - 2}` : "");
+    again = `<div class="group-title">Again?</div>
+      <button class="pick quick" data-again="${d}"><span class="tile-ic small" aria-hidden="true">${icon("repeat")}</span>
+        <span class="what"><b>Same as ${esc(when)}'s ${SLOT_LABEL[meal].toLowerCase()}</b><small>${esc(names)}</small></span><span class="add">Add</span></button>`;
+    break;
+  }
+  const quick = presetList.map(x => `<button class="pick quick" data-preset="${esc(x.id)}"><span class="tile-ic small" aria-hidden="true">${icon("tray")}</span>
+      <span class="what"><b>${esc(x.name)} <span class="est" title="An estimate">≈</span></b><small>${esc(x.detail)} · ≈ ${fmt(x.kcal)} kcal, an estimate</small></span>
+      <span class="add">Add</span></button>`).join("");
+  return again + (quick ? `${again ? "" : `<div class="group-title">Quick</div>`}${quick}` : "");
+}
+function repeatMeal(d) {
+  const items = entriesOf(d).filter(e => e.meal === logMeal && !e.failed).map(e => ({ kind: e.kind, id: e.id, name: e.name,
+    servings: e.servings, grams: e.grams, kcal: e.kcal, estimate: !!e.estimate, group: "" }));
+  logEntries(logMeal, items, "repeat");
+  closeSheet($("log-sheet")); renderToday();
+}
+// Several recent items at once, each at its usual amount.
+function updateMultiBar() {
+  const n = document.querySelectorAll(".pick-check:checked").length, bar = $("multi-bar");
+  if (!bar) return;
+  bar.hidden = !n;
+  bar.querySelector("button").textContent = `Add ${n} to ${SLOT_LABEL[logMeal].toLowerCase()}`;
+}
+function addPicked() {
+  const items = [...document.querySelectorAll(".pick-check:checked")].map(c => JSON.parse(c.dataset.multi)).map(x => x.kind === "recipe"
+    ? { kind: "recipe", id: x.id, name: x.name, servings: 1, kcal: Math.round(x.kcal) }
+    : { kind: "food", id: x.id, name: x.name, group: x.group || "", grams: x.portion_g, kcal: Math.round(x.kcal_100g * x.portion_g / 100) });
+  logEntries(logMeal, items, "manual");
+  closeSheet($("log-sheet")); renderToday();
+}
 // What was logged before, newest first: most meals repeat.
 function recentList() {
   const seen = new Set(), out = [];
   for (const iso of [...diaryCache.keys()].sort().reverse()) {
     for (const e of [...entriesOf(iso)].reverse()) {
+      if (e.kind === "preset") continue;                  // presets have their own row above
       const k = `${e.kind}|${e.id}`;
       if (seen.has(k)) continue;
       seen.add(k); out.push(e);
@@ -1773,9 +1830,13 @@ function recentList() {
     if (out.length >= 8) break;
   }
   if (!out.length) return `<p class="muted center log-hint">Type to search foods and recipes.</p>`;
-  return `<div class="group-title">Recent</div>${out.map(e => pickRow(e.kind === "recipe"
-    ? { kind: "recipe", id: e.id, name: e.name, kcal: Math.round((e.kcal || 0) / (e.servings || 1)) }
-    : { kind: "food", id: e.id, name: e.name, group: e.group, portion_g: e.grams, kcal_100g: e.grams ? Math.round(100 * (e.kcal || 0) / e.grams) : 0 })).join("")}`;
+  return `<div class="group-title">Recent · tap to select several</div>${out.map(e => {
+    const x = e.kind === "recipe"
+      ? { kind: "recipe", id: e.id, name: e.name, kcal: Math.round((e.kcal || 0) / (e.servings || 1)) }
+      : { kind: "food", id: e.id, name: e.name, group: e.group, portion_g: e.grams, kcal_100g: e.grams ? Math.round(100 * (e.kcal || 0) / e.grams) : 0 };
+    const label = x.kind === "food" ? friendlyName(x.name) : x.name;
+    return `<div class="pick-row"><input type="checkbox" class="pick-check" data-multi="${esc(JSON.stringify(x))}" aria-label="Select ${esc(label)}">${pickRow(x)}</div>`;
+  }).join("")}`;
 }
 function pickRow(x) {
   const data = esc(JSON.stringify(x));
@@ -1787,27 +1848,29 @@ function pickRow(x) {
 }
 // One tap on a result asks only the amount, with its usual portion already in.
 function pickAmount(x) {
-  const recipe = x.kind === "recipe", name = recipe ? x.name : friendlyName(x.name);
+  const preset = x.kind === "preset", recipe = x.kind === "recipe" || preset, name = recipe ? x.name : friendlyName(x.name);
   const kcalFor = (v) => recipe ? x.kcal * v : x.kcal_100g * v / 100;
   $("log-body").innerHTML = `<button class="back" data-log-back>← Search</button>
-    <div class="amount"><span class="tile-ic" aria-hidden="true">${thumbFor(x.kind, x.id, x.name)}</span><b>${esc(name)}</b></div>
+    <div class="amount"><span class="tile-ic" aria-hidden="true">${preset ? icon("tray") : thumbFor(x.kind, x.id, x.name)}</span><b>${esc(name)}${preset ? ` <span class="est" title="An estimate">≈</span>` : ""}</b></div>
+    ${preset ? `<p class="src">${esc(x.note)}</p>` : ""}
     <form id="amount-form" class="setup">
-      ${recipe ? `<div class="field"><span class="flabel">Portions</span><div class="choice">${[0.5, 1, 1.5, 2].map(v =>
+      ${recipe ? `<div class="field"><span class="flabel">Portions</span><div class="choice">${(preset ? [0.5, 1, 1.5] : [0.5, 1, 1.5, 2]).map(v =>
           `<label><input type="radio" name="amt" value="${v}" ${v === 1 ? "checked" : ""}><span>${v === 0.5 ? "½" : v}</span></label>`).join("")}</div></div>`
         : `<div class="field"><span class="flabel">Grams</span><div class="money"><input type="text" name="amt" inputmode="decimal" value="${round(x.portion_g)}" aria-label="Grams"><span class="muted">g</span></div>
           <div class="choice">${[0.5, 1, 2].map(k => `<button type="button" class="pill-btn" data-grams="${Math.round(x.portion_g * k)}">${k === 1 ? "1 portion" : k === 0.5 ? "½ portion" : "2 portions"} · ${Math.round(x.portion_g * k)} g</button>`).join("")}</div></div>`}
-      <p class="sub" id="amt-kcal">${fmt(kcalFor(recipe ? 1 : x.portion_g))} kcal</p>
+      <p class="sub" id="amt-kcal">${preset ? "≈ " : ""}${fmt(kcalFor(recipe ? 1 : x.portion_g))} kcal</p>
       <button class="primary" type="submit">Add to ${SLOT_LABEL[logMeal].toLowerCase()}</button>
     </form>`;
   const form = $("amount-form"), value = () => recipe ? +new FormData(form).get("amt") : parseFloat(String(form.amt.value).replace(",", ".")) || 0;
-  const update = () => { $("amt-kcal").textContent = `${fmt(kcalFor(value()))} kcal`; };
+  const update = () => { $("amt-kcal").textContent = `${preset ? "≈ " : ""}${fmt(kcalFor(value()))} kcal`; };
   form.querySelectorAll("input").forEach(i => i.oninput = i.onchange = update);
   form.querySelectorAll("[data-grams]").forEach(b => b.onclick = () => { form.amt.value = b.dataset.grams; update(); });
   form.onsubmit = (e) => {
     e.preventDefault();
     const v = value();
     if (!(v > 0) || (!recipe && v > 3000)) { form.amt?.setCustomValidity?.("Between 1 and 3000 g."); form.amt?.reportValidity?.(); return; }
-    logEntry(logMeal, recipe ? { kind: "recipe", id: x.id, name: x.name, servings: v, kcal: Math.round(kcalFor(v)) }
+    if (preset) logEntry(logMeal, { kind: "preset", id: x.id, name: x.name, servings: v, kcal: Math.round(kcalFor(v)), estimate: true }, "preset");
+    else logEntry(logMeal, recipe ? { kind: "recipe", id: x.id, name: x.name, servings: v, kcal: Math.round(kcalFor(v)) }
       : { kind: "food", id: x.id, name: x.name, group: x.group || "", grams: v, kcal: Math.round(kcalFor(v)) });
     closeSheet($("log-sheet")); renderToday();
   };
@@ -2594,8 +2657,9 @@ async function enterApp() {
   Object.keys(NAV_OF).forEach(t => { $("tab-" + t).hidden = t !== "today"; if (t !== "today") $("tab-" + t).innerHTML = ""; });
   $("tab-today").innerHTML = loading("Opening FeedForward…", "week");
   try {
-    const [saved, me, pics] = await Promise.all([api("/me/state"), api("/auth/me"), api("/photos"), loadBasics()]);
-    photos = pics;
+    const [saved, me, pics, presets] = await Promise.all([api("/me/state"), api("/auth/me"), api("/photos"),
+      api("/diary/presets").catch(() => []), loadBasics()]);
+    photos = pics; presetList = presets;
     account = me;
     app = Object.assign(blankApp(), saved.data || {});
     app.prefs = Object.assign({ extra: [], science: false }, app.prefs || {});
