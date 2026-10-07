@@ -68,7 +68,8 @@ def main() -> None:
         for f in tracked():
             (stage / f).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(ROOT / f, stage / f)
-        shutil.copy2(HERE / "Dockerfile", stage / "Dockerfile")
+        # Unix line endings whatever git checked out on Windows: the image's shell reads the commands
+        (stage / "Dockerfile").write_bytes((HERE / "Dockerfile").read_bytes().replace(b"\r\n", b"\n"))
         run(*deploy_args(args.service, str(stage), secrets.token_urlsafe(48)))
 
     url = run("run", "services", "describe", args.service, "--region", REGION, "--format", "value(status.url)", capture=True)
