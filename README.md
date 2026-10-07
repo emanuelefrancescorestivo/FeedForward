@@ -19,9 +19,9 @@ a path: *food → nutrient → goal*, backed by EU-authorised health claims.
 > says so, with the minimum budget it would take, instead of planning less food.
 
 <p align="center">
-  <img alt="Today on a laptop, sidebar on the left: an energy ring with carbs, protein and fat bars, the focus nutrients of the day with the meal each comes from and an EU badge, a green card saying food covers 25 of 27 needs this week, then breakfast, lunch and dinner as cards" src="docs/screenshots/week-desktop.png" width="66%">
+  <img alt="The planned week on a laptop, sidebar on the left: Your week is ready, €39.33 of €50 at Lidl, food covers 25 of 27 needs; an energy ring with carbs, protein and fat bars; the focus nutrients of the day with the meal each comes from and an EU badge; the food-first card; then breakfast and lunch with photos of a similar dish" src="docs/screenshots/week-desktop.png" width="66%">
   &nbsp;
-  <img alt="The same day on a phone, with four tabs: Today, Foods, List, Profile" src="docs/screenshots/week-phone.png" width="24%">
+  <img alt="The same week on a phone, with four tabs: Today, Foods, List, Profile" src="docs/screenshots/week-phone.png" width="24%">
 </p>
 
 ![Same student, same €50, two shops: at Lidl every tracked nutrient reaches 97 % or more except vitamin D (81 %); at Naturalia vitamin D, iodine, EPA + DHA and selenium fall to 27–40 %](docs/figures/week_coverage.svg)
@@ -34,6 +34,8 @@ figure. Here it is for every chain in the price data:
 
 Every figure in this README is computed by the engine: `python scripts/figures.py`
 (from `backend/`) redraws them and prints each number they show.
+The screenshots are taken from the running app by its browser tests:
+`FF_SCREENSHOTS=1 python -m pytest tests/ui -q` (from `backend/`).
 
 ---
 
@@ -70,8 +72,8 @@ says so.
 | **Optimisation** | Two mixed-integer programs (PuLP/CBC): one meal that covers a goal, and a whole week under a budget, with energy as a hard constraint and WHO limits on salt, saturated fat and free sugars | [`engine/week_planner.py`](backend/feedforward/engine/week_planner.py), [`engine/meal_optimizer.py`](backend/feedforward/engine/meal_optimizer.py) |
 | **Statistics on messy data** | Crowdsourced receipts → median €/kg per chain, outliers dropped, chains with few receipts shrunk towards national median × chain price index; the index comes out of the data (Lidl 0.67, Carrefour 1.06, Biocoop 1.49) | [`data/ingest/prices.py`](backend/feedforward/data/ingest/prices.py) |
 | **Scientific judgement** | Scoring per realistic portion against reference intakes; heme vs non-heme iron; the EU register as evidence layer (118 authorised links, 62 EFSA rejections removed); no medical conditions collected, on purpose (EU medical-device rules) | [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) |
-| **Design choices** | Thirty-one decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
-| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 358 tests on GitHub Actions, 30 of them driving the app in a browser (Playwright), and one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
+| **Design choices** | Thirty-two decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
+| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 369 tests on GitHub Actions, 35 of them driving the app in a browser (Playwright; two only when taking the screenshots), and one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
 
 Two bugs the tests caught, as examples of how the project is checked:
 
@@ -282,21 +284,21 @@ screens planned for the next releases are in
   &nbsp;
   <img alt="Add to dinner: the CROUS meal marked as an estimate at about 592 kcal, then recent items with round ticks, carrot and apple ticked, and a button Add 2 to dinner" src="docs/screenshots/release-1/add-sheet.png" width="24%">
   &nbsp;
-  <img alt="A recipe sheet with a photo of a similar dish and its credit line under it: Photo: a similar dish, the author and the licence" src="docs/screenshots/release-1/recipe-sheet.png" width="24%">
+  <img alt="A recipe sheet with a photo of a similar dish and its credit line under it: Photo: a similar dish, the author, the licence linked, cropped and resized" src="docs/screenshots/release-1/recipe-sheet.png" width="24%">
 </p>
 
 <p align="center">
   <img alt="Food first, opened on a phone: vitamin D 81 % with a note that the skin makes it in sunlight, calcium 97 % as almost there, and 25 nutrients covered by food" src="docs/screenshots/food-first-phone.png" width="24%">
   &nbsp;
-  <img alt="Swap on a phone: three dinners that keep the budget and limits, each with its cooking time, price difference and effect on focus" src="docs/screenshots/swap-phone.png" width="24%">
+  <img alt="Swap on a phone, under the dinner's photo and its credit: three dinners that keep the budget, energy and limits, each with its photo, cooking time, price difference and effect on focus" src="docs/screenshots/swap-phone.png" width="24%">
   &nbsp;
-  <img alt="The shopping list on a phone: €39.33 to buy at Lidl, grouped by aisle, each line with a tick and an at-home button" src="docs/screenshots/list-phone.png" width="24%">
+  <img alt="The shopping list on a phone: €39.33 to buy at Lidl, 0 of 35 ticked, fruit and vegetables first, each line with a tick, a photo where there is one, the French and English name, the amount, the price and an at-home button" src="docs/screenshots/list-phone.png" width="24%">
   &nbsp;
-  <img alt="The profile on a phone: age, sex, height, weight, activity, goal, shop, budget, diet and kitchen, an Edit button and switches for food suggestions" src="docs/screenshots/profile-phone.png" width="24%">
+  <img alt="The profile on a phone: signed in as anna, about you (24, male, 178 cm, 72 kg, light activity), the goal Focus with its icon, energy, your day, your food, your plan, shop and budget Lidl €50, and switches for food suggestions" src="docs/screenshots/profile-phone.png" width="24%">
 </p>
 
 <p align="center">
-  <img alt="The same day in the dark theme: forest and soil tones instead of black" src="docs/screenshots/week-dark.png" width="66%">
+  <img alt="The same week in the dark theme: forest and soil tones instead of black" src="docs/screenshots/week-dark.png" width="66%">
 </p>
 
 The **dictionary**
@@ -346,7 +348,7 @@ shop and a weekly budget, and get 7 days of breakfast, lunch and dinner
   budget, energy band and limits; ingredients marked at home cost nothing in
   the next plan.
 
-  <img alt="Why this meal for focus: sardine tartines give 7 times the daily need of EPA + DHA, 67 % of iron and 55 % of iodine, each with the EU authorised claim and its EFSA reference, and a note that one portion has 35 % of the daily salt limit" src="docs/screenshots/why-this-meal.png" width="60%">
+  <img alt="Why this meal for focus: the warm potato, green bean and mackerel salad drawn as paths to the goal through EPA + DHA (11 times the daily need), iodine (68 %) and iron (57 %), each with the EU authorised claim and its EFSA reference, and 13 more nutrients for focus behind a link" src="docs/screenshots/why-this-meal.png" width="60%">
 - API: `GET /plan/options`, `POST /plan/week` (with `pantry`), `POST /plan/swap-options`,
   `POST /plan/evaluate`, `GET /plan/recipes/{id}`, `GET /plan/recipes/{id}/why`.
 
@@ -449,7 +451,7 @@ This is a personal project and a working prototype, not a product in use.
 Nothing here has been reviewed by a dietitian or tested with users yet.
 What exists today:
 
-- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 358 tests (pytest, run on every push by GitHub Actions, browser tests included).
+- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 369 tests (pytest, run on every push by GitHub Actions, browser tests included).
 - ✅ FastAPI backend: recommend / explain / meal-plan / week plan / diary (day totals, ideas per meal) / food detail / dictionary / auth (Google ID tokens, tiered access) / saved app data per account.
 - ✅ Web app (`/app`): sign-in (Google, or a local test sign-in), a few questions with the strategies they turn on, Today (a diary: log a food or a recipe, ideas per meal with their reasons), an optional planned week (recipe sheet, swap), Foods (search, goals, dictionary), List (empty until you add to it), Profile; works on phones; data saved in the account. The single-meal optimiser stays in the engine and the API (`/meal-plan`), not in the interface.
 - 🟡 Expo mobile prototype (`mobile/`): early screens against the recommend API; it does not have My week.

@@ -75,7 +75,8 @@ def browser():
 
 @pytest.fixture()
 def page(browser):
-    context = browser.new_context(viewport=PHONE)
+    # screenshots for the docs are taken at a phone's pixel density
+    context = browser.new_context(viewport=PHONE, device_scale_factor=2 if os.environ.get("FF_SCREENSHOTS") == "1" else 1)
     pg = context.new_page()
     yield pg
     context.close()

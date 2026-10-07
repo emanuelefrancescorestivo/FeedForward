@@ -33,13 +33,13 @@ MIN_SECRET_LENGTH = 32
 
 
 def assert_production_secret() -> None:
-    """Deployments must not sign tokens with the public development secret."""
-    if os.getenv("FEEDFORWARD_ENV", "").lower() != "production":
+    """Deployments (production, and the public demo) must not sign tokens with the public development secret."""
+    if os.getenv("FEEDFORWARD_ENV", "").lower() not in ("production", "demo"):
         return
     secret = os.getenv("FEEDFORWARD_SECRET", "")
     if not secret or secret in _PLACEHOLDERS or len(secret) < MIN_SECRET_LENGTH:
         raise RuntimeError(
-            "FEEDFORWARD_ENV=production requires FEEDFORWARD_SECRET: a random "
+            "FEEDFORWARD_ENV=production (or demo) requires FEEDFORWARD_SECRET: a random "
             f"string of at least {MIN_SECRET_LENGTH} characters "
             "(e.g. python -c \"import secrets; print(secrets.token_urlsafe(48))\")."
         )
@@ -130,10 +130,16 @@ def google_client_id() -> str:
     return os.getenv("FEEDFORWARD_GOOGLE_CLIENT_ID", "").strip()
 
 
+def demo_mode() -> bool:
+    """A public demo (FEEDFORWARD_ENV=demo): each visitor tries the app with a fresh account of their own."""
+    return os.getenv("FEEDFORWARD_ENV", "").lower() == "demo"
+
+
 def dev_login_enabled() -> bool:
-    """The test sign-in (a name, no password) is for a developer's own machine: never in production,
-    and off when FEEDFORWARD_DEV_LOGIN=0."""
-    if os.getenv("FEEDFORWARD_ENV", "development").lower() == "production":
+    """The test sign-in (a name, no password) is for a developer's own machine: never in production or
+    the public demo (anyone typing the same name would open the same account), and off when
+    FEEDFORWARD_DEV_LOGIN=0."""
+    if os.getenv("FEEDFORWARD_ENV", "development").lower() in ("production", "demo"):
         return False
     return os.getenv("FEEDFORWARD_DEV_LOGIN", "1") != "0"
 

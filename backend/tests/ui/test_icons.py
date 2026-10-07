@@ -51,3 +51,27 @@ def test_no_emoji_in_the_interface(server, page):
         expect(page.get_by_role("heading", name=title)).to_be_visible(timeout=30_000)
         _no_emoji(page, title)
         page.locator("[data-onb-cancel]").first.click()
+
+
+def test_profile_draws_the_goal_icon_instead_of_printing_its_code(server, page):
+    sign_in(page, server, "icons-profile")
+    page.locator("input[name=age]").fill("21")
+    page.locator("input[name=height]").fill("178")
+    page.locator("input[name=weight]").fill("70")
+    _next(page)
+    page.get_by_text("Focus", exact=True).first.click()
+    _next(page, "Start")
+    expect(page.locator(".energy-card")).to_be_visible(timeout=30_000)
+    page.get_by_role("button", name="Profile").last.click()
+    goal = page.locator("[data-edit-step=goal]")
+    expect(goal).to_contain_text("Focus")
+    assert "<svg" not in goal.inner_text()
+    expect(goal.locator("svg")).to_have_count(1)
+
+
+def test_a_meal_and_a_goal_do_not_share_a_drawing(server, page):
+    """The plate (a meal) and Focus (a goal) sit side by side in the evidence graph and on the week."""
+    page.goto(f"{server}/app")
+    expect(page.get_by_text("Eat well, at your pace.")).to_be_visible()
+    drawings = page.evaluate("Object.fromEntries(Object.entries(ICONS).map(([k, v]) => [k, v.replace(/[\d.]+/g, '#')]))")
+    assert drawings["plate"] != drawings["focus"]

@@ -49,7 +49,7 @@ def _bearer(res) -> dict:
 
 def test_config_says_how_to_sign_in(client, monkeypatch):
     monkeypatch.delenv("FEEDFORWARD_GOOGLE_CLIENT_ID", raising=False)
-    assert client.get("/auth/config").json() == {"google_client_id": None, "dev_login": True}
+    assert client.get("/auth/config").json() == {"google_client_id": None, "dev_login": True, "demo": False}
     monkeypatch.setenv("FEEDFORWARD_GOOGLE_CLIENT_ID", CLIENT_ID)
     assert client.get("/auth/config").json()["google_client_id"] == CLIENT_ID
 

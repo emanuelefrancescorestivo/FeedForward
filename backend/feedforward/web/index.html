@@ -593,6 +593,9 @@ body.gated { padding-left: 0 !important; }
 .g-btn { display: flex; justify-content: center; min-height: 44px; margin-bottom: 18px; }
 .dev { background: var(--surface); box-shadow: var(--shadow); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 16px; }
 .dev-row { display: flex; gap: 8px; }
+.demo-try .primary { width: 100%; min-height: 48px; font-size: 17px; }
+.demo-try .src { margin-top: 8px; }
+.demo-strip { background: var(--soft); color: var(--muted); font-size: 13px; border-radius: 10px; padding: 8px 12px; margin: 8px 0 0; }
 .dev-row input { flex: 1; min-width: 0; font: inherit; color: var(--text); background: var(--soft); border: none; border-radius: 10px; padding: 10px 12px; min-height: 44px; }
 .dev-row .primary { min-height: 44px; padding: 10px 16px; }
 .dev .src { margin: 8px 0 0; }
@@ -745,6 +748,7 @@ dialog#log-sheet { width: min(520px, 94vw); }
 <section id="gate" hidden></section>
 
 <main class="wrap">
+  <p class="demo-strip" id="demo-strip" hidden>Demo: please use made-up details. Everything is wiped when the demo restarts.</p>
   <section id="tab-today"><div class="loading" role="status"><span class="loading-text">Opening FeedForward…</span><i class="sk sk-title"></i><i class="sk sk-strip"></i><i class="sk sk-card tall"></i><i class="sk sk-card"></i></div></section>
   <section id="tab-week" hidden></section>
   <section id="tab-find" hidden></section>
@@ -851,7 +855,7 @@ const ICONS = {
   leafs: '<path d="M6 18c-1-6 3-11 11-11 .5 7.5-4 11.5-11 11z"/><path d="M6 18l6-6"/><path d="M4 9c0-2.5 1.5-4.5 4.5-4.5"/>',
   calm: '<path d="M3 12c2.5-3 5-3 7.5 0s5 3 7.5 0 2.5-3 3 0"/><path d="M3 17c2.5-3 5-3 7.5 0s5 3 7.5 0"/>',
   medal: '<circle cx="12" cy="14.5" r="5.5"/><path d="M9 3.5h6l-1.8 5.3h-2.4z"/>',
-  plate: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/>',
+  plate: '<circle cx="12" cy="12" r="4"/><path d="M2.8 3.5V8a1.4 1.4 0 0 0 2.8 0V3.5M4.2 9.4v11.1"/><path d="M21.2 3.5c-1.4.9-2.2 3.2-2.2 6.6h2.2v10.4"/>',
 };
 const icon = (name, cls = "") => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] || ICONS.plate}</svg>`;
 // the same drawing inside another SVG (the evidence graph), centred on x, y
@@ -994,8 +998,8 @@ function prefsReq(src = app) {
 // ---------------------------------------------------------------- sign-in
 function renderGate() {
   document.body.classList.add("gated");
-  const g = authConfig.google_client_id, dev = authConfig.dev_login;
-  $("gate").hidden = false;
+  const g = authConfig.google_client_id, dev = authConfig.dev_login, demo = authConfig.demo;
+  $("gate").hidden = false; $("demo-strip").hidden = true;
   $("gate").innerHTML = `<div class="gate-card">
     <div class="brand big">${SPROUT_SVG}<div>Feed<span>Forward</span></div></div>
     <h1>Eat well, at your pace.</h1>
@@ -1005,6 +1009,8 @@ function renderGate() {
       <li><span aria-hidden="true">${icon("profile")}</span><span><b>Yours.</b> Your goal, your habits, the food you like and can make.</span></li>
       <li><span aria-hidden="true">${icon("check")}</span><span><b>Honest.</b> Every suggestion shows its evidence.</span></li>
     </ul>
+    ${demo ? `<div class="demo-try"><button class="primary" type="button" id="demo-go">Try the demo</button>
+        <p class="src">A fresh account just for you, no sign-up. Please use made-up details: the demo is wiped when it restarts.</p></div>` : ""}
     ${g ? `<div id="g-btn" class="g-btn"></div>` : ""}
     ${dev ? `<form id="dev-form" class="dev">
         <label class="flabel" for="dev-name">${g ? "Or a test account" : "Test sign-in"} · this computer only</label>
@@ -1012,11 +1018,14 @@ function renderGate() {
           <button class="primary" type="submit">Continue</button></div>
         <p class="src">The same name brings back the same account.${g ? "" : " Google sign-in appears here once it is set up (README, “Sign in with Google”)."}</p>
       </form>` : ""}
-    ${!g && !dev ? `<div class="note">Sign-in is not set up on this server yet.</div>` : ""}
+    ${!g && !dev && !demo ? `<div class="note">Sign-in is not set up on this server yet.</div>` : ""}
     <p class="gate-err note" id="gate-err" hidden></p>
     <p class="src center">Information, not medical advice.</p>
   </div>`;
   const err = (m) => { $("gate-err").hidden = false; $("gate-err").textContent = m; };
+  if (demo) $("demo-go").onclick = async () => {
+    try { await signIn("/auth/demo", {}); } catch (x) { err(`Could not open the demo (${x.message}).`); }
+  };
   if (dev) $("dev-form").onsubmit = async (e) => {
     e.preventDefault();
     const name = $("dev-name").value.trim();
@@ -1257,7 +1266,7 @@ function renderProfile() {
   const dayCount = ["sleep_onset", "morning_hunger", "energy_dips", "study_time", "training_days"].filter(q => a[q]).length;
   const notEaten = (a.dont_eat || []).length;
   const chain = (weekChains || []).find(c => c.id === v.chain)?.label || v.chain;
-  const row = (step, label, value) => `<button class="prow linkrow" data-edit-step="${step}"><span>${label}</span><b>${esc(value)} <span class="chev">›</span></b></button>`;
+  const row = (step, label, value, html = esc(value)) => `<button class="prow linkrow" data-edit-step="${step}"><span>${label}</span><b>${html} <span class="chev">›</span></b></button>`;
   const sw = (attr, label, on) => `<label class="prow"><span>${label}</span><input type="checkbox" ${attr} ${on ? "checked" : ""}></label>`;
   $("tab-profile").innerHTML = `<h1>Profile</h1>
     <div class="card plist"><div class="prow"><span>Signed in as</span><b>${esc(account?.email || "")}</b></div>
@@ -1265,7 +1274,7 @@ function renderProfile() {
     <div class="group-title">You</div>
     <div class="card plist">
       ${row("you", "About you", `${v.age} · ${v.sex === "male" ? "male" : "female"} · ${v.height} cm · ${v.weight} kg · ${activity}`)}
-      ${row("goal", "Goal", `${goalIcon(v.goal)} ${goalTitle(v.goal)}`)}
+      ${row("goal", "Goal", null, `${goalIcon(v.goal)} ${esc(goalTitle(v.goal))}`)}
       ${row("energy", "Energy", Q.energy_goal[1][a.energy_goal || "maintain"])}
       ${row("day", "Your day", dayCount ? `${dayCount} answered` : "Not answered")}
       ${row("food", "Your food", [v.diet ? v.diet[0].toUpperCase() + v.diet.slice(1) : "Anything", notEaten ? `${notEaten} not eaten` : ""].filter(Boolean).join(" · "))}
@@ -2865,6 +2874,7 @@ async function enterApp() {
       api("/photos").catch(() => ({ recipes: {}, foods: {}, ingredients: {}, credits: [] })), loadBasics()]);
     photos = pics;
     account = me;
+    $("demo-strip").hidden = !authConfig?.demo;
     app = Object.assign(blankApp(), saved.data || {});
     loadPresets();
     app.prefs = Object.assign({ extra: [], science: false }, app.prefs || {});
