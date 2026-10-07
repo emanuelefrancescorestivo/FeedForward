@@ -386,6 +386,12 @@ dialog#recipe-sheet { width: min(560px, 94vw); }
 details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
 .empty { text-align: center; padding: 32px 16px; }
 .big-ic { font-size: 48px; display: block; margin-bottom: 8px; color: var(--accent); }
+.qcard { padding: 14px 16px 12px; box-shadow: var(--shadow), inset 3px 0 0 var(--accent); }
+.qcard .q { font-weight: 650; font-size: 16px; margin-bottom: 2px; }
+.qcard .qchoice { margin-top: 10px; }
+.qcard .strat { padding: 0; }
+.qfoot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.qfoot .link { font-size: 14px; font-weight: 600; min-height: 32px; }
 .est { font-size: 11px; font-weight: 700; color: var(--note); background: var(--note-soft); border-radius: 4px; padding: 0 5px;
   vertical-align: 1px; }
 .pick-row { display: flex; align-items: center; gap: 10px; }
@@ -909,7 +915,8 @@ let presetList = [];            // GET /diary/presets: meals logged in one tap a
 let account = null;             // {email}
 let authConfig = { google_client_id: null, dev_login: false };
 const blankApp = () => ({ v: 1, onboarded: false, setup: {}, answers: {}, declined: [], avoid: [], list: [],
-  pantry: [], ticks: null, edits: null, weekList: null, prefs: { extra: [], science: false }, introSeen: false });
+  pantry: [], ticks: null, edits: null, weekList: null, prefs: { extra: [], science: false }, introSeen: false,
+  asked: [], qSnooze: null, strategyIds: null });
 
 let saveTimer = null;
 function save() { clearTimeout(saveTimer); saveTimer = setTimeout(flush, 400); }
@@ -1351,6 +1358,10 @@ document.addEventListener("click", (ev) => {
   if ((el = on("[data-log]"))) { openLog(el.dataset.log); return; }
   if ((el = on("[data-ideas]"))) { openIdeas(el.dataset.ideas); return; }
   if ((el = on("[data-unlog]"))) { unlog(el.dataset.unlog); return; }
+  if ((el = on("[data-q-answer]"))) { const [q, v] = el.dataset.qAnswer.split("|"); answerQuestion(q, v); return; }
+  if ((el = on("[data-q-next]"))) { qState = null; renderToday(); return; }
+  if ((el = on("[data-q-later]"))) { app.qSnooze = dayISO; qState = null; save(); renderToday(); return; }
+  if ((el = on("[data-q-strat]"))) { toggleQuestionStrategy(el); return; }
   if ((el = on("[data-retry-entry]"))) { retryEntry(el.dataset.retryEntry); return; }
   if ((el = on("[data-lever]"))) { showLever(el.dataset.lever); return; }
   if ((el = on("[data-pick]"))) { pickAmount(JSON.parse(el.dataset.pick)); return; }
@@ -1646,6 +1657,7 @@ function drawToday(sum, entries) {
       <button class="icon-btn" data-intro-close aria-label="Dismiss">${icon("x")}</button></div>` : ""}
     ${dayEnergyCard(sum, entries)}
     ${entries.length ? dayGoalCard(sum) : ""}
+    ${questionCard()}
     ${SLOTS.map(m => slotCard(m, sum, entries)).join("")}
     <button class="card plan-week" data-tab-go="week">
       <span class="tile-ic" aria-hidden="true">${icon("calendar")}</span>
@@ -1653,6 +1665,82 @@ function drawToday(sum, entries) {
         <small>${app.weekOn ? (weekPlan?.feasible ? `${euro(weekPlan.total_cost)} at ${esc(weekPlan.chain.label)} · open it` : "Open it")
           : "Optional: seven days of meals within a budget, with the shopping list."}</small></span>
       <span class="chev" aria-hidden="true">›</span></button>`;
+}
+
+// ---------------------------------------------------------------- the other questions, one at a time
+// The first run asks only about you and the goal. The rest arrive here, one card at a time, all optional;
+// an answer that turns a strategy on shows it with its grade, the answer behind it and its sources, and a
+// switch to turn it off.
+const QUESTION_ORDER = ["cook_time", "training_days", "training_time", "sleep_onset", "study_time", "energy_dips",
+  "morning_hunger", "dont_eat", "batch_ok", "kitchen"];
+const KITCHEN_Q = ["Only a microwave and a kettle?", { yes: "Yes", no: "No, a hob too" }];
+const QUESTION_WHY = { cook_time: "Ideas will fit the time you have.", training_days: "Ideas will take your training into account.",
+  training_time: "Ideas will take your training into account.", sleep_onset: "Evening ideas will take it into account.",
+  study_time: "Ideas will take your study hours into account.", energy_dips: "Ideas will take it into account.",
+  morning_hunger: "Breakfast ideas will match your appetite.", dont_eat: "Ideas will leave these out.",
+  batch_ok: "Ideas can cook once for three days.", kitchen: "Ideas will only need what you have." };
+let qState = null;                 // { id, news: [strategies the answer turned on] } after an answer
+const questionOf = (id) => id === "kitchen" ? KITCHEN_Q : Q[id];
+function nextQuestion() {
+  if (app.qSnooze === dayISO) return null;
+  const a = app.answers;
+  return QUESTION_ORDER.find(id => !app.asked.includes(id)
+    && !(id === "kitchen" ? false : Array.isArray(a[id]) ? a[id].length : a[id])
+    && !(id === "training_time" && (!a.training_days || a.training_days === "0"))) || null;
+}
+function strategyRow(s) {
+  const because = s.because && questionOf(s.because.question)
+    ? `You said “${questionOf(s.because.question)[1][s.because.answer] || s.because.answer}” to “${questionOf(s.because.question)[0]}”` : "";
+  return `<div class="strat"><label class="strat-row"><span class="what"><b>${esc(s.text)}</b>
+      <small>${s.grade ? `<span class="grade g${s.grade}" title="Evidence grade">${s.grade}</span> ` : ""}${esc(because)}</small></span>
+      <input type="checkbox" data-q-strat="${esc(s.id)}" ${app.declined.includes(s.id) ? "" : "checked"} aria-label="${esc(s.text)}"></label>
+    ${s.why ? `<details class="strat-why"><summary>Why?</summary><p>${esc(s.why)}</p>${(s.pmids || []).length ? `<p class="src">${s.pmids.map(id =>
+      `<a href="https://pubmed.ncbi.nlm.nih.gov/${esc(id)}/" target="_blank" rel="noopener">PubMed ${esc(id)}</a>`).join(" · ")}</p>` : ""}</details>` : ""}</div>`;
+}
+function questionCard() {
+  if (!app.onboarded || dayISO !== isoDate(new Date())) return "";
+  const pos = (id) => `${QUESTION_ORDER.indexOf(id) + 1} of ${QUESTION_ORDER.length} questions · all optional`;
+  if (qState) {
+    const more = nextQuestion();
+    return `<div class="card qcard" role="region" aria-label="A question">
+      <div class="q">Thank you</div>
+      ${qState.news.length ? `<p class="small muted">Your answer turns ${qState.news.length > 1 ? "these" : "this"} on. Each comes with its evidence; switch off any you don't want.</p>
+        ${qState.news.map(strategyRow).join("")}` : `<p class="small muted">${esc(QUESTION_WHY[qState.id])}</p>`}
+      <div class="qfoot"><span>${pos(qState.id)}</span><button class="ghost" data-q-next>${more ? "Next question" : "Done"}</button></div></div>`;
+  }
+  const id = nextQuestion();
+  if (!id) return "";
+  const [title, options] = questionOf(id), multi = id === "dont_eat";
+  const chosen = new Set(app.answers.dont_eat || []);
+  return `<div class="card qcard" role="region" aria-label="A question">
+    <div class="q">${esc(title)}</div><div class="small muted">${esc(QUESTION_WHY[id])}</div>
+    <div class="choice qchoice">${Object.entries(options).map(([k, l]) => multi
+      ? `<label><input type="checkbox" name="q-multi" value="${esc(k)}" ${chosen.has(k) ? "checked" : ""}><span>${esc(l)}</span></label>`
+      : `<button class="pill-btn" data-q-answer="${esc(id)}|${esc(k)}">${esc(l)}</button>`).join("")}</div>
+    ${multi ? `<div class="actions"><button class="ghost" data-q-answer="dont_eat|">Done</button></div>` : ""}
+    <div class="qfoot"><span>${pos(id)}</span><button class="link" data-q-later>Not now</button></div></div>`;
+}
+async function answerQuestion(id, value) {
+  const before = app.strategyIds ?? (await api("/plan/strategies", { ...personReq(), ...prefsReq() }).catch(() => ({ strategies: [] })))
+    .strategies.map(s => s.id);
+  if (id === "kitchen") app.setup.microwave = value === "yes";
+  else if (id === "dont_eat") app.answers.dont_eat = [...document.querySelectorAll(".qcard [name=q-multi]:checked")].map(c => c.value);
+  else app.answers[id] = value;
+  if (!app.asked.includes(id)) app.asked.push(id);
+  let news = [];
+  try {
+    const p = await api("/plan/strategies", { ...personReq(), ...prefsReq() });
+    news = p.strategies.filter(s => !before.includes(s.id));
+    app.strategyIds = p.strategies.map(s => s.id);
+  } catch { app.strategyIds = before; }
+  qState = { id, news };
+  save(); syncProfile(); dayView = null; weekPlan = null;
+  renderToday();
+}
+function toggleQuestionStrategy(el) {
+  const id = el.dataset.qStrat;
+  app.declined = el.checked ? app.declined.filter(x => x !== id) : [...new Set([...app.declined, id])];
+  save(); dayView = null;
 }
 
 function dayEnergyCard(sum, entries) {
