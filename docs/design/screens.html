@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FeedForward screens</title>
+<!--
+Mockups for step 3 (docs/DESIGN_SYSTEM.md). Same tokens as the app
+(backend/feedforward/web/index.html), with the revisions and additions of the
+design system. Static: no data, no requests; photos are marked slots until
+open-licence photos are sourced. Numbers on the "Why" screens are the engine's
+(recipe_why, French lentil salad, goal cognitive_function).
+-->
+<style>
+@font-face { font-family: "Inter"; font-weight: 100 900; font-display: swap;
+  src: url("../../backend/feedforward/web/fonts/inter-latin-wght-normal.woff2") format("woff2"); }
+:root, .phone {
+  --bg: #f5f2ea; --surface: #fffdf8; --soft: rgba(110, 96, 66, .09); --text: #2b2924; --muted: #655f53;
+  --line: rgba(80, 66, 40, .14); --control: #8f887a; --accent: #45693e; --on-accent: #fff; --accent-soft: #e3ebd9;
+  --ring: #6d965e; --note: #8a4f1f; --note-soft: #f5e7d6; --bar: rgba(245, 242, 234, .9);
+  --carbs: #d6ad5f; --protein: #c98a6b; --fat: #a497c7;
+  --gold: #7a5a10; --gold-soft: #f4e8cc; --rest: #6a5d9c; --rest-soft: #ebe7f5;
+  --ph-a: #ece3d2; --ph-b: #e4d8c2; --scrim: rgba(30, 26, 18, .38);
+  --shadow: 0 1px 2px rgba(64, 52, 28, .05), 0 0 0 .5px rgba(64, 52, 28, .07);
+  --shadow-up: 0 6px 20px rgba(64, 52, 28, .10), 0 0 0 .5px rgba(64, 52, 28, .07);
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px;
+  --r-sm: 8px; --r: 14px; --r-lg: 18px; --ease: cubic-bezier(.2, .8, .2, 1);
+}
+.phone.dark {
+  --bg: #161914; --surface: #20241d; --soft: rgba(226, 232, 212, .08); --text: #ece8dc; --muted: #aba696;
+  --line: rgba(226, 232, 212, .12); --control: #8a8578; --accent: #a9c99a; --on-accent: #15200f; --accent-soft: #2a3725;
+  --ring: #8fb27f; --note: #e8b78c; --note-soft: #3a2c1f; --bar: rgba(22, 25, 20, .9);
+  --carbs: #e0c07a; --protein: #dba08a; --fat: #b7abdb;
+  --gold: #e6c47c; --gold-soft: #3a321d; --rest: #b9addf; --rest-soft: #2e2a3d;
+  --ph-a: #2b3027; --ph-b: #262a22; --scrim: rgba(0, 0, 0, .5);
+  --shadow: 0 0 0 .5px rgba(226, 232, 212, .07); --shadow-up: 0 8px 24px rgba(0, 0, 0, .35), 0 0 0 .5px rgba(226, 232, 212, .08);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #e9e5db; color: #2b2924; font: 16px/1.55 "Inter", system-ui, sans-serif; letter-spacing: -.011em;
+  -webkit-font-smoothing: antialiased; }
+.page { max-width: 1680px; margin: 0 auto; padding: 40px 32px 80px; }
+.page > h1 { font-size: 34px; letter-spacing: -.025em; margin: 0 0 6px; }
+.page > p.lead { color: #655f53; max-width: 820px; margin: 0 0 8px; }
+.page h2.sec { font-size: 22px; margin: 48px 0 6px; letter-spacing: -.02em; }
+.page p.sec-lead { color: #655f53; margin: 0 0 22px; max-width: 820px; }
+.row-phones { display: flex; flex-wrap: wrap; gap: 44px 40px; align-items: flex-start; }
+figure { margin: 0; width: 390px; }
+figcaption { margin-top: 18px; font-size: 14px; color: #4f4a40; }
+figcaption b { display: block; font-size: 15px; color: #2b2924; margin-bottom: 4px; }
+figcaption ul { margin: 0; padding-left: 18px; }
+figcaption li { margin-bottom: 3px; }
+
+/* ---------- phone frame ---------- */
+.phone { width: 390px; height: 844px; border-radius: 46px; overflow: hidden; position: relative; background: var(--bg); color: var(--text);
+  box-shadow: 0 0 0 9px #1c1c1a, 0 0 0 10px #3a3a36, 0 24px 60px rgba(0, 0, 0, .22); font-size: 16px; }
+.status { position: absolute; top: 0; left: 0; right: 0; height: 50px; display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 34px 0; font-size: 15px; font-weight: 600; z-index: 6; }
+.status .isl { width: 120px; height: 34px; background: #000; border-radius: 20px; }
+.status .bat { width: 26px; height: 12px; border: 1.5px solid currentColor; border-radius: 4px; position: relative; opacity: .8; }
+.status .bat::after { content: ""; position: absolute; inset: 1.5px; right: 6px; background: currentColor; border-radius: 1.5px; }
+.scroll { position: absolute; inset: 50px 0 0; overflow: hidden; padding: 6px 16px 120px; }
+.appbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 2px 0 10px; }
+.brand { display: flex; align-items: center; gap: 7px; font-weight: 650; font-size: 16px; }
+.brand svg { width: 20px; height: 20px; color: var(--accent); }
+.brand b { font-weight: 650; } .brand span { color: var(--accent); }
+h1.t { font-size: 30px; line-height: 1.15; font-weight: 650; margin: 0; letter-spacing: -.024em; }
+.titlerow { display: flex; align-items: baseline; justify-content: space-between; margin: 0 0 12px; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.lead { color: var(--muted); margin: 6px 0 16px; font-size: 15px; }
+svg.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+svg.i.s18 { width: 18px; height: 18px; } svg.i.s16 { width: 16px; height: 16px; } svg.i.s20 { width: 20px; height: 20px; }
+
+/* tab bar: five tabs */
+.tabbar { position: absolute; left: 0; right: 0; bottom: 0; height: 84px; display: grid; grid-template-columns: repeat(5, 1fr);
+  background: var(--bar); border-top: .5px solid var(--line); padding-bottom: 30px; z-index: 5; -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); }
+.tabbar span { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 10.5px;
+  font-weight: 500; color: var(--muted); }
+.tabbar span svg { width: 25px; height: 25px; }
+.tabbar span.on { color: var(--accent); }
+.homebar { position: absolute; bottom: 8px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--text); opacity: .85; z-index: 9; }
+
+/* cards, chips, buttons */
+.card { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow); margin-bottom: 10px; }
+.pad { padding: 14px 16px; }
+.chip { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 600; background: var(--soft); color: var(--text);
+  border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.chip.good { background: var(--accent-soft); color: var(--accent); }
+.chip.warm { background: var(--note-soft); color: var(--note); }
+.chip.gold { background: var(--gold-soft); color: var(--gold); }
+.eu { font-size: 9.5px; font-weight: 700; color: var(--accent); background: var(--surface); border-radius: 4px; padding: 0 3px; }
+.chip.good .eu { background: var(--surface); }
+.grade { display: inline-block; font-size: 10.5px; font-weight: 700; border-radius: 4px; padding: 0 5px; line-height: 16px;
+  background: var(--accent-soft); color: var(--accent); }
+.grade.c { background: var(--soft); color: var(--muted); }
+.est { font-size: 11px; font-weight: 700; color: var(--note); background: var(--note-soft); border-radius: 4px; padding: 0 5px; line-height: 17px; }
+.ai { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700; color: var(--rest); background: var(--rest-soft);
+  border-radius: 999px; padding: 1px 8px 1px 6px; }
+.ai svg { width: 12px; height: 12px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: none; font: inherit; font-weight: 600;
+  border-radius: 12px; min-height: 50px; padding: 0 20px; background: var(--accent); color: var(--on-accent); }
+.btn.wide { width: 100%; }
+.btn.ghost { background: var(--soft); color: var(--accent); min-height: 44px; }
+.pill { display: inline-flex; align-items: center; gap: 5px; background: var(--accent-soft); color: var(--accent); border-radius: 999px;
+  padding: 6px 14px; font-size: 15px; font-weight: 600; min-height: 34px; }
+.pill.soft { background: var(--soft); color: var(--text); }
+.link { color: var(--accent); font-weight: 600; font-size: 15px; }
+.group { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 16px 4px 8px; }
+.sep { height: .5px; background: var(--line); margin: 0; }
+
+/* choice chips (real radios in the build: focusable, visible focus ring) */
+.choice { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice i { font-style: normal; background: var(--soft); border-radius: 999px; padding: 8px 14px; font-size: 15px; min-height: 40px; display: inline-flex; align-items: center; }
+.choice i.on { background: var(--accent); color: var(--on-accent); font-weight: 600; }
+.choice i.focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+.field { margin-bottom: 14px; }
+.flabel { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.inp { background: var(--soft); border-radius: 10px; min-height: 44px; display: flex; align-items: center; padding: 0 12px; font-size: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.steps { display: flex; gap: 6px; margin: 4px 0 18px; }
+.steps i { flex: 1; height: 4px; border-radius: 2px; background: var(--soft); }
+.steps i.on { background: var(--accent); }
+
+/* photo slots: open-licence photos, served by the app */
+.ph { position: relative; flex: none; border-radius: 12px; overflow: hidden; color: var(--muted);
+  background: repeating-linear-gradient(135deg, var(--ph-a) 0 9px, var(--ph-b) 9px 18px); display: flex; align-items: center; justify-content: center; }
+.ph svg { width: 40%; height: 40%; opacity: .55; stroke-width: 1.6; }
+.ph.t36 { width: 36px; height: 36px; border-radius: 10px; }
+.ph.t48 { width: 48px; height: 48px; }
+.ph.t64 { width: 64px; height: 64px; }
+.ph.hero { width: 100%; height: 190px; border-radius: 14px; }
+.ph.hero svg { width: 40px; height: 40px; }
+.ph .lbl { position: absolute; left: 8px; bottom: 6px; font-size: 11px; font-weight: 600; background: var(--surface); border-radius: 6px; padding: 1px 6px; }
+.credit { font-size: 11.5px; color: var(--muted); margin: 6px 2px 0; }
+.tile-ic { width: 48px; height: 48px; border-radius: 12px; background: var(--soft); display: flex; align-items: center; justify-content: center; color: var(--accent); flex: none; }
+.tile-ic.t36 { width: 36px; height: 36px; border-radius: 10px; }
+
+/* the week strip: days you showed up (shape + colour, never colour alone) */
+.week { padding: 12px 14px 12px; }
+.days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+.days b { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+.days b.today { color: var(--text); }
+.dot { width: 26px; height: 26px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
+.dot.on { background: var(--accent); color: var(--on-accent); }
+.dot.on svg { width: 15px; height: 15px; stroke-width: 2.6; }
+.dot.today { box-shadow: inset 0 0 0 2px var(--accent); }
+.dot.today.on { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent); }
+.dot.empty { box-shadow: inset 0 0 0 1.5px var(--control); }
+.dot.future { box-shadow: inset 0 0 0 1.5px var(--line); }
+.wk-line { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 13.5px; }
+.streak { display: inline-flex; align-items: center; gap: 4px; font-weight: 650; color: var(--accent); font-size: 13.5px; }
+.streak svg { width: 18px; height: 18px; }
+
+/* energy card and rings */
+.energy { display: flex; align-items: center; gap: 16px; padding: 14px 16px; }
+.ringbox { position: relative; flex: none; }
+.ringbox .rt { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ringbox .rt b { font-size: 24px; font-weight: 650; line-height: 1.1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.ringbox .rt small { font-size: 11.5px; color: var(--muted); }
+.ring .track { fill: none; stroke: var(--soft); }
+.ring .fill { fill: none; stroke: var(--ring); stroke-linecap: round; }
+.macros { flex: 1; display: flex; flex-direction: column; gap: 9px; }
+.mline { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 3px; }
+.bar { height: 7px; background: var(--soft); border-radius: 4px; overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 4px; background: var(--ring); }
+.bar.c i { background: var(--carbs); } .bar.p i { background: var(--protein); } .bar.f i { background: var(--fat); }
+.goalcard { padding: 12px 14px; }
+.gc-head { display: flex; justify-content: space-between; align-items: baseline; font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+.minis { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; }
+.mini { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.mini .ringbox .rt b { font-size: 13px; }
+.mini-name { font-size: 13.5px; font-weight: 600; }
+.mini small { font-size: 11.5px; color: var(--muted); }
+
+/* meal cards */
+.meal { padding: 10px 14px 8px; }
+.mc-head { display: flex; justify-content: space-between; align-items: baseline; font-weight: 650; font-size: 15.5px; margin-bottom: 6px; }
+.mc-head .muted { font-weight: 400; font-size: 14px; }
+.entry { display: flex; align-items: center; gap: 10px; padding: 4px 0 8px; }
+.what { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.what b { font-weight: 600; font-size: 15px; line-height: 1.3; }
+.what small { font-size: 12.5px; color: var(--muted); }
+.x { color: var(--muted); font-size: 20px; width: 32px; text-align: center; }
+.acts { display: flex; gap: 8px; padding: 2px 0 6px; }
+.add { background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 5px 13px; font-size: 14px; font-weight: 600; }
+.add.soft { background: var(--soft); color: var(--text); }
+.levers { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.inline-idea { background: var(--accent-soft); border-radius: 12px; padding: 10px; margin: 2px 0 8px; display: flex; gap: 10px; }
+.inline-idea .what b { font-size: 14.5px; }
+.inline-idea .reasons { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+.inline-idea .reasons .chip { background: var(--surface); }
+.ii-top { font-size: 11.5px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+.ii-acts { display: flex; gap: 14px; align-items: center; margin-top: 8px; font-size: 14px; }
+.ii-acts .btn { min-height: 34px; padding: 0 14px; font-size: 14px; border-radius: 999px; }
+.ii-acts > *, .btn { white-space: nowrap; }
+.qcard { padding: 14px 16px 12px; border-left: 3px solid var(--accent); }
+.qcard .q { font-weight: 650; font-size: 15.5px; margin-bottom: 2px; }
+.qcard .choice i { font-size: 14px; min-height: 34px; padding: 6px 12px; }
+.qcard .qfoot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 13px; color: var(--muted); }
+
+/* sheets */
+.scrim { position: absolute; inset: 0; background: var(--scrim); z-index: 7; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 8; background: var(--surface); border-radius: 18px 18px 0 0;
+  padding: 10px 16px 40px; box-shadow: var(--shadow-up); }
+.sheet .grab { width: 36px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 10px; }
+.sheet-h { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.sheet-h h2 { font-size: 20px; margin: 0; letter-spacing: -.02em; }
+.closebtn { width: 34px; height: 34px; border-radius: 50%; background: var(--soft); display: flex; align-items: center; justify-content: center; color: var(--muted); }
+.search { background: var(--soft); border-radius: 10px; min-height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 12px; color: var(--muted); font-size: 15px; }
+.pick { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: .5px solid var(--line); }
+.pick:last-child { border-bottom: none; }
+.pick .add { padding: 4px 12px; font-size: 13.5px; }
+.check { width: 24px; height: 24px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--control); flex: none; display: flex; align-items: center; justify-content: center; }
+.check.on { background: var(--accent); box-shadow: none; color: var(--on-accent); }
+.check.on svg { width: 14px; height: 14px; stroke-width: 2.8; }
+.describe { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; background: var(--rest-soft); margin: 12px 0 4px; }
+.describe .tile-ic { background: var(--surface); color: var(--rest); width: 40px; height: 40px; }
+.stickybar { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px 34px; background: var(--surface); border-top: .5px solid var(--line); z-index: 9; }
+.textarea { background: var(--soft); border-radius: 12px; padding: 12px; font-size: 15.5px; min-height: 84px; }
+.est-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: .5px solid var(--line); }
+.stepper { display: inline-flex; align-items: center; gap: 0; background: var(--soft); border-radius: 999px; font-size: 14px; font-weight: 600; }
+.stepper span { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 18px; }
+.stepper em { font-style: normal; min-width: 52px; text-align: center; font-variant-numeric: tabular-nums; }
+
+/* progress */
+.streakcard { display: flex; gap: 14px; align-items: center; padding: 14px 16px; }
+.medal { width: 52px; height: 52px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; flex: none; }
+.medal.gold { background: var(--gold-soft); color: var(--gold); }
+.medal.big { width: 104px; height: 104px; }
+.medal.big svg { width: 50px; height: 50px; stroke-width: 1.8; }
+.restline { display: inline-flex; align-items: center; gap: 5px; color: var(--rest); font-weight: 600; font-size: 13px; }
+.restline svg { width: 15px; height: 15px; }
+.needbar { display: flex; gap: 3px; margin: 10px 0 6px; }
+.needbar i { flex: 1; height: 7px; border-radius: 3px; background: var(--line); }
+.needbar i.on { background: var(--accent); }
+.needbar i.near { background: var(--ring); opacity: .6; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.stat { padding: 12px 14px; margin: 0; }
+.stat .k { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; display: flex; align-items: center; gap: 5px; }
+.stat .k svg { width: 15px; height: 15px; }
+.stat .v { font-size: 26px; font-weight: 650; letter-spacing: -.02em; line-height: 1.2; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.stat .d { font-size: 12.5px; color: var(--muted); }
+.plants { display: flex; flex-wrap: wrap; gap: 6px; }
+.plants .chip { font-weight: 500; }
+.plants .chip.new { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.milestones { display: flex; gap: 6px; justify-content: space-between; }
+.ms { width: 74px; text-align: center; font-size: 11.5px; color: var(--muted); flex: none; }
+.ms .medal { margin: 0 auto 5px; }
+.ms b { color: var(--text); display: block; font-size: 12px; font-weight: 600; line-height: 1.25; }
+.from { font-size: 12px; color: var(--muted); }
+
+/* recap card */
+.recap { background: var(--accent); color: var(--on-accent); border-radius: 18px; padding: 18px; }
+.phone:not(.dark) .recap { background: #3f6138; }
+.recap .rh { display: flex; justify-content: space-between; align-items: center; font-size: 13px; opacity: .9; }
+.recap h3 { font-size: 24px; line-height: 1.15; margin: 10px 0 14px; letter-spacing: -.02em; }
+.recap .rg { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 10px; }
+.recap .rg div b { display: block; font-size: 26px; font-weight: 650; letter-spacing: -.02em; line-height: 1.1; }
+.recap .rg div span { font-size: 12.5px; opacity: .9; }
+.recap .hl { margin-top: 14px; background: rgba(255, 255, 255, .14); border-radius: 12px; padding: 10px 12px; font-size: 14px; }
+.phone.dark .recap .hl { background: rgba(0, 0, 0, .12); }
+
+/* circles */
+.avs { display: flex; }
+.av { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+  box-shadow: 0 0 0 2px var(--surface); margin-left: -7px; color: var(--text); }
+.avs .av:first-child { margin-left: 0; }
+.av.a1 { background: var(--accent-soft); color: var(--accent); } .av.a2 { background: var(--note-soft); color: var(--note); }
+.av.a3 { background: var(--gold-soft); color: var(--gold); } .av.a4 { background: var(--rest-soft); color: var(--rest); }
+.av.lg { width: 36px; height: 36px; font-size: 13px; }
+.challenge { padding: 14px 16px; background: var(--accent-soft); box-shadow: none; }
+.challenge .ch-t { font-weight: 650; font-size: 15.5px; }
+.cbar { height: 10px; background: var(--surface); border-radius: 5px; overflow: hidden; margin: 10px 0 8px; }
+.cbar i { display: block; height: 100%; background: var(--accent); border-radius: 5px; }
+.post { padding: 12px 14px; }
+.post-h { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; font-size: 14.5px; }
+.post-h small { color: var(--muted); font-size: 12.5px; display: block; }
+.reacts { display: flex; gap: 8px; margin-top: 10px; }
+.react { display: inline-flex; align-items: center; gap: 5px; background: var(--soft); border-radius: 999px; padding: 4px 11px; font-size: 14px; font-weight: 600; min-height: 34px; }
+.react.on { background: var(--accent-soft); color: var(--accent); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.cook { display: flex; gap: 12px; align-items: center; padding: 12px 14px; }
+.daychips { display: flex; gap: 6px; }
+.daychips i { font-style: normal; width: 42px; height: 52px; border-radius: 12px; background: var(--soft); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; font-size: 11.5px; color: var(--muted); }
+.daychips i b { font-size: 16px; color: var(--text); }
+.daychips i.on { background: var(--accent); color: var(--on-accent); }
+.daychips i.on b { color: var(--on-accent); }
+
+/* ask why */
+.bubble { align-self: flex-end; background: var(--accent); color: var(--on-accent); border-radius: 18px 18px 4px 18px; padding: 9px 14px; font-size: 15px; max-width: 80%; margin-left: auto; }
+.answer { background: var(--soft); border-radius: 18px 18px 18px 4px; padding: 12px 14px; font-size: 14.5px; margin-top: 10px; }
+.answer p { margin: 0 0 8px; }
+.claim { border-left: 3px solid var(--accent); padding: 2px 0 2px 10px; margin: 8px 0; font-size: 14px; }
+.claim small { display: block; color: var(--muted); font-size: 11.5px; }
+.askbar { display: flex; gap: 8px; align-items: center; }
+.askbar .inp { flex: 1; color: var(--muted); font-size: 15px; }
+.sendbtn { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: flex; align-items: center; justify-content: center; }
+.seg { display: flex; background: var(--soft); border-radius: 9px; padding: 2px; margin-bottom: 14px; }
+.seg span { flex: 1; text-align: center; padding: 6px 0; font-size: 14.5px; border-radius: 7px; }
+.seg span.on { background: var(--surface); font-weight: 600; box-shadow: 0 3px 8px rgba(0,0,0,.12); }
+
+/* profile */
+.plist { padding: 0 16px; }
+.prow { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 52px; border-bottom: .5px solid var(--line); padding: 6px 0; }
+.plist .prow:last-child { border-bottom: none; }
+.prow .what small { font-size: 12.5px; }
+.sw { width: 51px; height: 31px; border-radius: 999px; background: var(--soft); position: relative; flex: none; box-shadow: inset 0 0 0 1.5px var(--control); }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.15); }
+.sw.on { background: var(--accent); box-shadow: none; }
+.sw.on::after { left: 22px; }
+.calmnote { font-size: 13px; color: var(--muted); padding: 0 4px; margin: 6px 0 0; }
+
+/* components board */
+.board { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+.panel { background: #fffdf8; border-radius: 16px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(64,52,28,.06); }
+.panel h3 { font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: #655f53; margin: 0 0 12px; }
+.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sw-c { border-radius: 10px; height: 44px; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.12); }
+.swatches div small { display: block; font-size: 11px; color: #655f53; margin-top: 3px; }
+.typerow { display: flex; align-items: baseline; justify-content: space-between; border-bottom: .5px solid rgba(80,66,40,.14); padding: 6px 0; }
+.typerow small { color: #655f53; font-size: 12px; }
+.panel .phone-free { background: var(--bg); border-radius: 12px; padding: 12px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-today" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-foods" viewBox="0 0 24 24"><path d="M5 19.5c-.5-8.5 5-14.5 15-14.5.3 9.5-5.5 15-14 14.6"/><path d="M5 19.5l8-8"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M9.5 6.5h10.5M9.5 12h10.5M9.5 17.5h10.5"/><circle cx="5" cy="6.5" r=".6"/><circle cx="5" cy="12" r=".6"/><circle cx="5" cy="17.5" r=".6"/></symbol>
+    <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.3 2.8-5 5.5-5s4.9 1.7 5.5 5"/><circle cx="17" cy="9.5" r="2.4"/><path d="M16.2 14.6c2.3.2 3.8 1.7 4.3 4.4"/></symbol>
+    <symbol id="i-profile" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1-3.8 3.9-5.8 7.5-5.8s6.5 2 7.5 5.8"/></symbol>
+    <symbol id="i-sprout" viewBox="0 0 24 24"><path d="M12 20v-8"/><path d="M12 12c0-4 3-6.5 7-6.5 0 4-3 6.5-7 6.5z"/><path d="M12 14.5c0-3-2.3-5-5.5-5 0 3 2.3 5 5.5 5z"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19.5 14.5A7.8 7.8 0 1 1 9.5 4.5a6.3 6.3 0 0 0 10 10z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.4"/><path d="M9 7l1.4-2.4h3.2L15 7"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M11 3.5l1.7 4.8 4.8 1.7-4.8 1.7L11 16.5l-1.7-4.8L4.5 10l4.8-1.7z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M4.5 11.5A7 7 0 0 1 16.3 6.6L18.5 9"/><path d="M18.5 4v5h-5"/><path d="M19.5 12.5a7 7 0 0 1-11.8 4.9L5.5 15"/><path d="M5.5 20v-5h5"/></symbol>
+    <symbol id="i-tray" viewBox="0 0 24 24"><path d="M3 17.5h18"/><path d="M5 17.5a7 7 0 0 1 14 0"/><path d="M12 8.5V7"/><path d="M10.5 7h3"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l4.5 4.5"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5.5 13.5h6L10.5 21 18.5 10h-6z"/></symbol>
+    <symbol id="i-focus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/></symbol>
+    <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14c1.8 2.2 5.2 2.2 7 0"/><path d="M9 9.8h.01M15 9.8h.01"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3.5c3.4 4.4 6 7.9 6 10.9a6 6 0 0 1-12 0c0-3 2.6-6.5 6-10.9z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3.5l7 2.8v5.2c0 4.8-3 8.2-7 9.6-4-1.4-7-4.8-7-9.6V6.3z"/></symbol>
+    <symbol id="i-bone" viewBox="0 0 24 24"><path d="M8.5 15.5l7-7"/><path d="M15.5 8.5a2.5 2.5 0 1 1 2.6-4.1 2.5 2.5 0 1 1 1.5 4.6 2.5 2.5 0 0 1-4.1-.5z"/><path d="M8.5 15.5a2.5 2.5 0 1 1-2.6 4.1 2.5 2.5 0 1 1-1.5-4.6 2.5 2.5 0 0 1 4.1.5z"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 19.5s-7-4.4-7-9.8a4 4 0 0 1 7-2.6 4 4 0 0 1 7 2.6c0 5.4-7 9.8-7 9.8z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.5 16v-5a5.5 5.5 0 0 1 11 0v5l1.5 2h-14z"/><path d="M10 20.5h4"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3.5v11"/><path d="M7.5 8L12 3.5 16.5 8"/><path d="M5.5 13.5v6h13v-6"/></symbol>
+    <symbol id="i-medal" viewBox="0 0 24 24"><circle cx="12" cy="14.5" r="5.5"/><path d="M9 3.5h6l-1.8 5.3h-2.4z"/><path d="M12 12.2l.8 1.6 1.7.2-1.2 1.2.3 1.7-1.6-.8-1.6.8.3-1.7-1.2-1.2 1.7-.2z"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M4.5 11.5l15-7-5.5 15-2.5-6z"/></symbol>
+    <symbol id="i-pot" viewBox="0 0 24 24"><path d="M4.5 10.5h15v4a5.5 5.5 0 0 1-5.5 5.5h-4a5.5 5.5 0 0 1-5.5-5.5z"/><path d="M2.5 10.5h2M19.5 10.5h2M9 7c0-1.3 1.2-1.3 1.2-2.6M13.5 7c0-1.3 1.2-1.3 1.2-2.6"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M14.8 9.3a3.2 3.2 0 1 0 0 5.4M8.5 11h5M8.5 13h5"/></symbol>
+    <symbol id="i-leafs" viewBox="0 0 24 24"><path d="M6 18c-1-6 3-11 11-11 .5 7.5-4 11.5-11 11z"/><path d="M6 18l6-6"/><path d="M4 9c0-2.5 1.5-4.5 4.5-4.5"/></symbol>
+    <symbol id="i-calm" viewBox="0 0 24 24"><path d="M3 12c2.5-3 5-3 7.5 0s5 3 7.5 0 2.5-3 3 0"/><path d="M3 17c2.5-3 5-3 7.5 0s5 3 7.5 0"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></symbol>
+  </defs>
+</svg>
+
+<div class="page">
+<h1>FeedForward: screens for the engagement phase</h1>
+<p class="lead">Step 3 mockups, built with the app's own tokens (see <code>docs/DESIGN_SYSTEM.md</code>). Static pictures: no data is loaded. Striped tiles with a camera are <b>photo slots</b> for open-licence photos, still to be sourced. Numbers on the "Ask why" screen are the engine's own; the other figures (prices, calories, the CROUS estimate) are illustrative and will come from the engine.</p>
+
+<!-- =========================================================== components -->
+<h2 class="sec">The system at a glance</h2>
+<p class="sec-lead">What is new next to the existing tokens: a spacing and type scale, motion durations, three colour pairs (gold for milestones, lavender for rest weeks and AI, the estimate tag), and the components the new screens need.</p>
+<div class="board">
+  <div class="panel"><h3>Colour, light</h3>
+    <div class="swatches">
+      <div><div class="sw-c" style="background:#f5f2ea"></div><small>bg</small></div>
+      <div><div class="sw-c" style="background:#fffdf8"></div><small>surface</small></div>
+      <div><div class="sw-c" style="background:#45693e"></div><small>accent</small></div>
+      <div><div class="sw-c" style="background:#e3ebd9"></div><small>accent-soft</small></div>
+      <div><div class="sw-c" style="background:#6d965e"></div><small>ring (revised)</small></div>
+      <div><div class="sw-c" style="background:#f5e7d6"></div><small>note-soft</small></div>
+      <div><div class="sw-c" style="background:#f4e8cc"></div><small>gold-soft (new)</small></div>
+      <div><div class="sw-c" style="background:#ebe7f5"></div><small>rest-soft (new)</small></div>
+    </div></div>
+  <div class="panel"><h3>Colour, dark</h3>
+    <div class="swatches">
+      <div><div class="sw-c" style="background:#161914"></div><small>bg</small></div>
+      <div><div class="sw-c" style="background:#20241d"></div><small>surface</small></div>
+      <div><div class="sw-c" style="background:#a9c99a"></div><small>accent</small></div>
+      <div><div class="sw-c" style="background:#2a3725"></div><small>accent-soft</small></div>
+      <div><div class="sw-c" style="background:#8a8578"></div><small>control (revised)</small></div>
+      <div><div class="sw-c" style="background:#3a2c1f"></div><small>note-soft</small></div>
+      <div><div class="sw-c" style="background:#3a321d"></div><small>gold-soft (new)</small></div>
+      <div><div class="sw-c" style="background:#2e2a3d"></div><small>rest-soft (new)</small></div>
+    </div></div>
+  <div class="panel"><h3>Type scale</h3>
+    <div class="typerow"><span style="font-size:30px;font-weight:650;letter-spacing:-.024em">Title</span><small>30 / 650</small></div>
+    <div class="typerow"><span style="font-size:22px;font-weight:650">Title 2</span><small>22 / 650</small></div>
+    <div class="typerow"><span style="font-size:17px;font-weight:600">Headline</span><small>17 / 600</small></div>
+    <div class="typerow"><span>Body, the default</span><small>16 / 400</small></div>
+    <div class="typerow"><span style="font-size:15px">Subhead</span><small>15 / 400</small></div>
+    <div class="typerow"><span style="font-size:13px">Footnote, sources, captions</span><small>13 / 400</small></div>
+    <div class="typerow"><span style="font-size:26px;font-weight:650;font-variant-numeric:tabular-nums">€18.40</span><small>Stat 26 / 650, tabular</small></div>
+  </div>
+  <div class="panel"><h3>Components</h3>
+    <div class="phone-free" style="--bg:#f5f2ea">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+        <span class="chip good">Iron 35 % <span class="eu">EU</span></span><span class="chip warm">Carbs at dinner <span class="grade c">C</span></span>
+        <span class="est">≈ estimate</span><span class="ai"><svg class="i"><use href="#i-spark"/></svg>AI</span>
+        <span class="streak"><svg class="i"><use href="#i-sprout"/></svg>6 weeks</span>
+        <span class="restline"><svg class="i"><use href="#i-moon"/></svg>1 rest week</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+        <div class="dot on"><svg class="i"><use href="#i-check"/></svg></div><div class="dot today on"><svg class="i"><use href="#i-check"/></svg></div>
+        <div class="dot today"></div><div class="dot empty"></div><div class="dot future"></div>
+        <span class="small muted">showed up · today · today, not yet · missed · ahead</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span class="react on">😋 3</span><span class="react">👏 1</span><span class="react">🙌</span>
+        <div class="medal gold" style="width:40px;height:40px"><svg class="i s20"><use href="#i-medal"/></svg></div>
+        <div class="avs"><span class="av a1">IN</span><span class="av a2">LÉ</span><span class="av a3">SA</span></div>
+        <div class="ph t48"><svg class="i"><use href="#i-camera"/></svg></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================== first day -->
+<h2 class="sec">1 · The first day</h2>
+<p class="sec-lead">Two required screens, then Today. The energy goal starts at "Keep steady" (changed in Profile). No tab bar during onboarding.</p>
+<div class="row-phones">
+
+<figure><div class="phone"><div class="status"><span>9:41</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <div class="appbar"><span class="brand"><svg class="i"><use href="#i-sprout"/></svg><b>Feed<span>Forward</span></b></span><span class="muted small">1 of 2</span></div>
+  <div class="steps"><i class="on"></i><i></i></div>
+  <h1 class="t">About you</h1>
+  <p class="lead">To work out what your body needs each day. You can change these any time.</p>
+  <div class="grid3 field"><div><span class="flabel">Age</span><div class="inp">21</div></div><div><span class="flabel">Height</span><div class="inp">178 cm</div></div><div><span class="flabel">Weight</span><div class="inp">70 kg</div></div></div>
+  <div class="field"><span class="flabel">Sex (for reference intakes)</span><div class="choice"><i>Female</i><i class="on">Male</i></div></div>
+  <div class="field"><span class="flabel">Pregnant or breastfeeding?</span><div class="choice"><i class="on">No</i><i>Pregnant</i><i>Breastfeeding</i></div></div>
+  <div class="field"><span class="flabel">How active are you?</span><div class="choice"><i>Sitting</i><i>Light</i><i class="on focus">Moderate</i><i>Active</i><i>Very active</i></div>
+    <p class="small muted" style="margin:8px 0 0">Sport 2–3 times a week</p></div>
+  <div style="position:absolute;left:16px;right:16px;bottom:40px"><span class="btn wide">Next</span></div>
+</div><div class="homebar"></div></div>
+<figcaption><b>About you</b><ul><li>Choices are real radio buttons: reachable by keyboard and screen reader, with a visible focus ring (on "Moderate").</li><li>One screen, five answers, about 15 seconds.</li></ul></figcaption></figure>
+
+<figure><div class="phone"><div class="status"><span>9:41</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <div class="appbar"><span class="brand"><svg class="i"><use href="#i-sprout"/></svg><b>Feed<span>Forward</span></b></span><span class="muted small">2 of 2</span></div>
+  <div class="steps"><i class="on"></i><i class="on"></i></div>
+  <h1 class="t">What should food help with?</h1>
+  <p class="lead">Pick one. Your ideas will lean towards it.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="card pad" style="margin:0"><svg class="i" style="color:#b9732f"><use href="#i-bolt"/></svg><b style="display:block;margin-top:6px">Energy</b><span class="small muted">Less tiredness</span></div>
+    <div class="card pad" style="margin:0;background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)"><svg class="i" style="color:var(--accent)"><use href="#i-focus"/></svg><b style="display:block;margin-top:6px">Focus</b><span class="small muted">Clear thinking</span></div>
+    <div class="card pad" style="margin:0"><svg class="i" style="color:#a0712a"><use href="#i-smile"/></svg><b style="display:block;margin-top:6px">Mood</b><span class="small muted">Feeling balanced</span></div>
+    <div class="card pad" style="margin:0"><svg class="i" style="color:var(--rest)"><use href="#i-moon"/></svg><b style="display:block;margin-top:6px">Sleep</b><span class="small muted">Rest well</span></div>
+    <div class="card pad" style="margin:0"><svg class="i" style="color:#a8423a"><use href="#i-drop"/></svg><b style="display:block;margin-top:6px">Iron</b><span class="small muted">Iron levels</span></div>
+    <div class="card pad" style="margin:0"><svg class="i" style="color:#3f6d8f"><use href="#i-shield"/></svg><b style="display:block;margin-top:6px">Immunity</b><span class="small muted">Body defences</span></div>
+    <div class="card pad" style="margin:0"><svg class="i" style="color:#7d7262"><use href="#i-bone"/></svg><b style="display:block;margin-top:6px">Bones</b><span class="small muted">Strong bones</span></div>
+    <div class="card pad" style="margin:0"><svg class="i" style="color:#a8423a"><use href="#i-heart"/></svg><b style="display:block;margin-top:6px">Heart</b><span class="small muted">Heart health</span></div>
+  </div>
+  <div style="position:absolute;left:16px;right:16px;bottom:40px;display:flex;gap:10px"><span class="btn ghost" style="min-height:50px">Back</span><span class="btn" style="flex:1">Start</span></div>
+</div><div class="homebar"></div></div>
+<figcaption><b>Goal</b><ul><li>Line icons replace emoji: one style, readable in both themes.</li><li>"Start" opens Today at once; what the answers turn on is computed in the background.</li></ul></figcaption></figure>
+
+<figure><div class="phone"><div class="status"><span>12:31</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <div class="titlerow"><h1 class="t">Today</h1><span class="muted">Tue 7 Oct</span></div>
+  <div class="card week">
+    <div class="days"><div><b>M</b><div class="dot future"></div></div><div><b class="today">T</b><div class="dot today"></div></div><div><b>W</b><div class="dot future"></div></div><div><b>T</b><div class="dot future"></div></div><div><b>F</b><div class="dot future"></div></div><div><b>S</b><div class="dot future"></div></div><div><b>S</b><div class="dot future"></div></div></div>
+    <div class="wk-line"><span class="muted">Your first week starts today</span><span class="link small" style="font-size:13.5px">How it works</span></div>
+  </div>
+  <div class="card meal">
+    <div class="mc-head"><span>Lunch</span><span class="muted">now</span></div>
+    <div class="inline-idea">
+      <div class="ph t64"><svg class="i"><use href="#i-camera"/></svg></div>
+      <div class="what"><span class="ii-top">An idea for lunch</span><b>French lentil salad with carrots</b><small>25 min · ≈ €1.10</small>
+        <span class="reasons"><span class="chip good">Zinc 47 % <span class="eu">EU</span></span><span class="chip good">Iron 35 % <span class="eu">EU</span></span></span>
+        <span class="ii-acts"><span class="btn">I'll have this</span><span class="link">More ideas</span></span></div>
+      <span class="x" style="align-self:flex-start;font-size:18px">×</span>
+    </div>
+    <div class="acts"><span class="add">+ Add</span><span class="add soft">Ideas</span></div>
+  </div>
+  <div class="card qcard">
+    <div class="q">When do you usually train?</div><div class="small muted" style="margin-bottom:10px">Your dinner ideas will fit around it.</div>
+    <div class="choice"><i>Mornings</i><i>Afternoons</i><i>Evenings</i><i>I don't</i></div>
+    <div class="qfoot"><span>1 of 6 questions · all optional</span><span class="link small">Not now</span></div>
+  </div>
+  <div class="card meal"><div class="mc-head"><span>Breakfast</span></div><div class="acts"><span class="add">+ Add</span><span class="add soft">Ideas</span></div></div>
+  <div class="card meal"><div class="mc-head"><span>Dinner</span></div><div class="acts"><span class="add">+ Add</span><span class="add soft">Ideas</span></div></div>
+</div>
+<div class="tabbar"><span class="on"><svg class="i"><use href="#i-today"/></svg>Today</span><span><svg class="i"><use href="#i-foods"/></svg>Foods</span><span><svg class="i"><use href="#i-list"/></svg>List</span><span><svg class="i"><use href="#i-circle"/></svg>Circle</span><span><svg class="i"><use href="#i-profile"/></svg>Profile</span></div><div class="homebar"></div></div>
+<figcaption><b>Today, day one</b><ul><li>The meal for now (by time of day) comes first with one idea inline, so Today is not empty. Dismissible; gone after the first log.</li><li>The other questions arrive one at a time, as cards, all optional.</li><li>Five tabs: Circle is new.</li></ul></figcaption></figure>
+</div>
+
+<!-- =========================================================== everyday -->
+<h2 class="sec">2 · Every day: the diary, faster</h2>
+<p class="sec-lead">Today keeps its layout; the week strip on top shows the days you showed up. Logging: repeat a meal, the CROUS lunch, several items at once, or describe it in your own words.</p>
+<div class="row-phones">
+
+<figure><div class="phone"><div class="status"><span>19:12</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <div class="titlerow"><h1 class="t">Today</h1><span class="muted">‹ Thu 9 Oct ›</span></div>
+  <div class="card week">
+    <div class="days"><div><b>M</b><div class="dot on"><svg class="i"><use href="#i-check"/></svg></div></div><div><b>T</b><div class="dot on"><svg class="i"><use href="#i-check"/></svg></div></div><div><b>W</b><div class="dot empty"></div></div><div><b class="today">T</b><div class="dot today on"><svg class="i"><use href="#i-check"/></svg></div></div><div><b>F</b><div class="dot future"></div></div><div><b>S</b><div class="dot future"></div></div><div><b>S</b><div class="dot future"></div></div></div>
+    <div class="wk-line"><span><b>3 of 3 days</b> <span class="muted">· this week counts</span></span><span class="streak"><svg class="i"><use href="#i-sprout"/></svg>6 weeks</span></div>
+  </div>
+  <div class="card energy">
+    <div class="ringbox" data-ring="0.67" data-size="118" data-w="11"><div class="rt"><b>1,780</b><small>of 2,654 kcal</small></div></div>
+    <div class="macros">
+      <div><div class="mline"><span>Carbs</span><span class="muted">221 / 348 g</span></div><div class="bar c"><i style="width:64%"></i></div></div>
+      <div><div class="mline"><span>Protein</span><span class="muted">74 / 112 g</span></div><div class="bar p"><i style="width:66%"></i></div></div>
+      <div><div class="mline"><span>Fat</span><span class="muted">58 / 81 g</span></div><div class="bar f"><i style="width:72%"></i></div></div>
+    </div>
+  </div>
+  <div class="card goalcard"><div class="gc-head"><span>Focus today</span><span class="muted small">tap for the evidence</span></div>
+    <div class="minis">
+      <div class="mini"><div class="ringbox" data-ring="0.54" data-size="56" data-w="6"><div class="rt"><b>54%</b></div></div><span class="mini-name">EPA+DHA <span class="eu" style="background:var(--accent-soft)">EU</span></span><small>breakfast</small></div>
+      <div class="mini"><div class="ringbox" data-ring="1" data-size="56" data-w="6"><div class="rt"><b>1.5×</b></div></div><span class="mini-name">Iron <span class="eu" style="background:var(--accent-soft)">EU</span></span><small>lunch</small></div>
+      <div class="mini"><div class="ringbox" data-ring="0.47" data-size="56" data-w="6"><div class="rt"><b>47%</b></div></div><span class="mini-name">Zinc <span class="eu" style="background:var(--accent-soft)">EU</span></span><small>lunch</small></div>
+    </div></div>
+  <div class="card meal"><div class="mc-head"><span>Breakfast</span><span class="muted">699 kcal</span></div>
+    <div class="entry"><div class="ph t48"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Porridge with banana and walnuts</b><small>1 portion · 699 kcal</small></div><span class="x">×</span></div></div>
+  <div class="card meal"><div class="mc-head"><span>Lunch</span><span class="muted">≈ 750 kcal</span></div>
+    <div class="entry"><div class="tile-ic"><svg class="i"><use href="#i-tray"/></svg></div><div class="what"><b>CROUS lunch <span class="est">≈</span></b><small>main + 2 sides · ≈ 750 kcal</small></div><span class="x">×</span></div></div>
+  <div class="card meal"><div class="mc-head"><span>Dinner</span></div>
+    <div class="levers"><span class="chip good">Carbs here <span class="grade c">C</span></span><span class="chip good">No caffeine <span class="grade">B</span></span></div>
+    <div class="acts"><span class="add">+ Add</span><span class="add soft">Ideas</span></div></div>
+</div>
+<div class="tabbar"><span class="on"><svg class="i"><use href="#i-today"/></svg>Today</span><span><svg class="i"><use href="#i-foods"/></svg>Foods</span><span><svg class="i"><use href="#i-list"/></svg>List</span><span><svg class="i"><use href="#i-circle"/></svg>Circle</span><span><svg class="i"><use href="#i-profile"/></svg>Profile</span></div><div class="homebar"></div></div>
+<figcaption><b>Today, a usual Thursday</b><ul><li>Week strip: a tick means "showed up" (logged, cooked, planned or used the list). Shape and colour together, never colour alone. Tap it for This week.</li><li>The streak is a sprout, not a flame: growth, not burning.</li><li>Ring and bars as now: a level to reach, nothing red, no "left".</li></ul></figcaption></figure>
+
+<figure><div class="phone"><div class="status"><span>19:14</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll" style="opacity:.6">
+  <div class="titlerow"><h1 class="t">Today</h1><span class="muted">‹ Thu 9 Oct ›</span></div>
+  <div class="card week" style="height:96px"></div><div class="card" style="height:150px"></div>
+</div>
+<div class="scrim"></div>
+<div class="sheet" style="top:70px;padding-bottom:0">
+  <div class="grab"></div>
+  <div class="sheet-h"><h2>Add to dinner</h2><span class="closebtn"><svg class="i s18"><use href="#i-x"/></svg></span></div>
+  <div class="search"><svg class="i s18"><use href="#i-search"/></svg>Search a food or a recipe</div>
+  <div class="describe"><div class="tile-ic"><svg class="i"><use href="#i-spark"/></svg></div><div class="what"><b>Describe it <span class="ai">AI</span></b><small>"A big plate of pasta with tomato sauce…"</small></div><svg class="i s18 muted"><use href="#i-chev"/></svg></div>
+  <div class="group">Again?</div>
+  <div class="pick"><div class="tile-ic t36"><svg class="i s20"><use href="#i-repeat"/></svg></div><div class="what"><b>Same as Monday's dinner</b><small>Chickpea and spinach curry with rice · 1 portion</small></div><span class="add">Add</span></div>
+  <div class="pick"><div class="tile-ic t36"><svg class="i s20"><use href="#i-tray"/></svg></div><div class="what"><b>CROUS meal <span class="est">≈</span></b><small>main + 2 sides · ≈ 750 kcal, an estimate</small></div><span class="add">Add</span></div>
+  <div class="group">Recent · tap to select several</div>
+  <div class="pick"><span class="check on"><svg class="i"><use href="#i-check"/></svg></span><div class="ph t36"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Wholemeal bread</b><small>60 g · 145 kcal</small></div></div>
+  <div class="pick"><span class="check on"><svg class="i"><use href="#i-check"/></svg></span><div class="ph t36"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Natural yogurt</b><small>125 g · 76 kcal</small></div></div>
+  <div class="pick"><span class="check"></span><div class="ph t36"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Apple</b><small>150 g · 80 kcal</small></div></div>
+  <div class="pick"><span class="check"></span><div class="ph t36"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Pasta with sardines and tomato</b><small>1 portion · 612 kcal</small></div></div>
+  <div class="stickybar"><span class="btn wide">Add 2 to dinner</span></div>
+</div><div class="homebar"></div></div>
+<figcaption><b>+ Add, faster</b><ul><li>"Again?" first: a whole earlier meal in one tap; the CROUS meal as an estimate (≈), editable.</li><li>Recent items can be ticked and added together: a usual dinner in 2–3 taps.</li><li>"Describe it" is the AI entry (lavender means AI throughout).</li></ul></figcaption></figure>
+
+<figure><div class="phone"><div class="status"><span>19:15</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll" style="opacity:.6"><div class="titlerow"><h1 class="t">Today</h1></div></div>
+<div class="scrim"></div>
+<div class="sheet" style="top:70px;padding-bottom:0">
+  <div class="grab"></div>
+  <div class="sheet-h"><h2>Describe it</h2><span class="closebtn"><svg class="i s18"><use href="#i-x"/></svg></span></div>
+  <div class="textarea">a big plate of pasta with tomato sauce and some grated cheese, and an apple</div>
+  <p class="small muted" style="margin:8px 2px 4px;display:flex;gap:6px;align-items:center"><span class="ai"><svg class="i"><use href="#i-spark"/></svg>AI</span> picked the foods. The numbers come from CIQUAL. Check the amounts.</p>
+  <div class="est-row"><div class="ph t36"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Pasta, cooked</b><small>≈ 404 kcal</small></div><span class="stepper"><span>−</span><em>≈ 250 g</em><span>+</span></span></div>
+  <div class="est-row"><div class="ph t36"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Tomato sauce</b><small>≈ 58 kcal</small></div><span class="stepper"><span>−</span><em>≈ 120 g</em><span>+</span></span></div>
+  <div class="est-row"><div class="ph t36"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Emmental, grated</b><small>≈ 76 kcal</small></div><span class="stepper"><span>−</span><em>≈ 20 g</em><span>+</span></span></div>
+  <div class="est-row" style="border-bottom:none"><div class="ph t36"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Apple</b><small>≈ 80 kcal</small></div><span class="stepper"><span>−</span><em>1</em><span>+</span></span></div>
+  <p class="small muted" style="margin:10px 2px">Not right? <span class="link small">Search instead</span> · <span class="link small">Remove one</span></p>
+  <div class="stickybar"><div style="display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px"><span class="muted">Total, an estimate</span><b>≈ 618 kcal</b></div><span class="btn wide">Add 4 to dinner</span></div>
+</div><div class="homebar"></div></div>
+<figcaption><b>Describe it (AI)</b><ul><li>The model only picks foods and portions from the engine's search results; every number is CIQUAL's.</li><li>Everything is marked ≈ and editable before it counts. When the month's AI budget is used up, this row sends you to search instead.</li></ul></figcaption></figure>
+
+<figure><div class="phone"><div class="status"><span>19:12</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <div class="titlerow"><h1 class="t">Today</h1><span class="muted">‹ Thu 9 Oct ›</span></div>
+  <div class="card week">
+    <div class="days"><div><b>M</b><div class="dot on"><svg class="i"><use href="#i-check"/></svg></div></div><div><b>T</b><div class="dot on"><svg class="i"><use href="#i-check"/></svg></div></div><div><b>W</b><div class="dot empty"></div></div><div><b class="today">T</b><div class="dot today on"><svg class="i"><use href="#i-check"/></svg></div></div><div><b>F</b><div class="dot future"></div></div><div><b>S</b><div class="dot future"></div></div><div><b>S</b><div class="dot future"></div></div></div>
+    <div class="wk-line"><span><b>3 of 3 days</b> <span class="muted">· this week counts</span></span><span class="streak"><svg class="i"><use href="#i-sprout"/></svg>6 weeks</span></div>
+  </div>
+  <div class="card energy">
+    <div class="ringbox" data-ring="0.5" data-size="118" data-w="11"><div class="rt"><b>2</b><small>meals logged</small></div></div>
+    <div class="macros" style="gap:6px"><span class="chip" style="align-self:flex-start"><svg class="i s16"><use href="#i-calm"/></svg>Calm mode</span>
+      <span class="small muted">Numbers are hidden. What you log still shapes your ideas.</span></div>
+  </div>
+  <div class="card goalcard"><div class="gc-head"><span>Focus today</span><span class="muted small">tap for the evidence</span></div>
+    <div class="pick" style="padding:7px 0"><div class="medal" style="width:34px;height:34px"><svg class="i s18"><use href="#i-check"/></svg></div><div class="what"><b>Iron</b><small>reached · mostly from lunch</small></div></div>
+    <div class="pick" style="padding:7px 0"><div class="medal" style="width:34px;height:34px;background:var(--soft);color:var(--muted)"><svg class="i s18"><use href="#i-sprout"/></svg></div><div class="what"><b>EPA + DHA</b><small>on its way</small></div></div>
+    <div class="pick" style="padding:7px 0;border:none"><div class="medal" style="width:34px;height:34px;background:var(--soft);color:var(--muted)"><svg class="i s18"><use href="#i-sprout"/></svg></div><div class="what"><b>Zinc</b><small>on its way</small></div></div>
+  </div>
+  <div class="card meal"><div class="mc-head"><span>Breakfast</span></div>
+    <div class="entry"><div class="ph t48"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Porridge with banana and walnuts</b><small>1 portion</small></div><span class="x">×</span></div></div>
+  <div class="card meal"><div class="mc-head"><span>Lunch</span></div>
+    <div class="entry"><div class="tile-ic"><svg class="i"><use href="#i-tray"/></svg></div><div class="what"><b>CROUS lunch</b><small>main + 2 sides</small></div><span class="x">×</span></div></div>
+</div>
+<div class="tabbar"><span class="on"><svg class="i"><use href="#i-today"/></svg>Today</span><span><svg class="i"><use href="#i-foods"/></svg>Foods</span><span><svg class="i"><use href="#i-list"/></svg>List</span><span><svg class="i"><use href="#i-circle"/></svg>Circle</span><span><svg class="i"><use href="#i-profile"/></svg>Profile</span></div><div class="homebar"></div></div>
+<figcaption><b>Calm mode</b><ul><li>No calories, macros or percentages anywhere. The ring counts meals; nutrients read "reached" or "on its way".</li><li>Anyone can turn it on in Profile; the app never guesses who needs it.</li></ul></figcaption></figure>
+</div>
+
+<!-- =========================================================== the week -->
+<h2 class="sec">3 · Progress and the week</h2>
+<p class="sec-lead">Counted weekly, from what was logged: food, cooking, variety and money, never weight or eating less.</p>
+<div class="row-phones">
+
+<figure><div class="phone"><div class="status"><span>20:02</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <div class="appbar"><span class="link" style="display:flex;align-items:center"><svg class="i s20"><use href="#i-back"/></svg>Today</span><span class="muted small">6–12 Oct</span></div>
+  <h1 class="t" style="margin-bottom:12px">This week</h1>
+  <div class="card streakcard"><div class="medal"><svg class="i"><use href="#i-sprout"/></svg></div>
+    <div class="what"><b>6 food weeks in a row</b><small>3 of 3 days this week · it counts</small><span class="restline" style="margin-top:4px"><svg class="i"><use href="#i-moon"/></svg>1 rest week saved for a busy week</span></div></div>
+  <div class="card pad"><div style="display:flex;justify-content:space-between;align-items:baseline"><b>Food covered 21 of 27 needs</b><svg class="i s18 muted"><use href="#i-chev"/></svg></div>
+    <div class="needbar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="near"></i><i class="near"></i><i class="near"></i><i></i><i></i><i></i></div>
+    <span class="from">From what you logged · vitamin D and iodine are the furthest</span></div>
+  <div class="stats">
+    <div class="card stat"><span class="k"><svg class="i"><use href="#i-leafs"/></svg>Plants</span><div class="v">14</div><span class="d">different · 3 new</span></div>
+    <div class="card stat"><span class="k"><svg class="i"><use href="#i-pot"/></svg>Cooked</span><div class="v">4</div><span class="d">meals · 2 new recipes</span></div>
+    <div class="card stat"><span class="k"><svg class="i"><use href="#i-coin"/></svg>Cost</span><div class="v">€18.40</div><span class="d">≈ €1.30 a meal, at Lidl</span></div>
+    <div class="card stat"><span class="k"><svg class="i"><use href="#i-focus"/></svg>Focus</span><div class="v">4 days</div><span class="d">iron need reached</span></div>
+  </div>
+  <div class="card pad"><b style="font-size:15px">Plants this week</b>
+    <div class="plants" style="margin-top:8px"><span class="chip new">banana · new</span><span class="chip new">red lentils · new</span><span class="chip new">walnuts · new</span><span class="chip">oats</span><span class="chip">spinach</span><span class="chip">chickpeas</span><span class="chip">carrot</span><span class="chip">tomato</span><span class="chip">rice</span><span class="chip">onion</span><span class="chip">apple</span><span class="chip">+3</span></div></div>
+  <div class="card pad"><b style="font-size:15px">Milestones</b>
+    <div class="milestones" style="margin-top:10px">
+      <div class="ms"><div class="medal gold"><svg class="i"><use href="#i-leafs"/></svg></div><b>10 plants in a week</b>Sep</div>
+      <div class="ms"><div class="medal gold"><svg class="i"><use href="#i-pot"/></svg></div><b>First recipe cooked</b>Sep</div>
+      <div class="ms"><div class="medal gold"><svg class="i"><use href="#i-coin"/></svg></div><b>A week within budget</b>Oct</div>
+      <div class="ms"><div class="medal" style="background:var(--soft);color:var(--muted)"><svg class="i"><use href="#i-leafs"/></svg></div><b>20 plants in a week</b>next</div>
+    </div></div>
+</div>
+<div class="tabbar"><span class="on"><svg class="i"><use href="#i-today"/></svg>Today</span><span><svg class="i"><use href="#i-foods"/></svg>Foods</span><span><svg class="i"><use href="#i-list"/></svg>List</span><span><svg class="i"><use href="#i-circle"/></svg>Circle</span><span><svg class="i"><use href="#i-profile"/></svg>Profile</span></div><div class="homebar"></div></div>
+<figcaption><b>This week (from the week strip)</b><ul><li>Streak and rest weeks first: a busy week is planned for, not punished.</li><li>"From what you logged": logs are never complete, and the page says so.</li><li>Cost is per meal at the person's shop; there is no "saved", no honest baseline exists.</li><li>The next milestone is named, with no countdown.</li></ul></figcaption></figure>
+
+<figure><div class="phone"><div class="status"><span>20:03</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll" style="opacity:.6"><h1 class="t">This week</h1></div>
+<div class="scrim"></div>
+<div class="sheet" style="padding-top:10px">
+  <div class="grab"></div>
+  <div style="text-align:center;padding:14px 4px 4px">
+    <div class="medal gold big" style="margin:0 auto 16px"><svg class="i"><use href="#i-leafs"/></svg></div>
+    <h2 style="font-size:24px;margin:0 0 6px;letter-spacing:-.02em">20 plants this week</h2>
+    <p class="muted" style="margin:0 0 6px;font-size:15px">Twenty different plants in one week: beans, grains, fruit, vegetables, nuts, seeds and herbs all count.</p>
+    <p style="margin:0 0 18px"><span class="link small">Why variety?</span> <span class="grade c">C</span></p>
+    <div style="display:flex;gap:10px"><span class="btn ghost" style="flex:1;min-height:50px"><svg class="i s18"><use href="#i-share"/></svg>Share</span><span class="btn" style="flex:1">Lovely</span></div>
+  </div>
+</div><div class="homebar"></div></div>
+<figcaption><b>A milestone</b><ul><li>Shown once, when it happens, with one quiet motion (the medal settles in, 600 ms; none with reduced motion).</li><li>The benefit link carries its evidence grade, like every health statement.</li></ul></figcaption></figure>
+
+<figure><div class="phone"><div class="status"><span>19:00</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <div class="appbar"><span class="link" style="display:flex;align-items:center"><svg class="i s20"><use href="#i-back"/></svg>Today</span><span class="muted small">Sunday 12 Oct</span></div>
+  <div class="recap">
+    <div class="rh"><span style="display:flex;gap:6px;align-items:center"><svg class="i s18"><use href="#i-sprout"/></svg>FeedForward</span><span>6–12 Oct</span></div>
+    <h3>Your week in food</h3>
+    <div class="rg"><div><b>16</b><span>plants · 4 new</span></div><div><b>5</b><span>meals cooked · 2 new</span></div><div><b>21 of 27</b><span>needs met by food</span></div><div><b>€21.60</b><span>≈ €1.35 a meal</span></div></div>
+    <div class="hl">Most of your iron came from Tuesday's lentils <span class="eu" style="background:rgba(255,255,255,.9)">EU</span></div>
+  </div>
+  <div class="group">For next week</div>
+  <div class="card pad" style="display:flex;gap:12px;align-items:center"><div class="ph t64"><svg class="i"><use href="#i-camera"/></svg></div>
+    <div class="what"><small>Vitamin D was the furthest this week</small><b>Sardine tartines with salad</b><small>5 min · ≈ €1.40</small></div></div>
+  <p class="small muted" style="margin:0 4px 14px">Vitamin D is made mostly in the skin in sunlight; food covers part of it. From what you logged.</p>
+  <div style="display:flex;gap:10px"><span class="btn ghost" style="flex:1;min-height:50px"><svg class="i s18"><use href="#i-share"/></svg>Share to circle</span><span class="btn" style="flex:1">Done</span></div>
+</div>
+<div class="homebar"></div></div>
+<figcaption><b>Your week in food (Sunday)</b><ul><li>No grade, no score, no calories: food, cooking, variety, money, one highlight with its evidence.</li><li>One idea aimed at the nutrient the logs were lowest in, with the honest note the app already writes.</li><li>The card is what a circle sees if it is shared.</li></ul></figcaption></figure>
+</div>
+
+<!-- =========================================================== circles -->
+<h2 class="sec">4 · Circles</h2>
+<p class="sec-lead">Small, private, invite-only. Only what someone posts is seen: cooking and food, never intake, weight or the diary.</p>
+<div class="row-phones">
+
+<figure><div class="phone"><div class="status"><span>18:20</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <div class="titlerow" style="align-items:center"><h1 class="t" style="font-size:26px">Rue Monge flat</h1><span class="pill soft" style="font-size:14px"><svg class="i s16"><use href="#i-link"/></svg>Invite</span></div>
+  <div style="display:flex;align-items:center;gap:10px;margin:-4px 0 12px"><div class="avs"><span class="av a1">IN</span><span class="av a2">LÉ</span><span class="av a3">SA</span><span class="av a4">ME</span></div><span class="small muted">4 people · private</span></div>
+  <div class="card challenge"><div class="ch-t">This week: 30 plants together</div>
+    <div class="cbar"><i style="width:73%"></i></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px"><span><b>22 of 30</b> <span class="muted">plants so far</span></span><span class="muted">all 4 joined</span></div></div>
+  <div class="card cook"><div class="ph t48"><svg class="i"><use href="#i-camera"/></svg></div>
+    <div class="what"><small>Thursday dinner · proposed by Inès</small><b>Chickpea and spinach curry with rice</b><span style="display:flex;align-items:center;gap:6px;margin-top:4px"><span class="avs"><span class="av a1" style="width:26px;height:26px;font-size:10px">IN</span><span class="av a3" style="width:26px;height:26px;font-size:10px">SA</span></span><span class="small muted">2 in · ingredients on the list</span></span></div>
+    <span class="add">I'm in</span></div>
+  <div class="card post"><div class="post-h"><span class="av a2 lg">LÉ</span><div><b>Léo</b> cooked<small>French lentil salad with carrots · 2 h ago</small></div></div>
+    <div class="ph hero"><svg class="i"><use href="#i-camera"/></svg><span class="lbl">Léo's photo</span></div>
+    <div class="reacts"><span class="react on">😋 3</span><span class="react">👏 1</span><span class="react">🙌</span><span class="link small" style="margin-left:auto;align-self:center">Recipe</span></div></div>
+  <div class="card pad" style="display:flex;align-items:center;gap:12px"><div class="tile-ic t36"><svg class="i s20"><use href="#i-list"/></svg></div><div class="what"><b>Shared list</b><small>7 items · Sam added chickpeas</small></div><svg class="i s18 muted"><use href="#i-chev"/></svg></div>
+</div>
+<div class="tabbar"><span><svg class="i"><use href="#i-today"/></svg>Today</span><span><svg class="i"><use href="#i-foods"/></svg>Foods</span><span><svg class="i"><use href="#i-list"/></svg>List</span><span class="on"><svg class="i"><use href="#i-circle"/></svg>Circle</span><span><svg class="i"><use href="#i-profile"/></svg>Profile</span></div><div class="homebar"></div></div>
+<figcaption><b>A circle</b><ul><li>One cooperative bar for the challenge; members appear as "joined", never with their amounts.</li><li>Cook together: "I'm in" puts the scaled ingredients on the shared list.</li><li>Reactions only, from a fixed set; no comments in the first version.</li></ul></figcaption></figure>
+
+<figure><div class="phone"><div class="status"><span>18:24</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll" style="opacity:.6"><h1 class="t" style="font-size:26px">Rue Monge flat</h1></div>
+<div class="scrim"></div>
+<div class="sheet">
+  <div class="grab"></div>
+  <div class="sheet-h"><h2>Cook together</h2><span class="closebtn"><svg class="i s18"><use href="#i-x"/></svg></span></div>
+  <div class="pick" style="border:none;padding-top:0"><div class="ph t64"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Chickpea and spinach curry with rice</b><small>25 min · ≈ €1.15 a portion</small></div><span class="link small">Change</span></div>
+  <div class="field" style="margin-top:8px"><span class="flabel">Which day?</span>
+    <div class="daychips"><i>Tue<b>7</b></i><i>Wed<b>8</b></i><i class="on">Thu<b>9</b></i><i>Fri<b>10</b></i><i>Sat<b>11</b></i><i>Sun<b>12</b></i></div></div>
+  <div class="field"><span class="flabel">Meal</span><div class="choice"><i>Lunch</i><i class="on">Dinner</i></div></div>
+  <p class="small muted" style="margin:0 0 16px">Ingredients go on the circle's list, scaled to how many say "I'm in". Nobody sees anyone's diary.</p>
+  <span class="btn wide">Propose to Rue Monge flat</span>
+</div><div class="homebar"></div></div>
+<figcaption><b>Propose a meal</b><ul><li>A recipe, a day, a meal; the list follows the number of people.</li><li>The flatmate feature: cooking together is the social act, not comparing.</li></ul></figcaption></figure>
+
+<figure><div class="phone"><div class="status"><span>21:10</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll" style="opacity:.6"><h1 class="t">Today</h1></div>
+<div class="scrim"></div>
+<div class="sheet" style="top:64px;padding-bottom:0">
+  <div class="grab"></div>
+  <div class="sheet-h"><h2>French lentil salad</h2><span class="closebtn"><svg class="i s18"><use href="#i-x"/></svg></span></div>
+  <div class="seg"><span>Recipe</span><span>Why</span><span class="on">Ask</span></div>
+  <div style="display:flex;flex-direction:column">
+    <div class="bubble">why is this good for focus?</div>
+    <div class="answer"><span class="ai" style="margin-bottom:6px"><svg class="i"><use href="#i-spark"/></svg>AI · from FeedForward's evidence</span>
+      <p style="margin-top:6px">One portion gives about 47 % of a day's zinc and 35 % of a day's iron, mostly from the green lentils. Both have an EU-authorised claim for thinking:</p>
+      <div class="claim">"Zinc contributes to normal cognitive function"<small>EU register · EFSA Journal 2009;7(9):1229 · grade A</small></div>
+      <div class="claim">"Iron contributes to normal cognitive function"<small>EU register · EFSA Journal 2009;7(9):1215 · grade A</small></div>
+      <p style="margin:6px 0 0">Iron from lentils is absorbed less than iron from meat; a vitamin C food in the same meal, such as a squeeze of lemon or some pepper, helps.</p></div>
+  </div>
+  <div class="stickybar"><div class="askbar"><div class="inp">Ask about this recipe</div><span class="sendbtn"><svg class="i s20"><use href="#i-send"/></svg></span></div>
+    <p class="small muted" style="margin:8px 2px 0">Answers use only the app's evidence. Questions about a health condition: please ask a doctor or dietitian.</p></div>
+</div><div class="homebar"></div></div>
+<figcaption><b>Ask why (AI)</b><ul><li>The model rephrases what the engine gives it (shares, claim wording, references, grades) and cites it; it adds nothing of its own.</li><li>The figures shown are the engine's for this recipe and the focus goal.</li></ul></figcaption></figure>
+</div>
+
+<!-- =========================================================== settings, dark, French -->
+<h2 class="sec">5 · Settings, dark theme, French</h2>
+<p class="sec-lead">Notifications all opt-in, at most one a day, none after 21:00. Dark is forest and soil, as now. Every screen exists in French and English.</p>
+<div class="row-phones">
+
+<figure><div class="phone"><div class="status"><span>9:41</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <h1 class="t" style="margin-bottom:6px">Profile</h1>
+  <div class="group">Notifications</div>
+  <div class="card plist">
+    <div class="prow"><div class="what"><b>Meal idea</b><small class="muted">Dinner, at 18:30</small></div><span class="sw on"></span></div>
+    <div class="prow"><div class="what"><b>Your week in food</b><small class="muted">Sunday, at 19:00</small></div><span class="sw on"></span></div>
+    <div class="prow"><div class="what"><b>Circle digest</b><small class="muted">Once a day at most</small></div><span class="sw"></span></div>
+    <div class="prow"><div class="what"><b>Shopping reminder</b><small class="muted">The day before you usually shop</small></div><span class="sw"></span></div>
+  </div>
+  <p class="calmnote">At most one a day, never after 21:00. FeedForward never sends "you haven't logged".</p>
+  <div class="group">How it feels</div>
+  <div class="card plist">
+    <div class="prow"><div class="what"><b>Calm mode</b><small class="muted">Hide calories, macros and percentages</small></div><span class="sw"></span></div>
+    <div class="prow"><div class="what"><b>Food-week streak</b><small class="muted">A week counts at 3 days</small></div><span class="stepper"><span>−</span><em>3</em><span>+</span></span></div>
+    <div class="prow"><div class="what"><b>Show the streak</b></div><span class="sw on"></span></div>
+  </div>
+  <div class="group">Language</div>
+  <div class="seg"><span>Français</span><span class="on">English</span></div>
+  <div class="card plist"><div class="prow"><div class="what"><b>Support</b><small class="muted">If food feels hard, people who can help</small></div><svg class="i s18 muted"><use href="#i-chev"/></svg></div></div>
+</div>
+<div class="tabbar"><span><svg class="i"><use href="#i-today"/></svg>Today</span><span><svg class="i"><use href="#i-foods"/></svg>Foods</span><span><svg class="i"><use href="#i-list"/></svg>List</span><span><svg class="i"><use href="#i-circle"/></svg>Circle</span><span class="on"><svg class="i"><use href="#i-profile"/></svg>Profile</span></div><div class="homebar"></div></div>
+<figcaption><b>Profile: notifications and how it feels</b><ul><li>Every notification off until chosen; each also has a one-tap "turn off" in the notification itself.</li><li>Calm mode, the streak's threshold and its visibility sit together.</li><li>Support services: the list is for the dietitians to choose.</li></ul></figcaption></figure>
+
+<figure><div class="phone dark"><div class="status"><span>19:12</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <div class="titlerow"><h1 class="t">Aujourd'hui</h1><span class="muted">‹ jeu. 9 oct. ›</span></div>
+  <div class="card week">
+    <div class="days"><div><b>L</b><div class="dot on"><svg class="i"><use href="#i-check"/></svg></div></div><div><b>M</b><div class="dot on"><svg class="i"><use href="#i-check"/></svg></div></div><div><b>M</b><div class="dot empty"></div></div><div><b class="today">J</b><div class="dot today on"><svg class="i"><use href="#i-check"/></svg></div></div><div><b>V</b><div class="dot future"></div></div><div><b>S</b><div class="dot future"></div></div><div><b>D</b><div class="dot future"></div></div></div>
+    <div class="wk-line"><span><b>3 jours sur 3</b> <span class="muted">· la semaine compte</span></span><span class="streak"><svg class="i"><use href="#i-sprout"/></svg>6 semaines</span></div>
+  </div>
+  <div class="card energy">
+    <div class="ringbox" data-ring="0.67" data-size="118" data-w="11"><div class="rt"><b>1 780</b><small>sur 2 654 kcal</small></div></div>
+    <div class="macros">
+      <div><div class="mline"><span>Glucides</span><span class="muted">221 / 348 g</span></div><div class="bar c"><i style="width:64%"></i></div></div>
+      <div><div class="mline"><span>Protéines</span><span class="muted">74 / 112 g</span></div><div class="bar p"><i style="width:66%"></i></div></div>
+      <div><div class="mline"><span>Lipides</span><span class="muted">58 / 81 g</span></div><div class="bar f"><i style="width:72%"></i></div></div>
+    </div>
+  </div>
+  <div class="card meal"><div class="mc-head"><span>Petit-déjeuner</span><span class="muted">699 kcal</span></div>
+    <div class="entry"><div class="ph t48"><svg class="i"><use href="#i-camera"/></svg></div><div class="what"><b>Porridge, banane et noix</b><small>1 portion · 699 kcal</small></div><span class="x">×</span></div></div>
+  <div class="card meal"><div class="mc-head"><span>Déjeuner</span><span class="muted">≈ 750 kcal</span></div>
+    <div class="entry"><div class="tile-ic"><svg class="i"><use href="#i-tray"/></svg></div><div class="what"><b>Repas CROUS <span class="est">≈</span></b><small>plat + 2 périphériques · ≈ 750 kcal</small></div><span class="x">×</span></div></div>
+  <div class="card meal"><div class="mc-head"><span>Dîner</span></div>
+    <div class="levers"><span class="chip good">Glucides ici <span class="grade c">C</span></span><span class="chip good">Sans caféine <span class="grade">B</span></span></div>
+    <div class="acts"><span class="add">+ Ajouter</span><span class="add soft">Idées</span></div></div>
+</div>
+<div class="tabbar"><span class="on"><svg class="i"><use href="#i-today"/></svg>Aujourd'hui</span><span><svg class="i"><use href="#i-foods"/></svg>Aliments</span><span><svg class="i"><use href="#i-list"/></svg>Liste</span><span><svg class="i"><use href="#i-circle"/></svg>Cercle</span><span><svg class="i"><use href="#i-profile"/></svg>Profil</span></div><div class="homebar"></div></div>
+<figcaption><b>Today, dark, in French</b><ul><li>French runs about 15–20 % longer: labels wrap, nothing has a fixed width.</li><li>French number format (1 780, "jeu. 9 oct."), CROUS wording from the official description.</li></ul></figcaption></figure>
+
+<figure><div class="phone dark"><div class="status"><span>20:02</span><span class="isl"></span><span class="bat"></span></div>
+<div class="scroll">
+  <div class="appbar"><span class="link" style="display:flex;align-items:center"><svg class="i s20"><use href="#i-back"/></svg>Today</span><span class="muted small">6–12 Oct</span></div>
+  <h1 class="t" style="margin-bottom:12px">This week</h1>
+  <div class="card streakcard"><div class="medal"><svg class="i"><use href="#i-sprout"/></svg></div>
+    <div class="what"><b>6 food weeks in a row</b><small>3 of 3 days this week · it counts</small><span class="restline" style="margin-top:4px"><svg class="i"><use href="#i-moon"/></svg>1 rest week saved for a busy week</span></div></div>
+  <div class="card pad"><div style="display:flex;justify-content:space-between;align-items:baseline"><b>Food covered 21 of 27 needs</b><svg class="i s18 muted"><use href="#i-chev"/></svg></div>
+    <div class="needbar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="near"></i><i class="near"></i><i class="near"></i><i></i><i></i><i></i></div>
+    <span class="from">From what you logged · vitamin D and iodine are the furthest</span></div>
+  <div class="stats">
+    <div class="card stat"><span class="k"><svg class="i"><use href="#i-leafs"/></svg>Plants</span><div class="v">14</div><span class="d">different · 3 new</span></div>
+    <div class="card stat"><span class="k"><svg class="i"><use href="#i-pot"/></svg>Cooked</span><div class="v">4</div><span class="d">meals · 2 new recipes</span></div>
+    <div class="card stat"><span class="k"><svg class="i"><use href="#i-coin"/></svg>Cost</span><div class="v">€18.40</div><span class="d">≈ €1.30 a meal, at Lidl</span></div>
+    <div class="card stat"><span class="k"><svg class="i"><use href="#i-focus"/></svg>Focus</span><div class="v">4 days</div><span class="d">iron need reached</span></div>
+  </div>
+  <div class="card pad"><b style="font-size:15px">Milestones</b>
+    <div class="milestones" style="margin-top:10px">
+      <div class="ms"><div class="medal gold"><svg class="i"><use href="#i-leafs"/></svg></div><b>10 plants in a week</b>Sep</div>
+      <div class="ms"><div class="medal gold"><svg class="i"><use href="#i-pot"/></svg></div><b>First recipe cooked</b>Sep</div>
+      <div class="ms"><div class="medal gold"><svg class="i"><use href="#i-coin"/></svg></div><b>A week within budget</b>Oct</div>
+      <div class="ms"><div class="medal" style="background:var(--soft);color:var(--muted)"><svg class="i"><use href="#i-leafs"/></svg></div><b>20 plants in a week</b>next</div>
+    </div></div>
+</div>
+<div class="tabbar"><span class="on"><svg class="i"><use href="#i-today"/></svg>Today</span><span><svg class="i"><use href="#i-foods"/></svg>Foods</span><span><svg class="i"><use href="#i-list"/></svg>List</span><span><svg class="i"><use href="#i-circle"/></svg>Circle</span><span><svg class="i"><use href="#i-profile"/></svg>Profile</span></div><div class="homebar"></div></div>
+<figcaption><b>This week, dark</b><ul><li>Gold and lavender have dark values of their own; every pair passes the contrast check (<code>docs/design/contrast.py</code>).</li></ul></figcaption></figure>
+</div>
+</div>
+
+<script>
+/* Draw the rings from data-ring (0..1): the same geometry as the app's ring(). */
+document.querySelectorAll("[data-ring]").forEach(box => {
+  const p = Math.min(1, +box.dataset.ring), s = +box.dataset.size, w = +box.dataset.w, r = (s - w) / 2, c = 2 * Math.PI * r;
+  box.style.width = box.style.height = s + "px";
+  box.insertAdjacentHTML("afterbegin", `<svg class="ring" width="${s}" height="${s}" viewBox="0 0 ${s} ${s}" aria-hidden="true">
+    <circle class="track" cx="${s / 2}" cy="${s / 2}" r="${r}" stroke-width="${w}"/>
+    <circle class="fill" cx="${s / 2}" cy="${s / 2}" r="${r}" stroke-width="${w}" stroke-dasharray="${p * c} ${c}" transform="rotate(-90 ${s / 2} ${s / 2})"/></svg>`);
+});
+</script>
+</body>
+</html>
