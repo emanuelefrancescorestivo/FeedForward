@@ -385,7 +385,15 @@ dialog#recipe-sheet { width: min(560px, 94vw); }
 .home-btn[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); }
 details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
 .empty { text-align: center; padding: 32px 16px; }
-.big-ic { font-size: 48px; display: block; margin-bottom: 8px; }
+.big-ic { font-size: 48px; display: block; margin-bottom: 8px; color: var(--accent); }
+.i { width: 1.25em; height: 1.25em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  flex: none; vertical-align: -0.25em; }
+.i.s16 { width: 16px; height: 16px; vertical-align: -3px; }
+.tile-ic .i, .ic .i, .rs-icon .i { width: 26px; height: 26px; color: var(--accent); }
+.tile-ic.small .i { width: 20px; height: 20px; }
+.big-ic .i { width: 48px; height: 48px; }
+.icon-btn .i { width: 20px; height: 20px; }
+.graph .gi { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Graph */
 .graph { width: 100%; height: auto; margin: 4px 0 12px; color: var(--text); }
@@ -729,7 +737,7 @@ dialog#log-sheet { width: min(520px, 94vw); }
     <div class="rs-head">
       <span class="rs-icon" id="rs-icon" aria-hidden="true"></span>
       <div class="rs-titles"><h2 id="rs-title"></h2><div class="sub" id="rs-sub"></div></div>
-      <button class="icon-btn" data-rs-close aria-label="Close">✕</button>
+      <button class="icon-btn" data-rs-close aria-label="Close"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
     </div>
     <div class="seg wseg" role="tablist" aria-label="Recipe" id="rs-tabs"></div>
     <div id="rs-body"></div>
@@ -740,7 +748,7 @@ dialog#log-sheet { width: min(520px, 94vw); }
 
 <dialog id="log-sheet" aria-labelledby="log-title">
   <div class="sheet">
-    <div class="rs-head"><div class="rs-titles"><h2 id="log-title"></h2></div><button class="icon-btn" data-close-sheet aria-label="Close">✕</button></div>
+    <div class="rs-head"><div class="rs-titles"><h2 id="log-title"></h2></div><button class="icon-btn" data-close-sheet aria-label="Close"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button></div>
     <div id="log-body"></div>
   </div>
 </dialog>
@@ -755,33 +763,52 @@ dialog#log-sheet { width: min(520px, 94vw); }
 <script>
 // ---------------------------------------------------------------- config
 const MAIN_GOALS = [
-  ["energy_metabolism", "⚡", "Energy", "Less tiredness"],
-  ["cognitive_function", "🧠", "Focus", "Clear thinking"],
-  ["mood_support", "🙂", "Mood", "Feeling balanced"],
-  ["sleep_support", "🌙", "Sleep", "Rest well"],
-  ["iron_support", "🩸", "Iron", "Iron levels"],
-  ["immune_support", "🛡️", "Immunity", "Body defences"],
-  ["bone_health", "🦴", "Bones", "Strong bones"],
-  ["heart_health", "❤️", "Heart", "Heart health"],
+  ["energy_metabolism", "bolt", "Energy", "Less tiredness"],
+  ["cognitive_function", "focus", "Focus", "Clear thinking"],
+  ["mood_support", "smile", "Mood", "Feeling balanced"],
+  ["sleep_support", "moon", "Sleep", "Rest well"],
+  ["iron_support", "drop", "Iron", "Iron levels"],
+  ["immune_support", "shield", "Immunity", "Body defences"],
+  ["bone_health", "bone", "Bones", "Strong bones"],
+  ["heart_health", "heart", "Heart", "Heart health"],
 ];
 const DEMOS = [["adult_female", "Adult woman (19–50)", "adult woman"], ["adult_male", "Adult man (19–50)", "adult man"],
   ["older_female", "Woman 51+", "woman 51+"], ["older_male", "Man 51+", "man 51+"], ["pregnancy", "Pregnancy", "pregnancy"],
   ["lactation", "Breastfeeding", "breastfeeding"], ["teen", "Teenager (14–18)", "teenager"]];
 const DIETS = [["", "No restriction"], ["vegetarian", "Vegetarian"], ["vegan", "Vegan"]];
 const EXTRA = [["low_sodium", "Low salt"], ["low_sugar", "Low sugar"]];
-const ICONS = { fish_seafood: "🐟", caviar_roe: "🐟", meat: "🥩", organ_meats: "🥩", cured_meats: "🥓", pate_spread: "🥓",
-  eggs: "🥚", dairy: "🥛", milk_powder: "🥛", cheese: "🧀", soft_cheese: "🧀", legumes: "🫘", legumes_dry: "🫘",
-  tofu_tempeh: "🫘", textured_protein: "🫘", peanuts: "🥜", nuts_seeds: "🥜", nut_butter: "🥜", vegetables: "🥬",
-  fresh_herbs: "🌿", spices_herbs: "🌿", dried_vegetables: "🌶️", dried_vegetables_any: "🥬", dried_seaweed: "🌿",
-  starchy_veg: "🥔", potato_skin: "🥔", fruits: "🍎", dried_fruit: "🍇", dried_fruit_any: "🍇", olives: "🫒",
-  grains_dry: "🌾", grains_cooked: "🍚", flour: "🌾", bran_germ: "🌾", breakfast_cereal: "🥣", bread_baked: "🍞",
-  crispbread: "🍘", oils_fats: "🫒", fish_oil: "🫒", beverages: "🥤", beverage_concentrate: "🥤", espresso: "☕",
-  sweets_snacks: "🍫", spreads_sweeteners: "🍯", soups: "🍲", sauces: "🥫", mixed_dishes: "🍽️" };
-const WORD_ICONS = [[/\b(shrimp|prawn|crab|lobster|crustacean)/, "🦐"], [/\b(oyster|mussel|clam|scallop|mollus|squid|octopus)/, "🦪"],
-  [/\b(chicken|turkey|duck|goose|emu|grouse|quail|pheasant|poultry)\b/, "🍗"], [/\beggs?\b/, "🥚"], [/\bmushroom/, "🍄"],
-  [/\bcarrot/, "🥕"], [/\bbroccoli/, "🥦"], [/\bpeppers?\b/, "🫑"], [/\bavocado/, "🥑"], [/\bbanana/, "🍌"], [/\b(orange|citrus|lemon)/, "🍊"],
-  [/\bkiwi/, "🥝"], [/\b(berr|currant)/, "🫐"], [/\btomato/, "🍅"], [/\b(milk|yogurt|kefir)\b/, "🥛"], [/\bcheese/, "🧀"],
-  [/\b(fish|salmon|tuna|cod|sardines?|trout|pollock|mackerel)\b/, "🐟"], [/\b(corn ?flakes|cereal)/, "🥣"]];
+// Line icons (24 px grid, 2 px stroke, round caps), drawn inline: one style for both themes, nothing
+// loaded from elsewhere. Food and recipes show a photo when there is one, else "plate".
+const ICONS = {
+  today: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  list: '<path d="M9.5 6.5h10.5M9.5 12h10.5M9.5 17.5h10.5"/><circle cx="5" cy="6.5" r=".6"/><circle cx="5" cy="12" r=".6"/><circle cx="5" cy="17.5" r=".6"/>',
+  profile: '<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1-3.8 3.9-5.8 7.5-5.8s6.5 2 7.5 5.8"/>',
+  sprout: '<path d="M12 20v-8"/><path d="M12 12c0-4 3-6.5 7-6.5 0 4-3 6.5-7 6.5z"/><path d="M12 14.5c0-3-2.3-5-5.5-5 0 3 2.3 5 5.5 5z"/>',
+  moon: '<path d="M19.5 14.5A7.8 7.8 0 1 1 9.5 4.5a6.3 6.3 0 0 0 10 10z"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+  spark: '<path d="M11 3.5l1.7 4.8 4.8 1.7-4.8 1.7L11 16.5l-1.7-4.8L4.5 10l4.8-1.7z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>',
+  repeat: '<path d="M4.5 11.5A7 7 0 0 1 16.3 6.6L18.5 9"/><path d="M18.5 4v5h-5"/><path d="M19.5 12.5a7 7 0 0 1-11.8 4.9L5.5 15"/><path d="M5.5 20v-5h5"/>',
+  tray: '<path d="M3 17.5h18"/><path d="M5 17.5a7 7 0 0 1 14 0"/><path d="M12 8.5V7"/><path d="M10.5 7h3"/>',
+  bolt: '<path d="M13 3L5.5 13.5h6L10.5 21 18.5 10h-6z"/>',
+  focus: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/>',
+  smile: '<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14c1.8 2.2 5.2 2.2 7 0"/><path d="M9 9.8h.01M15 9.8h.01"/>',
+  drop: '<path d="M12 3.5c3.4 4.4 6 7.9 6 10.9a6 6 0 0 1-12 0c0-3 2.6-6.5 6-10.9z"/>',
+  shield: '<path d="M12 3.5l7 2.8v5.2c0 4.8-3 8.2-7 9.6-4-1.4-7-4.8-7-9.6V6.3z"/>',
+  bone: '<path d="M8.5 15.5l7-7"/><path d="M15.5 8.5a2.5 2.5 0 1 1 2.6-4.1 2.5 2.5 0 1 1 1.5 4.6 2.5 2.5 0 0 1-4.1-.5z"/><path d="M8.5 15.5a2.5 2.5 0 1 1-2.6 4.1 2.5 2.5 0 1 1-1.5-4.6 2.5 2.5 0 0 1 4.1.5z"/>',
+  heart: '<path d="M12 19.5s-7-4.4-7-9.8a4 4 0 0 1 7-2.6 4 4 0 0 1 7 2.6c0 5.4-7 9.8-7 9.8z"/>',
+  pot: '<path d="M4.5 10.5h15v4a5.5 5.5 0 0 1-5.5 5.5h-4a5.5 5.5 0 0 1-5.5-5.5z"/><path d="M2.5 10.5h2M19.5 10.5h2M9 7c0-1.3 1.2-1.3 1.2-2.6M13.5 7c0-1.3 1.2-1.3 1.2-2.6"/>',
+  coin: '<circle cx="12" cy="12" r="8"/><path d="M14.8 9.3a3.2 3.2 0 1 0 0 5.4M8.5 11h5M8.5 13h5"/>',
+  leafs: '<path d="M6 18c-1-6 3-11 11-11 .5 7.5-4 11.5-11 11z"/><path d="M6 18l6-6"/><path d="M4 9c0-2.5 1.5-4.5 4.5-4.5"/>',
+  calm: '<path d="M3 12c2.5-3 5-3 7.5 0s5 3 7.5 0 2.5-3 3 0"/><path d="M3 17c2.5-3 5-3 7.5 0s5 3 7.5 0"/>',
+  medal: '<circle cx="12" cy="14.5" r="5.5"/><path d="M9 3.5h6l-1.8 5.3h-2.4z"/>',
+  plate: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/>',
+};
+const icon = (name, cls = "") => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] || ICONS.plate}</svg>`;
+// the same drawing inside another SVG (the evidence graph), centred on x, y
+const iconAt = (name, x, y, size = 26) =>
+  `<g class="gi" transform="translate(${x - size / 2},${y - size / 2}) scale(${size / 24})">${ICONS[name] || ICONS.plate}</g>`;
 // Words that only describe preparation or grading, dropped from display names.
 const FILLER = /^(raw|cooked|imported|domestic|new zealand|australian|farmed|wild|wild caught|boiled|drained|without salt|with salt|dry heat|moist heat|fresh|frozen|canned|unprepared|prepared|mature seeds|mixed species|all classes|meat only|separable lean only|variety meats and by-products|solids and liquids|simmered|braised|roasted|broiled|baked|steamed|stewed|grilled|fried|pan-fried|microwaved|heated|dried|ready-to-eat|includes foods for usda.*|\(includes.*|ns as to.*)$/i;
 const GENERIC_HEADS = /^(fish|mollusks|crustaceans|beverages|cereals|cereals ready-to-eat|game meat|spices|seeds|nuts|snacks|candies|babyfood)$/i;
@@ -798,8 +825,9 @@ const nLower = (id) => { const n = nName(id); return /^[A-Z]{2}|^Vitamin|^EPA|^A
 const constraints = () => [state.diet, ...state.extra].filter(Boolean);
 const mainGoal = (id) => MAIN_GOALS.find(g => g[0] === id);
 const goalTitle = (id) => mainGoal(id)?.[2] || state.goals[id]?.label || id.replace(/_/g, " ");
-const EXTRA_GOAL_ICONS = { muscle_recovery: "💪" };     // goals the answers can turn on
-const goalIcon = (id) => mainGoal(id)?.[1] || EXTRA_GOAL_ICONS[id] || "•";
+const EXTRA_GOAL_ICONS = { muscle_recovery: "bolt" };     // goals the answers can turn on
+const goalIconName = (id) => mainGoal(id)?.[1] || EXTRA_GOAL_ICONS[id] || "plate";
+const goalIcon = (id) => icon(goalIconName(id));
 
 function friendlyName(raw) {
   const parts = String(raw).split(",").map(p => p.trim()).filter(Boolean);
@@ -811,11 +839,7 @@ function friendlyName(raw) {
   name = name.charAt(0).toUpperCase() + name.slice(1);
   return prep ? `${name} (${prep.toLowerCase().split(" ")[0]})` : name;
 }
-function iconFor(name, group) {
-  const low = String(name).toLowerCase();
-  for (const [re, ic] of WORD_ICONS) if (re.test(low)) return ic;
-  return ICONS[group] || "🍽️";
-}
+function iconFor(name, group) { return icon("plate"); }     // foods without a photo
 function dots(pct) {   // 1-3 dots: under 15%, 15-30%, over 30% of daily need per portion
   const n = pct >= 30 ? 3 : pct >= 15 ? 2 : 1;
   return `<span class="dots" aria-label="${n} of 3">${"●".repeat(n)}<i>${"●".repeat(3 - n)}</i></span>`;
@@ -916,9 +940,9 @@ function renderGate() {
     <h1>Eat well, at your pace.</h1>
     <p class="lead">Log what you eat, ask for ideas that fit your goals, and see the science behind every suggestion.</p>
     <ul class="gate-points">
-      <li><span aria-hidden="true">🌱</span><span><b>Starts empty.</b> Nothing is planned until you ask.</span></li>
-      <li><span aria-hidden="true">🧭</span><span><b>Yours.</b> Your goal, your habits, the food you like and can make.</span></li>
-      <li><span aria-hidden="true">🔬</span><span><b>Honest.</b> Every suggestion shows its evidence.</span></li>
+      <li><span aria-hidden="true">${icon("sprout")}</span><span><b>Starts empty.</b> Nothing is planned until you ask.</span></li>
+      <li><span aria-hidden="true">${icon("profile")}</span><span><b>Yours.</b> Your goal, your habits, the food you like and can make.</span></li>
+      <li><span aria-hidden="true">${icon("check")}</span><span><b>Honest.</b> Every suggestion shows its evidence.</span></li>
     </ul>
     ${g ? `<div id="g-btn" class="g-btn"></div>` : ""}
     ${dev ? `<form id="dev-form" class="dev">
@@ -974,9 +998,9 @@ const Q = {
   energy_goal: ["Your energy", { maintain: "Keep steady", deficit: "Lose a little", surplus: "Gain a little" }],
 };
 const ENERGY_CHOICES = [
-  ["maintain", "⚖️", "Keep steady", "Eat to your needs"],
-  ["deficit", "🍃", "Lose a little", "About 15% less energy, never below what your body uses at rest"],
-  ["surplus", "💪", "Gain a little", "About 10% more energy"],
+  ["maintain", "calm", "Keep steady", "Eat to your needs"],
+  ["deficit", "leafs", "Lose a little", "About 15% less energy, never below what your body uses at rest"],
+  ["surplus", "sprout", "Gain a little", "About 10% more energy"],
 ];
 const STEPS = [
   { id: "you", title: "About you", lead: "To work out your daily needs. You can change these any time." },
@@ -1016,7 +1040,7 @@ async function renderOnboarding() {
         <p class="hint" id="act-hint">${ACTIVITY_HINT[act]}</p></div></fieldset>`;
   } else if (st.id === "goal") {
     body = `<div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) => `<label class="tile pick"><input type="radio" name="goal" value="${id}" ${(v.goal || "") === id ? "checked" : ""}>
-      <span class="ic">${ic}</span><b>${title}</b><small>${sub}</small></label>`).join("")}</div>`;
+      <span class="ic">${icon(ic)}</span><b>${title}</b><small>${sub}</small></label>`).join("")}</div>`;
   } else if (st.id === "energy") {
     if (!onb.info) {
       box.innerHTML = loading("One moment…");
@@ -1029,7 +1053,7 @@ async function renderOnboarding() {
     body = `<div class="options">${ENERGY_CHOICES.map(([k, ic, title, sub]) => {
       const why = closed[`energy_goal=${k}`];
       return `<label class="opt-card ${why ? "off" : ""}"><input type="radio" name="energy_goal" value="${k}" ${cur === k && !why ? "checked" : ""} ${why ? "disabled" : ""}>
-        <span class="ic" aria-hidden="true">${ic}</span><span class="what"><b>${title}</b><small>${esc(why || sub)}</small></span></label>`; }).join("")}</div>
+        <span class="ic" aria-hidden="true">${icon(ic)}</span><span class="what"><b>${title}</b><small>${esc(why || sub)}</small></span></label>`; }).join("")}</div>
       <p class="src">Energy is planned from your needs (Mifflin-St Jeor and your activity). A change is never offered under 18, in pregnancy or while breastfeeding, and no deficit under a BMI of 18.5.</p>`;
   } else if (st.id === "day") {
     const trains = a.training_days && a.training_days !== "0";
@@ -1053,7 +1077,7 @@ async function renderOnboarding() {
     const because = (b) => b && Q[b.question] ? `You said “${Q[b.question][1][b.answer] || b.answer}” to “${Q[b.question][0]}”` : "";
     body = `<div class="card plist">
         <div class="prow"><span>${goalIcon(v.goal)} Goal</span><b>${esc(goalTitle(v.goal))}</b></div>
-        <div class="prow"><span>${energy[1]} Energy</span><b>${energy[2]}</b></div>
+        <div class="prow"><span>${icon(energy[1])} Energy</span><b>${energy[2]}</b></div>
         ${p.goals.filter(g => g.id !== v.goal).map(g => `<div class="prow"><span>${goalIcon(g.id)} Also</span><b>${esc(goalTitle(g.id))}</b></div>`).join("")}</div>
       ${p.strategies.length ? `<div class="group-title">Turned on by your answers</div>
         ${p.strategies.map(s => `<div class="card strat">
@@ -1356,7 +1380,7 @@ function renderHome() {
     <div id="foods-home">
       <div class="group-title">Good for</div>
       <div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) =>
-        `<button class="tile" data-goal="${id}"><span class="ic">${ic}</span><b>${title}</b><small>${sub}</small></button>`).join("")}</div>
+        `<button class="tile" data-goal="${id}"><span class="ic">${icon(ic)}</span><b>${title}</b><small>${sub}</small></button>`).join("")}</div>
       <details class="more"><summary>More goals</summary>
         <div class="more-list">${others.map(g => `<button class="pill-btn" data-goal="${g.id}">${esc(g.label)}</button>`).join("")}</div>
       </details>
@@ -1506,9 +1530,9 @@ async function loadWhatIsIt(id) {
 // as a chip on it, with their evidence one tap away.
 const SLOT_LABEL = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", snack: "Snacks" };
 const SLOTS = ["breakfast", "lunch", "dinner", "snack"];
-const LEVER_CHIP = { evening_carbs: ["🌙", "More carbs here"], no_evening_caffeine: ["☕", "No caffeine"],
-  protein_spread: ["💪", "Protein here"], protein_breakfast: ["🥚", "More protein"], big_breakfast: ["🍳", "A bigger breakfast"],
-  light_breakfast: ["🍃", "A lighter breakfast"], post_training_carbs: ["🏃", "Carbs after training"] };
+const LEVER_CHIP = { evening_carbs: ["moon", "More carbs here"], no_evening_caffeine: ["moon", "No caffeine"],
+  protein_spread: ["pot", "Protein here"], protein_breakfast: ["pot", "More protein"], big_breakfast: ["plate", "A bigger breakfast"],
+  light_breakfast: ["plate", "A lighter breakfast"], post_training_carbs: ["bolt", "Carbs after training"] };
 const REASON_TEXT = { evening_carbs: "Carb-rich, for your evenings", protein_spread: "Protein for this meal",
   protein_breakfast: "Protein-rich breakfast", post_training_carbs: "Carbs after training" };
 let dayISO = isoDate(new Date());
@@ -1553,12 +1577,12 @@ function drawToday(sum, entries) {
         <span class="muted">${date}</span><button class="icon-btn" data-day-shift="1" aria-label="Next day">›</button></span></div>
     ${first ? `<div class="ready intro" role="status"><span class="ready-ic" aria-hidden="true">${SPROUT_SVG}</span>
       <span class="ready-text"><b>Your day starts empty</b><small>Log what you eat with <b>+ Add</b>, or tap <b>Ideas</b> on any meal for suggestions that fit your goal and your answers.</small></span>
-      <button class="icon-btn" data-intro-close aria-label="Dismiss">✕</button></div>` : ""}
+      <button class="icon-btn" data-intro-close aria-label="Dismiss">${icon("x")}</button></div>` : ""}
     ${dayEnergyCard(sum, entries)}
     ${entries.length ? dayGoalCard(sum) : ""}
     ${SLOTS.map(m => slotCard(m, sum, entries)).join("")}
     <button class="card plan-week" data-tab-go="week">
-      <span class="tile-ic" aria-hidden="true">🗓️</span>
+      <span class="tile-ic" aria-hidden="true">${icon("calendar")}</span>
       <span class="what"><b>${app.weekOn ? "Your planned week" : "Plan a whole week?"}</b>
         <small>${app.weekOn ? (weekPlan?.feasible ? `${euro(weekPlan.total_cost)} at ${esc(weekPlan.chain.label)} · open it` : "Open it")
           : "Optional: seven days of meals within a budget, with the shopping list."}</small></span>
@@ -1584,7 +1608,7 @@ function dayGoalCard(sum) {
   // other goals the answers turned on can share the card: then it is about all of them
   const mixed = top.some(g => g.goal && g.goal !== sum.goal);
   return `<div class="card dash goal-card">
-    <div class="gc-head"><span>${mixed ? "🎯 Your goals today" : `${goalIcon(sum.goal)} ${esc(goalTitle(sum.goal))} today`}</span><span class="muted small">tap for the evidence</span></div>
+    <div class="gc-head"><span>${mixed ? `${icon("focus")} Your goals today` : `${goalIcon(sum.goal)} ${esc(goalTitle(sum.goal))} today`}</span><span class="muted small">tap for the evidence</span></div>
     <div class="minis">${top.map(g => `<button class="mini" data-nutrient="${esc(g.nutrient)}">
       <span class="mini-ring">${ring(g.percent / 100, 64, 7, "goal", `${nName(g.nutrient)} ${Math.round(g.percent)}% of today's need`)}<b>${g.percent >= 200 ? `${Math.round(g.percent / 100)}×` : `${Math.round(g.percent)}%`}</b></span>
       <span class="mini-name">${esc(nName(g.nutrient))}${g.eu_claim ? ` <span class="eu" title="EU authorised health claim">EU</span>` : ""}</span>
@@ -1594,8 +1618,8 @@ function dayGoalCard(sum) {
 
 function leverChips(levers) {
   return levers.length ? `<div class="levers">${levers.map(l => {
-    const [ic, txt] = LEVER_CHIP[l.id] || ["•", l.text];
-    return `<button class="chip lever" data-lever="${esc(l.id)}" title="${esc(l.text)}">${ic} ${esc(txt)}${l.grade ? ` <span class="grade g${l.grade}">${l.grade}</span>` : ""}</button>`;
+    const [ic, txt] = LEVER_CHIP[l.id] || ["plate", l.text];
+    return `<button class="chip lever" data-lever="${esc(l.id)}" title="${esc(l.text)}">${icon(ic, "s16")} ${esc(txt)}${l.grade ? ` <span class="grade g${l.grade}">${l.grade}</span>` : ""}</button>`;
   }).join("")}</div>` : "";
 }
 
@@ -1615,7 +1639,7 @@ function slotCard(m, sum, entries) {
           <small>${e.kind === "food" ? `${round(e.grams)} g` : e.servings === 1 ? "1 portion" : `${e.servings} portions`} · ${fmt(e.kcal || 0)} kcal</small></span></button>
       <button class="x" data-unlog="${esc(e.uid)}" aria-label="Remove ${esc(e.name)}">×</button></div>`).join("")}
     ${share}
-    <div class="slot-actions"><button class="add" data-log="${m}">+ Add</button><button class="add soft" data-ideas="${m}">✨ Ideas</button></div>
+    <div class="slot-actions"><button class="add" data-log="${m}">+ Add</button><button class="add soft" data-ideas="${m}">${icon("spark", "s16")} Ideas</button></div>
   </div>`;
 }
 
@@ -1790,13 +1814,7 @@ const recipeCache = new Map();
 const planDayISO = (i) => shiftDay(isoDate(new Date()), i - todayIdx());
 
 // Dishes first, then the main ingredient: a picture says "pasta" faster than a name.
-const RECIPE_ICONS = [[/pasta|spaghetti|bolognese/i, "🍝"], [/soup|\bdal\b/i, "🍲"], [/curry/i, "🍛"], [/chili/i, "🌶️"],
-  [/porridge|oats|muesli/i, "🥣"], [/smoothie/i, "🥤"], [/omelette|frittata|shakshuka|\beggs?\b/i, "🍳"], [/salad/i, "🥗"],
-  [/salmon|mackerel|sardine|tuna|fish/i, "🐟"], [/chicken/i, "🍗"], [/beef|ham\b/i, "🥩"], [/tofu/i, "🥢"],
-  [/rice|couscous|quinoa|bowl/i, "🍚"], [/potato/i, "🥔"], [/toast|tartine|baguette|bread/i, "🥖"],
-  [/yogurt|yaourt|fromage blanc/i, "🥛"], [/banana/i, "🍌"], [/apple/i, "🍎"], [/orange/i, "🍊"], [/chocolate/i, "🍫"],
-  [/seeds|walnut|nuts|raisins/i, "🥜"]];
-const recipeIcon = (name) => (RECIPE_ICONS.find(([re]) => re.test(name)) || [, "🍽️"])[1];
+const recipeIcon = (name) => icon("plate");
 const euro = (x) => `€${x.toFixed(2)}`;
 
 function weekRequest() {
@@ -1971,7 +1989,7 @@ function readyBanner(p, setup, chainLabel) {
     <span class="ready-ic" aria-hidden="true">${SPROUT_SVG}</span>
     <span class="ready-text"><b>Your week is ready</b>
       <small>${euro(p.total_cost)} of €${esc(setup.budget)} at ${esc(chainLabel)} · food covers ${covered.length} of ${needs.length} needs</small></span>
-    <button class="icon-btn" data-ready-close aria-label="Dismiss">✕</button></div>`;
+    <button class="icon-btn" data-ready-close aria-label="Dismiss">${icon("x")}</button></div>`;
 }
 
 function energyCard(p, d, i) {
@@ -2113,7 +2131,7 @@ function addWeekToList() {
 let sheet = null;          // {id, en, kcal, time_min, meal, ctx: "week" | "idea" | "diary", day?}
 function openRecipeSheet(info) {
   sheet = info;
-  $("rs-icon").textContent = recipeIcon(info.en);
+  $("rs-icon").innerHTML = recipeIcon(info.en);
   $("rs-title").textContent = info.en;
   const when = info.ctx === "week" ? `${MEAL_LABEL[info.meal]} · ${WEEKDAYS[info.day]}` : SLOT_LABEL[info.meal] || "";
   $("rs-sub").textContent = [when, info.time_min ? `${info.time_min} min` : "", info.kcal ? `${fmt(info.kcal)} kcal` : ""].filter(Boolean).join(" · ");
@@ -2206,7 +2224,7 @@ function whyMeal(w, recipeName) {
       ? `<div class="claim">“${esc(n.eu_claims[0])}.”<small>EU authorised health claim${n.citations.length ? ` · ${esc(n.citations[0])}` : ""}</small></div>`
       : `<div class="claim plain">${esc(n.consumer_label || "Supported by research")}.<small>Evidence ${esc(n.evidence)} · ${esc(EVIDENCE_SOURCE[n.evidence_source] || "FeedForward sources")}</small></div>`}</li>`;
   const top = w.nutrients.slice(0, 3), rest = w.nutrients.slice(3);
-  return `${graphSvg(recipeName, "mixed_dishes", top, goal, recipeIcon(recipeName))}
+  return `${graphSvg(recipeName, "mixed_dishes", top, goal)}
     <ul class="why-list">${top.map(item).join("")}</ul>
     ${rest.length ? `<details class="sec"><summary>${rest.length} more for ${title}</summary><div><ul class="why-list">${rest.map(item).join("")}</ul></div></details>` : ""}
     ${w.limits.map(l => `<p class="watch">One portion has ${l.percent_of_limit}% of the daily limit for ${esc(LIMIT_WORDS[l.nutrient] || l.nutrient)}${fromSource(l.main_source)}.</p>`).join("")}
@@ -2216,7 +2234,7 @@ function whyMeal(w, recipeName) {
 // ---------------------------------------------------------------- graph
 // Food -> nutrients -> goal, the same edges the ranking uses. Line width follows
 // edge strength (0-1); solid lines are authorised EU claims.
-function graphSvg(foodName, group, contribs, goal, icon = null) {
+function graphSvg(foodName, group, contribs, goal, foodIcon = "plate") {
   if (!contribs.length) return "";
   const W = 600, rowH = 46, H = Math.max(120, contribs.length * rowH + 24);
   const xF = 80, xN = 300, xG = 520, mid = H / 2;
@@ -2234,10 +2252,10 @@ function graphSvg(foodName, group, contribs, goal, icon = null) {
       <text class="lbl" x="${xN}" y="${ys[i] + 12}" text-anchor="middle">${c.percent_of_need >= 200 ? `${Math.round(c.percent_of_need / 100)}× daily need` : `${round(c.percent_of_need)}% of daily need`}</text></g>`;
   });
   nodes += `<rect class="n-food" x="${xF - 46}" y="${mid - 30}" width="92" height="60" rx="14"/>
-    <text x="${xF}" y="${mid - 4}" text-anchor="middle" style="font-size:22px">${icon || iconFor(foodName, group)}</text>
+    ${iconAt(foodIcon, xF, mid - 10)}
     <text class="lbl" x="${xF}" y="${mid + 18}" text-anchor="middle">${esc(clip(friendlyName(foodName), 16))}</text>`;
   nodes += `<rect class="n-goal" x="${xG - 46}" y="${mid - 30}" width="92" height="60" rx="14"/>
-    <text x="${xG}" y="${mid - 4}" text-anchor="middle" style="font-size:22px">${goalIcon(goal)}</text>
+    ${iconAt(goalIconName(goal), xG, mid - 10)}
     <text class="lbl" x="${xG}" y="${mid + 18}" text-anchor="middle">${esc(clip(goalTitle(goal), 16))}</text>`;
   return `<svg class="graph" viewBox="0 0 ${W} ${H}" role="img" aria-label="How this food supports ${esc(goalTitle(goal))}">${edges}${nodes}</svg>`;
 }
@@ -2314,7 +2332,7 @@ async function dictTerms() {
 const sameName = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
 const inList = (kind, id) => app.list.some(i => i.kind === kind && i.id === id);
 function addBtn(id, name, portion, group) {
-  return inList("food", id) ? `<button class="add done" disabled>✓ On your list</button>`
+  return inList("food", id) ? `<button class="add done" disabled>${icon("check", "s16")} On your list</button>`
     : `<button class="add" data-add="${esc(id)}" data-name="${esc(name)}" data-portion="${portion || 100}" data-group="${esc(group || "")}">+ List</button>`;
 }
 function addToList(id, name, portion, group) {
@@ -2333,7 +2351,7 @@ async function addIngredients(recipeId) {
     }
     save(); updateCount();
     const btn = document.querySelector(`[data-ingredients-to-list="${CSS.escape(recipeId)}"]`);
-    if (btn) { btn.outerHTML = `<button class="ghost" data-tab-go="list">✓ On your list ›</button>`; }
+    if (btn) { btn.outerHTML = `<button class="ghost" data-tab-go="list">${icon("check", "s16")} On your list ›</button>`; }
   } catch (e) { showInfo("List", `<p>Could not add the ingredients (${esc(e.message)}).</p>`); }
 }
 function qty(b) {
@@ -2381,12 +2399,12 @@ async function renderList() {
     <form id="list-add" class="list-add"><input type="text" name="item" placeholder="Add an item" autocomplete="off" aria-label="Add an item" maxlength="80">
       <button class="add" type="submit">Add</button></form>`;
   if (p && !listed) {
-    html += `<div class="card plan-week static"><span class="tile-ic" aria-hidden="true">🗓️</span>
+    html += `<div class="card plan-week static"><span class="tile-ic" aria-hidden="true">${icon("calendar")}</span>
       <span class="what"><b>Your planned week</b><small>${p.basket.length} items · ${euro(p.total_cost)} at ${esc(p.chain.label)}</small></span>
       <button class="add" data-week-to-list>Add</button></div>`;
   }
   if (!app.list.length && !listed) {
-    html += `<div class="empty"><span class="big-ic" aria-hidden="true">🛒</span>
+    html += `<div class="empty"><span class="big-ic" aria-hidden="true">${icon("list")}</span>
       <p class="sub">Your list is empty.<br>Type an item above, or add a food or a recipe's ingredients from the app.</p></div>`;
   }
   if (app.list.length) {
@@ -2440,7 +2458,7 @@ async function renderList() {
   if ($("list-copy")) $("list-copy").onclick = async () => {
     const lines = [...app.list.filter(i => !i.done).map(i => `- ${i.kind === "food" ? friendlyName(i.name) : i.fr || i.name}${i.g ? `: ${qty({ grams: i.g, liquid: i.liquid })}` : ""}`),
       ...(listed ? p.basket.filter(b => !home.has(b.id) && !t.has(b.id)).map(b => `- ${b.fr}: ${qty(b).replace(/<[^>]+>/g, "")}`) : [])];
-    try { await navigator.clipboard.writeText(lines.join("\n")); $("list-copy").textContent = "Copied ✓"; } catch { $("list-copy").textContent = "Copy failed"; }
+    try { await navigator.clipboard.writeText(lines.join("\n")); $("list-copy").innerHTML = `Copied ${icon("check", "s16")}`; } catch { $("list-copy").textContent = "Copy failed"; }
   };
 }
 // "At home": out of the list now; "Plan around them" makes them free in a new plan.
