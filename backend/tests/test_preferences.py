@@ -194,17 +194,26 @@ def _day_kcal(ctx, day):
 
 
 def test_levers_keep_the_week_near_its_cost(engine, monkeypatch):
-    """The levers may make the week at most LEVER_COST (5 %) dearer than the week planned for the needs alone (the
-    first solve, read here by skipping the second); measured up to 4.9 % (light breakfast). The cap holds on the
-    model's cost, whose packs the 1 % gap may leave one too many, while the basket buys the fewest: hence a 1 %
-    tolerance. Against today's plain week (other goals can reweight the first week) training weeks measure 6.9 %."""
+    """The levers may make the week at most LEVER_COST (5 %) dearer than the week the same run planned for the needs
+    alone (its first solve). Both costs are read inside one run: two runs may settle on different first weeks, since
+    the 1 % gap is on the needs, not on the cost, and where a time-limited solve stops depends on the machine (CI
+    measured a separate first week 1.4 % cheaper). Against today's plain week (other goals can reweight the first
+    week) training weeks measure 6.9 %."""
     plain = _plan(engine)["total_cost"]
+    real, stages = wp._after_needs, []
+
+    def spy(prob, ctx, objective, x, y, intake, cost, *rest):
+        first = pulp.value(cost)
+        ok = real(prob, ctx, objective, x, y, intake, cost, *rest)
+        stages.append((first, pulp.value(cost) if ok else first))
+        return ok
+    monkeypatch.setattr(wp, "_after_needs", spy)
     for answers in NEEDS_FIRST_ANSWERS + ({"energy_goal": "deficit"},):
-        with monkeypatch.context() as m:
-            m.setattr(wp, "_after_needs", lambda *_a, **_k: False)
-            first = wp.plan_week(engine, STUDENT, goal="cognitive_function", budget=60, chain="lidl", answers=answers)
-        cost = _plan(engine, answers=answers)["total_cost"]
-        assert cost <= wp.LEVER_COST * first["total_cost"] * 1.01, (answers, cost, first["total_cost"])
+        stages.clear()
+        cost = wp.plan_week(engine, STUDENT, goal="cognitive_function", budget=60, chain="lidl", answers=answers)["total_cost"]
+        assert stages, answers                                        # each of these answers reaches the levers' solve
+        for first, second in stages:
+            assert second <= wp.LEVER_COST * first + 1e-4, (answers, second, first)
         assert cost <= 1.10 * plain, (answers, cost, plain)
 
 
