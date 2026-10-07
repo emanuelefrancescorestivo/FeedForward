@@ -343,3 +343,244 @@ protect on the server. A single file keeps the front end readable and
 deployable anywhere; the cost is less structure than a component framework
 would give as the UI grows.
 *Where:* [`web/index.html`](backend/feedforward/web/index.html), [`api/routers/plan.py`](backend/feedforward/api/routers/plan.py)
+
+## The engagement phase (October 2026)
+
+The next stage turns a personal diary into a product people come back to:
+progress over weeks, a forgiving streak, a weekly recap, notifications, small
+private circles and two AI features. The reasons are in
+[`docs/MARKET_ANALYSIS.md`](docs/MARKET_ANALYSIS.md), the product in
+[`docs/PRODUCT_STRATEGY.md`](docs/PRODUCT_STRATEGY.md), the screens in
+[`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md). The owner chose the market
+(France, French and English, *tu*), the money model (a free core that stays
+free), the social scope (small private circles), the platform (a web app),
+the AI model and where it runs; the decisions below record those choices and
+the engineering under them. Until each is built, *Where* names the place it
+will live.
+
+### 23. One installable web app, split into modules, still without a build step
+**Decision.** The web app stays the only client and becomes a progressive web
+app: a manifest (installable to the home screen), a service worker (the app
+shell and the last opened day work offline; logs made offline are queued and
+sent when back online) and Web Push. The 2,500-line `index.html` is split into
+native ES modules: `app/main.js`, `api.js`, `store.js`, `i18n.js`, one module
+per view (`today`, `add`, `ideas`, `week`, `progress`, `circle`, `foods`,
+`list`, `profile`) and per shared component (`ring`, `weekstrip`, `sheet`,
+`chips`); CSS in `tokens.css`, `base.css`, `components.css`; every string in
+`i18n/fr.json` and `i18n/en.json`. No framework and no bundler: browsers load
+the modules directly, served as today with revalidation. The Expo prototype in
+`mobile/` is archived: kept, marked unmaintained, no longer described as a
+client.
+**Why.** One codebase for phones and laptops, and the engine runs on the
+server, so a native app would add no capability the product needs. Phones can
+install a web app and receive its notifications (Android, and iPhone from iOS
+16.4 once the app is on the home screen). Nothing goes through an app store or
+a third party. The owner chose it.
+**Instead.** React with a bundler: more structure, but a build chain and a
+dependency tree to keep current, for a team of one. Reviving Expo: store
+presence and the most reliable push, but a second codebase that already lags
+(Expo 51, no diary). Both stay open: the same web app can be wrapped for the
+stores later without a rewrite.
+**Cost.** On iPhone, notifications need "Add to Home Screen" first, which the
+app has to explain. No store discovery. Without a framework the structure is a
+convention: each view module exports `render(state)` and is covered by a
+Playwright check, or the files drift back into one.
+*Where:* `backend/feedforward/web/` (`app/`, `i18n/`, `sw.js`, `manifest.webmanifest`)
+
+### 24. The diary as rows; the answers stay one document
+**Decision.** Logged food moves out of the per-account document into a table:
+`diary_entries` (an id made by the app, so a retried request is not counted
+twice; the person; the local day; the meal; recipe or food and its id; portions
+or grams; how it was logged: by hand, from an idea, repeated, CROUS, described;
+whether it is an estimate; when; and a deletion time, so other devices learn
+of a removal). The app reads a range of days and adds or removes one entry at
+a time. A second table, `activity_days`, records the days a person showed up
+and how (logged, cooked, planned, used the list). The answers, preferences
+and personal list stay one document in `/me/state`. Each account gets a time
+zone (Europe/Paris by default): days and weeks are local. A migration moves
+the diaries already saved into rows; `/diary/day` still accepts entries in the
+request for one release.
+**Why.** Weekly progress, the streak, the recap and notifications need the
+server to read past days, which a document the server never looks inside
+cannot give. And a document written whole loses data when two devices save
+it: the last write wins.
+**Instead.** Keeping the document and parsing it on the server: no migration,
+but the two-device loss stays, and every weekly query reads ten years of diary.
+**Cost.** A migration, new endpoints, and a queue in the service worker for
+logs made offline (the app-made ids make retries safe).
+*Where:* `db/models.py`, `alembic/versions/004_diary_rows.py`, `api/routers/diary.py`
+
+### 25. Progress, the food-week streak and the recap are pure engine functions
+**Decision.** `engine/progress.py` computes, from entries and activity days:
+the needs met by food over the week (the logged week against seven days of
+reference intakes, labelled "from what you logged"), the distinct plants eaten
+and the new ones (ingredients and foods mapped to a plant species in a curated
+`data/plants.json`, so tomato in two recipes counts once), recipes cooked and
+new recipes, the cost at the person's shop (or the national median), the days
+a goal nutrient reached its need; the streak in weeks (a week counts at the
+person's threshold, 3 days by default; one rest week earned every 4 weeks, at
+most 2 kept, used automatically; a missed week with no rest week left ends the
+run without erasing the longest one); and milestones defined as data
+(`data/milestones.json`), awarded once. The recap is computed on Sunday and
+stored as it was sent, so it does not change afterwards.
+**Why.** The engine is plain Python with no database (decision 2's design), so
+the rules can be tested exhaustively without one, and the product's promises
+become tests: a missed week with a rest week left pauses the streak; no
+milestone, recap field or progress figure refers to energy, weight or eating
+less (a test reads the milestone data and the recap's keys).
+**Instead.** Computing progress in the browser: no server work, but no recap
+without the app open, and the rules written twice.
+**Cost.** The plant mapping is curated by hand. Coverage from logs is a floor,
+since nobody logs everything, and the words say so.
+*Where:* `engine/progress.py`, `data/plants.json`, `data/milestones.json`, `tests/test_progress.py`
+
+### 26. Circles: membership is the only door
+**Decision.** Tables for circles, members (owner or member), invites (a hashed
+token, valid 7 days, a number of uses), posts (cooked, recap or milestone;
+the recipe; an optional photo), reactions (three kinds, one of each per person
+and post), cook-together plans and who joined them, and the circle's shopping
+list. A circle has 2 to 8 members; a person belongs to 3 circles at most.
+Every circle route goes through one dependency, `require_member(circle_id)`,
+which answers 404 to anyone outside (so a circle's existence does not leak).
+Nothing in the circle code reads the diary tables, and a test checks that the
+module does not import them. Leaving takes a person's posts, reactions and
+joins with them; items they added to the shared list stay, without their
+name. Photos posted to a circle are re-encoded (WebP, at most 1,600 px), which
+drops location and other EXIF data, stored in a private bucket and served only
+through the API after the membership check. Reports go to the circle's owner
+and to the operator; the owner can remove a member. No live updates: a circle
+is fetched when opened, and changes arrive in the daily digest. Circles are
+for people aged 15 or more (the French age of digital consent), to be
+confirmed with legal advice before launch.
+**Why.** The smallest model that does what the strategy describes, with one
+place to audit who sees what. Comparison is the harm (market analysis,
+section 5), so the data model gives a circle nothing to compare.
+**Instead.** A public feed or profiles: reach, but moderation from day one and
+the comparison the strategy rules out. Comments: kept for later, for the same
+reason.
+**Cost.** Object storage becomes a dependency. Moderation is manual at first.
+*Where:* `db/models.py`, `api/routers/circles.py`, `engine/circles.py` (scaling a recipe to the people who joined), `tests/test_circles.py`
+
+### 27. Background work: one worker, jobs in PostgreSQL, notifications behind one gate
+**Decision.** A second process, `python -m feedforward.worker`, from the same
+code. Jobs live in a table and are claimed with `SELECT ... FOR UPDATE SKIP
+LOCKED`; a loop each minute queues what is due for each person in their time
+zone: the meal idea at the time they chose, "Your week in food" on Sunday at
+19:00, the circle digest, the shopping reminder. Notifications are Web Push
+(VAPID keys; subscriptions stored per device and dropped when the browser
+says they are gone). Every notification passes `notify(person, kind)`, which
+allows only the kinds in one registry (meal idea, recap ready, circle digest,
+shopping reminder), only if the person turned that kind on, at most one a day,
+between 08:00 and 21:00 local time. A meal idea is computed when it is sent,
+by the same engine call as Ideas.
+**Why.** A handful of jobs a minute does not need Redis and Celery, and
+PostgreSQL is already required. A scheduler inside the API process would send
+everything twice as soon as there are two API instances. One gate makes the
+strategy's promises enforceable: a test checks that the registry has no kind
+about inactivity or the streak, and that a second notification on the same day
+is refused.
+**Instead.** Celery with Redis: proven, but two more services to run.
+APScheduler in the API: simplest, wrong with more than one instance.
+**Cost.** `SKIP LOCKED` is PostgreSQL only; the worker's tests run against
+PostgreSQL in CI (a service container), the rest of the suite stays on SQLite.
+On iPhone, push reaches only an app added to the home screen.
+*Where:* `feedforward/worker.py`, `feedforward/notify.py`, `db/models.py`, `tests/test_notify.py`
+
+### 28. AI: Claude Haiku 4.5 on Vertex AI in the EU, behind one grounded module
+**Decision.** All model calls go through `feedforward/ai/`, using the Anthropic
+SDK's Vertex client in Google Cloud's EU region with Claude Haiku 4.5
+(`claude-haiku-4-5@20251001` on Vertex; availability in the region checked at
+setup). Two features, both built so the model chooses and phrases but never
+supplies a number or a claim:
+- **Describe it.** The engine first searches its own foods for the words of the
+  description and passes up to 40 candidates (id, name, usual portion). The
+  model returns, as structured output, a list of candidate ids with grams and
+  the words it could not match. The server rejects any id outside the
+  candidates and any amount outside 1-1,500 g; nutrients come from CIQUAL. The
+  person sees the estimate (≈), edits it and confirms; nothing is logged
+  before that.
+- **Ask why.** The engine's explanation for the recipe or food (shares of need,
+  the numbered EU claims with their wording, references and grades) is the
+  only context. The model returns the connecting sentences and the numbers of
+  the claims it used; the app quotes the claims from the engine's data, not
+  from the model's text; the server checks that every number in the answer
+  appears in the context and falls back to the plain "Why" tab if not.
+  Questions naming a condition, a medication or a symptom (a French and
+  English word list, checked before the call) and questions the model marks as
+  out of scope get a fixed answer pointing to a professional.
+- **Budget.** Every call is recorded (feature, tokens, cost in euros, day,
+  person). Ten requests a person a day; €50 a month in total, from token
+  prices kept in configuration. At 90 % of the month's budget both features
+  pause until the next month, and the app falls back to search and the "Why"
+  tab. Answers are cached by feature, the normalised input and the version of
+  the engine's data, so a common question costs once.
+- **Privacy.** Only the typed text and the engine's data are sent: no name,
+  email, profile or account id. AI output is labelled as AI, as the EU AI Act
+  asks of systems that talk to people.
+- **Quality.** A small eval (50 described meals with the foods expected, 30
+  questions) runs before any change of model or prompt.
+**Why.** The owner chose Haiku 4.5 for cost: at first-party rates
+($1 / $5 per million tokens) a request of about 1,500 tokens in and 200 out
+costs about a quarter of a US cent, so the cap covers roughly 20,000 requests
+a month. Both tasks are constrained (choose from a list, rephrase given
+evidence), which suits a small model. The owner chose the EU region so that
+diary text stays in the EU; the Claude API's own location setting offers
+"us" or "global" only.
+**Instead.** Claude Opus 5.5: better wording, about five times the cost per
+request. The Claude API directly: simpler setup, processing outside the EU.
+Free-written nutrition answers: ruled out by the non-negotiables.
+**Cost.** A Google Cloud project and its credentials; Vertex prices are set by
+Google and are checked at setup. Prompt caching does not help: Haiku 4.5 caches
+only prompts of 4,096 tokens or more, and these are shorter, so the app's own
+cache does that work.
+*Where:* `feedforward/ai/` (`client.py`, `describe.py`, `why.py`, `budget.py`), `tests/test_ai.py` (with a fake client), `evals/`
+
+### 29. Measuring, consent and the rest of privacy
+**Decision.** Product measures are first-party and aggregate: a daily job
+counts new accounts, food weeks, day-1 and day-30 retention by cohort,
+notification opt-outs, calm mode and circle reports into one table of daily
+figures. No analytics SDK, no cookies, no event log beyond what the features
+store anyway. Export and deletion cover every new table, and a test lists the
+tables that hold a person's id and checks that each one is in the export and
+is emptied by deletion. Because a food diary can reveal health or religion
+(special categories under GDPR article 9), sign-up asks for explicit consent to
+keep it, with its purposes, and a data protection impact assessment (AIPD,
+CNIL) is done before launch. Per-person limits on invites (10 a day), photo
+uploads (20 a day) and AI (10 a day) sit next to the existing per-address
+limit.
+**Why.** The privacy non-negotiable, and the strategy's guardrail measures,
+which only need counts.
+**Cost.** Fewer numbers than an analytics SDK would give; funnels are rebuilt
+from the features' own tables when needed.
+*Where:* `feedforward/metrics.py`, `api/routers/auth_router.py` (export, delete), `tests/test_privacy.py`
+
+### 30. Photos: a ledger, a script, served by the app
+**Decision.** Recipe and food photos (the owner's choice: stock and open
+licences) are listed in `data/photos.json`: what each shows, its source page,
+author, licence and the changes made. `scripts/photos.py` takes them from
+Wikimedia Commons, accepting only public domain, CC0, CC BY and CC BY-SA (never
+NC or ND), and writes two WebP sizes (128 px square, 800 × 600) to
+`web/photos/`, served by the app with long caching. `DATA_LICENSES.md` points
+to the ledger; the recipe sheet credits "a similar dish" with author and
+licence. Pillow becomes a dependency (also used for circle photos).
+**Why.** The same rule as the font: opening the app sends nothing to a third
+party. A ledger makes every licence checkable, and the script makes the set
+reproducible.
+**Cost.** About 5 MB of images in the repository; each new recipe needs a photo
+entry, or it shows the line icon of its dish family.
+*Where:* `data/photos.json`, `scripts/photos.py`, `web/photos/`, `api/main.py`
+
+### 31. Running it: a container, an EU host, a fast start
+**Decision.** One container image with two processes (the API and the
+worker), a managed PostgreSQL, S3-compatible object storage, all in an EU
+region; the vendor is chosen at deployment. The food × goal scores
+(decision 2) are computed when the image is built and loaded at start-up, so
+an instance starts in seconds instead of about 17. Production start-up refuses
+to run without the new secrets (VAPID keys, Google Cloud credentials, storage
+keys), like it does today for the signing secret.
+**Why.** Nothing in the design ties FeedForward to one host, and the data stays
+in the EU. Container platforms restart instances freely; a 17-second start
+makes every restart an outage.
+**Cost.** A build step for the image (not for the web app), and a scores file
+to rebuild whenever the data changes.
+*Where:* `Dockerfile`, `engine/recommender.py` (loading precomputed scores), `api/auth.py` (production checks)

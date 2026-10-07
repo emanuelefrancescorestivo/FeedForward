@@ -205,6 +205,6 @@ until photos are sourced).
 - **Photos:** sourcing the first set (52 recipes and the commonest foods)
   means downloading files from Wikimedia Commons, Unsplash or Pexels; this
   waits for the owner's go-ahead.
-- **French register:** *tu* or *vous*? The glossary above uses *tu* ("Ta
-  semaine dans l'assiette"); student apps mostly say *tu*.
+- **French register:** decided, *tu* (owner, 7 October 2026), as in "Ta
+  semaine dans l'assiette".
 - **The bone icon** needs a better drawing.
