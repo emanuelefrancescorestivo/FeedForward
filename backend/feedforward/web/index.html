@@ -386,6 +386,8 @@ dialog#recipe-sheet { width: min(560px, 94vw); }
 details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
 .empty { text-align: center; padding: 32px 16px; }
 .big-ic { font-size: 48px; display: block; margin-bottom: 8px; color: var(--accent); }
+.unsaved { margin: -2px 0 6px 46px; font-size: 13px; color: var(--note); }
+.unsaved .link { font-size: 13px; min-height: 32px; font-weight: 600; }
 /* photos: a similar dish, served by this app (data/photos.json) */
 .tile-ic { overflow: hidden; }
 .tile-ic img.ph, .li-ph img.ph { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -893,7 +895,7 @@ let app = null;                 // the saved document
 let photos = { recipes: {}, foods: {}, ingredients: {} };   // GET /photos: which photo shows what, with its credit
 let account = null;             // {email}
 let authConfig = { google_client_id: null, dev_login: false };
-const blankApp = () => ({ v: 1, onboarded: false, setup: {}, answers: {}, declined: [], avoid: [], diary: {}, list: [],
+const blankApp = () => ({ v: 1, onboarded: false, setup: {}, answers: {}, declined: [], avoid: [], list: [],
   pantry: [], ticks: null, edits: null, weekList: null, prefs: { extra: [], science: false }, introSeen: false });
 
 let saveTimer = null;
@@ -914,6 +916,7 @@ function setToken(t) {
 function signOut() {
   if (saveTimer) flush();
   setToken(null); app = null; account = null; weekPlan = null; weekKey = null; dayView = null; onb.draft = null;
+  diaryCache.clear();
   try { window.google?.accounts?.id?.disableAutoSelect(); } catch {}
   renderGate();
 }
@@ -1326,6 +1329,7 @@ document.addEventListener("click", (ev) => {
   if ((el = on("[data-log]"))) { openLog(el.dataset.log); return; }
   if ((el = on("[data-ideas]"))) { openIdeas(el.dataset.ideas); return; }
   if ((el = on("[data-unlog]"))) { unlog(el.dataset.unlog); return; }
+  if ((el = on("[data-retry-entry]"))) { retryEntry(el.dataset.retryEntry); return; }
   if ((el = on("[data-lever]"))) { showLever(el.dataset.lever); return; }
   if ((el = on("[data-pick]"))) { pickAmount(JSON.parse(el.dataset.pick)); return; }
   if (on("[data-log-back]")) { openLog(logMeal); return; }
@@ -1558,16 +1562,42 @@ function dayLabel(iso) {
   if (iso === shiftDay(today, 1)) return "Tomorrow";
   return new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { weekday: "long" });
 }
-const entriesOf = (iso) => app.diary[iso] || [];
-const uid = () => Math.random().toString(36).slice(2, 10);
+// The diary lives in rows on the server (/diary/entries, DECISIONS.md decision 24): one request per log,
+// so two devices never overwrite each other. This cache holds the days already read. An entry not yet
+// saved is "pending"; one whose save failed stays on screen as "Not saved" with Retry, never dropped.
+const diaryCache = new Map();                       // iso -> entries
+const uid = () => Math.random().toString(36).slice(2, 10);   // shopping-list items (kept in the saved document)
+const newId = () => crypto.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+const fromRow = (r) => ({ uid: r.id, meal: r.meal, kind: r.kind, id: r.item_id, servings: r.servings, grams: r.grams,
+  name: r.name, kcal: r.kcal, src: r.source, estimate: r.estimate, group: "" });
+const toRow = (iso, e) => ({ id: e.uid, day: iso, meal: e.meal, kind: e.kind, item_id: e.id, servings: e.servings || 1,
+  grams: e.grams || 0, name: String(e.name || "").slice(0, 200), kcal: Math.max(0, Math.round(e.kcal || 0)),
+  source: e.src || "manual", estimate: !!e.estimate });
+async function loadDays(startISO, endISO) {
+  const r = await api("/diary/entries?" + qs({ start: startISO, end: endISO }));
+  const saved = new Map();
+  for (const row of r.entries) (saved.get(row.day) || saved.set(row.day, []).get(row.day)).push(fromRow(row));
+  for (let d = startISO; d <= endISO; d = shiftDay(d, 1)) {
+    const rows = saved.get(d) || [], ids = new Set(rows.map(e => e.uid));
+    diaryCache.set(d, rows.concat(entriesOf(d).filter(e => (e.pending || e.failed) && !ids.has(e.uid))));
+  }
+}
+async function ensureDays(startISO, endISO) {
+  for (let d = startISO; d <= endISO; d = shiftDay(d, 1)) if (!diaryCache.has(d)) return loadDays(startISO, endISO);
+}
+const entriesOf = (iso) => diaryCache.get(iso) || [];
+const todayShown = () => !$("tab-today").hidden;
 const toEntry = (e) => ({ kind: e.kind, id: e.id, meal: e.meal, servings: e.servings || 1, grams: e.grams || 0 });
 const dayReq = (entries) => ({ ...personReq(), ...prefsReq(), chain: app.setup.chain || "lidl", entries: entries.map(toEntry) });
 
 async function renderToday() {
   if (!app.onboarded || (onb.draft && onb.box === "today")) return renderOnboarding();
-  const box = $("tab-today"), my = ++dayToken, entries = entriesOf(dayISO);
+  const box = $("tab-today"), my = ++dayToken;
   if (!dayView || dayView.iso !== dayISO) box.innerHTML = loading("Opening your day…", "week");
   try {
+    await ensureDays(shiftDay(dayISO, -14), dayISO);   // the day, and the two weeks before it for "Recent"
+    if (my !== dayToken) return;
+    const entries = entriesOf(dayISO);
     const sum = await api("/diary/day", dayReq(entries));
     if (my !== dayToken) return;
     dayView = { iso: dayISO, sum };
@@ -1648,20 +1678,51 @@ function slotCard(m, sum, entries) {
         <span class="tile-ic small" aria-hidden="true">${thumbFor(e.kind, e.id, e.name)}</span>
         <span class="what"><b>${esc(e.kind === "food" ? friendlyName(e.name) : e.name)}</b>
           <small>${e.kind === "food" ? `${round(e.grams)} g` : e.servings === 1 ? "1 portion" : `${e.servings} portions`} · ${fmt(e.kcal || 0)} kcal</small></span></button>
-      <button class="x" data-unlog="${esc(e.uid)}" aria-label="Remove ${esc(e.name)}">×</button></div>`).join("")}
+      <button class="x" data-unlog="${esc(e.uid)}" aria-label="Remove ${esc(e.name)}">×</button></div>
+      ${e.failed ? `<p class="unsaved" role="status">Not saved · <button class="link" data-retry-entry="${esc(e.uid)}">Retry</button></p>`
+        : e.note ? `<p class="unsaved" role="status">${esc(e.note)}</p>` : ""}`).join("")}
     ${share}
     <div class="slot-actions"><button class="add" data-log="${m}">+ Add</button><button class="add soft" data-ideas="${m}">${icon("spark", "s16")} Ideas</button></div>
   </div>`;
 }
 
-function logEntry(meal, item) {
-  (app.diary[dayISO] ||= []).push({ uid: uid(), meal, ...item });
+// Log at once on screen, then save; a failed save is shown on its row with Retry.
+async function logEntries(meal, items, source, iso = dayISO) {
+  const added = items.map(item => ({ uid: newId(), meal, ...item, src: source, pending: true }));
+  diaryCache.set(iso, [...entriesOf(iso), ...added]);
   app.introSeen = true; save();
+  if (!(await saveEntries(iso, added)) && iso === dayISO && todayShown()) renderToday();
 }
-function unlog(id) {
-  app.diary[dayISO] = entriesOf(dayISO).filter(e => e.uid !== id);
-  if (!app.diary[dayISO].length) delete app.diary[dayISO];
-  save(); renderToday();
+function logEntry(meal, item, source = "manual") { logEntries(meal, [item], source); }
+async function saveEntries(iso, list) {
+  try {
+    await api("/diary/entries", { entries: list.map(e => toRow(iso, e)) });
+    list.forEach(e => { e.pending = false; e.failed = false; });
+    return true;
+  } catch {
+    list.forEach(e => { e.pending = false; e.failed = true; });
+    return false;
+  }
+}
+async function retryEntry(id) {
+  const e = entriesOf(dayISO).find(x => x.uid === id);
+  if (!e) return;
+  e.failed = false; e.pending = true;
+  await saveEntries(dayISO, [e]);
+  renderToday();
+}
+async function unlog(id, iso = dayISO) {
+  const list = entriesOf(iso), e = list.find(x => x.uid === id);
+  if (!e) return;
+  diaryCache.set(iso, list.filter(x => x !== e));
+  if (iso === dayISO && todayShown()) renderToday();
+  if (e.failed) return;                                   // never saved: nothing to remove on the server
+  try { await api(`/diary/entries/${encodeURIComponent(id)}`, undefined, "DELETE"); }
+  catch (x) {
+    if (x.message === "No such entry") return;            // already gone
+    diaryCache.set(iso, [...entriesOf(iso), { ...e, note: "Could not remove this. Check the connection and try again." }]);
+    if (iso === dayISO && todayShown()) renderToday();
+  }
 }
 function showLever(id) {
   const all = Object.values(dayView?.sum.meal_levers || {}).flat();
@@ -1702,8 +1763,8 @@ function openLog(meal) {
 // What was logged before, newest first: most meals repeat.
 function recentList() {
   const seen = new Set(), out = [];
-  for (const iso of Object.keys(app.diary).sort().reverse()) {
-    for (const e of [...app.diary[iso]].reverse()) {
+  for (const iso of [...diaryCache.keys()].sort().reverse()) {
+    for (const e of [...entriesOf(iso)].reverse()) {
       const k = `${e.kind}|${e.id}`;
       if (seen.has(k)) continue;
       seen.add(k); out.push(e);
@@ -1794,7 +1855,7 @@ function ideaById(id) { return ideas.last?.options.find(o => o.id === id); }
 function takeIdea(id) {
   const o = ideaById(id) || (sheet?.id === id ? sheet : null);
   if (!o) return;
-  logEntry(ideas.meal, { kind: "recipe", id: o.id, name: o.en, servings: 1, kcal: Math.round(o.kcal) });
+  logEntry(ideas.meal, { kind: "recipe", id: o.id, name: o.en, servings: 1, kcal: Math.round(o.kcal) }, "idea");
   closeSheet($("log-sheet")); closeSheet($("recipe-sheet")); renderToday();
 }
 function notForMe(id) {
@@ -1846,6 +1907,7 @@ const composition = (p) => p.days.map(d => ({
 async function renderWeek() {
   const my = ++weekToken, v = app.setup;
   if (!v.chain || !v.budget || weekUI.shop || !app.weekOn) return renderWeekShop();
+  try { await ensureDays(planDayISO(0), planDayISO(6)); } catch {}      // which planned meals are already logged
   const req = weekRequest(), key = JSON.stringify(req);
   if (weekPlan && weekKey === key) return renderWeekPlan();      // no re-solve on tab switches
   const box = $("tab-week");
@@ -1932,9 +1994,9 @@ function plannedEntry(i, m) {
 function toggleEaten(slot) {
   const [i, m] = [+slot.split("|")[0], slot.split("|")[1]], r = weekPlan.days[i].meals[m], iso = planDayISO(i);
   const found = plannedEntry(i, m), on = !found;
-  if (found) { app.diary[iso] = entriesOf(iso).filter(e => e !== found); if (!app.diary[iso].length) delete app.diary[iso]; }
-  else (app.diary[iso] ||= []).push({ uid: uid(), kind: "recipe", id: r.id, meal: m, servings: 1, name: r.en, kcal: r.kcal, src: "week" });
-  save(); dayView = null;
+  if (found) unlog(found.uid, iso);
+  else logEntries(m, [{ kind: "recipe", id: r.id, servings: 1, name: r.en, kcal: r.kcal }], "week", iso);
+  dayView = null;
   const btn = document.querySelector(`[data-eat="${slot}"]`), line = document.querySelector(".eaten-line");
   if (!btn || !line) return renderWeekPlan();
   btn.setAttribute("aria-pressed", on);

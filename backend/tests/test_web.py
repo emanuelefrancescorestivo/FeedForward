@@ -31,6 +31,11 @@ def test_choice_inputs_are_not_removed_from_the_page():
     assert not re.search(r"\.choice input\s*\{[^}]*display:\s*none", client.get("/app").text)
 
 
+def test_the_saved_document_no_longer_holds_the_diary():
+    """The diary lives in rows (/diary/entries); the saved document keeps answers and the list."""
+    assert "app.diary" not in client.get("/app").text
+
+
 def test_app_opens_on_sign_in_and_plans_nothing_by_itself():
     """A new person meets the sign-in page; no week, list or diet is made before they ask."""
     page = client.get("/app").text

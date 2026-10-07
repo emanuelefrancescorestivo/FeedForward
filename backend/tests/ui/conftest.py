@@ -19,6 +19,7 @@ sync_api = pytest.importorskip("playwright.sync_api", reason="Playwright is not 
 
 import uvicorn  # noqa: E402
 
+import feedforward.api.main as main_module  # noqa: E402
 from feedforward.api.main import app  # noqa: E402
 from feedforward.db.models import Base  # noqa: E402
 from feedforward.db.session import get_engine  # noqa: E402
@@ -41,6 +42,8 @@ def _free_port() -> int:
 
 @pytest.fixture(scope="session")
 def server():
+    # every test browses from 127.0.0.1: the per-address limit (120 a minute) would refuse the later tests
+    main_module._LIMIT = 1_000_000
     Base.metadata.create_all(get_engine())
     port = _free_port()
     srv = uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=port, log_level="warning"))
