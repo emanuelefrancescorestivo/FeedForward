@@ -584,26 +584,29 @@ in the EU. Container platforms restart instances freely; a 17-second start
 makes every restart an outage.
 **Cost.** A build step for the image (not for the web app), and a scores file
 to rebuild whenever the data changes.
-*Where:* `Dockerfile`, `engine/recommender.py` (loading precomputed scores), `api/auth.py` (production checks)
-### 32. A public demo on Cloud Run, in Paris
+**Partly built for the demo** (October 2026): the whole engine, not only the scores, is saved when the image is built (`python -m feedforward.engine.cache`) and loaded when `FEEDFORWARD_ENGINE_CACHE` points at it: start-up 0.9 s instead of 15 s. The file carries a fingerprint of the engine's code and data, so a stale one is ignored. `Delivery` (about 200,000 of them) has slots, without which the loaded engine took 80 MB more than the built one.
+*Where:* `deploy/demo/Dockerfile`, [`engine/cache.py`](backend/feedforward/engine/cache.py), `api/auth.py` (production checks), [`tests/test_engine_cache.py`](backend/tests/test_engine_cache.py)
+### 32. A public demo on Render's free plan, in Frankfurt
 **Decision.** A demo anyone can open from a link, so friends and testers try the
 app without installing anything. It runs `FEEDFORWARD_ENV=demo`: the sign-in
 page offers "Try the demo", which makes a fresh account with a random id for
 each visitor; the name-only test sign-in is off (anyone typing the same name
 would open the same account); a strip asks for made-up details. It runs on
-Google Cloud Run in Paris (`europe-west9`) as one instance at most, because
-its database is SQLite inside the instance, and none when idle. The signing
-secret is set at each deploy and refused if missing, as in production; the
-request limit counts each visitor (proxy headers), not Google's proxy.
-**Why.** Feedback needs people to use the real thing. Cloud Run keeps the demo
-in the EU (decision 31), on the Google Cloud account the AI pilot will use, and
-a demo's traffic stays within its free allowance. Accounts of their own, and
-nothing kept, mean no one sees another visitor's answers.
-**Instead.** A Hugging Face Space, built first: Docker Spaces now need a paid
-PRO subscription, and they run in the US. A shared demo account would mix
+Render's free plan in Frankfurt from `render.yaml`, one instance (512 MB, a
+tenth of a CPU) that sleeps after 15 minutes without visits. Its database is
+SQLite inside the instance. Render makes the signing secret, which start-up
+refuses to go without, as in production; the request limit counts each
+visitor (proxy headers), not Render's proxy.
+**Why.** Feedback needs people to use the real thing, and the owner wanted it
+free, with no card. Frankfurt keeps it in the EU (decision 31). Accounts of
+their own, and nothing kept, mean no one sees another visitor's answers.
+**Instead.** A Hugging Face Space (Docker Spaces now need a paid PRO plan, and
+run in the US) and Google Cloud Run in Paris (needs a billing account with a
+card) were both prepared and dropped. A shared demo account would mix
 everyone's diaries.
-**Cost.** A billing account with a card, watched by a budget alert. The
-instance stops after some minutes without visits (about 15), which wipes the
-demo: a visitor who comes back later starts again, and the first visit after a
-pause waits about 20 seconds while the engine loads. Each deploy wipes it too.
-*Where:* [`deploy/demo/`](deploy/demo/) (`Dockerfile`, `deploy.py`), `api/auth.py` (`demo_mode`), `api/routers/auth_router.py` (`POST /auth/demo`), [`tests/test_demo.py`](backend/tests/test_demo.py)
+**Cost.** The first visit after a quiet spell waits about a minute while the
+instance wakes, and each wake, like each deploy, starts an empty demo: a
+visitor who comes back later starts again. A tenth of a CPU makes every
+answer slower than on a laptop. 512 MB holds the engine (about 290 MB) with
+room to spare, and is the reason for the slots in decision 31.
+*Where:* [`render.yaml`](render.yaml), [`deploy/demo/Dockerfile`](deploy/demo/Dockerfile), `api/auth.py` (`demo_mode`), `api/routers/auth_router.py` (`POST /auth/demo`), [`tests/test_demo.py`](backend/tests/test_demo.py)

@@ -1,0 +1,11 @@
+# What the demo image (deploy/demo/Dockerfile) does not need from the repository
+.git
+.github
+.claude
+.superpowers
+docs
+mobile
+backend/tests
+**/__pycache__
+**/*.db
+backend/feedforward/data/ingest/cache

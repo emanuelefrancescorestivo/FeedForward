@@ -1,5 +1,4 @@
 """The public demo (FEEDFORWARD_ENV=demo): each visitor gets a fresh account of their own; no name sign-in."""
-import importlib.util
 from pathlib import Path
 
 import pytest
@@ -55,21 +54,18 @@ DEMO = Path(__file__).resolve().parents[2] / "deploy" / "demo"
 
 
 def test_the_container_runs_the_demo():
-    """deploy/demo/Dockerfile: demo mode, on the port Cloud Run gives, counting each visitor rather than the proxy."""
+    """deploy/demo/Dockerfile: demo mode, on the port the host gives, counting each visitor rather than the proxy."""
     dockerfile = (DEMO / "Dockerfile").read_text(encoding="utf-8")
     assert "FEEDFORWARD_ENV=demo" in dockerfile and "${PORT:-8080}" in dockerfile
     assert "--proxy-headers" in dockerfile
     assert "playwright" in dockerfile                        # test tools are left out of the image
+    # the engine is built with the image and loaded at start-up (a free instance has a tenth of a CPU)
+    assert "feedforward.engine.cache /home/app/engine.pkl" in dockerfile and "FEEDFORWARD_ENGINE_CACHE=/home/app/engine.pkl" in dockerfile
 
 
-def test_the_demo_runs_as_one_instance_in_paris():
-    """One instance: the demo's database lives inside it, so a second one would not know the first one's visitors."""
-    spec = importlib.util.spec_from_file_location("deploy_demo", DEMO / "deploy.py")
-    deploy = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(deploy)
-    args = deploy.deploy_args("feedforward-demo", "/tmp/stage", "s" * 64)
-    flag = lambda name: args[args.index(name) + 1]           # noqa: E731
-    assert args[:3] == ["run", "deploy", "feedforward-demo"]
-    assert flag("--region") == "europe-west9" and flag("--max-instances") == "1" and flag("--min-instances") == "0"
-    assert "--allow-unauthenticated" in args and flag("--memory") == "1Gi"
-    assert flag("--set-env-vars") == "FEEDFORWARD_SECRET=" + "s" * 64
+def test_render_runs_the_demo_free_in_frankfurt():
+    """render.yaml: Render's free plan (no card), in the EU, from the demo's Dockerfile, with a secret of its own."""
+    blueprint = (DEMO.parents[1] / "render.yaml").read_text(encoding="utf-8")
+    for line in ("runtime: docker", "plan: free", "region: frankfurt", "dockerfilePath: ./deploy/demo/Dockerfile",
+                 "healthCheckPath: /health", "key: FEEDFORWARD_SECRET", "generateValue: true"):
+        assert line in blueprint, line

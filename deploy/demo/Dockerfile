@@ -1,7 +1,7 @@
-# The public demo of FeedForward (DECISIONS.md, decision 32), built by Cloud Run.
-# deploy.py copies this file next to backend/ and the licences. The database is
-# SQLite inside the container: it is wiped whenever the instance stops, which
-# suits a demo (it asks for made-up details).
+# The public demo of FeedForward (DECISIONS.md, decision 32), built by Render
+# from the repository root (render.yaml). The database is SQLite inside the
+# container: it is wiped whenever the instance stops, which suits a demo (it
+# asks for made-up details).
 FROM python:3.12-slim
 
 # CBC (the solver PuLP calls to plan a week) needs the OpenMP runtime
@@ -18,7 +18,11 @@ RUN grep -v -E "^(pytest|playwright)" requirements.txt > run.txt && pip install 
 
 COPY --chown=app backend/ .
 
+# the engine built once here and loaded at start-up: about a second instead of fifteen (decision 31)
+RUN python -m feedforward.engine.cache /home/app/engine.pkl
+
 # demo: a fresh account per visitor, no name sign-in; FEEDFORWARD_SECRET comes from the deploy
 ENV FEEDFORWARD_ENV=demo FEEDFORWARD_DATABASE_URL=sqlite:////home/app/feedforward-demo.db
-# Cloud Run gives the port in $PORT; --proxy-headers: the request limit counts each visitor, not Google's proxy
+ENV FEEDFORWARD_ENGINE_CACHE=/home/app/engine.pkl
+# the host gives the port in $PORT; --proxy-headers: the request limit counts each visitor, not the host's proxy
 CMD exec uvicorn feedforward.api.main:app --host 0.0.0.0 --port ${PORT:-8080} --proxy-headers --forwarded-allow-ips "*"
