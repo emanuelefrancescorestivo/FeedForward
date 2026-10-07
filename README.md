@@ -5,6 +5,11 @@
 **A weekly meal plan that fits a student budget at your own supermarket,
 and shows the science behind every food on it.**
 
+**Try it: [feedforward-demo.onrender.com](https://feedforward-demo.onrender.com)**, a
+demo with a fresh account just for you, no sign-up. Please use made-up details:
+it is wiped whenever it restarts. It sleeps when nobody uses it, so the first
+visit can take about a minute (free hosting in Frankfurt, decision 32).
+
 You give your age, height, weight, how active you are, one goal (energy,
 focus, sleep, iron…), where you shop and what you can spend. FeedForward plans
 seven days of breakfasts, lunches and dinners that cover your needs, prices the
@@ -93,6 +98,10 @@ Two bugs the tests caught, as examples of how the project is checked:
 ---
 
 ## Try it
+
+Online: [feedforward-demo.onrender.com](https://feedforward-demo.onrender.com)
+(`render.yaml` builds `deploy/demo/Dockerfile` on Render's free plan). On your
+own machine:
 
 ```bash
 cd backend
