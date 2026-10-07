@@ -20,7 +20,8 @@ DATA = Path(__file__).resolve().parents[2] / "data"
 
 def _photo(p: dict) -> dict:
     return {"src": f"/app/photos/{p['id']}.webp", "thumb": f"/app/photos/{p['id']}-sq.webp",
-            "author": p["author"], "licence": p["licence"], "licence_url": p.get("licence_url", ""), "page": p["page"]}
+            "author": p["author"], "licence": p["licence"], "licence_url": p.get("licence_url", ""), "page": p["page"],
+            "changes": p["changes"]}
 
 
 @lru_cache(maxsize=1)
@@ -36,11 +37,14 @@ def photo_index() -> dict:
                 recipes[item] = _photo(p)
         for ing in p.get("ingredients", []):
             foods[food_of[ing]] = by_ingredient[ing] = _photo(p)
-    return {"recipes": recipes, "foods": foods, "ingredients": by_ingredient}
+    credits = [{"shows": p["shows"], "author": p["author"], "licence": p["licence"], "licence_url": p.get("licence_url", ""),
+                "page": p["page"], "changes": p["changes"]} for p in ledger["photos"]]
+    return {"recipes": recipes, "foods": foods, "ingredients": by_ingredient, "credits": credits}
 
 
 @router.get("/photos")
 def photos():
     """Photo, thumbnail and credit for each recipe and everyday food that has one; foods keyed by engine
-    food id and by the planner's ingredient id (shopping-list items carry the latter)."""
+    food id and by the planner's ingredient id (shopping-list items carry the latter). 'credits' lists every
+    photo once, with the changes made, for the app's Photo credits."""
     return photo_index()

@@ -214,7 +214,8 @@ nutrition apps; what sits inside is FeedForward's own:
 - **Today** is a diary. Each meal has **+ Add**: search a food or a recipe (its
   usual portion is filled in), repeat an earlier meal in one tap ("Same as
   Monday's dinner"), log the **CROUS meal** (a main and two sides, about 590 kcal,
-  always marked ≈ as an estimate), or tick several recent items and add them
+  always marked ≈ as an estimate; vegetarians and vegans get a lentil plate of
+  their own, about 640 and 650 kcal), or tick several recent items and add them
   together. Each log is saved on its own (`/diary/entries`), so two devices
   never overwrite each other, and a log that could not be saved stays on screen
   as "Not saved" with Retry. And **Ideas**: three recipes for that
@@ -267,8 +268,9 @@ and a tab bar on phones, quiet motion that switches off with the system's
 "reduce motion". Every text colour passes WCAG AA in both themes, and the
 meaningful graphics (rings, outlines) pass 3:1 (`docs/design/contrast.py`, run by
 the tests). Icons are line drawings, not emoji. Food is shown with open-licence
-photos of a similar dish from Wikimedia Commons, served by the app and credited
-next to each one (`data/photos.json`). Answers are read the way people type
+photos of a similar dish from Wikimedia Commons, served by the app; a recipe's
+photo is credited under it, and every photo (food thumbnails included) in
+"Sources and licences" › Photo credits (`data/photos.json`). Answers are read the way people type
 them: "1,78 m", "5'10", "160 lb" or "€50" all work. The design system and the
 screens planned for the next releases are in
 [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md).

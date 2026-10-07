@@ -392,8 +392,7 @@ Playwright check, or the files drift back into one.
 `diary_entries` (an id made by the app, so a retried request is not counted
 twice; the person; the local day; the meal; recipe or food and its id; portions
 or grams; how it was logged: by hand, from an idea, repeated, CROUS, described;
-whether it is an estimate; when; and a deletion time, so other devices learn
-of a removal). The app reads a range of days and adds or removes one entry at
+whether it is an estimate; when). Removing an entry deletes its row. The app reads a range of days and adds or removes one entry at
 a time. A second table, `activity_days`, records the days a person showed up
 and how (logged, cooked, planned, used the list). The answers, preferences
 and personal list stay one document in `/me/state`. Each account gets a time
@@ -408,7 +407,7 @@ it: the last write wins.
 but the two-device loss stays, and every weekly query reads ten years of diary.
 **Cost.** A migration, new endpoints, and a queue in the service worker for
 logs made offline (the app-made ids make retries safe).
-**Built in release 1** (October 2026), except the time zone, which comes with the weekly progress in release 2. The move of old diaries runs when the API starts (`migrate_state_diaries`, idempotent), because local and test databases are made with `create_all`; a log that fails to save stays on screen as "Not saved" with Retry.
+**Built in release 1** (October 2026), except the time zone, which comes with the weekly progress in release 2. The move of old diaries runs when the API starts (`migrate_state_diaries`, idempotent), because local and test databases are made with `create_all`, and a diary still sent inside the document by a page opened before the update is moved when it arrives. A log that fails to save stays on screen as "Not saved" with Retry; removing an entry waits for its save, then deletes the row (the planned deletion time, which would keep removed food on the server, was dropped: removed means gone). "Download my data" includes the entries and the activity days.
 *Where:* [`db/diary_rows.py`](backend/feedforward/db/diary_rows.py), [`api/routers/entries.py`](backend/feedforward/api/routers/entries.py), [`alembic/versions/004_diary_rows.py`](backend/alembic/versions/004_diary_rows.py), [`tests/test_diary_rows.py`](backend/tests/test_diary_rows.py)
 
 ### 25. Progress, the food-week streak and the recap are pure engine functions

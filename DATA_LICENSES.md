@@ -14,7 +14,9 @@ under its own licence: public domain, CC0, CC BY or CC BY-SA (never NC or ND).
 [`data/photos.json`](backend/feedforward/data/photos.json) lists, for every
 photo, its source page, author, licence and the changes made (cropped to 4:3
 and 1:1, resized, converted to WebP); a photo shared under CC BY-SA stays under
-CC BY-SA. The app credits the author and licence next to each photo, and
+CC BY-SA. The app credits the author, licence and changes under each recipe
+photo, and lists every photo's credit in "Sources and licences" › Photo
+credits (food thumbnails are too small for a line of their own); and
 `scripts/photos.py` rebuilds the files from the ledger.
 
 Raw downloads (`data/ingest/cache/`) and the original Open Food Facts crawl

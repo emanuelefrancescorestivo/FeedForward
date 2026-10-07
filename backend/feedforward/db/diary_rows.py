@@ -53,8 +53,14 @@ def list_entries(email: str, start: date, end: date) -> list[dict] | None:
 
 
 def _mark(s, uid: int, day: date, kind: str) -> None:
-    if s.get(ActivityDayRow, (uid, day, kind)) is None:
-        s.add(ActivityDayRow(user_id=uid, day=day, kind=kind))
+    if s.get(ActivityDayRow, (uid, day, kind)) is not None:
+        return
+    try:
+        with s.begin_nested():                     # two logs at once on a new day both find it unmarked
+            s.add(ActivityDayRow(user_id=uid, day=day, kind=kind))
+            s.flush()
+    except IntegrityError:
+        pass                                       # the other one marked it
 
 
 def add_entries(email: str, entries: list[dict]) -> list[dict] | None:

@@ -44,7 +44,8 @@ Everyday foods are ranked first (engine/familiarity.py). "Why?" shows the
 food -> nutrient -> goal graph. The Dictionary (nutrients, foods, terms) cites a
 source for every entry. Theme: system, light or
 dark (◐). The shopping list lives in this browser (localStorage).
-Icons are emoji placeholders per food group until real food images exist.
+Photos of a similar dish come from Wikimedia Commons (data/photos.json), each
+credited under Sources and licences; line icons stand in where there is none.
 Wording avoids the regulated EU nutrition-claim terms ("source of", "high in",
 "rich in"): it states the share of daily need instead.
 Look: Apple Human Interface Guidelines conventions (system font, large titles,
@@ -415,6 +416,8 @@ details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
 .multi-bar .primary { width: 100%; }
 .unsaved { margin: -2px 0 6px 46px; font-size: 13px; color: var(--note); }
 .unsaved .link { font-size: 13px; min-height: 32px; font-weight: 600; }
+.unsaved-inline { color: var(--note); }
+.stale-note .link { font-size: 15px; font-weight: 600; }
 /* photos: a similar dish, served by this app (data/photos.json) */
 .tile-ic { overflow: hidden; }
 .tile-ic img.ph, .li-ph img.ph { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -422,6 +425,10 @@ details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
   background: var(--soft); }
 .rs-credit { font-size: 12px; color: var(--muted); margin: 6px 2px 12px; }
 .rs-credit a { color: var(--muted); }
+.credits summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+.photo-credits { margin: 0 0 12px; padding-left: 18px; font-size: 13px; color: var(--muted); max-height: 40vh; overflow-y: auto; }
+.photo-credits li { margin: 4px 0; }
+.photo-credits a { color: var(--muted); }
 .li-ph { display: inline-block; width: 28px; height: 28px; border-radius: 8px; overflow: hidden; vertical-align: middle;
   margin-right: 8px; background: var(--soft); }
 .i { width: 1.25em; height: 1.25em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
@@ -766,7 +773,8 @@ dialog#log-sheet { width: min(520px, 94vw); }
     <p class="src">Food composition: ANSES-CIQUAL 2020 and USDA FoodData Central. Products and prices: Open Food Facts and
       Open Prices (ODbL); ≈ marks a price estimated from the national median and the shop's price level. Health claims:
       EU Register of nutrition and health claims, © European Union. Descriptions: Wikipedia (CC BY-SA). Typeface: Inter
-      (SIL Open Font License 1.1). Food icons are placeholders.</p>
+      (SIL Open Font License 1.1). Photos: Wikimedia Commons contributors, cropped and resized, each credited below.</p>
+    <details class="credits"><summary>Photo credits</summary><ul class="photo-credits" id="photo-credits"></ul></details>
     <button class="primary" type="button" data-close-sheet>Close</button>
   </div>
 </dialog>
@@ -920,8 +928,16 @@ const qs = (o) => new URLSearchParams(Object.entries(o).flatMap(([k, v]) => Arra
 const TOKEN_KEY = "feedforward.token";
 let token = (() => { try { return localStorage.getItem(TOKEN_KEY); } catch { return null; } })();
 let app = null;                 // the saved document
-let photos = { recipes: {}, foods: {}, ingredients: {} };   // GET /photos: which photo shows what, with its credit
+let photos = { recipes: {}, foods: {}, ingredients: {}, credits: [] };   // GET /photos: which photo shows what, with its credit
 let presetList = [];            // GET /diary/presets: meals logged in one tap as an estimate (the CROUS lunch)
+async function loadPresets() {   // the plate of the person's diet: a vegan's CROUS plate is not chicken and yogurt
+  const diet = app?.setup?.diet;
+  try { presetList = await api("/diary/presets" + (diet ? "?" + qs({ diet }) : "")); } catch { presetList = []; }
+}
+// Answers changed: what was computed from them is computed again.
+function answersChanged() {
+  dayView = null; weekPlan = null; forgetIdea(); loadPresets();
+}
 let account = null;             // {email}
 let authConfig = { google_client_id: null, dev_login: false };
 const blankApp = () => ({ v: 1, onboarded: false, setup: {}, answers: {}, declined: [], avoid: [], list: [],
@@ -946,7 +962,8 @@ function setToken(t) {
 function signOut() {
   if (saveTimer) flush();
   setToken(null); app = null; account = null; weekPlan = null; weekKey = null; dayView = null; onb.draft = null;
-  diaryCache.clear();
+  diaryCache.clear(); forgetIdea(); presetList = []; picked = new Map();
+  document.body.classList.remove("first-run");
   try { window.google?.accounts?.id?.disableAutoSelect(); } catch {}
   renderGate();
 }
@@ -1208,7 +1225,7 @@ function finishOnboarding() {
   const first = !app.onboarded;
   app.onboarded = true; onb.draft = null;
   document.body.classList.remove("first-run");
-  save(); syncProfile(); dayView = null; weekPlan = null; recipeCache.clear();
+  save(); syncProfile(); answersChanged(); recipeCache.clear();
   if ($("tab-find").innerHTML) refreshViews();
   showTab(first ? "today" : "profile");
 }
@@ -1345,7 +1362,7 @@ document.addEventListener("click", (ev) => {
   const closeSheets = () => document.querySelectorAll("dialog[open]").forEach(d => d.close());
   const on = (sel) => t.closest(sel);
   let el;
-  if (on("[data-about]")) { $("about").showModal(); return; }
+  if (on("[data-about]")) { fillCredits(); $("about").showModal(); return; }
   if (on("[data-rs-close]")) { closeSheet($("recipe-sheet")); return; }
   if ((el = on("[data-close-sheet]"))) { closeSheet(el.closest("dialog")); return; }
   if ((el = on("[data-theme-set]"))) { setTheme(el.dataset.themeSet); renderProfile(); return; }
@@ -1364,12 +1381,13 @@ document.addEventListener("click", (ev) => {
   // today
   if ((el = on("[data-day-shift]"))) { dayISO = shiftDay(dayISO, +el.dataset.dayShift); renderToday(); return; }
   if (on("[data-reload-day]")) { dayView = null; renderToday(); return; }
+  if (on("[data-retry-day]")) { renderToday(); return; }
   if ((el = on("[data-intro-close]"))) { app.introSeen = true; save(); el.closest(".ready").remove(); return; }
   if ((el = on("[data-log]"))) { openLog(el.dataset.log); return; }
   if ((el = on("[data-ideas]"))) { openIdeas(el.dataset.ideas); return; }
   if ((el = on("[data-unlog]"))) { unlog(el.dataset.unlog); return; }
   if (on("[data-inline-take]")) { takeInlineIdea(); return; }
-  if (on("[data-inline-hide]")) { app.inlineIdeaOff = true; save(); drawToday(dayView.sum, entriesOf(dayISO)); return; }
+  if (on("[data-inline-hide]")) { app.inlineIdeaOff = true; save(); dayView ? drawToday(dayView.sum, entriesOf(dayISO)) : renderToday(); return; }
   if ((el = on("[data-q-answer]"))) { const [q, v] = el.dataset.qAnswer.split("|"); answerQuestion(q, v); return; }
   if ((el = on("[data-q-next]"))) { qState = null; renderToday(); return; }
   if ((el = on("[data-q-later]"))) { app.qSnooze = dayISO; qState = null; save(); renderToday(); return; }
@@ -1380,7 +1398,7 @@ document.addEventListener("click", (ev) => {
   if ((el = on("[data-again]"))) { repeatMeal(el.dataset.again); return; }
   if ((el = on("[data-preset]"))) { const x = presetList.find(p => p.id === el.dataset.preset); if (x) pickAmount(x); return; }
   if ((el = on("[data-add-picked]"))) { addPicked(); return; }
-  if (on("[data-log-back]")) { openLog(logMeal); return; }
+  if (on("[data-log-back]")) { openLog(logMeal, true); return; }
   if (on("[data-ideas-more]")) { openIdeas(ideas.meal, true); return; }
   if (on("[data-ideas-reset]")) { openIdeas(ideas.meal); return; }
   if ((el = on("[data-idea-take]"))) { takeIdea(el.dataset.ideaTake); return; }
@@ -1652,13 +1670,15 @@ async function renderToday() {
     drawToday(sum, entries);
   } catch (e) {
     if (my !== dayToken) return;
+    // Offline after the day was open: keep it on screen, entries and "Not saved" included, with the last totals.
+    if (dayView?.iso === dayISO) { dayView.stale = true; return drawToday(dayView.sum, entriesOf(dayISO)); }
     box.innerHTML = `<h1>${dayLabel(dayISO)}</h1><div class="note">Could not open this day (${esc(e.message)}).</div>
       <div class="actions"><button class="primary" data-reload-day>Try again</button><button class="ghost" data-tab-go="profile">Check your answers</button></div>`;
   }
 }
 
 function drawToday(sum, entries) {
-  const box = $("tab-today");
+  const box = $("tab-today"), stale = !!dayView?.stale;
   ideaSlot = inlineIdeaSlot();
   if (ideaSlot && (inlineIdea.iso !== dayISO || inlineIdea.meal !== ideaSlot)) fetchInlineIdea(ideaSlot);
   const date = new Date(`${dayISO}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
@@ -1666,6 +1686,8 @@ function drawToday(sum, entries) {
     <div class="day-title"><h1>${dayLabel(dayISO)}</h1>
       <span class="daynav"><button class="icon-btn" data-day-shift="-1" aria-label="Previous day">‹</button>
         <span class="muted">${date}</span><button class="icon-btn" data-day-shift="1" aria-label="Next day">›</button></span></div>
+    ${stale ? `<div class="note stale-note" role="status">No connection: the totals are from before. They update when it is back.
+      <button class="link" data-retry-day>Try again</button></div>` : ""}
     ${dayEnergyCard(sum, entries)}
     ${entries.length ? dayGoalCard(sum) : ""}
     ${SLOTS.map(m => slotCard(m, sum, entries)).join("")}
@@ -1745,13 +1767,13 @@ async function answerQuestion(id, value) {
     app.strategyIds = p.strategies.map(s => s.id);
   } catch { app.strategyIds = before; }
   qState = { id, news };
-  save(); syncProfile(); dayView = null; weekPlan = null;
+  save(); syncProfile(); answersChanged();
   renderToday();
 }
 function toggleQuestionStrategy(el) {
   const id = el.dataset.qStrat;
   app.declined = el.checked ? app.declined.filter(x => x !== id) : [...new Set([...app.declined, id])];
-  save(); dayView = null;
+  save(); dayView = null; forgetIdea();
 }
 
 function dayEnergyCard(sum, entries) {
@@ -1792,6 +1814,7 @@ function leverChips(levers) {
 // Until something is logged, the card of the meal for this time of day shows one idea, so Today is not
 // empty on the first day. One tap logs it; it can be hidden for good.
 let ideaSlot = null, inlineIdea = { iso: null, meal: null, option: null };
+const forgetIdea = () => { inlineIdea = { iso: null, meal: null, option: null }; };   // it was chosen for other answers
 function currentSlot(d) {
   const minutes = d.getHours() * 60 + d.getMinutes();
   return minutes < 630 ? "breakfast" : minutes < 930 ? "lunch" : "dinner";
@@ -1825,7 +1848,7 @@ function takeInlineIdea() {
   const o = inlineIdea.option;
   if (!o) return;
   logEntries(inlineIdea.meal, [{ kind: "recipe", id: o.id, name: o.en, servings: 1, kcal: Math.round(o.kcal) }], "idea");
-  inlineIdea = { iso: null, meal: null, option: null };
+  forgetIdea();
   renderToday();
 }
 
@@ -1852,42 +1875,46 @@ function slotCard(m, sum, entries) {
   </div>`;
 }
 
-// Log at once on screen, then save; a failed save is shown on its row with Retry.
+// Log at once on screen, then save; a failed save is shown on its row with Retry. True when saved.
 async function logEntries(meal, items, source, iso = dayISO) {
   const added = items.map(item => ({ uid: newId(), meal, ...item, src: source, pending: true }));
   diaryCache.set(iso, [...entriesOf(iso), ...added]);
   app.introSeen = true; save();
-  if (!(await saveEntries(iso, added)) && iso === dayISO && todayShown()) renderToday();
+  const ok = await saveEntries(iso, added);
+  if (!ok && iso === dayISO && todayShown()) renderToday();
+  return ok;
 }
 function logEntry(meal, item, source = "manual") { logEntries(meal, [item], source); }
-async function saveEntries(iso, list) {
-  try {
-    await api("/diary/entries", { entries: list.map(e => toRow(iso, e)) });
-    list.forEach(e => { e.pending = false; e.failed = false; });
-    return true;
-  } catch {
-    list.forEach(e => { e.pending = false; e.failed = true; });
-    return false;
-  }
+// Each entry keeps its save in flight (e.saving), so removing it can wait for that save first.
+function saveEntries(iso, list) {
+  const done = api("/diary/entries", { entries: list.map(e => toRow(iso, e)) }).then(
+    () => { list.forEach(e => { e.pending = false; e.failed = false; }); return true; },
+    () => { list.forEach(e => { e.pending = false; e.failed = true; }); return false; });
+  list.forEach(e => { e.saving = done; });
+  return done;
 }
 async function retryEntry(id) {
   const e = entriesOf(dayISO).find(x => x.uid === id);
-  if (!e) return;
+  if (!e || e.pending) return;
   e.failed = false; e.pending = true;
   await saveEntries(dayISO, [e]);
   renderToday();
 }
+// Removing waits for the entry's save, then deletes it on the server even when it showed "Not saved":
+// the save may have arrived although its answer did not. True when it is gone.
 async function unlog(id, iso = dayISO) {
   const list = entriesOf(iso), e = list.find(x => x.uid === id);
-  if (!e) return;
+  if (!e) return true;
   diaryCache.set(iso, list.filter(x => x !== e));
   if (iso === dayISO && todayShown()) renderToday();
-  if (e.failed) return;                                   // never saved: nothing to remove on the server
-  try { await api(`/diary/entries/${encodeURIComponent(id)}`, undefined, "DELETE"); }
+  await e.saving;
+  try { await api(`/diary/entries/${encodeURIComponent(id)}`, undefined, "DELETE"); return true; }
   catch (x) {
-    if (x.message === "No such entry") return;            // already gone
-    diaryCache.set(iso, [...entriesOf(iso), { ...e, note: "Could not remove this. Check the connection and try again." }]);
+    if (x.message === "No such entry") return true;       // never stored, or already gone
+    diaryCache.set(iso, [...entriesOf(iso), { ...e, pending: false, failed: false, saving: null,
+      note: "Could not remove this. Check the connection and try again." }]);
     if (iso === dayISO && todayShown()) renderToday();
+    return false;
   }
 }
 function showLever(id) {
@@ -1901,15 +1928,24 @@ function showLever(id) {
 }
 
 // ---------------------------------------------------------------- log sheet: add what you ate
-let logMeal = null;
-function openLog(meal) {
+let logMeal = null, picked = new Map();          // ticked recent items, kept while searching
+// The sheet slides away for 190 ms after an Add: a second tap in that time must not log again.
+const logClosing = () => !$("log-sheet").open || $("log-sheet").classList.contains("closing");
+function openLog(meal, keepPicked = false) {
   logMeal = meal;
+  if (!keepPicked) picked = new Map();
   $("log-title").textContent = `Add to ${SLOT_LABEL[meal].toLowerCase()}`;
   $("log-body").innerHTML = `<input type="search" id="log-q" placeholder="Search a food or a recipe" autocomplete="off" aria-label="Search a food or a recipe">
     <div id="log-results">${quickRows(meal)}${recentList()}</div>
     <div class="multi-bar" id="multi-bar" hidden><button class="primary" type="button" data-add-picked></button></div>`;
-  $("log-sheet").showModal();
-  $("log-body").onchange = (e) => { if (e.target.matches(".pick-check")) updateMultiBar(); };
+  updateMultiBar();
+  if (!$("log-sheet").open) $("log-sheet").showModal();
+  $("log-body").onchange = (e) => {
+    if (!e.target.matches(".pick-check")) return;
+    const x = JSON.parse(e.target.dataset.multi), k = `${x.kind}|${x.id}`;
+    e.target.checked ? picked.set(k, x) : picked.delete(k);
+    updateMultiBar();
+  };
   let timer;
   $("log-q").addEventListener("input", (e) => {
     clearTimeout(timer);
@@ -1948,6 +1984,7 @@ function quickRows(meal) {
   return again + (quick ? `${again ? "" : `<div class="group-title">Quick</div>`}${quick}` : "");
 }
 function repeatMeal(d) {
+  if (logClosing()) return;
   const items = entriesOf(d).filter(e => e.meal === logMeal && !e.failed).map(e => ({ kind: e.kind, id: e.id, name: e.name,
     servings: e.servings, grams: e.grams, kcal: e.kcal, estimate: !!e.estimate, group: "" }));
   logEntries(logMeal, items, "repeat");
@@ -1955,13 +1992,14 @@ function repeatMeal(d) {
 }
 // Several recent items at once, each at its usual amount.
 function updateMultiBar() {
-  const n = document.querySelectorAll(".pick-check:checked").length, bar = $("multi-bar");
+  const n = picked.size, bar = $("multi-bar");
   if (!bar) return;
   bar.hidden = !n;
   bar.querySelector("button").textContent = `Add ${n} to ${SLOT_LABEL[logMeal].toLowerCase()}`;
 }
 function addPicked() {
-  const items = [...document.querySelectorAll(".pick-check:checked")].map(c => JSON.parse(c.dataset.multi)).map(x => x.kind === "recipe"
+  if (logClosing() || !picked.size) return;
+  const items = [...picked.values()].map(x => x.kind === "recipe"
     ? { kind: "recipe", id: x.id, name: x.name, servings: 1, kcal: Math.round(x.kcal) }
     : { kind: "food", id: x.id, name: x.name, group: x.group || "", grams: x.portion_g, kcal: Math.round(x.kcal_100g * x.portion_g / 100) });
   logEntries(logMeal, items, "manual");
@@ -1986,7 +2024,7 @@ function recentList() {
       ? { kind: "recipe", id: e.id, name: e.name, kcal: Math.round((e.kcal || 0) / (e.servings || 1)) }
       : { kind: "food", id: e.id, name: e.name, group: e.group, portion_g: e.grams, kcal_100g: e.grams ? Math.round(100 * (e.kcal || 0) / e.grams) : 0 };
     const label = x.kind === "food" ? friendlyName(x.name) : x.name;
-    return `<div class="pick-row"><input type="checkbox" class="pick-check" data-multi="${esc(JSON.stringify(x))}" aria-label="Select ${esc(label)}">${pickRow(x)}</div>`;
+    return `<div class="pick-row"><input type="checkbox" class="pick-check" data-multi="${esc(JSON.stringify(x))}" ${picked.has(`${x.kind}|${x.id}`) ? "checked" : ""} aria-label="Select ${esc(label)}">${pickRow(x)}</div>`;
   }).join("")}`;
 }
 function pickRow(x) {
@@ -2018,6 +2056,7 @@ function pickAmount(x) {
   form.querySelectorAll("[data-grams]").forEach(b => b.onclick = () => { form.amt.value = b.dataset.grams; update(); });
   form.onsubmit = (e) => {
     e.preventDefault();
+    if (logClosing()) return;
     const v = value();
     if (!(v > 0) || (!recipe && v > 3000)) { form.amt?.setCustomValidity?.("Between 1 and 3000 g."); form.amt?.reportValidity?.(); return; }
     if (preset) logEntry(logMeal, { kind: "preset", id: x.id, name: x.name, servings: v, kcal: Math.round(kcalFor(v)), estimate: true }, "preset");
@@ -2205,18 +2244,24 @@ function plannedEntry(i, m) {
   const r = weekPlan.days[i].meals[m];
   return entriesOf(planDayISO(i)).find(e => e.src === "week" && e.meal === m && e.id === r.id);
 }
-function toggleEaten(slot) {
+// The tick shows at once; when the save (or the removal) fails it goes back, with "Not saved" on the day's line.
+async function toggleEaten(slot) {
   const [i, m] = [+slot.split("|")[0], slot.split("|")[1]], r = weekPlan.days[i].meals[m], iso = planDayISO(i);
   const found = plannedEntry(i, m), on = !found;
-  if (found) unlog(found.uid, iso);
-  else logEntries(m, [{ kind: "recipe", id: r.id, servings: 1, name: r.en, kcal: r.kcal }], "week", iso);
+  const done = found ? unlog(found.uid, iso) : logEntries(m, [{ kind: "recipe", id: r.id, servings: 1, name: r.en, kcal: r.kcal }], "week", iso);
   dayView = null;
-  const btn = document.querySelector(`[data-eat="${slot}"]`), line = document.querySelector(".eaten-line");
-  if (!btn || !line) return renderWeekPlan();
+  paintEaten(slot, i, on);
+  if (await done) return;
+  if (on) diaryCache.set(iso, entriesOf(iso).filter(e => !(e.failed && e.src === "week" && e.meal === m && e.id === r.id)));
+  paintEaten(slot, i, !on, "Not saved, check the connection");
+}
+function paintEaten(slot, i, on, problem = "") {
+  const btn = document.querySelector(`[data-eat="${slot}"]`), line = $("tab-week").querySelector(".eaten-line");
+  if (!btn || !line) return problem || $("tab-week").hidden ? undefined : renderWeekPlan();
   btn.setAttribute("aria-pressed", on);
-  btn.classList.toggle("just", on);
+  btn.classList.toggle("just", on && !problem);
   btn.closest(".meal-card").classList.toggle("done", on);
-  line.innerHTML = eatenLine(i);
+  line.innerHTML = eatenLine(i) + (problem ? ` · <span class="unsaved-inline">${problem}</span>` : "");
 }
 function eatenLine(i) {
   const done = ["breakfast", "lunch", "dinner"].filter(m => weekPlan.days[i].meals[m] && plannedEntry(i, m)).length;
@@ -2423,12 +2468,19 @@ function addWeekToList() {
 // Swap when it is a meal of a planned week. It opens from an idea (with
 // "I'll have this"), from the diary, or from the week.
 let sheet = null;          // {id, en, kcal, time_min, meal, ctx: "week" | "idea" | "diary", day?}
+const licenceLink = (p) => p.licence_url ? `<a href="${esc(p.licence_url)}" target="_blank" rel="noopener">${esc(p.licence)}</a>` : esc(p.licence);
+const creditLine = (p, short = false) => `<a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.author)}</a>, ${licenceLink(p)}, ${
+  short || !p.changes ? "cropped and resized" : esc(p.changes)}`;
+function fillCredits() {
+  $("photo-credits").innerHTML = (photos.credits || []).map(p => `<li><b>${esc(p.shows)}</b>: ${creditLine(p)}</li>`).join("")
+    || `<li class="muted">The photos could not be loaded just now.</li>`;
+}
 function openRecipeSheet(info) {
   sheet = info;
   const pic = photos.recipes[info.id];
   $("rs-icon").innerHTML = pic ? "" : recipeIcon(info.en);
   $("rs-photo").innerHTML = pic ? `<img src="${pic.src}" alt="${esc(info.en)}" width="800" height="600">
-    <p class="rs-credit">Photo: a similar dish · <a href="${esc(pic.page)}" target="_blank" rel="noopener">${esc(pic.author)}</a>, ${esc(pic.licence)}</p>` : "";
+    <p class="rs-credit">Photo: a similar dish · ${creditLine(pic, true)}</p>` : "";
   $("rs-title").textContent = info.en;
   const when = info.ctx === "week" ? `${MEAL_LABEL[info.meal]} · ${WEEKDAYS[info.day]}` : SLOT_LABEL[info.meal] || "";
   $("rs-sub").textContent = [when, info.time_min ? `${info.time_min} min` : "", info.kcal ? `${fmt(info.kcal)} kcal` : ""].filter(Boolean).join(" · ");
@@ -2808,11 +2860,13 @@ async function enterApp() {
   Object.keys(NAV_OF).forEach(t => { $("tab-" + t).hidden = t !== "today"; if (t !== "today") $("tab-" + t).innerHTML = ""; });
   $("tab-today").innerHTML = loading("Opening FeedForward…", "week");
   try {
-    const [saved, me, pics, presets] = await Promise.all([api("/me/state"), api("/auth/me"), api("/photos"),
-      api("/diary/presets").catch(() => []), loadBasics()]);
-    photos = pics; presetList = presets;
+    // photos are a nicety: without them the app shows its plate icons
+    const [saved, me, pics] = await Promise.all([api("/me/state"), api("/auth/me"),
+      api("/photos").catch(() => ({ recipes: {}, foods: {}, ingredients: {}, credits: [] })), loadBasics()]);
+    photos = pics;
     account = me;
     app = Object.assign(blankApp(), saved.data || {});
+    loadPresets();
     app.prefs = Object.assign({ extra: [], science: false }, app.prefs || {});
     dayISO = isoDate(new Date()); dayView = null; weekPlan = null; weekKey = null;
     syncProfile(); updateCount();

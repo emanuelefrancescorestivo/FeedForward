@@ -158,3 +158,18 @@ def test_same_entry_arriving_twice_at_once_is_one_row(client, monkeypatch):
     assert [e["id"] for e in res.json()["entries"]] == ["racing-entry-01"]
     monkeypatch.setattr(Session, "get", original)
     assert len(_get(client, h, "2026-10-07", "2026-10-07").json()["entries"]) == 1
+
+def test_two_entries_at_once_on_a_new_day_mark_it_once(client, monkeypatch):
+    """A double tap or two devices: both requests find the day unmarked; the second must not fail."""
+    h = _bearer(client, "rows-max")
+    assert client.post("/diary/entries", headers=h, json={"entries": [_entry("first-of-day-01", "2026-10-07")]}).status_code == 200
+    from sqlalchemy.orm import Session
+    original = Session.get
+
+    def blind_to_days(self, entity, ident, *a, **kw):            # the day lookup misses, as in a race
+        return None if entity is ActivityDayRow else original(self, entity, ident, *a, **kw)
+    monkeypatch.setattr(Session, "get", blind_to_days)
+    res = client.post("/diary/entries", headers=h, json={"entries": [_entry("second-of-day-1", "2026-10-07")]})
+    monkeypatch.setattr(Session, "get", original)
+    assert res.status_code == 200, res.text
+    assert len(_get(client, h, "2026-10-07", "2026-10-07").json()["entries"]) == 2

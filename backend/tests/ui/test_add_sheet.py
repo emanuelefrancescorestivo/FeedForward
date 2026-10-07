@@ -71,3 +71,11 @@ def test_add_several_recent_items_at_once(server, page):
     expect(dinner.locator(".entry")).to_have_count(2)
     expect(dinner).to_contain_text("Apple")
     expect(dinner).to_contain_text("Carrot")
+
+
+def test_crous_plate_follows_the_diet(server, page):
+    sign_in(page, server, "add-crous-vegan")
+    finish_first_run(page, diet="Vegan")
+    page.locator("[data-log=lunch]").click()
+    expect(page.locator("[data-preset]")).to_have_count(1)
+    expect(page.locator("[data-preset=crous-meal-vegan]")).to_contain_text("CROUS meal")

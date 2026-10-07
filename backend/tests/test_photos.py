@@ -47,6 +47,16 @@ def test_photos_endpoint():
         assert photo["author"] and photo["licence"] and photo["page"].startswith("https://commons.wikimedia.org/")
 
 
+def test_every_photo_has_a_credit_with_its_changes():
+    """Food thumbnails have no room for a credit line: the app lists every photo's credit in one place."""
+    credits = client.get("/photos").json()["credits"]
+    ledger = json.loads((DATA / "photos.json").read_text(encoding="utf-8"))["photos"]
+    assert len(credits) == len(ledger)
+    for c in credits:
+        assert c["shows"] and c["author"] and c["licence"] and c["page"].startswith("https://commons.wikimedia.org/")
+        assert "cropped" in c["changes"]
+
+
 def test_photo_route_serves_only_photos():
     res = client.get("/app/photos/lentil-salad.webp")
     assert res.status_code == 200 and res.headers["content-type"] == "image/webp"
