@@ -65,8 +65,11 @@ recipe shows the goal's nutrients per portion (>= 15% of daily need, the EU
 :root {
   --bg: #f5f2ea; --surface: #fffdf8; --side: #ede8dc; --soft: rgba(110, 96, 66, .09); --text: #2b2924; --muted: #655f53;
   --line: rgba(80, 66, 40, .14); --control: #8f887a; --accent: #45693e; --on-accent: #ffffff; --accent-soft: #e3ebd9;
-  --ring: #86a977; --note: #8a4f1f; --note-soft: #f5e7d6; --seg-on: #fffdf8; --bar: rgba(245, 242, 234, .86); --badge: #a4532e;
+  --ring: #6d965e; --note: #8a4f1f; --note-soft: #f5e7d6; --seg-on: #fffdf8; --bar: rgba(245, 242, 234, .86); --badge: #a4532e;
   --carbs: #d6ad5f; --protein: #c98a6b; --fat: #a497c7;
+  --gold: #7a5a10; --gold-soft: #f4e8cc; --rest: #6a5d9c; --rest-soft: #ebe7f5;   /* milestones; rest weeks and AI */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --r-sm: 8px; --r-lg: 18px;
+  --dur-press: 120ms; --dur: 200ms; --dur-sheet: 280ms; --dur-draw: 800ms; --dur-moment: 600ms;
   --shadow: 0 1px 2px rgba(64, 52, 28, .05), 0 0 0 .5px rgba(64, 52, 28, .07);
   --shadow-up: 0 6px 20px rgba(64, 52, 28, .10), 0 0 0 .5px rgba(64, 52, 28, .07);
   --radius: 14px; --hair: .5px; --ease: cubic-bezier(.2, .8, .2, 1);
@@ -74,15 +77,17 @@ recipe shows the goal's nutrients per portion (>= 15% of daily need, the EU
 /* Theme: follows the system unless the user picks one (data-theme on <html>). Dark is forest and soil, not black. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) { --bg: #161914; --surface: #20241d; --side: #1b1e18; --soft: rgba(226, 232, 212, .08); --text: #ece8dc;
-    --muted: #aba696; --line: rgba(226, 232, 212, .12); --control: #7d796c; --accent: #a9c99a; --on-accent: #15200f;
+    --muted: #aba696; --line: rgba(226, 232, 212, .12); --control: #8a8578; --accent: #a9c99a; --on-accent: #15200f;
     --accent-soft: #2a3725; --ring: #8fb27f; --note: #e8b78c; --note-soft: #3a2c1f; --seg-on: #3a4034; --bar: rgba(22, 25, 20, .86);
     --carbs: #e0c07a; --protein: #dba08a; --fat: #b7abdb;
+    --gold: #e6c47c; --gold-soft: #3a321d; --rest: #b9addf; --rest-soft: #2e2a3d;
     --shadow: 0 0 0 .5px rgba(226, 232, 212, .07); --shadow-up: 0 8px 24px rgba(0, 0, 0, .35), 0 0 0 .5px rgba(226, 232, 212, .08); }
 }
 :root[data-theme="dark"] { --bg: #161914; --surface: #20241d; --side: #1b1e18; --soft: rgba(226, 232, 212, .08); --text: #ece8dc;
-    --muted: #aba696; --line: rgba(226, 232, 212, .12); --control: #7d796c; --accent: #a9c99a; --on-accent: #15200f;
+    --muted: #aba696; --line: rgba(226, 232, 212, .12); --control: #8a8578; --accent: #a9c99a; --on-accent: #15200f;
     --accent-soft: #2a3725; --ring: #8fb27f; --note: #e8b78c; --note-soft: #3a2c1f; --seg-on: #3a4034; --bar: rgba(22, 25, 20, .86);
     --carbs: #e0c07a; --protein: #dba08a; --fat: #b7abdb;
+    --gold: #e6c47c; --gold-soft: #3a321d; --rest: #b9addf; --rest-soft: #2e2a3d;
     --shadow: 0 0 0 .5px rgba(226, 232, 212, .07); --shadow-up: 0 8px 24px rgba(0, 0, 0, .35), 0 0 0 .5px rgba(226, 232, 212, .08); }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 [hidden] { display: none !important; }   /* class rules below set display; hidden must still win */
