@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 from ...engine import diary, load_engine
 from ...engine import week_planner as wp
 from ...engine.portions import portion_for
+from ...engine.presets import load_presets, preset_nutrients
 from .plan import _profile
 
 router = APIRouter(prefix="/diary", tags=["diary"])
@@ -22,7 +23,7 @@ Slot = Literal["breakfast", "lunch", "dinner", "snack"]
 
 
 class EntryIn(BaseModel):
-    kind: Literal["recipe", "food"]
+    kind: Literal["recipe", "food", "preset"]
     id: str = Field(min_length=1, max_length=80)
     meal: Slot
     servings: float = Field(1.0, gt=0, le=10)
@@ -79,6 +80,15 @@ def suggest(req: SuggestRequest):
                                   exclude=req.exclude, avoid_recipes=req.avoid_recipes, **_common(req))
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
+
+
+@router.get("/presets")
+def presets():
+    """Meals logged in one tap as an estimate (the CROUS lunch), with the energy of one portion."""
+    engine = load_engine()
+    return [{"kind": "preset", "id": p.id, "name": p.en, "fr": p.fr, "detail": p.detail_en,
+             "kcal": round(preset_nutrients(engine, p).get("energy-kcal", 0.0)), "estimate": p.estimate,
+             "price_eur": p.price_eur, "note": p.note_en} for p in load_presets().values()]
 
 
 @router.get("/search")

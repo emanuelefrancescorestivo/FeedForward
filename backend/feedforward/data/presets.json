@@ -1,0 +1,23 @@
+{
+ "about": "Meals logged in one tap as an estimate. The CROUS meal is a typical university-restaurant plate (a main course and two sides, served for 1 euro to every student since 4 May 2026); the real plate changes every day, so the app marks it as an estimate (≈) and lets the person change the portion. Ingredients are the planner's (data/ingredients.json), so nutrients come from CIQUAL like a recipe's; grams are raw or dry weights, as in recipes.json (65 g of dry rice is about 180 g cooked, 120 g of raw chicken about 90 g cooked). Written for FeedForward (MIT); to be reviewed by a dietitian.",
+ "presets": [
+  {
+   "id": "crous-meal",
+   "en": "CROUS meal",
+   "fr": "Repas CROUS",
+   "detail_en": "main + 2 sides",
+   "detail_fr": "plat + 2 périphériques",
+   "price_eur": 1.0,
+   "estimate": true,
+   "note_en": "An estimate of a typical plate: the real one changes every day.",
+   "items": [
+    {"ingredient": "chicken", "g": 120},
+    {"ingredient": "rice", "g": 65},
+    {"ingredient": "green-beans", "g": 100},
+    {"ingredient": "rapeseed-oil", "g": 5},
+    {"ingredient": "yogurt", "g": 125},
+    {"ingredient": "apple", "g": 150}
+   ]
+  }
+ ]
+}
