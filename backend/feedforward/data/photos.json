@@ -1,0 +1,948 @@
+{
+ "about": "Photos shown for recipes and foods: open-licence photos of a similar dish from Wikimedia Commons, served by the app (DECISIONS.md, decision 30). Each entry records the source page, author, licence and the changes made. 'none' lists items that keep their line icon. scripts/photos.py fetches and converts them.",
+ "accepted_licences": [
+  "Public domain",
+  "CC0",
+  "CC BY",
+  "CC BY-SA"
+ ],
+ "photos": [
+  {
+   "id": "apple",
+   "for": [
+    "food:apple"
+   ],
+   "shows": "apple",
+   "file": "Red Apple.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Red_Apple.jpg",
+   "author": "Abhijit Tembhekar from Mumbai, India",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "60baaee8cff7502bc7cde3cefaf940247a8a9ee5bff7522efc515710b54f36ce"
+  },
+  {
+   "id": "baguette-emmental-apple",
+   "for": [
+    "recipe:baguette-emmental-apple"
+   ],
+   "shows": "Baguette, emmental, apple and café au lait",
+   "file": "Baguette de pain, WikiCheese Lausanne.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Baguette_de_pain,_WikiCheese_Lausanne.jpg",
+   "author": "Yann Forget",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "64adf3eead895bcf81d0f3bbc1640d5411ad65ed7087beaabacd5e07bdd854ba"
+  },
+  {
+   "id": "banana-oat-smoothie",
+   "for": [
+    "recipe:banana-oat-smoothie"
+   ],
+   "shows": "Banana and oat smoothie with toast",
+   "file": "Banana smoothie with weetbix.jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:Banana_smoothie_with_weetbix.jpeg",
+   "author": "Maryjeanne.li",
+   "licence": "CC BY-SA 3.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "1a6917700b69f97fbd271fd8d4fe484d2153b330390393444b314488f81981f8"
+  },
+  {
+   "id": "bean-chili-rice",
+   "for": [
+    "recipe:bean-chili-rice"
+   ],
+   "shows": "Bean chili with rice",
+   "file": "Vegan 4 Bean Chili (2793810844).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Vegan_4_Bean_Chili_(2793810844).jpg",
+   "author": "Kari Sullivan from Austin, TX",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "590a04700816ff4fa455f8c312495bd1e903f178030f6229cdb41e9c04b6784f"
+  },
+  {
+   "id": "beef-bean-chili",
+   "for": [
+    "recipe:beef-bean-chili"
+   ],
+   "shows": "Chili con carne with rice",
+   "file": "Chili con carne in Helsinki.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Chili_con_carne_in_Helsinki.jpg",
+   "author": "JIP",
+   "licence": "CC BY-SA 3.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "c1a4750741735a76f333c008d2779efcce19d1796e9d07890e8f9d032c41e8bd"
+  },
+  {
+   "id": "boiled-eggs",
+   "for": [
+    "food:boiled-eggs"
+   ],
+   "shows": "boiled eggs",
+   "file": "Hard boiled eggs for thit heo kho, peeled.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Hard_boiled_eggs_for_thit_heo_kho,_peeled.jpg",
+   "author": "HungryHuy",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "82fb9033c4876671e4d1cef3e6ffea1f4d7bfcda524ff811393d9ca68254eadd"
+  },
+  {
+   "id": "carrots",
+   "for": [
+    "food:carrots"
+   ],
+   "shows": "carrots",
+   "file": "Fresh Carrots.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Fresh_Carrots.jpg",
+   "author": "Yerson Retamel",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "e60a692a580b78adf44745082074a025aa1e2c513d4d51507f1082a643d1e8bd"
+  },
+  {
+   "id": "chicken-rice-courgette",
+   "for": [
+    "recipe:chicken-rice-courgette"
+   ],
+   "shows": "Chicken, rice and courgettes",
+   "file": "-2020-09-03 Chicken with courgette, onion, tomato, and mascarpone sauce, Trimingham (3).JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:-2020-09-03_Chicken_with_courgette,_onion,_tomato,_and_mascarpone_sauce,_Trimingham_(3).JPG",
+   "author": "Kolforn (Kolforn)",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "8d697d0f98db016615fb2229bc58f6f44bd0c2f3707a4e08595cbc844f8e1519"
+  },
+  {
+   "id": "chickpea-couscous-salad",
+   "for": [
+    "recipe:chickpea-couscous-salad"
+   ],
+   "shows": "Chickpea couscous salad",
+   "file": "Oriental Couscous Salad - 49859609511.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Oriental_Couscous_Salad_-_49859609511.jpg",
+   "author": "FitTasteTic",
+   "licence": "CC BY-SA 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "6cda6d633bfadaaab7a94539d51b69faf0de4b64c97abe0da8930c59379d9d17"
+  },
+  {
+   "id": "chickpea-spinach-curry",
+   "for": [
+    "recipe:chickpea-spinach-curry"
+   ],
+   "shows": "Chickpea and spinach curry with rice",
+   "file": "Chana Masala - Mohammed - Spice Of Life 2024-05-27.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Chana_Masala_-_Mohammed_-_Spice_Of_Life_2024-05-27.jpg",
+   "author": "Andy Li",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "5b5df093640dd726d360a2ca8105fd420cd4654c202f312396e97f7f00dc94fb"
+  },
+  {
+   "id": "chickpea-tomato-couscous",
+   "for": [
+    "recipe:chickpea-tomato-couscous"
+   ],
+   "shows": "Warm chickpea and tomato couscous",
+   "file": "Couscous with curried chickpeas.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Couscous_with_curried_chickpeas.jpg",
+   "author": "Stacy Spensley",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "272894ae53004fb095fdeb4169af63e5acb845e90858836b7edc0f5068bcda25"
+  },
+  {
+   "id": "chickpeas",
+   "for": [
+    "food:chickpeas"
+   ],
+   "shows": "chickpeas",
+   "file": "Curry in a Hurry Chickpea Bowl (51383382685).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Curry_in_a_Hurry_Chickpea_Bowl_(51383382685).jpg",
+   "author": "Compassionate Action for Animals from Minneapolis, MN, USA",
+   "licence": "CC BY-SA 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "9587f2bb254bc78eccdaa2b7f51970b6e719d483d74038ca164f2400011453f9"
+  },
+  {
+   "id": "cooked-lentils",
+   "for": [
+    "food:cooked-lentils"
+   ],
+   "shows": "cooked lentils",
+   "file": "Liat Portal for Foodie Disorder - Cooked Lentils with Caramelized Onions.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Cooked_Lentils_with_Caramelized_Onions.jpg",
+   "author": "HaJunkiyada",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "246612ffa21297ea334d4641ecabb444b9b862d54e4e7d0bc67a605ecaeac393"
+  },
+  {
+   "id": "cooked-pasta",
+   "for": [
+    "food:cooked-pasta"
+   ],
+   "shows": "cooked pasta",
+   "file": "Cooked dry pasta.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Cooked_dry_pasta.jpg",
+   "author": "MarkTraceur",
+   "licence": "CC BY-SA 3.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "11f6da2c968904ca314e96995321bf75afd96badd01d34c2b2a530b0a33fa25f"
+  },
+  {
+   "id": "egg-fried-rice",
+   "for": [
+    "recipe:egg-fried-rice"
+   ],
+   "shows": "Egg fried rice with peas and carrot",
+   "file": "Special fried rice with sunny-side egg and satay; January 2011.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Special_fried_rice_with_sunny-side_egg_and_satay;_January_2011.jpg",
+   "author": "HPG Online",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "27187c896c060a69607f4052d94ae667fbbb1386faa721b68ab362406007f529"
+  },
+  {
+   "id": "egg-spinach-mug",
+   "for": [
+    "recipe:egg-spinach-mug"
+   ],
+   "shows": "Microwave eggs with spinach on toast",
+   "file": "Liat Portal for Foodie Disorder - Scrambled eggs with spinach.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Scrambled_eggs_with_spinach.jpg",
+   "author": "HaJunkiyada",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "2160aca8ae75c43640a87288324c2b3e72f97ac19f1845a896051093c32f044b"
+  },
+  {
+   "id": "eggs-toast-orange",
+   "for": [
+    "recipe:eggs-toast-orange"
+   ],
+   "shows": "Eggs on wholemeal toast, orange",
+   "file": "Eggs On Toast - FIKA 2023-09-02.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Eggs_On_Toast_-_FIKA_2023-09-02.jpg",
+   "author": "Andy Li",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "829b4889e826deea428de0de00fe229372681cc43b69ffb50553eddef604a716"
+  },
+  {
+   "id": "emmental-cheese",
+   "for": [
+    "food:emmental-cheese"
+   ],
+   "shows": "emmental cheese",
+   "file": "A slice of Emmental Cheese.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:A_slice_of_Emmental_Cheese.jpg",
+   "author": "Peachyeung316",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "d2fffd130c82dab63f356a96c9ecaf2b90cb9016b92b03c055c887bd4f8c0815"
+  },
+  {
+   "id": "fromage-blanc-apple-walnut",
+   "for": [
+    "recipe:fromage-blanc-apple-walnut"
+   ],
+   "shows": "Fromage blanc with apple, walnuts and bread",
+   "file": "Cereal, Yoghurt, Berries & Apple (4380985577).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Cereal,_Yoghurt,_Berries_%26_Apple_(4380985577).jpg",
+   "author": "Katrin Gilger",
+   "licence": "CC BY-SA 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "14af0d3d5b8966cf31f6a6755c584491ca238fdc40efc029a1197f8f653976f3"
+  },
+  {
+   "id": "fromage-blanc-kiwi-oats",
+   "for": [
+    "recipe:fromage-blanc-kiwi-oats"
+   ],
+   "shows": "Fromage blanc with kiwi and oats",
+   "file": "Chia jars with bleuberries (Unsplash).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Chia_jars_with_bleuberries_(Unsplash).jpg",
+   "author": "Brenda Godinez cravethebenefits",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "3e88d0672a62f54988251b4841b1cdb42afbc68cde4bfc368d5574f4b81d7bd6"
+  },
+  {
+   "id": "ham-cheese-baguette",
+   "for": [
+    "recipe:ham-cheese-baguette"
+   ],
+   "shows": "Ham and emmental baguette, apple",
+   "file": "Jambon-beurre.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Jambon-beurre.jpg",
+   "author": "lazy fri13th",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "3c50e6e535713b228b2eb5362b926326955b61c3b875543d20913a0b61d4e29e"
+  },
+  {
+   "id": "jacket-potato-beans",
+   "for": [
+    "recipe:jacket-potato-beans"
+   ],
+   "shows": "Jacket potato with beans and tomato",
+   "file": "Baked potato with baked beans and cheese - The Verandah 2026-08-25.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Baked_potato_with_baked_beans_and_cheese_-_The_Verandah_2026-08-25.jpg",
+   "author": "Andy Li",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "a6dbf2e557dc9c012c24bf7c760ba668485fc96bcd29d1ef56739a26741e03a4"
+  },
+  {
+   "id": "jacket-potato-tuna",
+   "for": [
+    "recipe:jacket-potato-tuna"
+   ],
+   "shows": "Jacket potato with tuna and yogurt",
+   "file": "Oven-baked Jacket Potato (Brie & caramelised onion chutney) - The Trellis Café 2024-05-23.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Oven-baked_Jacket_Potato_(Brie_%26_caramelised_onion_chutney)_-_The_Trellis_Caf%C3%A9_2024-05-23.jpg",
+   "author": "Andy Li",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "964f4be08827fec0939f2d699d3d3b78ab497e1a54a013131eb7bdeae6f3d479"
+  },
+  {
+   "id": "leek-potato-soup",
+   "for": [
+    "recipe:leek-potato-soup"
+   ],
+   "shows": "Leek and potato soup with bread and cheese",
+   "file": "Leek & Potato + celeriac soup.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Leek_%26_Potato_%2B_celeriac_soup.jpg",
+   "author": "Andy Li",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "a94b3fc05cc83fc824077d527f26d13363d13bbfd79945df466be6f9544a7a46"
+  },
+  {
+   "id": "lentil-bolognese",
+   "for": [
+    "recipe:lentil-bolognese"
+   ],
+   "shows": "Wholemeal pasta with lentil bolognese",
+   "file": "Healthy Spaghetti bolognese.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Healthy_Spaghetti_bolognese.jpg",
+   "author": "FitTasteTic",
+   "licence": "CC BY-SA 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "af4a5b708a9f38258fae209291ffdb56291121d7599bf5bba4cfbc6d7155cb6c"
+  },
+  {
+   "id": "lentil-salad",
+   "for": [
+    "recipe:lentil-salad"
+   ],
+   "shows": "French lentil salad with carrots",
+   "file": "Healthy Lentil Salad (Unsplash).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Healthy_Lentil_Salad_(Unsplash).jpg",
+   "author": "James Sutton jamessutton_photography",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "96322fbb82eb87072df76ad0b120de945fc426ee59e6b989647fbec4fe233f56"
+  },
+  {
+   "id": "lentil-vegetable-soup",
+   "for": [
+    "recipe:lentil-vegetable-soup"
+   ],
+   "shows": "Lentil and vegetable soup with bread",
+   "file": "Homemade Lentil Soup - Lavash 2025-02-10.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Homemade_Lentil_Soup_-_Lavash_2025-02-10.jpg",
+   "author": "Andy Li",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "2cb6e96bc6f01a655f0c782c8f572d752c1ab02b550ee0f844abd0daa2d46da3"
+  },
+  {
+   "id": "mackerel-potato-salad",
+   "for": [
+    "recipe:mackerel-potato-salad"
+   ],
+   "shows": "Warm potato, green bean and mackerel salad",
+   "file": "Potato salad 001.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Potato_salad_001.jpg",
+   "author": "Ocdp",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "45c441b3424027e8c057bb6aee1e615fd8a0abbc7761bc9fe218352e780fca05"
+  },
+  {
+   "id": "mackerel-rice-beans",
+   "for": [
+    "recipe:mackerel-rice-beans"
+   ],
+   "shows": "Mackerel, rice and green beans",
+   "file": "Grilled mackerel on a BBQ.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Grilled_mackerel_on_a_BBQ.jpg",
+   "author": "Kernow Skies",
+   "licence": "CC BY-SA 3.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "855a3f43ecb0d3c834d79b7da4fd6050a78ae6e88e91e164194874420391a387"
+  },
+  {
+   "id": "milk-glass",
+   "for": [
+    "food:milk-glass"
+   ],
+   "shows": "milk glass",
+   "file": "Glass of Milk (33657535532).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Glass_of_Milk_(33657535532).jpg",
+   "author": "NIAID",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "23898fd4bd889da3745ca6cbf18b2e54065362c09ed81cd85be2e079d348df95"
+  },
+  {
+   "id": "muesli-soy-kiwi",
+   "for": [
+    "recipe:muesli-soy-kiwi"
+   ],
+   "shows": "Oat muesli with soy drink and kiwi",
+   "file": "Fresh-muesli.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Fresh-muesli.jpg",
+   "author": "Markus Kuhn at en.wikipedia",
+   "licence": "Public domain",
+   "licence_url": "",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "7ad2681577022e32b135239069f3e2e4d32426b1aee91fbf645bf94f31de33e3"
+  },
+  {
+   "id": "mushroom-omelette-salad",
+   "for": [
+    "recipe:mushroom-omelette-salad"
+   ],
+   "shows": "Mushroom omelette with salad",
+   "file": "Mushroom, pepper and cheese omelette.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Mushroom,_pepper_and_cheese_omelette.jpg",
+   "author": "Photograph by Mike Peel (www.mikepeel.net).",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "3ed72469da9603f54f3c9e4f6703e41759aa47c02c146e421764cc148acad70c"
+  },
+  {
+   "id": "natural-yogurt",
+   "for": [
+    "food:natural-yogurt"
+   ],
+   "shows": "natural yogurt",
+   "file": "Liat Portal for Foodie Disorder - Yogurt Bowl with Figs, Nuts, Chia Seeds, and Seaweed.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Yogurt_Bowl_with_Figs,_Nuts,_Chia_Seeds,_and_Seaweed.jpg",
+   "author": "HaJunkiyada",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "5bf204d7bf4523b1d51ef93e4726240d3cbde486e43f4ccd0bdfe12fc2e106e0"
+  },
+  {
+   "id": "omelette-spinach-toast",
+   "for": [
+    "recipe:omelette-spinach-toast"
+   ],
+   "shows": "Spinach omelette with toast",
+   "file": "Spinach omelette (3278835124).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Spinach_omelette_(3278835124).jpg",
+   "author": "David Pursehouse from Kawasaki, Japan",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "233da1f1de51577e852c535bfd2bde0a8e1dbcbab6d7a87261a898bce3e48f4b"
+  },
+  {
+   "id": "overnight-oats-raisins",
+   "for": [
+    "recipe:overnight-oats-raisins",
+    "recipe:overnight-oats-soy"
+   ],
+   "shows": "Overnight oats with raisins, walnuts and apple",
+   "file": "-2019-02-07 Overnight Oats, Cromer.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:-2019-02-07_Overnight_Oats,_Cromer.JPG",
+   "author": "Kolforn (Kolforn)",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "db8efabda57c416ea1ad298dd507dc3a51d29a97eca2f2f43c76a62593971d69"
+  },
+  {
+   "id": "pasta-peas-ham",
+   "for": [
+    "recipe:pasta-peas-ham"
+   ],
+   "shows": "Pasta with peas and ham",
+   "file": "Lemon Pasta with Peas (11667881).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Lemon_Pasta_with_Peas_(11667881).jpg",
+   "author": "Charles Haynes",
+   "licence": "CC BY-SA 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "5329d1da22f01862dc18e744170df157455af15d8a0261bfe7f40f95bfd7fc60"
+  },
+  {
+   "id": "pb-banana-toast",
+   "for": [
+    "recipe:pb-banana-toast",
+    "recipe:pb-banana-toast-soy"
+   ],
+   "shows": "Peanut butter and banana toast, glass of milk",
+   "file": "Avocado Toast and Peanut Butter Toast with Strawberries and Bananas.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Avocado_Toast_and_Peanut_Butter_Toast_with_Strawberries_and_Bananas.jpg",
+   "author": "Tony Webster",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "22c0a8444b948bd3d2febbd225957031895b0c353e763825b6b5ba372413c93c"
+  },
+  {
+   "id": "porridge-banana-walnut",
+   "for": [
+    "recipe:porridge-banana-walnut"
+   ],
+   "shows": "Porridge with banana and walnuts",
+   "file": "Oatmeal porridge with fruits.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Oatmeal_porridge_with_fruits.jpg",
+   "author": "Shisma",
+   "licence": "CC BY 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "6119d2ae013b928dfb6782509629bf2ab414cc5ea605ef2449e6f89a446c16ee"
+  },
+  {
+   "id": "porridge-soy-banana",
+   "for": [
+    "recipe:porridge-soy-banana"
+   ],
+   "shows": "Microwave porridge with soy drink and banana",
+   "file": "Banana oatmeal.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Banana_oatmeal.jpg",
+   "author": "Shisma",
+   "licence": "CC BY 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "f6b968348fa456eeb8a17adbb6ce974a1531672d046fe718d2788669607c0a99"
+  },
+  {
+   "id": "potato-spinach-frittata",
+   "for": [
+    "recipe:potato-spinach-frittata"
+   ],
+   "shows": "Potato and spinach frittata",
+   "file": "Frittata - Bam's Kitchen 2024-04-02.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Frittata_-_Bam%27s_Kitchen_2024-04-02.jpg",
+   "author": "Andy Li",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "d25dfb0db69595d2655a58ecc96afb32a3f29d87bf01a76a11943a04f8080adc"
+  },
+  {
+   "id": "quinoa-chickpea-bowl",
+   "for": [
+    "recipe:quinoa-chickpea-bowl"
+   ],
+   "shows": "Quinoa and chickpea bowl",
+   "file": "Healthy quinoa salad with dried fruit.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Healthy_quinoa_salad_with_dried_fruit.jpg",
+   "author": "TorbeyCharbel",
+   "licence": "CC BY 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "0597ab6e834db08e0da2d1bb6c24c39c5a7af8ca394b0434dc8d1950af3a05c4"
+  },
+  {
+   "id": "red-lentil-dal",
+   "for": [
+    "recipe:red-lentil-dal"
+   ],
+   "shows": "Red lentil dal with spinach and rice",
+   "file": "Lal Masoor Dal and Palak.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:Lal_Masoor_Dal_and_Palak.JPG",
+   "author": "Miansari66",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "bb252ef3369caf9ecffc60a46a475fc9d689874386c9528b9d19577761437ffc"
+  },
+  {
+   "id": "rolled-oats",
+   "for": [
+    "food:rolled-oats"
+   ],
+   "shows": "rolled oats",
+   "file": "Rolled oats in bowl 2.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Rolled_oats_in_bowl_2.jpg",
+   "author": "Bodhi Peace",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "8dabacefb216ccbbdb930adaf544021b8f02054baa97054e773cd397b2faea4f"
+  },
+  {
+   "id": "salmon-couscous-spinach",
+   "for": [
+    "recipe:salmon-couscous-spinach"
+   ],
+   "shows": "Microwave salmon with couscous and spinach",
+   "file": "Cedar-Planked Salmon with couscous, spinach, tomatoes and olives.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Cedar-Planked_Salmon_with_couscous,_spinach,_tomatoes_and_olives.jpg",
+   "author": "ZhengZhou",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "e243a50d2520648efcc370bba892ae90ef78685733cddc6ba0f9fcae9c36ab52"
+  },
+  {
+   "id": "salmon-potato-broccoli",
+   "for": [
+    "recipe:salmon-potato-broccoli"
+   ],
+   "shows": "Salmon, potatoes and broccoli",
+   "file": "2020-02-21 20 20 10 A serving of salmon, mashed potatoes and broccoli at the Olive Garden in Fair Lakes, Fairfax County, Virginia.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:2020-02-21_20_20_10_A_serving_of_salmon,_mashed_potatoes_and_broccoli_at_the_Olive_Garden_in_Fair_Lakes,_Fairfax_County,_Virginia.jpg",
+   "author": "Famartin",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "0c13dc290d74da6b5e06bab0e712cadf812ab24dc220a9a04243672efb848cee"
+  },
+  {
+   "id": "sardine-tartines",
+   "for": [
+    "recipe:sardine-tartines"
+   ],
+   "shows": "Sardine tartines with salad",
+   "file": "Tartines à la sardine & olives.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Tartines_%C3%A0_la_sardine_%26_olives.jpg",
+   "author": "Arnaud 25",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "83f9be54ea1b84c24e47e5d64bb75969b6645be8ca401d0421004443bce31d1c"
+  },
+  {
+   "id": "sardine-tomato-pasta",
+   "for": [
+    "recipe:sardine-tomato-pasta"
+   ],
+   "shows": "Pasta with sardines and tomato",
+   "file": "Pasta con le sarde.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Pasta_con_le_sarde.jpg",
+   "author": "Sebastian Fischer",
+   "licence": "CC BY-SA 3.0",
+   "licence_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "86d9fa260ded137cab1b2721d3e8004412a04f0bd1806bfbb9bdece91be648ff"
+  },
+  {
+   "id": "shakshuka",
+   "for": [
+    "recipe:shakshuka"
+   ],
+   "shows": "Shakshuka with baguette",
+   "file": "Shakshuka by Calliopejen1.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Shakshuka_by_Calliopejen1.jpg",
+   "author": "Calliopejen1",
+   "licence": "CC BY-SA 3.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "ef6d5c6c944895b548f5fddd0eb8caeb246029848cd9993b9468fb10e4648a21"
+  },
+  {
+   "id": "snack-apple-walnuts",
+   "for": [
+    "recipe:snack-apple-walnuts"
+   ],
+   "shows": "Apple and a handful of walnuts",
+   "file": "Noces Walnuts Nueces.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Noces_Walnuts_Nueces.jpg",
+   "author": "Lmbuga (Luis Miguel Bugallo Sánchez)",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "239def125ab8a3e69053cf2f325c52a53665c1fcaa84a7fd3ff5a21d8dd884a6"
+  },
+  {
+   "id": "snack-banana",
+   "for": [
+    "recipe:snack-banana",
+    "food:banana"
+   ],
+   "shows": "A banana",
+   "file": "Cavendish banana from Maracaibo.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Cavendish_banana_from_Maracaibo.jpg",
+   "author": "Wilfredor",
+   "licence": "CC BY-SA 3.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "d17b3662c7b72aef6cbcfb83e091dd4580c9a57b2e3a836530c1c8dd63f5e062"
+  },
+  {
+   "id": "snack-orange",
+   "for": [
+    "recipe:snack-orange",
+    "food:orange-fruit"
+   ],
+   "shows": "An orange",
+   "file": "Sliced juicy orange fruit.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Sliced_juicy_orange_fruit.jpg",
+   "author": "Paolo Neo",
+   "licence": "Public domain",
+   "licence_url": "",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "a8e9679ada9e69f591942db77b5518bebc16271aeab1bafb612d1e905a46a9d6"
+  },
+  {
+   "id": "snack-seeds-raisins",
+   "for": [
+    "recipe:snack-seeds-raisins"
+   ],
+   "shows": "Sunflower seeds and raisins",
+   "file": "Cashew and raisins, photographed in West Bengal, India, February 11, 2024.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Cashew_and_raisins,_photographed_in_West_Bengal,_India,_February_11,_2024.jpg",
+   "author": "Billjones94",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "d10af1096363d7a16fc3b61eacda5020549aabcb8000448fa90978b6362c2bbc"
+  },
+  {
+   "id": "snack-yogurt-honey",
+   "for": [
+    "recipe:snack-yogurt-honey"
+   ],
+   "shows": "Yogurt with honey",
+   "file": "Muesli, Fresh Fruit, Honey & Yogurt (9646801012).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Muesli,_Fresh_Fruit,_Honey_%26_Yogurt_(9646801012).jpg",
+   "author": "LeonardKong",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "5b504e76b0a6f35bf95c65087d112691ee078e38028cbcb97ae05806733972d1"
+  },
+  {
+   "id": "tofu-cabbage-stirfry",
+   "for": [
+    "recipe:tofu-cabbage-stirfry"
+   ],
+   "shows": "Tofu and cabbage stir-fry with rice",
+   "file": "Tofu stir-fry.jpeg",
+   "page": "https://commons.wikimedia.org/wiki/File:Tofu_stir-fry.jpeg",
+   "author": "unknown",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "0fed8166b09303b565f6b5348f7197234a245e4ef69ff6c7c32e9595f3524dd3"
+  },
+  {
+   "id": "tofu-couscous-beans",
+   "for": [
+    "recipe:tofu-couscous-beans"
+   ],
+   "shows": "Tofu with couscous and green beans",
+   "file": "Crispy Tofu - Stir Fry by CK 2025-04-06.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Crispy_Tofu_-_Stir_Fry_by_CK_2025-04-06.jpg",
+   "author": "Andy Li",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "f185731ec06135dafd08e4d0a5653470365d61c042c656bbc320ccce0a284511"
+  },
+  {
+   "id": "tofu-rice-broccoli",
+   "for": [
+    "recipe:tofu-rice-broccoli"
+   ],
+   "shows": "Crispy tofu, rice and broccoli",
+   "file": "Tofu and Broccoli 1.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Tofu_and_Broccoli_1.jpg",
+   "author": "Miscellaneous contributor",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "4d09a608e89fdd463c747b0e947700cf467a5f47b09b861f62b87ddf914231eb"
+  },
+  {
+   "id": "tomatoes",
+   "for": [
+    "food:tomatoes"
+   ],
+   "shows": "tomatoes",
+   "file": "Tomatoes in basket 2026 G3.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Tomatoes_in_basket_2026_G3.jpg",
+   "author": "George Chernilevsky",
+   "licence": "CC BY 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "af3fd582302e72a99414ad51c4461549d1f938085c1828f6960d6a31ae2317c0"
+  },
+  {
+   "id": "tuna-pasta-salad",
+   "for": [
+    "recipe:tuna-pasta-salad"
+   ],
+   "shows": "Tuna pasta salad with tomato and pepper",
+   "file": "Pasta salad with sun-dried tomatoes and green olives (Poznan).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Pasta_salad_with_sun-dried_tomatoes_and_green_olives_(Poznan).jpg",
+   "author": "MOs810",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "c1fb69343f4a14309ff82d1cd11cba270180a97bcacc28462f385da56163f1a0"
+  },
+  {
+   "id": "tuna-rice-peas",
+   "for": [
+    "recipe:tuna-rice-peas"
+   ],
+   "shows": "Microwave rice with tuna and peas",
+   "file": "Spicy tuna rice bowl (35032450572).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Spicy_tuna_rice_bowl_(35032450572).jpg",
+   "author": "pelican from Tokyo, Japan",
+   "licence": "CC BY-SA 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "d1a4ff11dfd4b7fdbf25100fd9f2db1cd08cb0e8deab34a053ed544f24e34b81"
+  },
+  {
+   "id": "white-rice",
+   "for": [
+    "food:white-rice"
+   ],
+   "shows": "white rice",
+   "file": "White Rice 03.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:White_Rice_03.jpg",
+   "author": "Bembety",
+   "licence": "CC0",
+   "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "fb94d5a74b5f19b1a98012b7d48bec95b70416161a4f87c892da9b144c50d47a"
+  },
+  {
+   "id": "wholemeal-bread",
+   "for": [
+    "food:wholemeal-bread"
+   ],
+   "shows": "wholemeal bread",
+   "file": "Homemade wholemeal bread.png",
+   "page": "https://commons.wikimedia.org/wiki/File:Homemade_wholemeal_bread.png",
+   "author": "Marius Vassnes",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "c0f9cba6f37cf3a94225cb289dc179ee161b465fcebaac6b4e7f958f44b52304"
+  },
+  {
+   "id": "yogurt-blueberry-seeds",
+   "for": [
+    "recipe:yogurt-blueberry-seeds"
+   ],
+   "shows": "Yogurt with blueberries, oats and seeds",
+   "file": "Yogurt parfait with granola and blueberries in shot glasses with silverware spoons (17098581522).jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Yogurt_parfait_with_granola_and_blueberries_in_shot_glasses_with_silverware_spoons_(17098581522).jpg",
+   "author": "Personal Creations",
+   "licence": "CC BY 2.0",
+   "licence_url": "https://creativecommons.org/licenses/by/2.0",
+   "retrieved": "2026-10-07",
+   "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
+   "sha256": "5c74cd803257e8b62f202784b3051b3d99fd75518c30d153b9e727b78200b7e5"
+  }
+ ],
+ "none": [
+  "recipe:snack-bread-chocolate"
+ ]
+}

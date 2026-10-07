@@ -9,6 +9,14 @@ The web app's typeface, `web/fonts/inter-latin-wght-normal.woff2`, is Inter
 (© The Inter Project Authors) under the SIL Open Font License 1.1; the licence
 is next to it in [`web/fonts/OFL.txt`](backend/feedforward/web/fonts/OFL.txt).
 
+The recipe and food photos in `web/photos/` come from Wikimedia Commons, each
+under its own licence: public domain, CC0, CC BY or CC BY-SA (never NC or ND).
+[`data/photos.json`](backend/feedforward/data/photos.json) lists, for every
+photo, its source page, author, licence and the changes made (cropped to 4:3
+and 1:1, resized, converted to WebP); a photo shared under CC BY-SA stays under
+CC BY-SA. The app credits the author and licence next to each photo, and
+`scripts/photos.py` rebuilds the files from the ledger.
+
 Raw downloads (`data/ingest/cache/`) and the original Open Food Facts crawl
 (`data/raw/`) are not in the repository; the importers in `data/ingest/`
 rebuild the derived files from the public sources.
@@ -31,6 +39,7 @@ rebuild the derived files from the public sources.
 > Products and prices: Open Food Facts and Open Prices (ODbL).
 > Health claims: EU Register of nutrition and health claims, © European Union.
 > Descriptions: Wikipedia (CC BY-SA).
+> Photos: Wikimedia Commons contributors, each credited with its licence (`data/photos.json`).
 
 The web app shows this in its footer and next to the prices it uses.
 
