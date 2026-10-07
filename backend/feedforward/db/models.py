@@ -24,10 +24,10 @@ different sources that are the same food share a ``food_concepts`` row.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from sqlalchemy import (
-    Boolean, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint,
+    Boolean, Date, DateTime, Float, ForeignKey, Index, Integer, String, Text, UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -71,6 +71,42 @@ class UserStateRow(Base):
     data: Mapped[str] = mapped_column(Text, default="{}")
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+
+class DiaryEntryRow(Base):
+    """
+    One thing a person logged: a recipe, a food or a preset (the CROUS meal), on a day, at a meal. The id
+    is made by the app, so a request sent twice stores one row. Removal sets ``deleted_at``, so another
+    device learns of it. ``name`` and ``kcal`` are what the app showed when it was logged (the engine
+    recomputes the day from ids and amounts). DECISIONS.md, decision 24.
+    """
+    __tablename__ = "diary_entries"
+    __table_args__ = (Index("ix_diary_entries_user_day", "user_id", "day"),)
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    day: Mapped[date] = mapped_column(Date)
+    meal: Mapped[str] = mapped_column(String(16))
+    kind: Mapped[str] = mapped_column(String(16))
+    item_id: Mapped[str] = mapped_column(String(80))
+    servings: Mapped[float] = mapped_column(Float, default=1.0)
+    grams: Mapped[float] = mapped_column(Float, default=0.0)
+    name: Mapped[str] = mapped_column(String(200), default="")
+    kcal: Mapped[float] = mapped_column(Float, default=0.0)
+    # manual | idea | repeat | preset | week | describe
+    source: Mapped[str] = mapped_column(String(16), default="manual")
+    estimate: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class ActivityDayRow(Base):
+    """A day a person showed up, and how (logged, cooked, planned, list): what the food-week streak counts."""
+    __tablename__ = "activity_days"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    day: Mapped[date] = mapped_column(Date, primary_key=True)
+    kind: Mapped[str] = mapped_column(String(16), primary_key=True)
 
 
 class SourceRow(Base):

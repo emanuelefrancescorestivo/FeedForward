@@ -24,11 +24,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from pathlib import Path
 
+from ..db.diary_rows import migrate_state_diaries
 from ..db.models import Base
 from ..db.session import assert_production_database, get_engine
 from ..engine import load_engine
 from .auth import assert_production_secret
-from .routers import goals, recommend, auth_router, analysis, dictionary, plan, me, diary, photos
+from .routers import goals, recommend, auth_router, analysis, dictionary, plan, me, diary, entries, photos
 from . import __doc__ as _pkg_doc  # noqa
 
 
@@ -46,6 +47,7 @@ async def lifespan(app: FastAPI):
     assert_production_database()
     assert_production_secret()
     Base.metadata.create_all(get_engine())
+    migrate_state_diaries()                       # diaries still in the saved document move to rows, once
     engine = load_engine()
     app.state.engine_summary = engine.graph.summary()
     yield
@@ -97,6 +99,7 @@ app.include_router(dictionary.router)
 app.include_router(plan.router)
 app.include_router(me.router)
 app.include_router(diary.router)
+app.include_router(entries.router)
 app.include_router(photos.router)
 
 

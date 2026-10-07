@@ -468,6 +468,8 @@ def delete_user(email: str) -> bool:
         state = s.get(UserStateRow, row.id)
         if state is not None:
             s.delete(state)
+        from .diary_rows import delete_all
+        delete_all(s, row.id)
         s.delete(row)
         return True
 
