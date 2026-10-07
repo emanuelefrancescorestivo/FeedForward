@@ -28,7 +28,7 @@ from ..db.models import Base
 from ..db.session import assert_production_database, get_engine
 from ..engine import load_engine
 from .auth import assert_production_secret
-from .routers import goals, recommend, auth_router, analysis, dictionary, plan, me, diary
+from .routers import goals, recommend, auth_router, analysis, dictionary, plan, me, diary, photos
 from . import __doc__ as _pkg_doc  # noqa
 
 
@@ -97,6 +97,7 @@ app.include_router(dictionary.router)
 app.include_router(plan.router)
 app.include_router(me.router)
 app.include_router(diary.router)
+app.include_router(photos.router)
 
 
 @app.get("/", tags=["meta"])
@@ -131,6 +132,20 @@ def explorer_font(name: str):
     if path.suffix != ".woff2" or path.parent != _FONTS or not path.is_file():
         raise HTTPException(status_code=404)
     return FileResponse(path, media_type="font/woff2",
+                        headers={"Cache-Control": "public, max-age=31536000, immutable"})
+
+
+_PHOTOS = (_WEB.parent / "photos").resolve()
+
+
+@app.get("/app/photos/{name}", include_in_schema=False)
+def explorer_photo(name: str):
+    """Recipe and food photos (data/photos.json lists each one's source, author and licence). Served from
+    here, like the typeface, so showing a photo sends nothing to a third party."""
+    path = (_PHOTOS / name).resolve()
+    if path.suffix != ".webp" or path.parent != _PHOTOS or not path.is_file():
+        raise HTTPException(status_code=404)
+    return FileResponse(path, media_type="image/webp",
                         headers={"Cache-Control": "public, max-age=31536000, immutable"})
 
 

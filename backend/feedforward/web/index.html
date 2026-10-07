@@ -386,6 +386,15 @@ dialog#recipe-sheet { width: min(560px, 94vw); }
 details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
 .empty { text-align: center; padding: 32px 16px; }
 .big-ic { font-size: 48px; display: block; margin-bottom: 8px; color: var(--accent); }
+/* photos: a similar dish, served by this app (data/photos.json) */
+.tile-ic { overflow: hidden; }
+.tile-ic img.ph, .li-ph img.ph { width: 100%; height: 100%; object-fit: cover; display: block; }
+#rs-photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius);
+  background: var(--soft); }
+.rs-credit { font-size: 12px; color: var(--muted); margin: 6px 2px 12px; }
+.rs-credit a { color: var(--muted); }
+.li-ph { display: inline-block; width: 28px; height: 28px; border-radius: 8px; overflow: hidden; vertical-align: middle;
+  margin-right: 8px; background: var(--soft); }
 .i { width: 1.25em; height: 1.25em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
   flex: none; vertical-align: -0.25em; }
 .i.s16 { width: 16px; height: 16px; vertical-align: -3px; }
@@ -739,6 +748,7 @@ dialog#log-sheet { width: min(520px, 94vw); }
       <div class="rs-titles"><h2 id="rs-title"></h2><div class="sub" id="rs-sub"></div></div>
       <button class="icon-btn" data-rs-close aria-label="Close"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
     </div>
+    <div id="rs-photo"></div>
     <div class="seg wseg" role="tablist" aria-label="Recipe" id="rs-tabs"></div>
     <div id="rs-body"></div>
   </div>
@@ -880,6 +890,7 @@ const qs = (o) => new URLSearchParams(Object.entries(o).flatMap(([k, v]) => Arra
 const TOKEN_KEY = "feedforward.token";
 let token = (() => { try { return localStorage.getItem(TOKEN_KEY); } catch { return null; } })();
 let app = null;                 // the saved document
+let photos = { recipes: {}, foods: {}, ingredients: {} };   // GET /photos: which photo shows what, with its credit
 let account = null;             // {email}
 let authConfig = { google_client_id: null, dev_login: false };
 const blankApp = () => ({ v: 1, onboarded: false, setup: {}, answers: {}, declined: [], avoid: [], diary: {}, list: [],
@@ -1634,7 +1645,7 @@ function slotCard(m, sum, entries) {
     ${leverChips(levers)}
     ${mine.map(e => `<div class="mc-row entry">
       <button class="meal" ${e.kind === "recipe" ? `data-open-entry="${esc(e.uid)}"` : `data-food="${esc(e.id)}"`}>
-        <span class="tile-ic small" aria-hidden="true">${e.kind === "recipe" ? recipeIcon(e.name) : iconFor(e.name, e.group || "")}</span>
+        <span class="tile-ic small" aria-hidden="true">${thumbFor(e.kind, e.id, e.name)}</span>
         <span class="what"><b>${esc(e.kind === "food" ? friendlyName(e.name) : e.name)}</b>
           <small>${e.kind === "food" ? `${round(e.grams)} g` : e.servings === 1 ? "1 portion" : `${e.servings} portions`} · ${fmt(e.kcal || 0)} kcal</small></span></button>
       <button class="x" data-unlog="${esc(e.uid)}" aria-label="Remove ${esc(e.name)}">×</button></div>`).join("")}
@@ -1710,7 +1721,7 @@ function pickRow(x) {
   const sub = x.kind === "recipe" ? `${fmt(x.kcal)} kcal a portion${x.time_min ? ` · ${x.time_min} min` : ""}`
     : `${round(x.portion_g)} g · ${fmt(x.kcal_100g * x.portion_g / 100)} kcal`;
   const name = x.kind === "food" ? friendlyName(x.name) : x.name;
-  return `<button class="pick" data-pick="${data}"><span class="tile-ic small" aria-hidden="true">${x.kind === "recipe" ? recipeIcon(x.name) : iconFor(x.name + " " + (x.category || ""), x.group || "")}</span>
+  return `<button class="pick" data-pick="${data}"><span class="tile-ic small" aria-hidden="true">${thumbFor(x.kind, x.id, x.name)}</span>
     <span class="what"><b>${esc(name)}</b><small>${sub}</small></span><span class="add">Add</span></button>`;
 }
 // One tap on a result asks only the amount, with its usual portion already in.
@@ -1718,7 +1729,7 @@ function pickAmount(x) {
   const recipe = x.kind === "recipe", name = recipe ? x.name : friendlyName(x.name);
   const kcalFor = (v) => recipe ? x.kcal * v : x.kcal_100g * v / 100;
   $("log-body").innerHTML = `<button class="back" data-log-back>← Search</button>
-    <div class="amount"><span class="tile-ic" aria-hidden="true">${recipe ? recipeIcon(x.name) : iconFor(x.name, x.group || "")}</span><b>${esc(name)}</b></div>
+    <div class="amount"><span class="tile-ic" aria-hidden="true">${thumbFor(x.kind, x.id, x.name)}</span><b>${esc(name)}</b></div>
     <form id="amount-form" class="setup">
       ${recipe ? `<div class="field"><span class="flabel">Portions</span><div class="choice">${[0.5, 1, 1.5, 2].map(v =>
           `<label><input type="radio" name="amt" value="${v}" ${v === 1 ? "checked" : ""}><span>${v === 0.5 ? "½" : v}</span></label>`).join("")}</div></div>`
@@ -1769,7 +1780,7 @@ function drawIdeas(r) {
   $("log-body").innerHTML = `<p class="sub">About ${fmt(r.energy_for_meal)} kcal fits this meal today.</p>
     ${leverChips(r.levers)}
     ${r.options.map(o => `<div class="idea">
-      <button class="idea-main" data-idea-open="${esc(o.id)}"><span class="tile-ic" aria-hidden="true">${recipeIcon(o.en)}</span>
+      <button class="idea-main" data-idea-open="${esc(o.id)}"><span class="tile-ic" aria-hidden="true">${thumbFor("recipe", o.id, o.en)}</span>
         <span class="what"><b>${esc(o.en)}</b><small>${fmt(o.kcal)} kcal${o.time_min ? ` · ${o.time_min} min` : ""} · about ${euro(o.cost)}${o.batch ? " · keeps 3 days" : ""}</small>
         <span class="reasons">${o.reasons.slice(0, 3).map(reasonChip).join("")}</span></span></button>
       <div class="idea-actions"><button class="add" data-idea-take="${esc(o.id)}">I'll have this</button>
@@ -1815,6 +1826,13 @@ const planDayISO = (i) => shiftDay(isoDate(new Date()), i - todayIdx());
 
 // Dishes first, then the main ingredient: a picture says "pasta" faster than a name.
 const recipeIcon = (name) => icon("plate");
+// A photo of a similar dish when there is one (served by this app, credited in the recipe sheet), else the
+// plate icon; plate = false returns nothing instead (shopping-list rows).
+function thumbFor(kind, id, name, plate = true) {
+  const p = (kind === "recipe" ? photos.recipes : kind === "ingredient" ? photos.ingredients : photos.foods)[id];
+  if (p) return `<img class="ph" src="${p.thumb}" alt="${esc(name)}" width="48" height="48" loading="lazy">`;
+  return plate ? icon("plate") : "";
+}
 const euro = (x) => `€${x.toFixed(2)}`;
 
 function weekRequest() {
@@ -2067,7 +2085,7 @@ function mealCard(i, m, r) {
     <div class="mc-head"><span>${MEAL_LABEL[m]}</span><span class="muted">${fmt(r.kcal)} kcal</span></div>
     <div class="mc-row">
       <button class="meal" data-recipe="${esc(r.id)}" data-slot="${slot}" aria-haspopup="dialog">
-        <span class="tile-ic" aria-hidden="true">${recipeIcon(r.en)}</span>
+        <span class="tile-ic" aria-hidden="true">${thumbFor("recipe", r.id, r.en)}</span>
         <span class="what"><b>${esc(r.en)}</b><small>${r.time_min ? `${r.time_min} min · ` : ""}P ${fmt(r.protein)} g · C ${fmt(r.carbs)} g · F ${fmt(r.fat)} g${r.batch ? " · keeps 3 days" : ""}</small></span>
       </button>
       <button class="eat" data-eat="${slot}" aria-pressed="${done}" aria-label="Eaten (logs it in your diary): ${esc(r.en)}" title="Eaten: log it in your diary">
@@ -2080,7 +2098,7 @@ function snackCard(d) {
   const kcal = d.snacks.reduce((s, x) => s + x.kcal, 0);
   return `<div class="card meal-card">
     <div class="mc-head"><span>Snacks</span><span class="muted">${fmt(kcal)} kcal</span></div>
-    ${d.snacks.map(s => `<div class="mc-row snack"><span class="tile-ic small" aria-hidden="true">${recipeIcon(s.en)}</span>
+    ${d.snacks.map(s => `<div class="mc-row snack"><span class="tile-ic small" aria-hidden="true">${thumbFor("recipe", s.id, s.en)}</span>
       <span class="what">${esc(s.en)}<small>${fmt(s.kcal)} kcal</small></span></div>`).join("")}
   </div>`;
 }
@@ -2131,7 +2149,10 @@ function addWeekToList() {
 let sheet = null;          // {id, en, kcal, time_min, meal, ctx: "week" | "idea" | "diary", day?}
 function openRecipeSheet(info) {
   sheet = info;
-  $("rs-icon").innerHTML = recipeIcon(info.en);
+  const pic = photos.recipes[info.id];
+  $("rs-icon").innerHTML = pic ? "" : recipeIcon(info.en);
+  $("rs-photo").innerHTML = pic ? `<img src="${pic.src}" alt="${esc(info.en)}" width="800" height="600">
+    <p class="rs-credit">Photo: a similar dish · <a href="${esc(pic.page)}" target="_blank" rel="noopener">${esc(pic.author)}</a>, ${esc(pic.licence)}</p>` : "";
   $("rs-title").textContent = info.en;
   const when = info.ctx === "week" ? `${MEAL_LABEL[info.meal]} · ${WEEKDAYS[info.day]}` : SLOT_LABEL[info.meal] || "";
   $("rs-sub").textContent = [when, info.time_min ? `${info.time_min} min` : "", info.kcal ? `${fmt(info.kcal)} kcal` : ""].filter(Boolean).join(" · ");
@@ -2182,7 +2203,7 @@ function swapView(res) {
   const delta = (d) => d === 0 ? "same price" : d > 0 ? `+${euro(d)}` : `−${euro(-d)}`;
   if (!res.options.length) return `<p class="sub">No other ${res.meal} fits this week's budget and needs.</p>`;
   return `<p class="sub">Each keeps your budget, energy and limits.</p>
-    ${res.options.map(o => `<div class="swap-opt"><span class="mi" aria-hidden="true">${recipeIcon(o.en)}</span>
+    ${res.options.map(o => `<div class="swap-opt"><span class="tile-ic small" aria-hidden="true">${thumbFor("recipe", o.id, o.en)}</span>
       <span class="what"><b>${esc(o.en)}</b><small>${o.time_min ? `${o.time_min} min · ` : ""}${delta(o.cost_delta)}</small>
         <span class="chip ${effect[o.effect][1]}">${effect[o.effect][0]}</span></span>
       <button class="add" data-swap-to="${esc(o.id)}">Choose</button></div>`).join("")}`;
@@ -2373,11 +2394,15 @@ const HOME_ICON = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" s
 function shopRow(b, t, atHome) {
   return `<div class="shop-row${atHome ? " home" : ""}">
     ${atHome ? `<span></span>` : `<input type="checkbox" id="s-${esc(b.id)}" data-shop="${esc(b.id)}" ${t.has(b.id) ? "checked" : ""}>`}
-    <label class="nm" ${atHome ? "" : `for="s-${esc(b.id)}"`}>${esc(b.fr)}${sameName(b.fr, b.en) ? "" : ` <span class="muted">· ${esc(b.en)}</span>`}</label>
+    <label class="nm" ${atHome ? "" : `for="s-${esc(b.id)}"`}>${listPhoto("ingredient", b.id, b.en)}${esc(b.fr)}${sameName(b.fr, b.en) ? "" : ` <span class="muted">· ${esc(b.en)}</span>`}</label>
     <span class="num">${qty(b)}</span>
     <span class="num">${atHome ? "" : `${b.estimated ? "≈" : ""}${euro(b.price)}`}</span>
     <button class="home-btn" data-pantry="${esc(b.id)}" aria-pressed="${atHome}" title="${atHome ? "Need to buy it" : "I have this at home"}" aria-label="${atHome ? `Buy ${esc(b.fr)}` : `${esc(b.fr)}: I have this at home`}">${HOME_ICON}</button>
   </div>`;
+}
+function listPhoto(kind, id, name) {
+  const img = thumbFor(kind, id, name, false);
+  return img ? `<span class="li-ph" aria-hidden="true">${img}</span>` : "";
 }
 function itemRow(i) {
   const label = i.kind === "food" ? friendlyName(i.name) : i.kind === "ingredient" ? (i.fr || i.name) : i.name;
@@ -2385,7 +2410,7 @@ function itemRow(i) {
   const amount = i.kind === "ingredient" && i.g ? qty({ grams: i.g, liquid: i.liquid }) : "";
   return `<div class="shop-row item">
     <input type="checkbox" id="i-${esc(i.uid)}" data-item="${esc(i.uid)}" ${i.done ? "checked" : ""}>
-    <label class="nm" for="i-${esc(i.uid)}">${esc(label)}${extra}</label>
+    <label class="nm" for="i-${esc(i.uid)}">${listPhoto(i.kind, i.id, label)}${esc(label)}${extra}</label>
     <span class="num">${amount}</span><span></span>
     <button class="home-btn" data-remove="${esc(i.uid)}" aria-label="Remove ${esc(label)}" title="Remove">×</button></div>`;
 }
@@ -2507,7 +2532,8 @@ async function enterApp() {
   Object.keys(NAV_OF).forEach(t => { $("tab-" + t).hidden = t !== "today"; if (t !== "today") $("tab-" + t).innerHTML = ""; });
   $("tab-today").innerHTML = loading("Opening FeedForward…", "week");
   try {
-    const [saved, me] = await Promise.all([api("/me/state"), api("/auth/me"), loadBasics()]);
+    const [saved, me, pics] = await Promise.all([api("/me/state"), api("/auth/me"), api("/photos"), loadBasics()]);
+    photos = pics;
     account = me;
     app = Object.assign(blankApp(), saved.data || {});
     app.prefs = Object.assign({ extra: [], science: false }, app.prefs || {});

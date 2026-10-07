@@ -20,7 +20,10 @@
    "licence_url": "https://creativecommons.org/licenses/by/2.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "60baaee8cff7502bc7cde3cefaf940247a8a9ee5bff7522efc515710b54f36ce"
+   "sha256": "60baaee8cff7502bc7cde3cefaf940247a8a9ee5bff7522efc515710b54f36ce",
+   "ingredients": [
+    "apple"
+   ]
   },
   {
    "id": "baguette-emmental-apple",
@@ -95,7 +98,10 @@
    "licence_url": "https://creativecommons.org/licenses/by/2.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "82fb9033c4876671e4d1cef3e6ffea1f4d7bfcda524ff811393d9ca68254eadd"
+   "sha256": "82fb9033c4876671e4d1cef3e6ffea1f4d7bfcda524ff811393d9ca68254eadd",
+   "ingredients": [
+    "egg"
+   ]
   },
   {
    "id": "carrots",
@@ -110,7 +116,10 @@
    "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "e60a692a580b78adf44745082074a025aa1e2c513d4d51507f1082a643d1e8bd"
+   "sha256": "e60a692a580b78adf44745082074a025aa1e2c513d4d51507f1082a643d1e8bd",
+   "ingredients": [
+    "carrot"
+   ]
   },
   {
    "id": "chicken-rice-courgette",
@@ -185,7 +194,10 @@
    "licence_url": "https://creativecommons.org/licenses/by-sa/2.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "9587f2bb254bc78eccdaa2b7f51970b6e719d483d74038ca164f2400011453f9"
+   "sha256": "9587f2bb254bc78eccdaa2b7f51970b6e719d483d74038ca164f2400011453f9",
+   "ingredients": [
+    "chickpeas"
+   ]
   },
   {
    "id": "cooked-lentils",
@@ -200,7 +212,10 @@
    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "246612ffa21297ea334d4641ecabb444b9b862d54e4e7d0bc67a605ecaeac393"
+   "sha256": "246612ffa21297ea334d4641ecabb444b9b862d54e4e7d0bc67a605ecaeac393",
+   "ingredients": [
+    "green-lentils"
+   ]
   },
   {
    "id": "cooked-pasta",
@@ -215,7 +230,10 @@
    "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "11f6da2c968904ca314e96995321bf75afd96badd01d34c2b2a530b0a33fa25f"
+   "sha256": "11f6da2c968904ca314e96995321bf75afd96badd01d34c2b2a530b0a33fa25f",
+   "ingredients": [
+    "pasta"
+   ]
   },
   {
    "id": "egg-fried-rice",
@@ -275,7 +293,10 @@
    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "d2fffd130c82dab63f356a96c9ecaf2b90cb9016b92b03c055c887bd4f8c0815"
+   "sha256": "d2fffd130c82dab63f356a96c9ecaf2b90cb9016b92b03c055c887bd4f8c0815",
+   "ingredients": [
+    "emmental"
+   ]
   },
   {
    "id": "fromage-blanc-apple-walnut",
@@ -455,7 +476,10 @@
    "licence_url": "https://creativecommons.org/licenses/by/2.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "23898fd4bd889da3745ca6cbf18b2e54065362c09ed81cd85be2e079d348df95"
+   "sha256": "23898fd4bd889da3745ca6cbf18b2e54065362c09ed81cd85be2e079d348df95",
+   "ingredients": [
+    "milk"
+   ]
   },
   {
    "id": "muesli-soy-kiwi",
@@ -500,7 +524,10 @@
    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "5bf204d7bf4523b1d51ef93e4726240d3cbde486e43f4ccd0bdfe12fc2e106e0"
+   "sha256": "5bf204d7bf4523b1d51ef93e4726240d3cbde486e43f4ccd0bdfe12fc2e106e0",
+   "ingredients": [
+    "yogurt"
+   ]
   },
   {
    "id": "omelette-spinach-toast",
@@ -652,7 +679,10 @@
    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "8dabacefb216ccbbdb930adaf544021b8f02054baa97054e773cd397b2faea4f"
+   "sha256": "8dabacefb216ccbbdb930adaf544021b8f02054baa97054e773cd397b2faea4f",
+   "ingredients": [
+    "oats"
+   ]
   },
   {
    "id": "salmon-couscous-spinach",
@@ -758,7 +788,10 @@
    "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "d17b3662c7b72aef6cbcfb83e091dd4580c9a57b2e3a836530c1c8dd63f5e062"
+   "sha256": "d17b3662c7b72aef6cbcfb83e091dd4580c9a57b2e3a836530c1c8dd63f5e062",
+   "ingredients": [
+    "banana"
+   ]
   },
   {
    "id": "snack-orange",
@@ -774,7 +807,10 @@
    "licence_url": "",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "a8e9679ada9e69f591942db77b5518bebc16271aeab1bafb612d1e905a46a9d6"
+   "sha256": "a8e9679ada9e69f591942db77b5518bebc16271aeab1bafb612d1e905a46a9d6",
+   "ingredients": [
+    "orange"
+   ]
   },
   {
    "id": "snack-seeds-raisins",
@@ -864,7 +900,10 @@
    "licence_url": "https://creativecommons.org/licenses/by/4.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "af3fd582302e72a99414ad51c4461549d1f938085c1828f6960d6a31ae2317c0"
+   "sha256": "af3fd582302e72a99414ad51c4461549d1f938085c1828f6960d6a31ae2317c0",
+   "ingredients": [
+    "tomato"
+   ]
   },
   {
    "id": "tuna-pasta-salad",
@@ -909,7 +948,10 @@
    "licence_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "fb94d5a74b5f19b1a98012b7d48bec95b70416161a4f87c892da9b144c50d47a"
+   "sha256": "fb94d5a74b5f19b1a98012b7d48bec95b70416161a4f87c892da9b144c50d47a",
+   "ingredients": [
+    "rice"
+   ]
   },
   {
    "id": "wholemeal-bread",
@@ -924,7 +966,10 @@
    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
    "retrieved": "2026-10-07",
    "changes": "cropped to 4:3 and 1:1, resized, converted to WebP",
-   "sha256": "c0f9cba6f37cf3a94225cb289dc179ee161b465fcebaac6b4e7f958f44b52304"
+   "sha256": "c0f9cba6f37cf3a94225cb289dc179ee161b465fcebaac6b4e7f958f44b52304",
+   "ingredients": [
+    "wholemeal-bread"
+   ]
   },
   {
    "id": "yogurt-blueberry-seeds",
