@@ -585,22 +585,25 @@ makes every restart an outage.
 **Cost.** A build step for the image (not for the web app), and a scores file
 to rebuild whenever the data changes.
 *Where:* `Dockerfile`, `engine/recommender.py` (loading precomputed scores), `api/auth.py` (production checks)
-### 32. A public demo on a Hugging Face Space
+### 32. A public demo on Cloud Run, in Paris
 **Decision.** A demo anyone can open from a link, so friends and testers try the
 app without installing anything. It runs `FEEDFORWARD_ENV=demo`: the sign-in
 page offers "Try the demo", which makes a fresh account with a random id for
 each visitor; the name-only test sign-in is off (anyone typing the same name
-would open the same account); a strip asks for made-up details; the database
-is SQLite inside the container, wiped whenever the Space restarts; the
-signing secret is a Space secret, refused if missing, as in production. The
-request limit counts each visitor (proxy headers), not the Space's proxy.
-**Why.** Feedback needs people to use the real thing, and the owner chose a
-free host with no card. Accounts of their own, and nothing kept, mean no one
-sees another visitor's answers.
-**Instead.** Google Cloud Run in Paris (the EU host of decision 31) needs
-billing set up; a shared demo account would mix everyone's diaries.
-**Cost.** The Space runs in the US, so the demo is not the EU deployment of
-decision 31 and must never hold real data, which is why it asks for made-up
-details and keeps nothing. It sleeps after 48 hours without visits and wakes in
-about a minute. Each deploy wipes it.
-*Where:* [`deploy/huggingface/`](deploy/huggingface/) (`Dockerfile`, the Space card, `deploy.py`), `api/auth.py` (`demo_mode`), `api/routers/auth_router.py` (`POST /auth/demo`), [`tests/test_demo.py`](backend/tests/test_demo.py)
+would open the same account); a strip asks for made-up details. It runs on
+Google Cloud Run in Paris (`europe-west9`) as one instance at most, because
+its database is SQLite inside the instance, and none when idle. The signing
+secret is set at each deploy and refused if missing, as in production; the
+request limit counts each visitor (proxy headers), not Google's proxy.
+**Why.** Feedback needs people to use the real thing. Cloud Run keeps the demo
+in the EU (decision 31), on the Google Cloud account the AI pilot will use, and
+a demo's traffic stays within its free allowance. Accounts of their own, and
+nothing kept, mean no one sees another visitor's answers.
+**Instead.** A Hugging Face Space, built first: Docker Spaces now need a paid
+PRO subscription, and they run in the US. A shared demo account would mix
+everyone's diaries.
+**Cost.** A billing account with a card, watched by a budget alert. The
+instance stops after some minutes without visits (about 15), which wipes the
+demo: a visitor who comes back later starts again, and the first visit after a
+pause waits about 20 seconds while the engine loads. Each deploy wipes it too.
+*Where:* [`deploy/demo/`](deploy/demo/) (`Dockerfile`, `deploy.py`), `api/auth.py` (`demo_mode`), `api/routers/auth_router.py` (`POST /auth/demo`), [`tests/test_demo.py`](backend/tests/test_demo.py)

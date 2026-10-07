@@ -1,4 +1,7 @@
 """The public demo (FEEDFORWARD_ENV=demo): each visitor gets a fresh account of their own; no name sign-in."""
+import importlib.util
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -48,13 +51,25 @@ def test_the_demo_link_opens_the_app(demo):
     assert res.status_code in (302, 307) and res.headers["location"] == "/app"
 
 
-def test_the_space_runs_the_demo_on_its_port():
-    """The Hugging Face Space (deploy/huggingface) builds this app in demo mode on the port its card names."""
-    import re
-    from pathlib import Path
-    space = Path(__file__).resolve().parents[2] / "deploy" / "huggingface"
-    dockerfile, card = (space / "Dockerfile").read_text(encoding="utf-8"), (space / "README.md").read_text(encoding="utf-8")
-    port = re.search(r"^app_port: (\d+)$", card, re.M).group(1)
-    assert "FEEDFORWARD_ENV=demo" in dockerfile and f'"--port", "{port}"' in dockerfile
-    assert "--proxy-headers" in dockerfile                  # the limit counts each visitor, not the proxy
+DEMO = Path(__file__).resolve().parents[2] / "deploy" / "demo"
+
+
+def test_the_container_runs_the_demo():
+    """deploy/demo/Dockerfile: demo mode, on the port Cloud Run gives, counting each visitor rather than the proxy."""
+    dockerfile = (DEMO / "Dockerfile").read_text(encoding="utf-8")
+    assert "FEEDFORWARD_ENV=demo" in dockerfile and "${PORT:-8080}" in dockerfile
+    assert "--proxy-headers" in dockerfile
     assert "playwright" in dockerfile                        # test tools are left out of the image
+
+
+def test_the_demo_runs_as_one_instance_in_paris():
+    """One instance: the demo's database lives inside it, so a second one would not know the first one's visitors."""
+    spec = importlib.util.spec_from_file_location("deploy_demo", DEMO / "deploy.py")
+    deploy = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(deploy)
+    args = deploy.deploy_args("feedforward-demo", "/tmp/stage", "s" * 64)
+    flag = lambda name: args[args.index(name) + 1]           # noqa: E731
+    assert args[:3] == ["run", "deploy", "feedforward-demo"]
+    assert flag("--region") == "europe-west9" and flag("--max-instances") == "1" and flag("--min-instances") == "0"
+    assert "--allow-unauthenticated" in args and flag("--memory") == "1Gi"
+    assert flag("--set-env-vars") == "FEEDFORWARD_SECRET=" + "s" * 64
