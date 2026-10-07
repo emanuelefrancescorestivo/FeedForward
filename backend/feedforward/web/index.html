@@ -206,7 +206,9 @@ details.more summary::-webkit-details-marker { display: none; }
 .presets { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 18px; }
 .presets button.on, .choice label:has(input:checked) { background: var(--accent); color: var(--on-accent); font-weight: 600; }
 .choice { display: flex; flex-wrap: wrap; gap: 8px; }
-.choice input { display: none; }
+.choice label { position: relative; }
+/* visually hidden, still a real control: reachable by Tab and arrow keys, read by screen readers */
+.choice input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
 .goodfor { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
 .hero { display: flex; gap: 16px; align-items: center; margin-bottom: 8px; }
 .hero .icon { font-size: 44px; width: 56px; }

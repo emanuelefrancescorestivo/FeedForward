@@ -25,6 +25,12 @@ def test_font_route_serves_only_font_files():
         assert client.get(f"/app/fonts/{bad}").status_code == 404, bad
 
 
+def test_choice_inputs_are_not_removed_from_the_page():
+    """display: none takes a radio button away from keyboards and screen readers (WCAG 2.1.1, 4.1.2)."""
+    import re
+    assert not re.search(r"\.choice input\s*\{[^}]*display:\s*none", client.get("/app").text)
+
+
 def test_app_opens_on_sign_in_and_plans_nothing_by_itself():
     """A new person meets the sign-in page; no week, list or diet is made before they ask."""
     page = client.get("/app").text
