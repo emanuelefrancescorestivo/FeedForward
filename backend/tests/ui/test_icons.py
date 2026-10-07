@@ -38,7 +38,7 @@ def test_no_emoji_in_the_interface(server, page):
     expect(page.locator("[data-pick]").first).to_be_visible(timeout=15_000)
     _no_emoji(page, "+ add")
     page.locator("#log-sheet [data-close-sheet]").click()
-    page.locator("[data-ideas=dinner]").click()
+    page.locator(".slot-actions [data-ideas=dinner]").click()
     expect(page.locator(".idea").first).to_be_visible(timeout=30_000)
     _no_emoji(page, "ideas")
     page.locator("#log-sheet [data-close-sheet]").click()

@@ -28,6 +28,20 @@ def _all_suggestions(engine, meal, **kw):
         shown += [o["id"] for o in r["options"]]
 
 
+def test_vegetarian_ideas_have_no_animal_flesh(engine):
+    """The first idea a vegetarian sees (day one, inline) comes from these: none may contain meat or fish."""
+    import json
+    from pathlib import Path
+    flesh = {"chicken", "ham", "minced-beef", "mackerel", "salmon", "sardines", "tuna"}
+    recipes = {r["id"]: r for r in json.loads(
+        (Path(__file__).resolve().parents[1] / "feedforward" / "data" / "recipes.json").read_text(encoding="utf-8"))["recipes"]}
+    for meal in ("breakfast", "lunch", "dinner", "snack"):
+        ids = _all_suggestions(engine, meal, goal=None, diet="vegetarian")
+        assert ids, meal
+        for rid in ids:
+            assert not flesh & {i["id"] for i in recipes[rid]["ingredients"]}, (meal, rid)
+
+
 def test_an_empty_day_has_targets_and_nothing_eaten(engine):
     s = diary.day_summary(engine, STUDENT, [], goal="sleep_support")
     assert s["totals"] == {"kcal": 0, "protein": 0.0, "carbs": 0.0, "fat": 0.0}

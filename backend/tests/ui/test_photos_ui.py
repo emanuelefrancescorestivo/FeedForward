@@ -11,7 +11,7 @@ def test_recipe_sheet_credits_the_photo(server, page):
     page.on("request", lambda r: hosts.add(urlparse(r.url).netloc))
     sign_in(page, server, "photos-ada")
     finish_first_run(page)
-    page.locator("[data-ideas=lunch]").click()
+    page.locator(".slot-actions [data-ideas=lunch]").click()
     page.locator(".idea [data-idea-open]").first.click()
     sheet = page.locator("#recipe-sheet")
     expect(sheet.locator("img").first).to_be_visible(timeout=15_000)
