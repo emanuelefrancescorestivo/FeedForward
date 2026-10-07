@@ -25,9 +25,31 @@ def test_font_route_serves_only_font_files():
         assert client.get(f"/app/fonts/{bad}").status_code == 404, bad
 
 
+def test_choice_inputs_are_not_removed_from_the_page():
+    """display: none takes a radio button away from keyboards and screen readers (WCAG 2.1.1, 4.1.2)."""
+    import re
+    assert not re.search(r"\.choice input\s*\{[^}]*display:\s*none", client.get("/app").text)
+
+
+def test_the_saved_document_no_longer_holds_the_diary():
+    """The diary lives in rows (/diary/entries); the saved document keeps answers and the list."""
+    assert "app.diary" not in client.get("/app").text
+
+
 def test_app_opens_on_sign_in_and_plans_nothing_by_itself():
     """A new person meets the sign-in page; no week, list or diet is made before they ask."""
     page = client.get("/app").text
     assert 'id="gate"' in page and "/auth/config" in page
     start = page[page.index("// ---------------------------------------------------------------- start"):]
     assert "/plan/week" not in start and "renderWeek(" not in start
+
+
+def test_static_files_do_not_count_against_the_request_limit(monkeypatch):
+    """Photos, fonts and the page itself are not API work: a few screens of thumbnails must not lock a student out."""
+    import feedforward.api.main as main_module
+    monkeypatch.setattr(main_module, "_LIMIT", 5)
+    main_module._HITS.clear()
+    for _ in range(12):
+        assert client.get("/app/photos/lentil-salad-sq.webp").status_code == 200
+    assert client.get("/app").status_code == 200
+    main_module._HITS.clear()

@@ -49,7 +49,7 @@ def _bearer(res) -> dict:
 
 def test_config_says_how_to_sign_in(client, monkeypatch):
     monkeypatch.delenv("FEEDFORWARD_GOOGLE_CLIENT_ID", raising=False)
-    assert client.get("/auth/config").json() == {"google_client_id": None, "dev_login": True}
+    assert client.get("/auth/config").json() == {"google_client_id": None, "dev_login": True, "demo": False}
     monkeypatch.setenv("FEEDFORWARD_GOOGLE_CLIENT_ID", CLIENT_ID)
     assert client.get("/auth/config").json()["google_client_id"] == CLIENT_ID
 
@@ -103,7 +103,7 @@ def test_test_sign_in_is_off_in_production_and_when_switched_off(client, monkeyp
 def test_saved_data_round_trip_export_and_delete(client):
     h = _bearer(client.post("/auth/dev", json={"name": "Bea"}))
     assert client.get("/me/state", headers=h).json() == {"data": {}}
-    doc = {"onboarded": True, "setup": {"age": "30"}, "diary": {"2026-10-06": [{"kind": "food", "id": "wf-042"}]}}
+    doc = {"onboarded": True, "setup": {"age": "30"}, "have": ["rice", "lentils"]}    # the diary is in rows
     assert client.put("/me/state", headers=h, json={"data": doc}).json() == {"saved": True}
     assert client.get("/me/state", headers=h).json()["data"] == doc
     assert client.get("/auth/export", headers=h).json()["app"] == doc

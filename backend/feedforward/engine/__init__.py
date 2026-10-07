@@ -42,13 +42,18 @@ def load_engine() -> Recommender:
 
     If the database has been seeded, that is the source — adding a food is a
     row, not a JSON edit. An empty database falls back to the versioned JSON
-    seed so the API still starts before the first seed run.
+    seed so the API still starts before the first seed run; built from those
+    files, the engine comes from FEEDFORWARD_ENGINE_CACHE when the image saved
+    one for the same code and data (engine/cache.py).
     """
+    import os
     from ..db.models import Base
     from ..db.repository import corpus_is_seeded
     from ..db.session import get_engine
+    from . import cache
     get_engine()
     Base.metadata.create_all(get_engine())
     if corpus_is_seeded():
         return build_engine(use_pubmed=False, source="db")
-    return build_engine(use_pubmed=False)
+    saved = os.getenv("FEEDFORWARD_ENGINE_CACHE")
+    return (cache.load(saved) if saved else None) or build_engine(use_pubmed=False)

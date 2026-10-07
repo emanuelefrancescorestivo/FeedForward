@@ -44,7 +44,8 @@ Everyday foods are ranked first (engine/familiarity.py). "Why?" shows the
 food -> nutrient -> goal graph. The Dictionary (nutrients, foods, terms) cites a
 source for every entry. Theme: system, light or
 dark (◐). The shopping list lives in this browser (localStorage).
-Icons are emoji placeholders per food group until real food images exist.
+Photos of a similar dish come from Wikimedia Commons (data/photos.json), each
+credited under Sources and licences; line icons stand in where there is none.
 Wording avoids the regulated EU nutrition-claim terms ("source of", "high in",
 "rich in"): it states the share of daily need instead.
 Look: Apple Human Interface Guidelines conventions (system font, large titles,
@@ -65,8 +66,11 @@ recipe shows the goal's nutrients per portion (>= 15% of daily need, the EU
 :root {
   --bg: #f5f2ea; --surface: #fffdf8; --side: #ede8dc; --soft: rgba(110, 96, 66, .09); --text: #2b2924; --muted: #655f53;
   --line: rgba(80, 66, 40, .14); --control: #8f887a; --accent: #45693e; --on-accent: #ffffff; --accent-soft: #e3ebd9;
-  --ring: #86a977; --note: #8a4f1f; --note-soft: #f5e7d6; --seg-on: #fffdf8; --bar: rgba(245, 242, 234, .86); --badge: #a4532e;
+  --ring: #6d965e; --note: #8a4f1f; --note-soft: #f5e7d6; --seg-on: #fffdf8; --bar: rgba(245, 242, 234, .86); --badge: #a4532e;
   --carbs: #d6ad5f; --protein: #c98a6b; --fat: #a497c7;
+  --gold: #7a5a10; --gold-soft: #f4e8cc; --rest: #6a5d9c; --rest-soft: #ebe7f5;   /* milestones; rest weeks and AI */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --r-sm: 8px; --r-lg: 18px;
+  --dur-press: 120ms; --dur: 200ms; --dur-sheet: 280ms; --dur-draw: 800ms; --dur-moment: 600ms;
   --shadow: 0 1px 2px rgba(64, 52, 28, .05), 0 0 0 .5px rgba(64, 52, 28, .07);
   --shadow-up: 0 6px 20px rgba(64, 52, 28, .10), 0 0 0 .5px rgba(64, 52, 28, .07);
   --radius: 14px; --hair: .5px; --ease: cubic-bezier(.2, .8, .2, 1);
@@ -74,15 +78,17 @@ recipe shows the goal's nutrients per portion (>= 15% of daily need, the EU
 /* Theme: follows the system unless the user picks one (data-theme on <html>). Dark is forest and soil, not black. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) { --bg: #161914; --surface: #20241d; --side: #1b1e18; --soft: rgba(226, 232, 212, .08); --text: #ece8dc;
-    --muted: #aba696; --line: rgba(226, 232, 212, .12); --control: #7d796c; --accent: #a9c99a; --on-accent: #15200f;
+    --muted: #aba696; --line: rgba(226, 232, 212, .12); --control: #8a8578; --accent: #a9c99a; --on-accent: #15200f;
     --accent-soft: #2a3725; --ring: #8fb27f; --note: #e8b78c; --note-soft: #3a2c1f; --seg-on: #3a4034; --bar: rgba(22, 25, 20, .86);
     --carbs: #e0c07a; --protein: #dba08a; --fat: #b7abdb;
+    --gold: #e6c47c; --gold-soft: #3a321d; --rest: #b9addf; --rest-soft: #2e2a3d;
     --shadow: 0 0 0 .5px rgba(226, 232, 212, .07); --shadow-up: 0 8px 24px rgba(0, 0, 0, .35), 0 0 0 .5px rgba(226, 232, 212, .08); }
 }
 :root[data-theme="dark"] { --bg: #161914; --surface: #20241d; --side: #1b1e18; --soft: rgba(226, 232, 212, .08); --text: #ece8dc;
-    --muted: #aba696; --line: rgba(226, 232, 212, .12); --control: #7d796c; --accent: #a9c99a; --on-accent: #15200f;
+    --muted: #aba696; --line: rgba(226, 232, 212, .12); --control: #8a8578; --accent: #a9c99a; --on-accent: #15200f;
     --accent-soft: #2a3725; --ring: #8fb27f; --note: #e8b78c; --note-soft: #3a2c1f; --seg-on: #3a4034; --bar: rgba(22, 25, 20, .86);
     --carbs: #e0c07a; --protein: #dba08a; --fat: #b7abdb;
+    --gold: #e6c47c; --gold-soft: #3a321d; --rest: #b9addf; --rest-soft: #2e2a3d;
     --shadow: 0 0 0 .5px rgba(226, 232, 212, .07); --shadow-up: 0 8px 24px rgba(0, 0, 0, .35), 0 0 0 .5px rgba(226, 232, 212, .08); }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 [hidden] { display: none !important; }   /* class rules below set display; hidden must still win */
@@ -206,7 +212,9 @@ details.more summary::-webkit-details-marker { display: none; }
 .presets { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 18px; }
 .presets button.on, .choice label:has(input:checked) { background: var(--accent); color: var(--on-accent); font-weight: 600; }
 .choice { display: flex; flex-wrap: wrap; gap: 8px; }
-.choice input { display: none; }
+.choice label { position: relative; }
+/* visually hidden, still a real control: reachable by Tab and arrow keys, read by screen readers */
+.choice input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
 .goodfor { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
 .hero { display: flex; gap: 16px; align-items: center; margin-bottom: 8px; }
 .hero .icon { font-size: 44px; width: 56px; }
@@ -378,7 +386,59 @@ dialog#recipe-sheet { width: min(560px, 94vw); }
 .home-btn[aria-pressed="true"] { color: var(--accent); background: var(--accent-soft); }
 details.sec summary svg { vertical-align: -4px; margin-right: 4px; }
 .empty { text-align: center; padding: 32px 16px; }
-.big-ic { font-size: 48px; display: block; margin-bottom: 8px; }
+.big-ic { font-size: 48px; display: block; margin-bottom: 8px; color: var(--accent); }
+.inline-idea { display: flex; gap: 10px; align-items: flex-start; background: var(--accent-soft); border-radius: 12px; padding: 10px;
+  margin: 2px 0 8px; animation: rise .35s var(--ease) both; }
+.inline-idea .tile-ic { width: 64px; height: 64px; }
+.inline-idea .what { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.inline-idea .what small { font-size: 13px; color: var(--muted); }
+.inline-idea .reasons .chip { background: var(--surface); }
+.inline-idea .icon-btn { width: 36px; height: 36px; background: none; flex: none; }
+.ii-top { font-size: 11.5px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .05em; }
+.ii-acts { display: flex; gap: 14px; align-items: center; margin-top: 6px; flex-wrap: wrap; }
+.primary.small { min-height: 38px; padding: 6px 16px; border-radius: 999px; font-size: 14px; white-space: nowrap; }
+.qcard { padding: 14px 16px 12px; box-shadow: var(--shadow), inset 3px 0 0 var(--accent); }
+.qcard .q { font-weight: 650; font-size: 16px; margin-bottom: 2px; }
+.qcard .qchoice { margin-top: 10px; }
+.qcard .strat { padding: 0; }
+.qfoot { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.qfoot .link { font-size: 14px; font-weight: 600; min-height: 32px; }
+.est { font-size: 11px; font-weight: 700; color: var(--note); background: var(--note-soft); border-radius: 4px; padding: 0 5px;
+  vertical-align: 1px; }
+.pick-row { display: flex; align-items: center; gap: 10px; }
+.pick-row .pick { flex: 1; min-width: 0; }
+/* a round tick, as on the shopping list (the sheet's switches are for settings) */
+.sheet input[type=checkbox].pick-check { flex: none; width: 24px; height: 24px; border-radius: 50%; margin: 0; cursor: pointer;
+  background: none; box-shadow: inset 0 0 0 1.5px var(--control); transition: none; }
+.sheet input[type=checkbox].pick-check::after { content: none; }
+.sheet input[type=checkbox].pick-check:checked { box-shadow: none; background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7.5l2.8 2.8L11 4.5'/%3E%3C/svg%3E") center no-repeat; }
+.multi-bar { position: sticky; bottom: 0; background: var(--surface); padding: 10px 0 4px; }
+.multi-bar .primary { width: 100%; }
+.unsaved { margin: -2px 0 6px 46px; font-size: 13px; color: var(--note); }
+.unsaved .link { font-size: 13px; min-height: 32px; font-weight: 600; }
+.unsaved-inline { color: var(--note); }
+.stale-note .link { font-size: 15px; font-weight: 600; }
+/* photos: a similar dish, served by this app (data/photos.json) */
+.tile-ic { overflow: hidden; }
+.tile-ic img.ph, .li-ph img.ph { width: 100%; height: 100%; object-fit: cover; display: block; }
+#rs-photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius);
+  background: var(--soft); }
+.rs-credit { font-size: 12px; color: var(--muted); margin: 6px 2px 12px; }
+.rs-credit a { color: var(--muted); }
+.credits summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+.photo-credits { margin: 0 0 12px; padding-left: 18px; font-size: 13px; color: var(--muted); max-height: 40vh; overflow-y: auto; }
+.photo-credits li { margin: 4px 0; }
+.photo-credits a { color: var(--muted); }
+.li-ph { display: inline-block; width: 28px; height: 28px; border-radius: 8px; overflow: hidden; vertical-align: middle;
+  margin-right: 8px; background: var(--soft); }
+.i { width: 1.25em; height: 1.25em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  flex: none; vertical-align: -0.25em; }
+.i.s16 { width: 16px; height: 16px; vertical-align: -3px; }
+.tile-ic .i, .ic .i, .rs-icon .i { width: 26px; height: 26px; color: var(--accent); }
+.tile-ic.small .i { width: 20px; height: 20px; }
+.big-ic .i { width: 48px; height: 48px; }
+.icon-btn .i { width: 20px; height: 20px; }
+.graph .gi { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Graph */
 .graph { width: 100%; height: auto; margin: 4px 0 12px; color: var(--text); }
@@ -520,6 +580,7 @@ dialog.closing::backdrop { animation: fade-out .18s ease forwards; }
 
 /* v6: accounts. A sign-in page, getting to know you, the day as a diary, ideas per meal */
 body.gated header, body.gated main, body.gated .tabbar, body.gated footer { display: none !important; }
+body.first-run .tabbar, body.first-run nav.top-tabs { display: none !important; }   /* two screens, nothing to wander off to */
 body.gated { padding-left: 0 !important; }
 #gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32px 16px; }
 .gate-card { width: min(440px, 100%); }
@@ -532,6 +593,9 @@ body.gated { padding-left: 0 !important; }
 .g-btn { display: flex; justify-content: center; min-height: 44px; margin-bottom: 18px; }
 .dev { background: var(--surface); box-shadow: var(--shadow); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 16px; }
 .dev-row { display: flex; gap: 8px; }
+.demo-try .primary { width: 100%; min-height: 48px; font-size: 17px; }
+.demo-try .src { margin-top: 8px; }
+.demo-strip { background: var(--soft); color: var(--muted); font-size: 13px; border-radius: 10px; padding: 8px 12px; margin: 8px 0 0; }
 .dev-row input { flex: 1; min-width: 0; font: inherit; color: var(--text); background: var(--soft); border: none; border-radius: 10px; padding: 10px 12px; min-height: 44px; }
 .dev-row .primary { min-height: 44px; padding: 10px 16px; }
 .dev .src { margin: 8px 0 0; }
@@ -684,6 +748,7 @@ dialog#log-sheet { width: min(520px, 94vw); }
 <section id="gate" hidden></section>
 
 <main class="wrap">
+  <p class="demo-strip" id="demo-strip" hidden>Demo: please use made-up details. Everything is wiped when the demo restarts.</p>
   <section id="tab-today"><div class="loading" role="status"><span class="loading-text">Opening FeedForward…</span><i class="sk sk-title"></i><i class="sk sk-strip"></i><i class="sk sk-card tall"></i><i class="sk sk-card"></i></div></section>
   <section id="tab-week" hidden></section>
   <section id="tab-find" hidden></section>
@@ -712,7 +777,8 @@ dialog#log-sheet { width: min(520px, 94vw); }
     <p class="src">Food composition: ANSES-CIQUAL 2020 and USDA FoodData Central. Products and prices: Open Food Facts and
       Open Prices (ODbL); ≈ marks a price estimated from the national median and the shop's price level. Health claims:
       EU Register of nutrition and health claims, © European Union. Descriptions: Wikipedia (CC BY-SA). Typeface: Inter
-      (SIL Open Font License 1.1). Food icons are placeholders.</p>
+      (SIL Open Font License 1.1). Photos: Wikimedia Commons contributors, cropped and resized, each credited below.</p>
+    <details class="credits"><summary>Photo credits</summary><ul class="photo-credits" id="photo-credits"></ul></details>
     <button class="primary" type="button" data-close-sheet>Close</button>
   </div>
 </dialog>
@@ -722,8 +788,9 @@ dialog#log-sheet { width: min(520px, 94vw); }
     <div class="rs-head">
       <span class="rs-icon" id="rs-icon" aria-hidden="true"></span>
       <div class="rs-titles"><h2 id="rs-title"></h2><div class="sub" id="rs-sub"></div></div>
-      <button class="icon-btn" data-rs-close aria-label="Close">✕</button>
+      <button class="icon-btn" data-rs-close aria-label="Close"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
     </div>
+    <div id="rs-photo"></div>
     <div class="seg wseg" role="tablist" aria-label="Recipe" id="rs-tabs"></div>
     <div id="rs-body"></div>
   </div>
@@ -733,7 +800,7 @@ dialog#log-sheet { width: min(520px, 94vw); }
 
 <dialog id="log-sheet" aria-labelledby="log-title">
   <div class="sheet">
-    <div class="rs-head"><div class="rs-titles"><h2 id="log-title"></h2></div><button class="icon-btn" data-close-sheet aria-label="Close">✕</button></div>
+    <div class="rs-head"><div class="rs-titles"><h2 id="log-title"></h2></div><button class="icon-btn" data-close-sheet aria-label="Close"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button></div>
     <div id="log-body"></div>
   </div>
 </dialog>
@@ -748,33 +815,52 @@ dialog#log-sheet { width: min(520px, 94vw); }
 <script>
 // ---------------------------------------------------------------- config
 const MAIN_GOALS = [
-  ["energy_metabolism", "⚡", "Energy", "Less tiredness"],
-  ["cognitive_function", "🧠", "Focus", "Clear thinking"],
-  ["mood_support", "🙂", "Mood", "Feeling balanced"],
-  ["sleep_support", "🌙", "Sleep", "Rest well"],
-  ["iron_support", "🩸", "Iron", "Iron levels"],
-  ["immune_support", "🛡️", "Immunity", "Body defences"],
-  ["bone_health", "🦴", "Bones", "Strong bones"],
-  ["heart_health", "❤️", "Heart", "Heart health"],
+  ["energy_metabolism", "bolt", "Energy", "Less tiredness"],
+  ["cognitive_function", "focus", "Focus", "Clear thinking"],
+  ["mood_support", "smile", "Mood", "Feeling balanced"],
+  ["sleep_support", "moon", "Sleep", "Rest well"],
+  ["iron_support", "drop", "Iron", "Iron levels"],
+  ["immune_support", "shield", "Immunity", "Body defences"],
+  ["bone_health", "bone", "Bones", "Strong bones"],
+  ["heart_health", "heart", "Heart", "Heart health"],
 ];
 const DEMOS = [["adult_female", "Adult woman (19–50)", "adult woman"], ["adult_male", "Adult man (19–50)", "adult man"],
   ["older_female", "Woman 51+", "woman 51+"], ["older_male", "Man 51+", "man 51+"], ["pregnancy", "Pregnancy", "pregnancy"],
   ["lactation", "Breastfeeding", "breastfeeding"], ["teen", "Teenager (14–18)", "teenager"]];
 const DIETS = [["", "No restriction"], ["vegetarian", "Vegetarian"], ["vegan", "Vegan"]];
 const EXTRA = [["low_sodium", "Low salt"], ["low_sugar", "Low sugar"]];
-const ICONS = { fish_seafood: "🐟", caviar_roe: "🐟", meat: "🥩", organ_meats: "🥩", cured_meats: "🥓", pate_spread: "🥓",
-  eggs: "🥚", dairy: "🥛", milk_powder: "🥛", cheese: "🧀", soft_cheese: "🧀", legumes: "🫘", legumes_dry: "🫘",
-  tofu_tempeh: "🫘", textured_protein: "🫘", peanuts: "🥜", nuts_seeds: "🥜", nut_butter: "🥜", vegetables: "🥬",
-  fresh_herbs: "🌿", spices_herbs: "🌿", dried_vegetables: "🌶️", dried_vegetables_any: "🥬", dried_seaweed: "🌿",
-  starchy_veg: "🥔", potato_skin: "🥔", fruits: "🍎", dried_fruit: "🍇", dried_fruit_any: "🍇", olives: "🫒",
-  grains_dry: "🌾", grains_cooked: "🍚", flour: "🌾", bran_germ: "🌾", breakfast_cereal: "🥣", bread_baked: "🍞",
-  crispbread: "🍘", oils_fats: "🫒", fish_oil: "🫒", beverages: "🥤", beverage_concentrate: "🥤", espresso: "☕",
-  sweets_snacks: "🍫", spreads_sweeteners: "🍯", soups: "🍲", sauces: "🥫", mixed_dishes: "🍽️" };
-const WORD_ICONS = [[/\b(shrimp|prawn|crab|lobster|crustacean)/, "🦐"], [/\b(oyster|mussel|clam|scallop|mollus|squid|octopus)/, "🦪"],
-  [/\b(chicken|turkey|duck|goose|emu|grouse|quail|pheasant|poultry)\b/, "🍗"], [/\beggs?\b/, "🥚"], [/\bmushroom/, "🍄"],
-  [/\bcarrot/, "🥕"], [/\bbroccoli/, "🥦"], [/\bpeppers?\b/, "🫑"], [/\bavocado/, "🥑"], [/\bbanana/, "🍌"], [/\b(orange|citrus|lemon)/, "🍊"],
-  [/\bkiwi/, "🥝"], [/\b(berr|currant)/, "🫐"], [/\btomato/, "🍅"], [/\b(milk|yogurt|kefir)\b/, "🥛"], [/\bcheese/, "🧀"],
-  [/\b(fish|salmon|tuna|cod|sardines?|trout|pollock|mackerel)\b/, "🐟"], [/\b(corn ?flakes|cereal)/, "🥣"]];
+// Line icons (24 px grid, 2 px stroke, round caps), drawn inline: one style for both themes, nothing
+// loaded from elsewhere. Food and recipes show a photo when there is one, else "plate".
+const ICONS = {
+  today: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  list: '<path d="M9.5 6.5h10.5M9.5 12h10.5M9.5 17.5h10.5"/><circle cx="5" cy="6.5" r=".6"/><circle cx="5" cy="12" r=".6"/><circle cx="5" cy="17.5" r=".6"/>',
+  profile: '<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1-3.8 3.9-5.8 7.5-5.8s6.5 2 7.5 5.8"/>',
+  sprout: '<path d="M12 20v-8"/><path d="M12 12c0-4 3-6.5 7-6.5 0 4-3 6.5-7 6.5z"/><path d="M12 14.5c0-3-2.3-5-5.5-5 0 3 2.3 5 5.5 5z"/>',
+  moon: '<path d="M19.5 14.5A7.8 7.8 0 1 1 9.5 4.5a6.3 6.3 0 0 0 10 10z"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+  spark: '<path d="M11 3.5l1.7 4.8 4.8 1.7-4.8 1.7L11 16.5l-1.7-4.8L4.5 10l4.8-1.7z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>',
+  repeat: '<path d="M4.5 11.5A7 7 0 0 1 16.3 6.6L18.5 9"/><path d="M18.5 4v5h-5"/><path d="M19.5 12.5a7 7 0 0 1-11.8 4.9L5.5 15"/><path d="M5.5 20v-5h5"/>',
+  tray: '<path d="M3 17.5h18"/><path d="M5 17.5a7 7 0 0 1 14 0"/><path d="M12 8.5V7"/><path d="M10.5 7h3"/>',
+  bolt: '<path d="M13 3L5.5 13.5h6L10.5 21 18.5 10h-6z"/>',
+  focus: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/>',
+  smile: '<circle cx="12" cy="12" r="8.5"/><path d="M8.5 14c1.8 2.2 5.2 2.2 7 0"/><path d="M9 9.8h.01M15 9.8h.01"/>',
+  drop: '<path d="M12 3.5c3.4 4.4 6 7.9 6 10.9a6 6 0 0 1-12 0c0-3 2.6-6.5 6-10.9z"/>',
+  shield: '<path d="M12 3.5l7 2.8v5.2c0 4.8-3 8.2-7 9.6-4-1.4-7-4.8-7-9.6V6.3z"/>',
+  bone: '<path d="M8.5 15.5l7-7"/><path d="M15.5 8.5a2.5 2.5 0 1 1 2.6-4.1 2.5 2.5 0 1 1 1.5 4.6 2.5 2.5 0 0 1-4.1-.5z"/><path d="M8.5 15.5a2.5 2.5 0 1 1-2.6 4.1 2.5 2.5 0 1 1-1.5-4.6 2.5 2.5 0 0 1 4.1.5z"/>',
+  heart: '<path d="M12 19.5s-7-4.4-7-9.8a4 4 0 0 1 7-2.6 4 4 0 0 1 7 2.6c0 5.4-7 9.8-7 9.8z"/>',
+  pot: '<path d="M4.5 10.5h15v4a5.5 5.5 0 0 1-5.5 5.5h-4a5.5 5.5 0 0 1-5.5-5.5z"/><path d="M2.5 10.5h2M19.5 10.5h2M9 7c0-1.3 1.2-1.3 1.2-2.6M13.5 7c0-1.3 1.2-1.3 1.2-2.6"/>',
+  coin: '<circle cx="12" cy="12" r="8"/><path d="M14.8 9.3a3.2 3.2 0 1 0 0 5.4M8.5 11h5M8.5 13h5"/>',
+  leafs: '<path d="M6 18c-1-6 3-11 11-11 .5 7.5-4 11.5-11 11z"/><path d="M6 18l6-6"/><path d="M4 9c0-2.5 1.5-4.5 4.5-4.5"/>',
+  calm: '<path d="M3 12c2.5-3 5-3 7.5 0s5 3 7.5 0 2.5-3 3 0"/><path d="M3 17c2.5-3 5-3 7.5 0s5 3 7.5 0"/>',
+  medal: '<circle cx="12" cy="14.5" r="5.5"/><path d="M9 3.5h6l-1.8 5.3h-2.4z"/>',
+  plate: '<circle cx="12" cy="12" r="4"/><path d="M2.8 3.5V8a1.4 1.4 0 0 0 2.8 0V3.5M4.2 9.4v11.1"/><path d="M21.2 3.5c-1.4.9-2.2 3.2-2.2 6.6h2.2v10.4"/>',
+};
+const icon = (name, cls = "") => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] || ICONS.plate}</svg>`;
+// the same drawing inside another SVG (the evidence graph), centred on x, y
+const iconAt = (name, x, y, size = 26) =>
+  `<g class="gi" transform="translate(${x - size / 2},${y - size / 2}) scale(${size / 24})">${ICONS[name] || ICONS.plate}</g>`;
 // Words that only describe preparation or grading, dropped from display names.
 const FILLER = /^(raw|cooked|imported|domestic|new zealand|australian|farmed|wild|wild caught|boiled|drained|without salt|with salt|dry heat|moist heat|fresh|frozen|canned|unprepared|prepared|mature seeds|mixed species|all classes|meat only|separable lean only|variety meats and by-products|solids and liquids|simmered|braised|roasted|broiled|baked|steamed|stewed|grilled|fried|pan-fried|microwaved|heated|dried|ready-to-eat|includes foods for usda.*|\(includes.*|ns as to.*)$/i;
 const GENERIC_HEADS = /^(fish|mollusks|crustaceans|beverages|cereals|cereals ready-to-eat|game meat|spices|seeds|nuts|snacks|candies|babyfood)$/i;
@@ -791,8 +877,9 @@ const nLower = (id) => { const n = nName(id); return /^[A-Z]{2}|^Vitamin|^EPA|^A
 const constraints = () => [state.diet, ...state.extra].filter(Boolean);
 const mainGoal = (id) => MAIN_GOALS.find(g => g[0] === id);
 const goalTitle = (id) => mainGoal(id)?.[2] || state.goals[id]?.label || id.replace(/_/g, " ");
-const EXTRA_GOAL_ICONS = { muscle_recovery: "💪" };     // goals the answers can turn on
-const goalIcon = (id) => mainGoal(id)?.[1] || EXTRA_GOAL_ICONS[id] || "•";
+const EXTRA_GOAL_ICONS = { muscle_recovery: "bolt" };     // goals the answers can turn on
+const goalIconName = (id) => mainGoal(id)?.[1] || EXTRA_GOAL_ICONS[id] || "plate";
+const goalIcon = (id) => icon(goalIconName(id));
 
 function friendlyName(raw) {
   const parts = String(raw).split(",").map(p => p.trim()).filter(Boolean);
@@ -804,11 +891,7 @@ function friendlyName(raw) {
   name = name.charAt(0).toUpperCase() + name.slice(1);
   return prep ? `${name} (${prep.toLowerCase().split(" ")[0]})` : name;
 }
-function iconFor(name, group) {
-  const low = String(name).toLowerCase();
-  for (const [re, ic] of WORD_ICONS) if (re.test(low)) return ic;
-  return ICONS[group] || "🍽️";
-}
+function iconFor(name, group) { return icon("plate"); }     // foods without a photo
 function dots(pct) {   // 1-3 dots: under 15%, 15-30%, over 30% of daily need per portion
   const n = pct >= 30 ? 3 : pct >= 15 ? 2 : 1;
   return `<span class="dots" aria-label="${n} of 3">${"●".repeat(n)}<i>${"●".repeat(3 - n)}</i></span>`;
@@ -849,10 +932,21 @@ const qs = (o) => new URLSearchParams(Object.entries(o).flatMap(([k, v]) => Arra
 const TOKEN_KEY = "feedforward.token";
 let token = (() => { try { return localStorage.getItem(TOKEN_KEY); } catch { return null; } })();
 let app = null;                 // the saved document
+let photos = { recipes: {}, foods: {}, ingredients: {}, credits: [] };   // GET /photos: which photo shows what, with its credit
+let presetList = [];            // GET /diary/presets: meals logged in one tap as an estimate (the CROUS lunch)
+async function loadPresets() {   // the plate of the person's diet: a vegan's CROUS plate is not chicken and yogurt
+  const diet = app?.setup?.diet;
+  try { presetList = await api("/diary/presets" + (diet ? "?" + qs({ diet }) : "")); } catch { presetList = []; }
+}
+// Answers changed: what was computed from them is computed again.
+function answersChanged() {
+  dayView = null; weekPlan = null; forgetIdea(); loadPresets();
+}
 let account = null;             // {email}
 let authConfig = { google_client_id: null, dev_login: false };
-const blankApp = () => ({ v: 1, onboarded: false, setup: {}, answers: {}, declined: [], avoid: [], diary: {}, list: [],
-  pantry: [], ticks: null, edits: null, weekList: null, prefs: { extra: [], science: false }, introSeen: false });
+const blankApp = () => ({ v: 1, onboarded: false, setup: {}, answers: {}, declined: [], avoid: [], list: [],
+  pantry: [], ticks: null, edits: null, weekList: null, prefs: { extra: [], science: false }, introSeen: false,
+  asked: [], qSnooze: null, strategyIds: null });
 
 let saveTimer = null;
 function save() { clearTimeout(saveTimer); saveTimer = setTimeout(flush, 400); }
@@ -872,6 +966,8 @@ function setToken(t) {
 function signOut() {
   if (saveTimer) flush();
   setToken(null); app = null; account = null; weekPlan = null; weekKey = null; dayView = null; onb.draft = null;
+  diaryCache.clear(); forgetIdea(); presetList = []; picked = new Map();
+  document.body.classList.remove("first-run");
   try { window.google?.accounts?.id?.disableAutoSelect(); } catch {}
   renderGate();
 }
@@ -902,17 +998,19 @@ function prefsReq(src = app) {
 // ---------------------------------------------------------------- sign-in
 function renderGate() {
   document.body.classList.add("gated");
-  const g = authConfig.google_client_id, dev = authConfig.dev_login;
-  $("gate").hidden = false;
+  const g = authConfig.google_client_id, dev = authConfig.dev_login, demo = authConfig.demo;
+  $("gate").hidden = false; $("demo-strip").hidden = true;
   $("gate").innerHTML = `<div class="gate-card">
     <div class="brand big">${SPROUT_SVG}<div>Feed<span>Forward</span></div></div>
     <h1>Eat well, at your pace.</h1>
     <p class="lead">Log what you eat, ask for ideas that fit your goals, and see the science behind every suggestion.</p>
     <ul class="gate-points">
-      <li><span aria-hidden="true">🌱</span><span><b>Starts empty.</b> Nothing is planned until you ask.</span></li>
-      <li><span aria-hidden="true">🧭</span><span><b>Yours.</b> Your goal, your habits, the food you like and can make.</span></li>
-      <li><span aria-hidden="true">🔬</span><span><b>Honest.</b> Every suggestion shows its evidence.</span></li>
+      <li><span aria-hidden="true">${icon("sprout")}</span><span><b>Starts empty.</b> Nothing is planned until you ask.</span></li>
+      <li><span aria-hidden="true">${icon("profile")}</span><span><b>Yours.</b> Your goal, your habits, the food you like and can make.</span></li>
+      <li><span aria-hidden="true">${icon("check")}</span><span><b>Honest.</b> Every suggestion shows its evidence.</span></li>
     </ul>
+    ${demo ? `<div class="demo-try"><button class="primary" type="button" id="demo-go">Try the demo</button>
+        <p class="src">A fresh account just for you, no sign-up. Please use made-up details: the demo is wiped when it restarts.</p></div>` : ""}
     ${g ? `<div id="g-btn" class="g-btn"></div>` : ""}
     ${dev ? `<form id="dev-form" class="dev">
         <label class="flabel" for="dev-name">${g ? "Or a test account" : "Test sign-in"} · this computer only</label>
@@ -920,11 +1018,14 @@ function renderGate() {
           <button class="primary" type="submit">Continue</button></div>
         <p class="src">The same name brings back the same account.${g ? "" : " Google sign-in appears here once it is set up (README, “Sign in with Google”)."}</p>
       </form>` : ""}
-    ${!g && !dev ? `<div class="note">Sign-in is not set up on this server yet.</div>` : ""}
+    ${!g && !dev && !demo ? `<div class="note">Sign-in is not set up on this server yet.</div>` : ""}
     <p class="gate-err note" id="gate-err" hidden></p>
     <p class="src center">Information, not medical advice.</p>
   </div>`;
   const err = (m) => { $("gate-err").hidden = false; $("gate-err").textContent = m; };
+  if (demo) $("demo-go").onclick = async () => {
+    try { await signIn("/auth/demo", {}); } catch (x) { err(`Could not open the demo (${x.message}).`); }
+  };
   if (dev) $("dev-form").onsubmit = async (e) => {
     e.preventDefault();
     const name = $("dev-name").value.trim();
@@ -967,9 +1068,9 @@ const Q = {
   energy_goal: ["Your energy", { maintain: "Keep steady", deficit: "Lose a little", surplus: "Gain a little" }],
 };
 const ENERGY_CHOICES = [
-  ["maintain", "⚖️", "Keep steady", "Eat to your needs"],
-  ["deficit", "🍃", "Lose a little", "About 15% less energy, never below what your body uses at rest"],
-  ["surplus", "💪", "Gain a little", "About 10% more energy"],
+  ["maintain", "calm", "Keep steady", "Eat to your needs"],
+  ["deficit", "leafs", "Lose a little", "About 15% less energy, never below what your body uses at rest"],
+  ["surplus", "sprout", "Gain a little", "About 10% more energy"],
 ];
 const STEPS = [
   { id: "you", title: "About you", lead: "To work out your daily needs. You can change these any time." },
@@ -979,18 +1080,23 @@ const STEPS = [
   { id: "food", title: "Your food", lead: "Optional. So suggestions are food you'd eat and can make.", optional: true },
   { id: "plan", title: "Your plan", lead: "What your answers turn on. Each comes with its evidence; switch off any you don't want." },
 ];
+// A new account answers two screens (about you, the goal and the diet) and reaches Today; the other
+// questions come later, one at a time. Profile reopens any screen of STEPS.
+const FIRST_RUN = ["you", "goal"];
+const flow = () => onb.edit ? STEPS : STEPS.filter(s => FIRST_RUN.includes(s.id));
 const onb = { step: 0, draft: null, edit: false, box: "today", info: null };
 const clone = (x) => JSON.parse(JSON.stringify(x));
 
 function startOnboarding(stepId = "you", edit = false) {
-  onb.step = Math.max(0, STEPS.findIndex(s => s.id === stepId));
   onb.edit = edit; onb.box = edit ? "profile" : "today"; onb.info = null;
+  onb.step = Math.max(0, flow().findIndex(s => s.id === stepId));
+  document.body.classList.toggle("first-run", !edit);
   onb.draft = clone({ setup: app.setup, answers: app.answers, declined: app.declined, avoid: app.avoid });
   showTab(onb.box);
 }
 
 async function renderOnboarding() {
-  const box = $(`tab-${onb.box}`), st = STEPS[onb.step], d = onb.draft, v = d.setup, a = d.answers;
+  const box = $(`tab-${onb.box}`), st = flow()[onb.step], d = onb.draft, v = d.setup, a = d.answers;
   const chip = (name, value, label, checked, type = "radio") =>
     `<label><input type="${type}" name="${name}" value="${esc(value)}" ${checked ? "checked" : ""}><span>${esc(label)}</span></label>`;
   const qChips = (id) => `<div class="field q" data-q="${id}"><span class="flabel">${esc(Q[id][0])}</span><div class="choice">${
@@ -1009,20 +1115,22 @@ async function renderOnboarding() {
         <p class="hint" id="act-hint">${ACTIVITY_HINT[act]}</p></div></fieldset>`;
   } else if (st.id === "goal") {
     body = `<div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) => `<label class="tile pick"><input type="radio" name="goal" value="${id}" ${(v.goal || "") === id ? "checked" : ""}>
-      <span class="ic">${ic}</span><b>${title}</b><small>${sub}</small></label>`).join("")}</div>`;
+      <span class="ic">${icon(ic)}</span><b>${title}</b><small>${sub}</small></label>`).join("")}</div>
+      ${onb.edit ? "" : `<div class="field"><span class="flabel">Diet</span><div class="choice">${chip("diet", "", "Anything", !v.diet)}${
+        chip("diet", "vegetarian", "Vegetarian", v.diet === "vegetarian")}${chip("diet", "vegan", "Vegan", v.diet === "vegan")}</div></div>`}`;
   } else if (st.id === "energy") {
     if (!onb.info) {
       box.innerHTML = loading("One moment…");
       try { onb.info = await api("/plan/strategies", { ...personReq(d), ...prefsReq(d), answers: null, declined: null }); }
       catch (e) { box.innerHTML = `<h1>${st.title}</h1><div class="note">Could not load the choices (${esc(e.message)}).</div>
         <div class="actions"><button class="ghost" data-onb-back>Back</button></div>`; return; }
-      if (STEPS[onb.step].id !== "energy") return;
+      if (flow()[onb.step].id !== "energy") return;
     }
     const closed = onb.info.unavailable || {}, cur = a.energy_goal || "maintain";
     body = `<div class="options">${ENERGY_CHOICES.map(([k, ic, title, sub]) => {
       const why = closed[`energy_goal=${k}`];
       return `<label class="opt-card ${why ? "off" : ""}"><input type="radio" name="energy_goal" value="${k}" ${cur === k && !why ? "checked" : ""} ${why ? "disabled" : ""}>
-        <span class="ic" aria-hidden="true">${ic}</span><span class="what"><b>${title}</b><small>${esc(why || sub)}</small></span></label>`; }).join("")}</div>
+        <span class="ic" aria-hidden="true">${icon(ic)}</span><span class="what"><b>${title}</b><small>${esc(why || sub)}</small></span></label>`; }).join("")}</div>
       <p class="src">Energy is planned from your needs (Mifflin-St Jeor and your activity). A change is never offered under 18, in pregnancy or while breastfeeding, and no deficit under a BMI of 18.5.</p>`;
   } else if (st.id === "day") {
     const trains = a.training_days && a.training_days !== "0";
@@ -1040,13 +1148,13 @@ async function renderOnboarding() {
     try { p = await api("/plan/strategies", { ...personReq(d), ...prefsReq(d) }); }
     catch (e) { box.innerHTML = `<h1>${st.title}</h1><div class="note">Could not load your plan (${esc(e.message)}).</div>
       <div class="actions"><button class="ghost" data-onb-back>Back</button></div>`; return; }
-    if (STEPS[onb.step].id !== "plan") return;
+    if (flow()[onb.step].id !== "plan") return;
     const declined = new Set(d.declined || []);
     const energy = ENERGY_CHOICES.find(c => c[0] === (a.energy_goal || "maintain"));
     const because = (b) => b && Q[b.question] ? `You said “${Q[b.question][1][b.answer] || b.answer}” to “${Q[b.question][0]}”` : "";
     body = `<div class="card plist">
         <div class="prow"><span>${goalIcon(v.goal)} Goal</span><b>${esc(goalTitle(v.goal))}</b></div>
-        <div class="prow"><span>${energy[1]} Energy</span><b>${energy[2]}</b></div>
+        <div class="prow"><span>${icon(energy[1])} Energy</span><b>${energy[2]}</b></div>
         ${p.goals.filter(g => g.id !== v.goal).map(g => `<div class="prow"><span>${goalIcon(g.id)} Also</span><b>${esc(goalTitle(g.id))}</b></div>`).join("")}</div>
       ${p.strategies.length ? `<div class="group-title">Turned on by your answers</div>
         ${p.strategies.map(s => `<div class="card strat">
@@ -1058,11 +1166,11 @@ async function renderOnboarding() {
         <p class="src">Evidence grades: A strong, B good, C limited. Only strategies graded A to C are offered.</p>`
       : `<div class="note soft">Nothing extra: your suggestions follow your goal and your daily needs.</div>`}`;
   }
-  const n = STEPS.length, last = onb.step === n - 1;
+  const n = flow().length, last = onb.step === n - 1;
   box.innerHTML = `
     ${onb.edit ? `<button class="back" data-onb-cancel>← Profile</button>` : ""}
     <h1>${esc(st.title)}</h1><p class="lead">${esc(st.lead)}</p>
-    ${onb.edit ? "" : `<div class="steps" role="progressbar" aria-valuemin="1" aria-valuemax="${n}" aria-valuenow="${onb.step + 1}" aria-label="Step ${onb.step + 1} of ${n}">${STEPS.map((_, i) => `<i class="${i <= onb.step ? "on" : ""}"></i>`).join("")}</div>`}
+    ${onb.edit ? "" : `<div class="steps" role="progressbar" aria-valuemin="1" aria-valuemax="${n}" aria-valuenow="${onb.step + 1}" aria-label="Step ${onb.step + 1} of ${n}">${flow().map((_, i) => `<i class="${i <= onb.step ? "on" : ""}"></i>`).join("")}</div>`}
     <form class="setup" id="onb-form" novalidate>${body}
       <div class="actions wizard">
         ${onb.edit ? `<button type="button" class="ghost" data-onb-cancel>Cancel</button>` : onb.step > 0 ? `<button type="button" class="ghost" data-onb-back>Back</button>` : ""}
@@ -1097,6 +1205,7 @@ function collectStep(form, id) {
   } else if (id === "goal") {
     if (!f.get("goal")) { form.querySelector(".tiles").classList.add("shake"); return false; }
     d.setup.goal = f.get("goal");
+    if (!onb.edit) d.setup.diet = f.get("diet") || "";
   } else if (id === "energy") {
     d.answers.energy_goal = f.get("energy_goal") || "maintain";
   } else if (id === "day") {
@@ -1116,7 +1225,7 @@ function collectStep(form, id) {
   return true;
 }
 function nextStep() {
-  if (onb.edit || onb.step === STEPS.length - 1) return finishOnboarding();
+  if (onb.edit || onb.step === flow().length - 1) return finishOnboarding();
   onb.step++; renderOnboarding(); window.scrollTo(0, 0);
 }
 function finishOnboarding() {
@@ -1124,7 +1233,8 @@ function finishOnboarding() {
   Object.assign(app, { setup: d.setup, answers: d.answers, declined: d.declined, avoid: d.avoid });
   const first = !app.onboarded;
   app.onboarded = true; onb.draft = null;
-  save(); syncProfile(); dayView = null; weekPlan = null; recipeCache.clear();
+  document.body.classList.remove("first-run");
+  save(); syncProfile(); answersChanged(); recipeCache.clear();
   if ($("tab-find").innerHTML) refreshViews();
   showTab(first ? "today" : "profile");
 }
@@ -1156,7 +1266,7 @@ function renderProfile() {
   const dayCount = ["sleep_onset", "morning_hunger", "energy_dips", "study_time", "training_days"].filter(q => a[q]).length;
   const notEaten = (a.dont_eat || []).length;
   const chain = (weekChains || []).find(c => c.id === v.chain)?.label || v.chain;
-  const row = (step, label, value) => `<button class="prow linkrow" data-edit-step="${step}"><span>${label}</span><b>${esc(value)} <span class="chev">›</span></b></button>`;
+  const row = (step, label, value, html = esc(value)) => `<button class="prow linkrow" data-edit-step="${step}"><span>${label}</span><b>${html} <span class="chev">›</span></b></button>`;
   const sw = (attr, label, on) => `<label class="prow"><span>${label}</span><input type="checkbox" ${attr} ${on ? "checked" : ""}></label>`;
   $("tab-profile").innerHTML = `<h1>Profile</h1>
     <div class="card plist"><div class="prow"><span>Signed in as</span><b>${esc(account?.email || "")}</b></div>
@@ -1164,7 +1274,7 @@ function renderProfile() {
     <div class="group-title">You</div>
     <div class="card plist">
       ${row("you", "About you", `${v.age} · ${v.sex === "male" ? "male" : "female"} · ${v.height} cm · ${v.weight} kg · ${activity}`)}
-      ${row("goal", "Goal", `${goalIcon(v.goal)} ${goalTitle(v.goal)}`)}
+      ${row("goal", "Goal", null, `${goalIcon(v.goal)} ${esc(goalTitle(v.goal))}`)}
       ${row("energy", "Energy", Q.energy_goal[1][a.energy_goal || "maintain"])}
       ${row("day", "Your day", dayCount ? `${dayCount} answered` : "Not answered")}
       ${row("food", "Your food", [v.diet ? v.diet[0].toUpperCase() + v.diet.slice(1) : "Anything", notEaten ? `${notEaten} not eaten` : ""].filter(Boolean).join(" · "))}
@@ -1261,7 +1371,7 @@ document.addEventListener("click", (ev) => {
   const closeSheets = () => document.querySelectorAll("dialog[open]").forEach(d => d.close());
   const on = (sel) => t.closest(sel);
   let el;
-  if (on("[data-about]")) { $("about").showModal(); return; }
+  if (on("[data-about]")) { fillCredits(); $("about").showModal(); return; }
   if (on("[data-rs-close]")) { closeSheet($("recipe-sheet")); return; }
   if ((el = on("[data-close-sheet]"))) { closeSheet(el.closest("dialog")); return; }
   if ((el = on("[data-theme-set]"))) { setTheme(el.dataset.themeSet); renderProfile(); return; }
@@ -1280,13 +1390,24 @@ document.addEventListener("click", (ev) => {
   // today
   if ((el = on("[data-day-shift]"))) { dayISO = shiftDay(dayISO, +el.dataset.dayShift); renderToday(); return; }
   if (on("[data-reload-day]")) { dayView = null; renderToday(); return; }
+  if (on("[data-retry-day]")) { renderToday(); return; }
   if ((el = on("[data-intro-close]"))) { app.introSeen = true; save(); el.closest(".ready").remove(); return; }
   if ((el = on("[data-log]"))) { openLog(el.dataset.log); return; }
   if ((el = on("[data-ideas]"))) { openIdeas(el.dataset.ideas); return; }
   if ((el = on("[data-unlog]"))) { unlog(el.dataset.unlog); return; }
+  if (on("[data-inline-take]")) { takeInlineIdea(); return; }
+  if (on("[data-inline-hide]")) { app.inlineIdeaOff = true; save(); dayView ? drawToday(dayView.sum, entriesOf(dayISO)) : renderToday(); return; }
+  if ((el = on("[data-q-answer]"))) { const [q, v] = el.dataset.qAnswer.split("|"); answerQuestion(q, v); return; }
+  if ((el = on("[data-q-next]"))) { qState = null; renderToday(); return; }
+  if ((el = on("[data-q-later]"))) { app.qSnooze = dayISO; qState = null; save(); renderToday(); return; }
+  if ((el = on("[data-q-strat]"))) { toggleQuestionStrategy(el); return; }
+  if ((el = on("[data-retry-entry]"))) { retryEntry(el.dataset.retryEntry); return; }
   if ((el = on("[data-lever]"))) { showLever(el.dataset.lever); return; }
   if ((el = on("[data-pick]"))) { pickAmount(JSON.parse(el.dataset.pick)); return; }
-  if (on("[data-log-back]")) { openLog(logMeal); return; }
+  if ((el = on("[data-again]"))) { repeatMeal(el.dataset.again); return; }
+  if ((el = on("[data-preset]"))) { const x = presetList.find(p => p.id === el.dataset.preset); if (x) pickAmount(x); return; }
+  if ((el = on("[data-add-picked]"))) { addPicked(); return; }
+  if (on("[data-log-back]")) { openLog(logMeal, true); return; }
   if (on("[data-ideas-more]")) { openIdeas(ideas.meal, true); return; }
   if (on("[data-ideas-reset]")) { openIdeas(ideas.meal); return; }
   if ((el = on("[data-idea-take]"))) { takeIdea(el.dataset.ideaTake); return; }
@@ -1349,7 +1470,7 @@ function renderHome() {
     <div id="foods-home">
       <div class="group-title">Good for</div>
       <div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) =>
-        `<button class="tile" data-goal="${id}"><span class="ic">${ic}</span><b>${title}</b><small>${sub}</small></button>`).join("")}</div>
+        `<button class="tile" data-goal="${id}"><span class="ic">${icon(ic)}</span><b>${title}</b><small>${sub}</small></button>`).join("")}</div>
       <details class="more"><summary>More goals</summary>
         <div class="more-list">${others.map(g => `<button class="pill-btn" data-goal="${g.id}">${esc(g.label)}</button>`).join("")}</div>
       </details>
@@ -1499,9 +1620,9 @@ async function loadWhatIsIt(id) {
 // as a chip on it, with their evidence one tap away.
 const SLOT_LABEL = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", snack: "Snacks" };
 const SLOTS = ["breakfast", "lunch", "dinner", "snack"];
-const LEVER_CHIP = { evening_carbs: ["🌙", "More carbs here"], no_evening_caffeine: ["☕", "No caffeine"],
-  protein_spread: ["💪", "Protein here"], protein_breakfast: ["🥚", "More protein"], big_breakfast: ["🍳", "A bigger breakfast"],
-  light_breakfast: ["🍃", "A lighter breakfast"], post_training_carbs: ["🏃", "Carbs after training"] };
+const LEVER_CHIP = { evening_carbs: ["moon", "More carbs here"], no_evening_caffeine: ["moon", "No caffeine"],
+  protein_spread: ["pot", "Protein here"], protein_breakfast: ["pot", "More protein"], big_breakfast: ["plate", "A bigger breakfast"],
+  light_breakfast: ["plate", "A lighter breakfast"], post_training_carbs: ["bolt", "Carbs after training"] };
 const REASON_TEXT = { evening_carbs: "Carb-rich, for your evenings", protein_spread: "Protein for this meal",
   protein_breakfast: "Protein-rich breakfast", post_training_carbs: "Carbs after training" };
 let dayISO = isoDate(new Date());
@@ -1516,46 +1637,152 @@ function dayLabel(iso) {
   if (iso === shiftDay(today, 1)) return "Tomorrow";
   return new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { weekday: "long" });
 }
-const entriesOf = (iso) => app.diary[iso] || [];
-const uid = () => Math.random().toString(36).slice(2, 10);
+// The diary lives in rows on the server (/diary/entries, DECISIONS.md decision 24): one request per log,
+// so two devices never overwrite each other. This cache holds the days already read. An entry not yet
+// saved is "pending"; one whose save failed stays on screen as "Not saved" with Retry, never dropped.
+const diaryCache = new Map();                       // iso -> entries
+const uid = () => Math.random().toString(36).slice(2, 10);   // shopping-list items (kept in the saved document)
+const newId = () => crypto.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+const fromRow = (r) => ({ uid: r.id, meal: r.meal, kind: r.kind, id: r.item_id, servings: r.servings, grams: r.grams,
+  name: r.name, kcal: r.kcal, src: r.source, estimate: r.estimate, group: "" });
+const toRow = (iso, e) => ({ id: e.uid, day: iso, meal: e.meal, kind: e.kind, item_id: e.id, servings: e.servings || 1,
+  grams: e.grams || 0, name: String(e.name || "").slice(0, 200), kcal: Math.max(0, Math.round(e.kcal || 0)),
+  source: e.src || "manual", estimate: !!e.estimate });
+async function loadDays(startISO, endISO) {
+  const r = await api("/diary/entries?" + qs({ start: startISO, end: endISO }));
+  const saved = new Map();
+  for (const row of r.entries) (saved.get(row.day) || saved.set(row.day, []).get(row.day)).push(fromRow(row));
+  for (let d = startISO; d <= endISO; d = shiftDay(d, 1)) {
+    const rows = saved.get(d) || [], ids = new Set(rows.map(e => e.uid));
+    diaryCache.set(d, rows.concat(entriesOf(d).filter(e => (e.pending || e.failed) && !ids.has(e.uid))));
+  }
+}
+async function ensureDays(startISO, endISO) {
+  for (let d = startISO; d <= endISO; d = shiftDay(d, 1)) if (!diaryCache.has(d)) return loadDays(startISO, endISO);
+}
+const entriesOf = (iso) => diaryCache.get(iso) || [];
+const todayShown = () => !$("tab-today").hidden;
 const toEntry = (e) => ({ kind: e.kind, id: e.id, meal: e.meal, servings: e.servings || 1, grams: e.grams || 0 });
 const dayReq = (entries) => ({ ...personReq(), ...prefsReq(), chain: app.setup.chain || "lidl", entries: entries.map(toEntry) });
 
 async function renderToday() {
   if (!app.onboarded || (onb.draft && onb.box === "today")) return renderOnboarding();
-  const box = $("tab-today"), my = ++dayToken, entries = entriesOf(dayISO);
+  const box = $("tab-today"), my = ++dayToken;
   if (!dayView || dayView.iso !== dayISO) box.innerHTML = loading("Opening your day…", "week");
   try {
+    await ensureDays(shiftDay(dayISO, -14), dayISO);   // the day, and the two weeks before it for "Recent"
+    if (my !== dayToken) return;
+    const entries = entriesOf(dayISO);
     const sum = await api("/diary/day", dayReq(entries));
     if (my !== dayToken) return;
     dayView = { iso: dayISO, sum };
     drawToday(sum, entries);
   } catch (e) {
     if (my !== dayToken) return;
+    // Offline after the day was open: keep it on screen, entries and "Not saved" included, with the last totals.
+    if (dayView?.iso === dayISO) { dayView.stale = true; return drawToday(dayView.sum, entriesOf(dayISO)); }
     box.innerHTML = `<h1>${dayLabel(dayISO)}</h1><div class="note">Could not open this day (${esc(e.message)}).</div>
       <div class="actions"><button class="primary" data-reload-day>Try again</button><button class="ghost" data-tab-go="profile">Check your answers</button></div>`;
   }
 }
 
 function drawToday(sum, entries) {
-  const box = $("tab-today"), first = !app.introSeen;
+  const box = $("tab-today"), stale = !!dayView?.stale;
+  ideaSlot = inlineIdeaSlot();
+  if (ideaSlot && (inlineIdea.iso !== dayISO || inlineIdea.meal !== ideaSlot)) fetchInlineIdea(ideaSlot);
   const date = new Date(`${dayISO}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
   box.innerHTML = `
     <div class="day-title"><h1>${dayLabel(dayISO)}</h1>
       <span class="daynav"><button class="icon-btn" data-day-shift="-1" aria-label="Previous day">‹</button>
         <span class="muted">${date}</span><button class="icon-btn" data-day-shift="1" aria-label="Next day">›</button></span></div>
-    ${first ? `<div class="ready intro" role="status"><span class="ready-ic" aria-hidden="true">${SPROUT_SVG}</span>
-      <span class="ready-text"><b>Your day starts empty</b><small>Log what you eat with <b>+ Add</b>, or tap <b>Ideas</b> on any meal for suggestions that fit your goal and your answers.</small></span>
-      <button class="icon-btn" data-intro-close aria-label="Dismiss">✕</button></div>` : ""}
+    ${stale ? `<div class="note stale-note" role="status">No connection: the totals are from before. They update when it is back.
+      <button class="link" data-retry-day>Try again</button></div>` : ""}
     ${dayEnergyCard(sum, entries)}
     ${entries.length ? dayGoalCard(sum) : ""}
     ${SLOTS.map(m => slotCard(m, sum, entries)).join("")}
+    ${questionCard()}
     <button class="card plan-week" data-tab-go="week">
-      <span class="tile-ic" aria-hidden="true">🗓️</span>
+      <span class="tile-ic" aria-hidden="true">${icon("calendar")}</span>
       <span class="what"><b>${app.weekOn ? "Your planned week" : "Plan a whole week?"}</b>
         <small>${app.weekOn ? (weekPlan?.feasible ? `${euro(weekPlan.total_cost)} at ${esc(weekPlan.chain.label)} · open it` : "Open it")
           : "Optional: seven days of meals within a budget, with the shopping list."}</small></span>
       <span class="chev" aria-hidden="true">›</span></button>`;
+}
+
+// ---------------------------------------------------------------- the other questions, one at a time
+// The first run asks only about you and the goal. The rest arrive here, one card at a time, all optional;
+// an answer that turns a strategy on shows it with its grade, the answer behind it and its sources, and a
+// switch to turn it off.
+const QUESTION_ORDER = ["cook_time", "training_days", "training_time", "sleep_onset", "study_time", "energy_dips",
+  "morning_hunger", "dont_eat", "batch_ok", "kitchen"];
+const KITCHEN_Q = ["Only a microwave and a kettle?", { yes: "Yes", no: "No, a hob too" }];
+const QUESTION_WHY = { cook_time: "Ideas will fit the time you have.", training_days: "Ideas will take your training into account.",
+  training_time: "Ideas will take your training into account.", sleep_onset: "Evening ideas will take it into account.",
+  study_time: "Ideas will take your study hours into account.", energy_dips: "Ideas will take it into account.",
+  morning_hunger: "Breakfast ideas will match your appetite.", dont_eat: "Ideas will leave these out.",
+  batch_ok: "Ideas can cook once for three days.", kitchen: "Ideas will only need what you have." };
+let qState = null;                 // { id, news: [strategies the answer turned on] } after an answer
+const questionOf = (id) => id === "kitchen" ? KITCHEN_Q : Q[id];
+function nextQuestion() {
+  if (app.qSnooze === dayISO) return null;
+  const a = app.answers;
+  return QUESTION_ORDER.find(id => !app.asked.includes(id)
+    && !(id === "kitchen" ? false : Array.isArray(a[id]) ? a[id].length : a[id])
+    && !(id === "training_time" && (!a.training_days || a.training_days === "0"))) || null;
+}
+function strategyRow(s) {
+  const because = s.because && questionOf(s.because.question)
+    ? `You said “${questionOf(s.because.question)[1][s.because.answer] || s.because.answer}” to “${questionOf(s.because.question)[0]}”` : "";
+  return `<div class="strat"><label class="strat-row"><span class="what"><b>${esc(s.text)}</b>
+      <small>${s.grade ? `<span class="grade g${s.grade}" title="Evidence grade">${s.grade}</span> ` : ""}${esc(because)}</small></span>
+      <input type="checkbox" data-q-strat="${esc(s.id)}" ${app.declined.includes(s.id) ? "" : "checked"} aria-label="${esc(s.text)}"></label>
+    ${s.why ? `<details class="strat-why"><summary>Why?</summary><p>${esc(s.why)}</p>${(s.pmids || []).length ? `<p class="src">${s.pmids.map(id =>
+      `<a href="https://pubmed.ncbi.nlm.nih.gov/${esc(id)}/" target="_blank" rel="noopener">PubMed ${esc(id)}</a>`).join(" · ")}</p>` : ""}</details>` : ""}</div>`;
+}
+function questionCard() {
+  if (!app.onboarded || dayISO !== isoDate(new Date())) return "";
+  const pos = (id) => `${QUESTION_ORDER.indexOf(id) + 1} of ${QUESTION_ORDER.length} questions · all optional`;
+  if (qState) {
+    const more = nextQuestion();
+    return `<div class="card qcard" role="region" aria-label="A question">
+      <div class="q">Thank you</div>
+      ${qState.news.length ? `<p class="small muted">Your answer turns ${qState.news.length > 1 ? "these" : "this"} on. Each comes with its evidence; switch off any you don't want.</p>
+        ${qState.news.map(strategyRow).join("")}` : `<p class="small muted">${esc(QUESTION_WHY[qState.id])}</p>`}
+      <div class="qfoot"><span>${pos(qState.id)}</span><button class="ghost" data-q-next>${more ? "Next question" : "Done"}</button></div></div>`;
+  }
+  const id = nextQuestion();
+  if (!id) return "";
+  const [title, options] = questionOf(id), multi = id === "dont_eat";
+  const chosen = new Set(app.answers.dont_eat || []);
+  return `<div class="card qcard" role="region" aria-label="A question">
+    <div class="q">${esc(title)}</div><div class="small muted">${esc(QUESTION_WHY[id])}</div>
+    <div class="choice qchoice">${Object.entries(options).map(([k, l]) => multi
+      ? `<label><input type="checkbox" name="q-multi" value="${esc(k)}" ${chosen.has(k) ? "checked" : ""}><span>${esc(l)}</span></label>`
+      : `<button class="pill-btn" data-q-answer="${esc(id)}|${esc(k)}">${esc(l)}</button>`).join("")}</div>
+    ${multi ? `<div class="actions"><button class="ghost" data-q-answer="dont_eat|">Done</button></div>` : ""}
+    <div class="qfoot"><span>${pos(id)}</span><button class="link" data-q-later>Not now</button></div></div>`;
+}
+async function answerQuestion(id, value) {
+  const before = app.strategyIds ?? (await api("/plan/strategies", { ...personReq(), ...prefsReq() }).catch(() => ({ strategies: [] })))
+    .strategies.map(s => s.id);
+  if (id === "kitchen") app.setup.microwave = value === "yes";
+  else if (id === "dont_eat") app.answers.dont_eat = [...document.querySelectorAll(".qcard [name=q-multi]:checked")].map(c => c.value);
+  else app.answers[id] = value;
+  if (!app.asked.includes(id)) app.asked.push(id);
+  let news = [];
+  try {
+    const p = await api("/plan/strategies", { ...personReq(), ...prefsReq() });
+    news = p.strategies.filter(s => !before.includes(s.id));
+    app.strategyIds = p.strategies.map(s => s.id);
+  } catch { app.strategyIds = before; }
+  qState = { id, news };
+  save(); syncProfile(); answersChanged();
+  renderToday();
+}
+function toggleQuestionStrategy(el) {
+  const id = el.dataset.qStrat;
+  app.declined = el.checked ? app.declined.filter(x => x !== id) : [...new Set([...app.declined, id])];
+  save(); dayView = null; forgetIdea();
 }
 
 function dayEnergyCard(sum, entries) {
@@ -1577,7 +1804,7 @@ function dayGoalCard(sum) {
   // other goals the answers turned on can share the card: then it is about all of them
   const mixed = top.some(g => g.goal && g.goal !== sum.goal);
   return `<div class="card dash goal-card">
-    <div class="gc-head"><span>${mixed ? "🎯 Your goals today" : `${goalIcon(sum.goal)} ${esc(goalTitle(sum.goal))} today`}</span><span class="muted small">tap for the evidence</span></div>
+    <div class="gc-head"><span>${mixed ? `${icon("focus")} Your goals today` : `${goalIcon(sum.goal)} ${esc(goalTitle(sum.goal))} today`}</span><span class="muted small">tap for the evidence</span></div>
     <div class="minis">${top.map(g => `<button class="mini" data-nutrient="${esc(g.nutrient)}">
       <span class="mini-ring">${ring(g.percent / 100, 64, 7, "goal", `${nName(g.nutrient)} ${Math.round(g.percent)}% of today's need`)}<b>${g.percent >= 200 ? `${Math.round(g.percent / 100)}×` : `${Math.round(g.percent)}%`}</b></span>
       <span class="mini-name">${esc(nName(g.nutrient))}${g.eu_claim ? ` <span class="eu" title="EU authorised health claim">EU</span>` : ""}</span>
@@ -1587,9 +1814,51 @@ function dayGoalCard(sum) {
 
 function leverChips(levers) {
   return levers.length ? `<div class="levers">${levers.map(l => {
-    const [ic, txt] = LEVER_CHIP[l.id] || ["•", l.text];
-    return `<button class="chip lever" data-lever="${esc(l.id)}" title="${esc(l.text)}">${ic} ${esc(txt)}${l.grade ? ` <span class="grade g${l.grade}">${l.grade}</span>` : ""}</button>`;
+    const [ic, txt] = LEVER_CHIP[l.id] || ["plate", l.text];
+    return `<button class="chip lever" data-lever="${esc(l.id)}" title="${esc(l.text)}">${icon(ic, "s16")} ${esc(txt)}${l.grade ? ` <span class="grade g${l.grade}">${l.grade}</span>` : ""}</button>`;
   }).join("")}</div>` : "";
+}
+
+// ---------------------------------------------------------------- day one: an idea for the meal of the moment
+// Until something is logged, the card of the meal for this time of day shows one idea, so Today is not
+// empty on the first day. One tap logs it; it can be hidden for good.
+let ideaSlot = null, inlineIdea = { iso: null, meal: null, option: null };
+const forgetIdea = () => { inlineIdea = { iso: null, meal: null, option: null }; };   // it was chosen for other answers
+function currentSlot(d) {
+  const minutes = d.getHours() * 60 + d.getMinutes();
+  return minutes < 630 ? "breakfast" : minutes < 930 ? "lunch" : "dinner";
+}
+function inlineIdeaSlot() {
+  if (app.inlineIdeaOff || dayISO !== isoDate(new Date())) return null;
+  for (let i = 0; i <= 14; i++) if (entriesOf(shiftDay(dayISO, -i)).length) return null;
+  return currentSlot(new Date());
+}
+async function fetchInlineIdea(meal) {
+  inlineIdea = { iso: dayISO, meal, option: null };
+  try {
+    const r = await api("/diary/suggest", { ...dayReq([]), meal, k: 1 });
+    if (inlineIdea.iso !== dayISO || inlineIdea.meal !== meal) return;
+    inlineIdea.option = r.options[0] || null;
+    if (dayView?.iso === dayISO && todayShown()) drawToday(dayView.sum, entriesOf(dayISO));
+  } catch {}                                           // no idea is fine: the card keeps + Add and Ideas
+}
+function inlineIdeaCard(m) {
+  const o = inlineIdea.option;
+  if (ideaSlot !== m || !o || inlineIdea.meal !== m) return "";
+  return `<div class="inline-idea">
+    <span class="tile-ic" aria-hidden="true">${thumbFor("recipe", o.id, o.en)}</span>
+    <div class="what"><span class="ii-top">An idea for ${SLOT_LABEL[m].toLowerCase()}</span><b>${esc(o.en)}</b>
+      <small>${o.time_min ? `${o.time_min} min · ` : ""}about ${euro(o.cost)}</small>
+      <span class="reasons">${o.reasons.slice(0, 2).map(reasonChip).join("")}</span>
+      <span class="ii-acts"><button class="primary small" data-inline-take>I'll have this</button><button class="link" data-ideas="${m}">More ideas</button></span></div>
+    <button class="icon-btn" data-inline-hide aria-label="Hide this idea">${icon("x")}</button></div>`;
+}
+function takeInlineIdea() {
+  const o = inlineIdea.option;
+  if (!o) return;
+  logEntries(inlineIdea.meal, [{ kind: "recipe", id: o.id, name: o.en, servings: 1, kcal: Math.round(o.kcal) }], "idea");
+  forgetIdea();
+  renderToday();
 }
 
 function slotCard(m, sum, entries) {
@@ -1600,26 +1869,62 @@ function slotCard(m, sum, entries) {
     ? `<p class="src share">${sum.meal_shares[m].carbs}% of today's carbohydrates so far (your plan: 40% or more)</p>` : "";
   return `<div class="card meal-card slot">
     <div class="mc-head"><span>${SLOT_LABEL[m]}</span><span class="muted">${kcal ? `${fmt(kcal)} kcal` : ""}</span></div>
+    ${inlineIdeaCard(m)}
     ${leverChips(levers)}
     ${mine.map(e => `<div class="mc-row entry">
-      <button class="meal" ${e.kind === "recipe" ? `data-open-entry="${esc(e.uid)}"` : `data-food="${esc(e.id)}"`}>
-        <span class="tile-ic small" aria-hidden="true">${e.kind === "recipe" ? recipeIcon(e.name) : iconFor(e.name, e.group || "")}</span>
-        <span class="what"><b>${esc(e.kind === "food" ? friendlyName(e.name) : e.name)}</b>
-          <small>${e.kind === "food" ? `${round(e.grams)} g` : e.servings === 1 ? "1 portion" : `${e.servings} portions`} · ${fmt(e.kcal || 0)} kcal</small></span></button>
-      <button class="x" data-unlog="${esc(e.uid)}" aria-label="Remove ${esc(e.name)}">×</button></div>`).join("")}
+      <button class="meal" ${e.kind === "recipe" ? `data-open-entry="${esc(e.uid)}"` : e.kind === "food" ? `data-food="${esc(e.id)}"` : ""}>
+        <span class="tile-ic small" aria-hidden="true">${e.kind === "preset" ? icon("tray") : thumbFor(e.kind, e.id, e.name)}</span>
+        <span class="what"><b>${esc(e.kind === "food" ? friendlyName(e.name) : e.name)}${e.estimate ? ` <span class="est" title="An estimate">≈</span>` : ""}</b>
+          <small>${e.kind === "food" ? `${round(e.grams)} g` : e.servings === 1 ? "1 portion" : `${e.servings} portions`} · ${e.estimate ? "≈ " : ""}${fmt(e.kcal || 0)} kcal</small></span></button>
+      <button class="x" data-unlog="${esc(e.uid)}" aria-label="Remove ${esc(e.name)}">×</button></div>
+      ${e.failed ? `<p class="unsaved" role="status">Not saved · <button class="link" data-retry-entry="${esc(e.uid)}">Retry</button></p>`
+        : e.note ? `<p class="unsaved" role="status">${esc(e.note)}</p>` : ""}`).join("")}
     ${share}
-    <div class="slot-actions"><button class="add" data-log="${m}">+ Add</button><button class="add soft" data-ideas="${m}">✨ Ideas</button></div>
+    <div class="slot-actions"><button class="add" data-log="${m}">+ Add</button><button class="add soft" data-ideas="${m}">${icon("spark", "s16")} Ideas</button></div>
   </div>`;
 }
 
-function logEntry(meal, item) {
-  (app.diary[dayISO] ||= []).push({ uid: uid(), meal, ...item });
+// Log at once on screen, then save; a failed save is shown on its row with Retry. True when saved.
+async function logEntries(meal, items, source, iso = dayISO) {
+  const added = items.map(item => ({ uid: newId(), meal, ...item, src: source, pending: true }));
+  diaryCache.set(iso, [...entriesOf(iso), ...added]);
   app.introSeen = true; save();
+  const ok = await saveEntries(iso, added);
+  if (!ok && iso === dayISO && todayShown()) renderToday();
+  return ok;
 }
-function unlog(id) {
-  app.diary[dayISO] = entriesOf(dayISO).filter(e => e.uid !== id);
-  if (!app.diary[dayISO].length) delete app.diary[dayISO];
-  save(); renderToday();
+function logEntry(meal, item, source = "manual") { logEntries(meal, [item], source); }
+// Each entry keeps its save in flight (e.saving), so removing it can wait for that save first.
+function saveEntries(iso, list) {
+  const done = api("/diary/entries", { entries: list.map(e => toRow(iso, e)) }).then(
+    () => { list.forEach(e => { e.pending = false; e.failed = false; }); return true; },
+    () => { list.forEach(e => { e.pending = false; e.failed = true; }); return false; });
+  list.forEach(e => { e.saving = done; });
+  return done;
+}
+async function retryEntry(id) {
+  const e = entriesOf(dayISO).find(x => x.uid === id);
+  if (!e || e.pending) return;
+  e.failed = false; e.pending = true;
+  await saveEntries(dayISO, [e]);
+  renderToday();
+}
+// Removing waits for the entry's save, then deletes it on the server even when it showed "Not saved":
+// the save may have arrived although its answer did not. True when it is gone.
+async function unlog(id, iso = dayISO) {
+  const list = entriesOf(iso), e = list.find(x => x.uid === id);
+  if (!e) return true;
+  diaryCache.set(iso, list.filter(x => x !== e));
+  if (iso === dayISO && todayShown()) renderToday();
+  await e.saving;
+  try { await api(`/diary/entries/${encodeURIComponent(id)}`, undefined, "DELETE"); return true; }
+  catch (x) {
+    if (x.message === "No such entry") return true;       // never stored, or already gone
+    diaryCache.set(iso, [...entriesOf(iso), { ...e, pending: false, failed: false, saving: null,
+      note: "Could not remove this. Check the connection and try again." }]);
+    if (iso === dayISO && todayShown()) renderToday();
+    return false;
+  }
 }
 function showLever(id) {
   const all = Object.values(dayView?.sum.meal_levers || {}).flat();
@@ -1632,18 +1937,29 @@ function showLever(id) {
 }
 
 // ---------------------------------------------------------------- log sheet: add what you ate
-let logMeal = null;
-function openLog(meal) {
+let logMeal = null, picked = new Map();          // ticked recent items, kept while searching
+// The sheet slides away for 190 ms after an Add: a second tap in that time must not log again.
+const logClosing = () => !$("log-sheet").open || $("log-sheet").classList.contains("closing");
+function openLog(meal, keepPicked = false) {
   logMeal = meal;
+  if (!keepPicked) picked = new Map();
   $("log-title").textContent = `Add to ${SLOT_LABEL[meal].toLowerCase()}`;
   $("log-body").innerHTML = `<input type="search" id="log-q" placeholder="Search a food or a recipe" autocomplete="off" aria-label="Search a food or a recipe">
-    <div id="log-results">${recentList()}</div>`;
-  $("log-sheet").showModal();
+    <div id="log-results">${quickRows(meal)}${recentList()}</div>
+    <div class="multi-bar" id="multi-bar" hidden><button class="primary" type="button" data-add-picked></button></div>`;
+  updateMultiBar();
+  if (!$("log-sheet").open) $("log-sheet").showModal();
+  $("log-body").onchange = (e) => {
+    if (!e.target.matches(".pick-check")) return;
+    const x = JSON.parse(e.target.dataset.multi), k = `${x.kind}|${x.id}`;
+    e.target.checked ? picked.set(k, x) : picked.delete(k);
+    updateMultiBar();
+  };
   let timer;
   $("log-q").addEventListener("input", (e) => {
     clearTimeout(timer);
     const q = e.target.value.trim();
-    if (q.length < 2) { $("log-results").innerHTML = recentList(); return; }
+    if (q.length < 2) { $("log-results").innerHTML = quickRows(meal) + recentList(); updateMultiBar(); return; }
     timer = setTimeout(async () => {
       try {
         const r = await api("/diary/search?" + qs({ q, scale: dayView?.sum.portion_scale || 1 }));
@@ -1657,11 +1973,53 @@ function openLog(meal) {
   });
   setTimeout(() => $("log-q")?.focus(), 50);
 }
+// "Again?": the same meal as on the latest earlier day that had it, in one tap; and presets (the CROUS meal).
+function quickRows(meal) {
+  let again = "";
+  for (const d of [...diaryCache.keys()].filter(d => d < dayISO).sort().reverse()) {
+    const items = entriesOf(d).filter(e => e.meal === meal && !e.failed);
+    if (!items.length) continue;
+    const when = dayLabel(d) === "Yesterday" ? "yesterday" : dayLabel(d);
+    const names = items.slice(0, 2).map(e => e.kind === "food" ? friendlyName(e.name) : e.name).join(", ")
+      + (items.length > 2 ? ` +${items.length - 2}` : "");
+    again = `<div class="group-title">Again?</div>
+      <button class="pick quick" data-again="${d}"><span class="tile-ic small" aria-hidden="true">${icon("repeat")}</span>
+        <span class="what"><b>Same as ${esc(when)}'s ${SLOT_LABEL[meal].toLowerCase()}</b><small>${esc(names)}</small></span><span class="add">Add</span></button>`;
+    break;
+  }
+  const quick = presetList.map(x => `<button class="pick quick" data-preset="${esc(x.id)}"><span class="tile-ic small" aria-hidden="true">${icon("tray")}</span>
+      <span class="what"><b>${esc(x.name)} <span class="est" title="An estimate">≈</span></b><small>${esc(x.detail)} · ≈ ${fmt(x.kcal)} kcal, an estimate</small></span>
+      <span class="add">Add</span></button>`).join("");
+  return again + (quick ? `${again ? "" : `<div class="group-title">Quick</div>`}${quick}` : "");
+}
+function repeatMeal(d) {
+  if (logClosing()) return;
+  const items = entriesOf(d).filter(e => e.meal === logMeal && !e.failed).map(e => ({ kind: e.kind, id: e.id, name: e.name,
+    servings: e.servings, grams: e.grams, kcal: e.kcal, estimate: !!e.estimate, group: "" }));
+  logEntries(logMeal, items, "repeat");
+  closeSheet($("log-sheet")); renderToday();
+}
+// Several recent items at once, each at its usual amount.
+function updateMultiBar() {
+  const n = picked.size, bar = $("multi-bar");
+  if (!bar) return;
+  bar.hidden = !n;
+  bar.querySelector("button").textContent = `Add ${n} to ${SLOT_LABEL[logMeal].toLowerCase()}`;
+}
+function addPicked() {
+  if (logClosing() || !picked.size) return;
+  const items = [...picked.values()].map(x => x.kind === "recipe"
+    ? { kind: "recipe", id: x.id, name: x.name, servings: 1, kcal: Math.round(x.kcal) }
+    : { kind: "food", id: x.id, name: x.name, group: x.group || "", grams: x.portion_g, kcal: Math.round(x.kcal_100g * x.portion_g / 100) });
+  logEntries(logMeal, items, "manual");
+  closeSheet($("log-sheet")); renderToday();
+}
 // What was logged before, newest first: most meals repeat.
 function recentList() {
   const seen = new Set(), out = [];
-  for (const iso of Object.keys(app.diary).sort().reverse()) {
-    for (const e of [...app.diary[iso]].reverse()) {
+  for (const iso of [...diaryCache.keys()].sort().reverse()) {
+    for (const e of [...entriesOf(iso)].reverse()) {
+      if (e.kind === "preset") continue;                  // presets have their own row above
       const k = `${e.kind}|${e.id}`;
       if (seen.has(k)) continue;
       seen.add(k); out.push(e);
@@ -1670,41 +2028,48 @@ function recentList() {
     if (out.length >= 8) break;
   }
   if (!out.length) return `<p class="muted center log-hint">Type to search foods and recipes.</p>`;
-  return `<div class="group-title">Recent</div>${out.map(e => pickRow(e.kind === "recipe"
-    ? { kind: "recipe", id: e.id, name: e.name, kcal: Math.round((e.kcal || 0) / (e.servings || 1)) }
-    : { kind: "food", id: e.id, name: e.name, group: e.group, portion_g: e.grams, kcal_100g: e.grams ? Math.round(100 * (e.kcal || 0) / e.grams) : 0 })).join("")}`;
+  return `<div class="group-title">Recent · tap to select several</div>${out.map(e => {
+    const x = e.kind === "recipe"
+      ? { kind: "recipe", id: e.id, name: e.name, kcal: Math.round((e.kcal || 0) / (e.servings || 1)) }
+      : { kind: "food", id: e.id, name: e.name, group: e.group, portion_g: e.grams, kcal_100g: e.grams ? Math.round(100 * (e.kcal || 0) / e.grams) : 0 };
+    const label = x.kind === "food" ? friendlyName(x.name) : x.name;
+    return `<div class="pick-row"><input type="checkbox" class="pick-check" data-multi="${esc(JSON.stringify(x))}" ${picked.has(`${x.kind}|${x.id}`) ? "checked" : ""} aria-label="Select ${esc(label)}">${pickRow(x)}</div>`;
+  }).join("")}`;
 }
 function pickRow(x) {
   const data = esc(JSON.stringify(x));
   const sub = x.kind === "recipe" ? `${fmt(x.kcal)} kcal a portion${x.time_min ? ` · ${x.time_min} min` : ""}`
     : `${round(x.portion_g)} g · ${fmt(x.kcal_100g * x.portion_g / 100)} kcal`;
   const name = x.kind === "food" ? friendlyName(x.name) : x.name;
-  return `<button class="pick" data-pick="${data}"><span class="tile-ic small" aria-hidden="true">${x.kind === "recipe" ? recipeIcon(x.name) : iconFor(x.name + " " + (x.category || ""), x.group || "")}</span>
+  return `<button class="pick" data-pick="${data}"><span class="tile-ic small" aria-hidden="true">${thumbFor(x.kind, x.id, x.name)}</span>
     <span class="what"><b>${esc(name)}</b><small>${sub}</small></span><span class="add">Add</span></button>`;
 }
 // One tap on a result asks only the amount, with its usual portion already in.
 function pickAmount(x) {
-  const recipe = x.kind === "recipe", name = recipe ? x.name : friendlyName(x.name);
+  const preset = x.kind === "preset", recipe = x.kind === "recipe" || preset, name = recipe ? x.name : friendlyName(x.name);
   const kcalFor = (v) => recipe ? x.kcal * v : x.kcal_100g * v / 100;
   $("log-body").innerHTML = `<button class="back" data-log-back>← Search</button>
-    <div class="amount"><span class="tile-ic" aria-hidden="true">${recipe ? recipeIcon(x.name) : iconFor(x.name, x.group || "")}</span><b>${esc(name)}</b></div>
+    <div class="amount"><span class="tile-ic" aria-hidden="true">${preset ? icon("tray") : thumbFor(x.kind, x.id, x.name)}</span><b>${esc(name)}${preset ? ` <span class="est" title="An estimate">≈</span>` : ""}</b></div>
+    ${preset ? `<p class="src">${esc(x.note)}</p>` : ""}
     <form id="amount-form" class="setup">
-      ${recipe ? `<div class="field"><span class="flabel">Portions</span><div class="choice">${[0.5, 1, 1.5, 2].map(v =>
+      ${recipe ? `<div class="field"><span class="flabel">Portions</span><div class="choice">${(preset ? [0.5, 1, 1.5] : [0.5, 1, 1.5, 2]).map(v =>
           `<label><input type="radio" name="amt" value="${v}" ${v === 1 ? "checked" : ""}><span>${v === 0.5 ? "½" : v}</span></label>`).join("")}</div></div>`
         : `<div class="field"><span class="flabel">Grams</span><div class="money"><input type="text" name="amt" inputmode="decimal" value="${round(x.portion_g)}" aria-label="Grams"><span class="muted">g</span></div>
           <div class="choice">${[0.5, 1, 2].map(k => `<button type="button" class="pill-btn" data-grams="${Math.round(x.portion_g * k)}">${k === 1 ? "1 portion" : k === 0.5 ? "½ portion" : "2 portions"} · ${Math.round(x.portion_g * k)} g</button>`).join("")}</div></div>`}
-      <p class="sub" id="amt-kcal">${fmt(kcalFor(recipe ? 1 : x.portion_g))} kcal</p>
+      <p class="sub" id="amt-kcal">${preset ? "≈ " : ""}${fmt(kcalFor(recipe ? 1 : x.portion_g))} kcal</p>
       <button class="primary" type="submit">Add to ${SLOT_LABEL[logMeal].toLowerCase()}</button>
     </form>`;
   const form = $("amount-form"), value = () => recipe ? +new FormData(form).get("amt") : parseFloat(String(form.amt.value).replace(",", ".")) || 0;
-  const update = () => { $("amt-kcal").textContent = `${fmt(kcalFor(value()))} kcal`; };
+  const update = () => { $("amt-kcal").textContent = `${preset ? "≈ " : ""}${fmt(kcalFor(value()))} kcal`; };
   form.querySelectorAll("input").forEach(i => i.oninput = i.onchange = update);
   form.querySelectorAll("[data-grams]").forEach(b => b.onclick = () => { form.amt.value = b.dataset.grams; update(); });
   form.onsubmit = (e) => {
     e.preventDefault();
+    if (logClosing()) return;
     const v = value();
     if (!(v > 0) || (!recipe && v > 3000)) { form.amt?.setCustomValidity?.("Between 1 and 3000 g."); form.amt?.reportValidity?.(); return; }
-    logEntry(logMeal, recipe ? { kind: "recipe", id: x.id, name: x.name, servings: v, kcal: Math.round(kcalFor(v)) }
+    if (preset) logEntry(logMeal, { kind: "preset", id: x.id, name: x.name, servings: v, kcal: Math.round(kcalFor(v)), estimate: true }, "preset");
+    else logEntry(logMeal, recipe ? { kind: "recipe", id: x.id, name: x.name, servings: v, kcal: Math.round(kcalFor(v)) }
       : { kind: "food", id: x.id, name: x.name, group: x.group || "", grams: v, kcal: Math.round(kcalFor(v)) });
     closeSheet($("log-sheet")); renderToday();
   };
@@ -1724,7 +2089,7 @@ async function openIdeas(meal, more = false) {
   } catch (e) { $("log-body").innerHTML = `<div class="note">Could not find ideas (${esc(e.message)}).</div>`; }
 }
 function reasonChip(rz) {
-  if (rz.kind === "nutrient") return `<span class="chip good" title="of your daily need">${esc(nName(rz.nutrient))} ${rz.percent}%${rz.eu_claim ? ` <span class="eu">EU</span>` : ""}</span>`;
+  if (rz.kind === "nutrient") return `<span class="chip good" title="of your daily need">${esc(nName(rz.nutrient))} ${rz.percent >= 200 ? `${Math.round(rz.percent / 100)}×` : `${rz.percent}%`}${rz.eu_claim ? ` <span class="eu">EU</span>` : ""}</span>`;
   return `<span class="chip lever-on">${esc(REASON_TEXT[rz.id] || rz.text)}${rz.grade ? ` <span class="grade g${rz.grade}">${rz.grade}</span>` : ""}</span>`;
 }
 function drawIdeas(r) {
@@ -1738,7 +2103,7 @@ function drawIdeas(r) {
   $("log-body").innerHTML = `<p class="sub">About ${fmt(r.energy_for_meal)} kcal fits this meal today.</p>
     ${leverChips(r.levers)}
     ${r.options.map(o => `<div class="idea">
-      <button class="idea-main" data-idea-open="${esc(o.id)}"><span class="tile-ic" aria-hidden="true">${recipeIcon(o.en)}</span>
+      <button class="idea-main" data-idea-open="${esc(o.id)}"><span class="tile-ic" aria-hidden="true">${thumbFor("recipe", o.id, o.en)}</span>
         <span class="what"><b>${esc(o.en)}</b><small>${fmt(o.kcal)} kcal${o.time_min ? ` · ${o.time_min} min` : ""} · about ${euro(o.cost)}${o.batch ? " · keeps 3 days" : ""}</small>
         <span class="reasons">${o.reasons.slice(0, 3).map(reasonChip).join("")}</span></span></button>
       <div class="idea-actions"><button class="add" data-idea-take="${esc(o.id)}">I'll have this</button>
@@ -1752,7 +2117,7 @@ function ideaById(id) { return ideas.last?.options.find(o => o.id === id); }
 function takeIdea(id) {
   const o = ideaById(id) || (sheet?.id === id ? sheet : null);
   if (!o) return;
-  logEntry(ideas.meal, { kind: "recipe", id: o.id, name: o.en, servings: 1, kcal: Math.round(o.kcal) });
+  logEntry(ideas.meal, { kind: "recipe", id: o.id, name: o.en, servings: 1, kcal: Math.round(o.kcal) }, "idea");
   closeSheet($("log-sheet")); closeSheet($("recipe-sheet")); renderToday();
 }
 function notForMe(id) {
@@ -1783,13 +2148,14 @@ const recipeCache = new Map();
 const planDayISO = (i) => shiftDay(isoDate(new Date()), i - todayIdx());
 
 // Dishes first, then the main ingredient: a picture says "pasta" faster than a name.
-const RECIPE_ICONS = [[/pasta|spaghetti|bolognese/i, "🍝"], [/soup|\bdal\b/i, "🍲"], [/curry/i, "🍛"], [/chili/i, "🌶️"],
-  [/porridge|oats|muesli/i, "🥣"], [/smoothie/i, "🥤"], [/omelette|frittata|shakshuka|\beggs?\b/i, "🍳"], [/salad/i, "🥗"],
-  [/salmon|mackerel|sardine|tuna|fish/i, "🐟"], [/chicken/i, "🍗"], [/beef|ham\b/i, "🥩"], [/tofu/i, "🥢"],
-  [/rice|couscous|quinoa|bowl/i, "🍚"], [/potato/i, "🥔"], [/toast|tartine|baguette|bread/i, "🥖"],
-  [/yogurt|yaourt|fromage blanc/i, "🥛"], [/banana/i, "🍌"], [/apple/i, "🍎"], [/orange/i, "🍊"], [/chocolate/i, "🍫"],
-  [/seeds|walnut|nuts|raisins/i, "🥜"]];
-const recipeIcon = (name) => (RECIPE_ICONS.find(([re]) => re.test(name)) || [, "🍽️"])[1];
+const recipeIcon = (name) => icon("plate");
+// A photo of a similar dish when there is one (served by this app, credited in the recipe sheet), else the
+// plate icon; plate = false returns nothing instead (shopping-list rows).
+function thumbFor(kind, id, name, plate = true) {
+  const p = (kind === "recipe" ? photos.recipes : kind === "ingredient" ? photos.ingredients : photos.foods)[id];
+  if (p) return `<img class="ph" src="${p.thumb}" alt="${esc(name)}" width="48" height="48" loading="lazy">`;
+  return plate ? icon("plate") : "";
+}
 const euro = (x) => `€${x.toFixed(2)}`;
 
 function weekRequest() {
@@ -1803,6 +2169,7 @@ const composition = (p) => p.days.map(d => ({
 async function renderWeek() {
   const my = ++weekToken, v = app.setup;
   if (!v.chain || !v.budget || weekUI.shop || !app.weekOn) return renderWeekShop();
+  try { await ensureDays(planDayISO(0), planDayISO(6)); } catch {}      // which planned meals are already logged
   const req = weekRequest(), key = JSON.stringify(req);
   if (weekPlan && weekKey === key) return renderWeekPlan();      // no re-solve on tab switches
   const box = $("tab-week");
@@ -1886,18 +2253,24 @@ function plannedEntry(i, m) {
   const r = weekPlan.days[i].meals[m];
   return entriesOf(planDayISO(i)).find(e => e.src === "week" && e.meal === m && e.id === r.id);
 }
-function toggleEaten(slot) {
+// The tick shows at once; when the save (or the removal) fails it goes back, with "Not saved" on the day's line.
+async function toggleEaten(slot) {
   const [i, m] = [+slot.split("|")[0], slot.split("|")[1]], r = weekPlan.days[i].meals[m], iso = planDayISO(i);
   const found = plannedEntry(i, m), on = !found;
-  if (found) { app.diary[iso] = entriesOf(iso).filter(e => e !== found); if (!app.diary[iso].length) delete app.diary[iso]; }
-  else (app.diary[iso] ||= []).push({ uid: uid(), kind: "recipe", id: r.id, meal: m, servings: 1, name: r.en, kcal: r.kcal, src: "week" });
-  save(); dayView = null;
-  const btn = document.querySelector(`[data-eat="${slot}"]`), line = document.querySelector(".eaten-line");
-  if (!btn || !line) return renderWeekPlan();
+  const done = found ? unlog(found.uid, iso) : logEntries(m, [{ kind: "recipe", id: r.id, servings: 1, name: r.en, kcal: r.kcal }], "week", iso);
+  dayView = null;
+  paintEaten(slot, i, on);
+  if (await done) return;
+  if (on) diaryCache.set(iso, entriesOf(iso).filter(e => !(e.failed && e.src === "week" && e.meal === m && e.id === r.id)));
+  paintEaten(slot, i, !on, "Not saved, check the connection");
+}
+function paintEaten(slot, i, on, problem = "") {
+  const btn = document.querySelector(`[data-eat="${slot}"]`), line = $("tab-week").querySelector(".eaten-line");
+  if (!btn || !line) return problem || $("tab-week").hidden ? undefined : renderWeekPlan();
   btn.setAttribute("aria-pressed", on);
-  btn.classList.toggle("just", on);
+  btn.classList.toggle("just", on && !problem);
   btn.closest(".meal-card").classList.toggle("done", on);
-  line.innerHTML = eatenLine(i);
+  line.innerHTML = eatenLine(i) + (problem ? ` · <span class="unsaved-inline">${problem}</span>` : "");
 }
 function eatenLine(i) {
   const done = ["breakfast", "lunch", "dinner"].filter(m => weekPlan.days[i].meals[m] && plannedEntry(i, m)).length;
@@ -1964,7 +2337,7 @@ function readyBanner(p, setup, chainLabel) {
     <span class="ready-ic" aria-hidden="true">${SPROUT_SVG}</span>
     <span class="ready-text"><b>Your week is ready</b>
       <small>${euro(p.total_cost)} of €${esc(setup.budget)} at ${esc(chainLabel)} · food covers ${covered.length} of ${needs.length} needs</small></span>
-    <button class="icon-btn" data-ready-close aria-label="Dismiss">✕</button></div>`;
+    <button class="icon-btn" data-ready-close aria-label="Dismiss">${icon("x")}</button></div>`;
 }
 
 function energyCard(p, d, i) {
@@ -2042,7 +2415,7 @@ function mealCard(i, m, r) {
     <div class="mc-head"><span>${MEAL_LABEL[m]}</span><span class="muted">${fmt(r.kcal)} kcal</span></div>
     <div class="mc-row">
       <button class="meal" data-recipe="${esc(r.id)}" data-slot="${slot}" aria-haspopup="dialog">
-        <span class="tile-ic" aria-hidden="true">${recipeIcon(r.en)}</span>
+        <span class="tile-ic" aria-hidden="true">${thumbFor("recipe", r.id, r.en)}</span>
         <span class="what"><b>${esc(r.en)}</b><small>${r.time_min ? `${r.time_min} min · ` : ""}P ${fmt(r.protein)} g · C ${fmt(r.carbs)} g · F ${fmt(r.fat)} g${r.batch ? " · keeps 3 days" : ""}</small></span>
       </button>
       <button class="eat" data-eat="${slot}" aria-pressed="${done}" aria-label="Eaten (logs it in your diary): ${esc(r.en)}" title="Eaten: log it in your diary">
@@ -2055,7 +2428,7 @@ function snackCard(d) {
   const kcal = d.snacks.reduce((s, x) => s + x.kcal, 0);
   return `<div class="card meal-card">
     <div class="mc-head"><span>Snacks</span><span class="muted">${fmt(kcal)} kcal</span></div>
-    ${d.snacks.map(s => `<div class="mc-row snack"><span class="tile-ic small" aria-hidden="true">${recipeIcon(s.en)}</span>
+    ${d.snacks.map(s => `<div class="mc-row snack"><span class="tile-ic small" aria-hidden="true">${thumbFor("recipe", s.id, s.en)}</span>
       <span class="what">${esc(s.en)}<small>${fmt(s.kcal)} kcal</small></span></div>`).join("")}
   </div>`;
 }
@@ -2104,9 +2477,19 @@ function addWeekToList() {
 // Swap when it is a meal of a planned week. It opens from an idea (with
 // "I'll have this"), from the diary, or from the week.
 let sheet = null;          // {id, en, kcal, time_min, meal, ctx: "week" | "idea" | "diary", day?}
+const licenceLink = (p) => p.licence_url ? `<a href="${esc(p.licence_url)}" target="_blank" rel="noopener">${esc(p.licence)}</a>` : esc(p.licence);
+const creditLine = (p, short = false) => `<a href="${esc(p.page)}" target="_blank" rel="noopener">${esc(p.author)}</a>, ${licenceLink(p)}, ${
+  short || !p.changes ? "cropped and resized" : esc(p.changes)}`;
+function fillCredits() {
+  $("photo-credits").innerHTML = (photos.credits || []).map(p => `<li><b>${esc(p.shows)}</b>: ${creditLine(p)}</li>`).join("")
+    || `<li class="muted">The photos could not be loaded just now.</li>`;
+}
 function openRecipeSheet(info) {
   sheet = info;
-  $("rs-icon").textContent = recipeIcon(info.en);
+  const pic = photos.recipes[info.id];
+  $("rs-icon").innerHTML = pic ? "" : recipeIcon(info.en);
+  $("rs-photo").innerHTML = pic ? `<img src="${pic.src}" alt="${esc(info.en)}" width="800" height="600">
+    <p class="rs-credit">Photo: a similar dish · ${creditLine(pic, true)}</p>` : "";
   $("rs-title").textContent = info.en;
   const when = info.ctx === "week" ? `${MEAL_LABEL[info.meal]} · ${WEEKDAYS[info.day]}` : SLOT_LABEL[info.meal] || "";
   $("rs-sub").textContent = [when, info.time_min ? `${info.time_min} min` : "", info.kcal ? `${fmt(info.kcal)} kcal` : ""].filter(Boolean).join(" · ");
@@ -2157,7 +2540,7 @@ function swapView(res) {
   const delta = (d) => d === 0 ? "same price" : d > 0 ? `+${euro(d)}` : `−${euro(-d)}`;
   if (!res.options.length) return `<p class="sub">No other ${res.meal} fits this week's budget and needs.</p>`;
   return `<p class="sub">Each keeps your budget, energy and limits.</p>
-    ${res.options.map(o => `<div class="swap-opt"><span class="mi" aria-hidden="true">${recipeIcon(o.en)}</span>
+    ${res.options.map(o => `<div class="swap-opt"><span class="tile-ic small" aria-hidden="true">${thumbFor("recipe", o.id, o.en)}</span>
       <span class="what"><b>${esc(o.en)}</b><small>${o.time_min ? `${o.time_min} min · ` : ""}${delta(o.cost_delta)}</small>
         <span class="chip ${effect[o.effect][1]}">${effect[o.effect][0]}</span></span>
       <button class="add" data-swap-to="${esc(o.id)}">Choose</button></div>`).join("")}`;
@@ -2199,7 +2582,7 @@ function whyMeal(w, recipeName) {
       ? `<div class="claim">“${esc(n.eu_claims[0])}.”<small>EU authorised health claim${n.citations.length ? ` · ${esc(n.citations[0])}` : ""}</small></div>`
       : `<div class="claim plain">${esc(n.consumer_label || "Supported by research")}.<small>Evidence ${esc(n.evidence)} · ${esc(EVIDENCE_SOURCE[n.evidence_source] || "FeedForward sources")}</small></div>`}</li>`;
   const top = w.nutrients.slice(0, 3), rest = w.nutrients.slice(3);
-  return `${graphSvg(recipeName, "mixed_dishes", top, goal, recipeIcon(recipeName))}
+  return `${graphSvg(recipeName, "mixed_dishes", top, goal)}
     <ul class="why-list">${top.map(item).join("")}</ul>
     ${rest.length ? `<details class="sec"><summary>${rest.length} more for ${title}</summary><div><ul class="why-list">${rest.map(item).join("")}</ul></div></details>` : ""}
     ${w.limits.map(l => `<p class="watch">One portion has ${l.percent_of_limit}% of the daily limit for ${esc(LIMIT_WORDS[l.nutrient] || l.nutrient)}${fromSource(l.main_source)}.</p>`).join("")}
@@ -2209,7 +2592,7 @@ function whyMeal(w, recipeName) {
 // ---------------------------------------------------------------- graph
 // Food -> nutrients -> goal, the same edges the ranking uses. Line width follows
 // edge strength (0-1); solid lines are authorised EU claims.
-function graphSvg(foodName, group, contribs, goal, icon = null) {
+function graphSvg(foodName, group, contribs, goal, foodIcon = "plate") {
   if (!contribs.length) return "";
   const W = 600, rowH = 46, H = Math.max(120, contribs.length * rowH + 24);
   const xF = 80, xN = 300, xG = 520, mid = H / 2;
@@ -2227,10 +2610,10 @@ function graphSvg(foodName, group, contribs, goal, icon = null) {
       <text class="lbl" x="${xN}" y="${ys[i] + 12}" text-anchor="middle">${c.percent_of_need >= 200 ? `${Math.round(c.percent_of_need / 100)}× daily need` : `${round(c.percent_of_need)}% of daily need`}</text></g>`;
   });
   nodes += `<rect class="n-food" x="${xF - 46}" y="${mid - 30}" width="92" height="60" rx="14"/>
-    <text x="${xF}" y="${mid - 4}" text-anchor="middle" style="font-size:22px">${icon || iconFor(foodName, group)}</text>
+    ${iconAt(foodIcon, xF, mid - 10)}
     <text class="lbl" x="${xF}" y="${mid + 18}" text-anchor="middle">${esc(clip(friendlyName(foodName), 16))}</text>`;
   nodes += `<rect class="n-goal" x="${xG - 46}" y="${mid - 30}" width="92" height="60" rx="14"/>
-    <text x="${xG}" y="${mid - 4}" text-anchor="middle" style="font-size:22px">${goalIcon(goal)}</text>
+    ${iconAt(goalIconName(goal), xG, mid - 10)}
     <text class="lbl" x="${xG}" y="${mid + 18}" text-anchor="middle">${esc(clip(goalTitle(goal), 16))}</text>`;
   return `<svg class="graph" viewBox="0 0 ${W} ${H}" role="img" aria-label="How this food supports ${esc(goalTitle(goal))}">${edges}${nodes}</svg>`;
 }
@@ -2307,7 +2690,7 @@ async function dictTerms() {
 const sameName = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
 const inList = (kind, id) => app.list.some(i => i.kind === kind && i.id === id);
 function addBtn(id, name, portion, group) {
-  return inList("food", id) ? `<button class="add done" disabled>✓ On your list</button>`
+  return inList("food", id) ? `<button class="add done" disabled>${icon("check", "s16")} On your list</button>`
     : `<button class="add" data-add="${esc(id)}" data-name="${esc(name)}" data-portion="${portion || 100}" data-group="${esc(group || "")}">+ List</button>`;
 }
 function addToList(id, name, portion, group) {
@@ -2326,7 +2709,7 @@ async function addIngredients(recipeId) {
     }
     save(); updateCount();
     const btn = document.querySelector(`[data-ingredients-to-list="${CSS.escape(recipeId)}"]`);
-    if (btn) { btn.outerHTML = `<button class="ghost" data-tab-go="list">✓ On your list ›</button>`; }
+    if (btn) { btn.outerHTML = `<button class="ghost" data-tab-go="list">${icon("check", "s16")} On your list ›</button>`; }
   } catch (e) { showInfo("List", `<p>Could not add the ingredients (${esc(e.message)}).</p>`); }
 }
 function qty(b) {
@@ -2348,11 +2731,15 @@ const HOME_ICON = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" s
 function shopRow(b, t, atHome) {
   return `<div class="shop-row${atHome ? " home" : ""}">
     ${atHome ? `<span></span>` : `<input type="checkbox" id="s-${esc(b.id)}" data-shop="${esc(b.id)}" ${t.has(b.id) ? "checked" : ""}>`}
-    <label class="nm" ${atHome ? "" : `for="s-${esc(b.id)}"`}>${esc(b.fr)}${sameName(b.fr, b.en) ? "" : ` <span class="muted">· ${esc(b.en)}</span>`}</label>
+    <label class="nm" ${atHome ? "" : `for="s-${esc(b.id)}"`}>${listPhoto("ingredient", b.id, b.en)}${esc(b.fr)}${sameName(b.fr, b.en) ? "" : ` <span class="muted">· ${esc(b.en)}</span>`}</label>
     <span class="num">${qty(b)}</span>
     <span class="num">${atHome ? "" : `${b.estimated ? "≈" : ""}${euro(b.price)}`}</span>
     <button class="home-btn" data-pantry="${esc(b.id)}" aria-pressed="${atHome}" title="${atHome ? "Need to buy it" : "I have this at home"}" aria-label="${atHome ? `Buy ${esc(b.fr)}` : `${esc(b.fr)}: I have this at home`}">${HOME_ICON}</button>
   </div>`;
+}
+function listPhoto(kind, id, name) {
+  const img = thumbFor(kind, id, name, false);
+  return img ? `<span class="li-ph" aria-hidden="true">${img}</span>` : "";
 }
 function itemRow(i) {
   const label = i.kind === "food" ? friendlyName(i.name) : i.kind === "ingredient" ? (i.fr || i.name) : i.name;
@@ -2360,7 +2747,7 @@ function itemRow(i) {
   const amount = i.kind === "ingredient" && i.g ? qty({ grams: i.g, liquid: i.liquid }) : "";
   return `<div class="shop-row item">
     <input type="checkbox" id="i-${esc(i.uid)}" data-item="${esc(i.uid)}" ${i.done ? "checked" : ""}>
-    <label class="nm" for="i-${esc(i.uid)}">${esc(label)}${extra}</label>
+    <label class="nm" for="i-${esc(i.uid)}">${listPhoto(i.kind, i.id, label)}${esc(label)}${extra}</label>
     <span class="num">${amount}</span><span></span>
     <button class="home-btn" data-remove="${esc(i.uid)}" aria-label="Remove ${esc(label)}" title="Remove">×</button></div>`;
 }
@@ -2374,12 +2761,12 @@ async function renderList() {
     <form id="list-add" class="list-add"><input type="text" name="item" placeholder="Add an item" autocomplete="off" aria-label="Add an item" maxlength="80">
       <button class="add" type="submit">Add</button></form>`;
   if (p && !listed) {
-    html += `<div class="card plan-week static"><span class="tile-ic" aria-hidden="true">🗓️</span>
+    html += `<div class="card plan-week static"><span class="tile-ic" aria-hidden="true">${icon("calendar")}</span>
       <span class="what"><b>Your planned week</b><small>${p.basket.length} items · ${euro(p.total_cost)} at ${esc(p.chain.label)}</small></span>
       <button class="add" data-week-to-list>Add</button></div>`;
   }
   if (!app.list.length && !listed) {
-    html += `<div class="empty"><span class="big-ic" aria-hidden="true">🛒</span>
+    html += `<div class="empty"><span class="big-ic" aria-hidden="true">${icon("list")}</span>
       <p class="sub">Your list is empty.<br>Type an item above, or add a food or a recipe's ingredients from the app.</p></div>`;
   }
   if (app.list.length) {
@@ -2433,7 +2820,7 @@ async function renderList() {
   if ($("list-copy")) $("list-copy").onclick = async () => {
     const lines = [...app.list.filter(i => !i.done).map(i => `- ${i.kind === "food" ? friendlyName(i.name) : i.fr || i.name}${i.g ? `: ${qty({ grams: i.g, liquid: i.liquid })}` : ""}`),
       ...(listed ? p.basket.filter(b => !home.has(b.id) && !t.has(b.id)).map(b => `- ${b.fr}: ${qty(b).replace(/<[^>]+>/g, "")}`) : [])];
-    try { await navigator.clipboard.writeText(lines.join("\n")); $("list-copy").textContent = "Copied ✓"; } catch { $("list-copy").textContent = "Copy failed"; }
+    try { await navigator.clipboard.writeText(lines.join("\n")); $("list-copy").innerHTML = `Copied ${icon("check", "s16")}`; } catch { $("list-copy").textContent = "Copy failed"; }
   };
 }
 // "At home": out of the list now; "Plan around them" makes them free in a new plan.
@@ -2482,9 +2869,14 @@ async function enterApp() {
   Object.keys(NAV_OF).forEach(t => { $("tab-" + t).hidden = t !== "today"; if (t !== "today") $("tab-" + t).innerHTML = ""; });
   $("tab-today").innerHTML = loading("Opening FeedForward…", "week");
   try {
-    const [saved, me] = await Promise.all([api("/me/state"), api("/auth/me"), loadBasics()]);
+    // photos are a nicety: without them the app shows its plate icons
+    const [saved, me, pics] = await Promise.all([api("/me/state"), api("/auth/me"),
+      api("/photos").catch(() => ({ recipes: {}, foods: {}, ingredients: {}, credits: [] })), loadBasics()]);
+    photos = pics;
     account = me;
+    $("demo-strip").hidden = !authConfig?.demo;
     app = Object.assign(blankApp(), saved.data || {});
+    loadPresets();
     app.prefs = Object.assign({ extra: [], science: false }, app.prefs || {});
     dayISO = isoDate(new Date()); dayView = null; weekPlan = null; weekKey = null;
     syncProfile(); updateCount();

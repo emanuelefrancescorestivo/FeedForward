@@ -1,0 +1,16 @@
+# The public demo on Render's free plan, in Frankfurt (DECISIONS.md, decision 32).
+# Render reads this file: dashboard > New > Blueprint > this repository.
+services:
+  - type: web
+    name: feedforward-demo
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: feature/engagement        # the branch with the demo; main once it is merged
+    dockerfilePath: ./deploy/demo/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: FEEDFORWARD_SECRET       # signs the demo's sign-in tokens; Render makes a random one
+        generateValue: true

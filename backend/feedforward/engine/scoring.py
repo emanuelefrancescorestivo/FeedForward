@@ -103,7 +103,7 @@ def saturate(x: float) -> float:
     return 1.0 - math.exp(-SATURATION_K * x) if x > 0 else 0.0
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)     # about 200,000 of them: no per-instance dict, also when unpickled
 class Delivery:
     nutrient: str
     portion_g: float

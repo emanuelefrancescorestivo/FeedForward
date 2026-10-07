@@ -21,14 +21,15 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from pathlib import Path
 
+from ..db.diary_rows import migrate_state_diaries
 from ..db.models import Base
 from ..db.session import assert_production_database, get_engine
 from ..engine import load_engine
-from .auth import assert_production_secret
-from .routers import goals, recommend, auth_router, analysis, dictionary, plan, me, diary
+from .auth import assert_production_secret, demo_mode
+from .routers import goals, recommend, auth_router, analysis, dictionary, plan, me, diary, entries, photos
 from . import __doc__ as _pkg_doc  # noqa
 
 
@@ -46,6 +47,7 @@ async def lifespan(app: FastAPI):
     assert_production_database()
     assert_production_secret()
     Base.metadata.create_all(get_engine())
+    migrate_state_diaries()                       # diaries still in the saved document move to rows, once
     engine = load_engine()
     app.state.engine_summary = engine.graph.summary()
     yield
@@ -78,8 +80,9 @@ _WINDOW = 60.0
 
 @app.middleware("http")
 async def rate_limit(request: Request, call_next):
-    if request.url.path in ("/health", "/docs", "/openapi.json"):
-        return await call_next(request)
+    path = request.url.path
+    if path in ("/health", "/docs", "/openapi.json", "/app") or path.startswith("/app/"):
+        return await call_next(request)          # the page, its font and photos are files, not API work
     key = request.client.host if request.client else "local"
     now = time.time()
     hits = [t for t in _HITS[key] if now - t < _WINDOW]
@@ -97,10 +100,14 @@ app.include_router(dictionary.router)
 app.include_router(plan.router)
 app.include_router(me.router)
 app.include_router(diary.router)
+app.include_router(entries.router)
+app.include_router(photos.router)
 
 
 @app.get("/", tags=["meta"])
 def root():
+    if demo_mode():                               # the demo's link opens the app, not this description
+        return RedirectResponse("/app")
     return {
         "name": "FeedForward API",
         "version": "1.0.0",
@@ -131,6 +138,20 @@ def explorer_font(name: str):
     if path.suffix != ".woff2" or path.parent != _FONTS or not path.is_file():
         raise HTTPException(status_code=404)
     return FileResponse(path, media_type="font/woff2",
+                        headers={"Cache-Control": "public, max-age=31536000, immutable"})
+
+
+_PHOTOS = (_WEB.parent / "photos").resolve()
+
+
+@app.get("/app/photos/{name}", include_in_schema=False)
+def explorer_photo(name: str):
+    """Recipe and food photos (data/photos.json lists each one's source, author and licence). Served from
+    here, like the typeface, so showing a photo sends nothing to a third party."""
+    path = (_PHOTOS / name).resolve()
+    if path.suffix != ".webp" or path.parent != _PHOTOS or not path.is_file():
+        raise HTTPException(status_code=404)
+    return FileResponse(path, media_type="image/webp",
                         headers={"Cache-Control": "public, max-age=31536000, immutable"})
 
 

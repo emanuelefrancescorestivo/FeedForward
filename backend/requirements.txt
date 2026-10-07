@@ -21,6 +21,7 @@ beautifulsoup4>=4.12      # Wikipedia micronutrient scraping
 pandas>=2.2               # CIQUAL (xls) and Open Prices (parquet) importers
 pyarrow>=15               # parquet reader for Open Prices
 xlrd>=2.0                 # CIQUAL 2020 is distributed as .xls
+Pillow>=10.0              # scripts/photos.py: recipe photos to WebP
 
 # --- Analytics / reporting (optional) ---
 networkx>=3.3             # centrality, community detection for the report
@@ -29,3 +30,4 @@ matplotlib>=3.8           # graph visualisations
 # --- Testing ---
 pytest>=8.0
 httpx>=0.27               # FastAPI TestClient
+playwright>=1.47          # tests/ui drive the web app in Chromium (python -m playwright install chromium)

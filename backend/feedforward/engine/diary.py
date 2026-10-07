@@ -28,6 +28,7 @@ from dataclasses import dataclass
 from .needs import Profile
 from .profile import MEALS
 from . import week_planner as wp
+from .presets import load_presets, preset_nutrients
 
 SLOTS = MEALS + ("snack",)
 # A day's energy, by meal, when no strategy says otherwise: typical shares in
@@ -42,10 +43,10 @@ CARB_RICH = 0.5            # a meal with half its energy or more from carbohydra
 
 @dataclass(frozen=True)
 class Entry:
-    kind: str              # "recipe" | "food"
+    kind: str              # "recipe" | "food" | "preset"
     id: str
     meal: str              # one of SLOTS
-    servings: float = 1.0  # recipe
+    servings: float = 1.0  # recipe or preset
     grams: float = 0.0     # food
 
 
@@ -54,12 +55,12 @@ def entries_from(raw: list[dict]) -> list[Entry]:
     out = []
     for e in raw or []:
         kind, meal = e.get("kind"), e.get("meal")
-        if kind not in ("recipe", "food"):
-            raise ValueError("entry kind must be 'recipe' or 'food'")
+        if kind not in ("recipe", "food", "preset"):
+            raise ValueError("entry kind must be 'recipe', 'food' or 'preset'")
         if meal not in SLOTS:
             raise ValueError(f"entry meal must be one of {list(SLOTS)}")
         servings, grams = float(e.get("servings") or 1.0), float(e.get("grams") or 0.0)
-        if kind == "recipe" and not 0 < servings <= 10:
+        if kind in ("recipe", "preset") and not 0 < servings <= 10:
             raise ValueError("servings must be above 0 and at most 10")
         if kind == "food" and not 0 < grams <= 3000:
             raise ValueError("grams must be above 0 and at most 3000")
@@ -83,6 +84,11 @@ def _entry_nutrients(rec, recipes: dict, e: Entry) -> tuple[dict[str, float], st
         if r is None:
             raise ValueError(f"unknown recipe: {e.id}")
         return {n: v * e.servings for n, v in r.nutrients.items()}, r.en
+    if e.kind == "preset":
+        preset = load_presets().get(e.id)
+        if preset is None:
+            raise ValueError(f"unknown preset: {e.id}")
+        return {n: v * e.servings for n, v in preset_nutrients(rec, preset).items()}, preset.en
     food = rec.food_by_id.get(e.id)
     if food is None:
         raise ValueError(f"unknown food: {e.id}")

@@ -6,8 +6,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from ...engine.reference import Demographic
 import re
+import secrets
 
-from ..auth import (authenticate, create_token, create_user, dev_login_enabled, google_client_id,
+from ..auth import (authenticate, create_token, create_user, demo_mode, dev_login_enabled, google_client_id,
                     require_user, user_for_email, verify_google)
 from ..models import DevLogin, GoogleLogin, ProfileUpdate, Token, UserCreate, UserOut
 from ...db.repository import delete_user, export_user, get_user_state, update_profile
@@ -36,9 +37,9 @@ def login(form: OAuth2PasswordRequestForm = Depends()):
 
 @router.get("/config")
 def config():
-    """How this server lets people sign in: the Google client ID (public; empty when not set up)
-    and whether the local test sign-in is on (never in production)."""
-    return {"google_client_id": google_client_id() or None, "dev_login": dev_login_enabled()}
+    """How this server lets people sign in: the Google client ID (public; empty when not set up),
+    whether the local test sign-in is on (never in production), and whether this is the public demo."""
+    return {"google_client_id": google_client_id() or None, "dev_login": dev_login_enabled(), "demo": demo_mode()}
 
 
 @router.post("/google", response_model=Token)
@@ -58,6 +59,15 @@ def dev(payload: DevLogin):
     if not slug:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Type a name")
     return _token(user_for_email(f"{slug[:40]}@test.local"))
+
+
+@router.post("/demo", response_model=Token)
+def demo():
+    """The public demo: a fresh account for each visitor, no name or password, shared with no one.
+    Only when FEEDFORWARD_ENV=demo."""
+    if not demo_mode():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Not found")
+    return _token(user_for_email(f"demo-{secrets.token_hex(8)}@demo.local"))
 
 
 @router.get("/me", response_model=UserOut)
@@ -105,7 +115,9 @@ def export_me(user=Depends(require_user)):
     exported = export_user(user["sub"])
     if not exported:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "User no longer exists")
-    return {"user": exported, "app": get_user_state(user["sub"]) or {}}
+    from ...db.diary_rows import activity_for_export, entries_for_export
+    return {"user": exported, "app": get_user_state(user["sub"]) or {}, "diary": entries_for_export(user["sub"]),
+            "activity": activity_for_export(user["sub"])}
 
 
 @router.delete("/me")
