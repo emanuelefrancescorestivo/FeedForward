@@ -408,7 +408,8 @@ it: the last write wins.
 but the two-device loss stays, and every weekly query reads ten years of diary.
 **Cost.** A migration, new endpoints, and a queue in the service worker for
 logs made offline (the app-made ids make retries safe).
-*Where:* `db/models.py`, `alembic/versions/004_diary_rows.py`, `api/routers/diary.py`
+**Built in release 1** (October 2026), except the time zone, which comes with the weekly progress in release 2. The move of old diaries runs when the API starts (`migrate_state_diaries`, idempotent), because local and test databases are made with `create_all`; a log that fails to save stays on screen as "Not saved" with Retry.
+*Where:* [`db/diary_rows.py`](backend/feedforward/db/diary_rows.py), [`api/routers/entries.py`](backend/feedforward/api/routers/entries.py), [`alembic/versions/004_diary_rows.py`](backend/alembic/versions/004_diary_rows.py), [`tests/test_diary_rows.py`](backend/tests/test_diary_rows.py)
 
 ### 25. Progress, the food-week streak and the recap are pure engine functions
 **Decision.** `engine/progress.py` computes, from entries and activity days:
@@ -568,7 +569,8 @@ party. A ledger makes every licence checkable, and the script makes the set
 reproducible.
 **Cost.** About 5 MB of images in the repository; each new recipe needs a photo
 entry, or it shows the line icon of its dish family.
-*Where:* `data/photos.json`, `scripts/photos.py`, `web/photos/`, `api/main.py`
+**Built in release 1** (October 2026): 62 photos for 66 recipes and foods, 11 of the first choices replaced after looking at them (`docs/design/PHOTOS_PROPOSED.md`).
+*Where:* [`data/photos.json`](backend/feedforward/data/photos.json), [`scripts/photos.py`](backend/scripts/photos.py), [`api/routers/photos.py`](backend/feedforward/api/routers/photos.py), `web/photos/`, [`tests/test_photos.py`](backend/tests/test_photos.py)
 
 ### 31. Running it: a container, an EU host, a fast start
 **Decision.** One container image with two processes (the API and the
