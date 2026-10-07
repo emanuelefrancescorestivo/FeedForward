@@ -71,7 +71,7 @@ says so.
 | **Statistics on messy data** | Crowdsourced receipts → median €/kg per chain, outliers dropped, chains with few receipts shrunk towards national median × chain price index; the index comes out of the data (Lidl 0.67, Carrefour 1.06, Biocoop 1.49) | [`data/ingest/prices.py`](backend/feedforward/data/ingest/prices.py) |
 | **Scientific judgement** | Scoring per realistic portion against reference intakes; heme vs non-heme iron; the EU register as evidence layer (118 authorised links, 62 EFSA rejections removed); no medical conditions collected, on purpose (EU medical-device rules) | [`docs/SCIENTIFIC_BASIS.md`](docs/SCIENTIFIC_BASIS.md) |
 | **Design choices** | Thirty-one decisions with their alternatives and costs: −log edge costs, portion scoring, the EU register as evidence, energy as a hard constraint, robust price statistics… | [`DECISIONS.md`](DECISIONS.md) |
-| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 338 tests on GitHub Actions, 18 of them driving the app in a browser (Playwright), and one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
+| **Engineering** | FastAPI + SQLAlchemy/Alembic; a web app with no build step (progressive disclosure, dark mode, works on phones); 358 tests on GitHub Actions, 30 of them driving the app in a browser (Playwright), and one that walks the input space (small to athlete-sized needs, every diet and kitchen, cheapest and dearest shops) | [`backend/tests/`](backend/tests/), [`.github/workflows/`](.github/workflows/) |
 
 Two bugs the tests caught, as examples of how the project is checked:
 
@@ -449,7 +449,7 @@ This is a personal project and a working prototype, not a product in use.
 Nothing here has been reviewed by a dietitian or tested with users yet.
 What exists today:
 
-- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 338 tests (pytest, run on every push by GitHub Actions, browser tests included).
+- ✅ Engine: graph, bioavailability rules, evidence grading, 27-goal taxonomy, portion-based scoring, meal MILP, weekly budget planner — covered by 358 tests (pytest, run on every push by GitHub Actions, browser tests included).
 - ✅ FastAPI backend: recommend / explain / meal-plan / week plan / diary (day totals, ideas per meal) / food detail / dictionary / auth (Google ID tokens, tiered access) / saved app data per account.
 - ✅ Web app (`/app`): sign-in (Google, or a local test sign-in), a few questions with the strategies they turn on, Today (a diary: log a food or a recipe, ideas per meal with their reasons), an optional planned week (recipe sheet, swap), Foods (search, goals, dictionary), List (empty until you add to it), Profile; works on phones; data saved in the account. The single-meal optimiser stays in the engine and the API (`/meal-plan`), not in the interface.
 - 🟡 Expo mobile prototype (`mobile/`): early screens against the recommend API; it does not have My week.
