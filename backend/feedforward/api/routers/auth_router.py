@@ -105,8 +105,9 @@ def export_me(user=Depends(require_user)):
     exported = export_user(user["sub"])
     if not exported:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "User no longer exists")
-    from ...db.diary_rows import entries_for_export
-    return {"user": exported, "app": get_user_state(user["sub"]) or {}, "diary": entries_for_export(user["sub"])}
+    from ...db.diary_rows import activity_for_export, entries_for_export
+    return {"user": exported, "app": get_user_state(user["sub"]) or {}, "diary": entries_for_export(user["sub"]),
+            "activity": activity_for_export(user["sub"])}
 
 
 @router.delete("/me")

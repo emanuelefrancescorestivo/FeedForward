@@ -25,14 +25,21 @@ class Preset:
     estimate: bool
     note_en: str
     items: tuple[tuple[str, float], ...]       # (ingredient id, grams)
+    diet: str | None = None                    # offered to people with this diet only; None: no restriction
 
 
 @lru_cache(maxsize=1)
 def load_presets() -> dict[str, Preset]:
     raw = json.loads((DATA / "presets.json").read_text(encoding="utf-8"))["presets"]
     return {p["id"]: Preset(p["id"], p["en"], p["fr"], p["detail_en"], p["detail_fr"], float(p["price_eur"]),
-                            bool(p["estimate"]), p["note_en"], tuple((i["ingredient"], float(i["g"])) for i in p["items"]))
+                            bool(p["estimate"]), p["note_en"], tuple((i["ingredient"], float(i["g"])) for i in p["items"]),
+                            p.get("diet"))
             for p in raw}
+
+
+def presets_for(diet: str | None) -> list[Preset]:
+    """The presets a person sees: the plate of their own diet (a vegan's CROUS plate is not chicken)."""
+    return [p for p in load_presets().values() if p.diet == diet]
 
 
 @lru_cache(maxsize=1)

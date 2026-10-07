@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field
 from ...engine import diary, load_engine
 from ...engine import week_planner as wp
 from ...engine.portions import portion_for
-from ...engine.presets import load_presets, preset_nutrients
+from ...engine.presets import load_presets, preset_nutrients, presets_for
 from .plan import _profile
 
 router = APIRouter(prefix="/diary", tags=["diary"])
@@ -83,12 +83,13 @@ def suggest(req: SuggestRequest):
 
 
 @router.get("/presets")
-def presets():
-    """Meals logged in one tap as an estimate (the CROUS lunch), with the energy of one portion."""
+def presets(diet: Literal["vegetarian", "vegan"] | None = None):
+    """Meals logged in one tap as an estimate (the CROUS lunch), for the person's diet, with the energy of
+    one portion."""
     engine = load_engine()
     return [{"kind": "preset", "id": p.id, "name": p.en, "fr": p.fr, "detail": p.detail_en,
              "kcal": round(preset_nutrients(engine, p).get("energy-kcal", 0.0)), "estimate": p.estimate,
-             "price_eur": p.price_eur, "note": p.note_en} for p in load_presets().values()]
+             "price_eur": p.price_eur, "note": p.note_en} for p in presets_for(diet)]
 
 
 @router.get("/search")

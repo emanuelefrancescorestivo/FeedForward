@@ -80,8 +80,9 @@ _WINDOW = 60.0
 
 @app.middleware("http")
 async def rate_limit(request: Request, call_next):
-    if request.url.path in ("/health", "/docs", "/openapi.json"):
-        return await call_next(request)
+    path = request.url.path
+    if path in ("/health", "/docs", "/openapi.json", "/app") or path.startswith("/app/"):
+        return await call_next(request)          # the page, its font and photos are files, not API work
     key = request.client.host if request.client else "local"
     now = time.time()
     hits = [t for t in _HITS[key] if now - t < _WINDOW]

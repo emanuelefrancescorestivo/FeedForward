@@ -54,3 +54,21 @@ def test_presets_endpoint():
     crous = next(p for p in body if p["id"] == "crous-meal")
     assert crous["kind"] == "preset" and crous["estimate"] is True and crous["detail"] == "main + 2 sides"
     assert 500 <= crous["kcal"] <= 850 and crous["price_eur"] == 1.0
+
+
+FLESH_TAGS, ANIMAL_TAGS = {"meat", "pork", "fish_seafood"}, {"meat", "pork", "fish_seafood", "dairy", "eggs"}
+
+
+def _tags(preset):
+    return {t for ingredient, _ in preset.items for t in INGREDIENTS[ingredient].get("tags", [])}
+
+
+def test_presets_follow_the_diet(engine):
+    """A vegetarian's or a vegan's CROUS plate is not counted as chicken and yogurt (B12, heme iron)."""
+    with TestClient(app) as client:
+        for diet, banned in (("vegetarian", FLESH_TAGS), ("vegan", ANIMAL_TAGS)):
+            listed = client.get(f"/diary/presets?diet={diet}").json()
+            assert [p["name"] for p in listed] == ["CROUS meal"], diet
+            assert not _tags(load_presets()[listed[0]["id"]]) & banned, diet
+            assert 500 <= listed[0]["kcal"] <= 850, diet
+        assert [p["id"] for p in client.get("/diary/presets").json()] == ["crous-meal"]

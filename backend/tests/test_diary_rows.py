@@ -10,6 +10,7 @@ from sqlalchemy import func, select
 from feedforward.api.main import app
 from feedforward.db.diary_rows import migrate_state_diaries
 from feedforward.db.models import ActivityDayRow, Base, DiaryEntryRow, UserRow
+from feedforward.db.repository import save_user_state
 from feedforward.db.session import get_engine, reset_engine, session_scope
 
 
@@ -80,7 +81,7 @@ def test_old_diaries_move_once(client):
         {"uid": "old-entry-0001", "meal": "breakfast", "kind": "recipe", "id": "porridge-banana-walnut", "servings": 1,
          "name": "Porridge with banana and walnuts", "kcal": 699},
         {"meal": "lunch", "kind": "food", "id": "ciqual-20532", "grams": 150, "name": "Lentils", "kcal": 174, "src": "week"}]}}
-    client.put("/me/state", headers=h, json={"data": doc})
+    save_user_state("rows-finn@test.local", doc)              # saved before the update, as it sits in the database
     assert migrate_state_diaries() == 2
     got = _get(client, h, "2026-10-05", "2026-10-05").json()["entries"]
     assert [(e["id"], e["kind"], e["item_id"], e["source"]) for e in got][0] == (
@@ -109,3 +110,51 @@ def test_export_and_delete_cover_entries(client):
     with session_scope() as s:
         assert s.scalar(select(func.count()).select_from(DiaryEntryRow).where(DiaryEntryRow.user_id == uid)) == 0
         assert s.scalar(select(func.count()).select_from(ActivityDayRow).where(ActivityDayRow.user_id == uid)) == 0
+
+
+# ---- final review fixes
+
+def test_a_removed_entry_is_gone_from_the_database(client):
+    """Removing is removing: nothing of the entry stays stored (HANDOFF 4.5, personal data deletable)."""
+    h = _bearer(client, "rows-ivo")
+    client.post("/diary/entries", headers=h, json={"entries": [_entry("gone-for-good-1", "2026-10-07")]})
+    assert client.delete("/diary/entries/gone-for-good-1", headers=h).status_code == 200
+    with session_scope() as s:
+        assert s.get(DiaryEntryRow, "gone-for-good-1") is None
+
+
+def test_export_includes_the_days_shown_up(client):
+    h = _bearer(client, "rows-jo")
+    client.post("/diary/entries", headers=h, json={"entries": [_entry("export-days-001", "2026-10-07")]})
+    assert client.get("/auth/export", headers=h).json()["activity"] == [{"day": "2026-10-07", "kind": "logged"}]
+
+
+def test_a_diary_sent_in_the_saved_document_moves_to_rows(client):
+    """A page loaded before the update still saves the diary inside the document: it moves at once."""
+    h = _bearer(client, "rows-kai")
+    doc = {"onboarded": True, "diary": {"2026-10-06": [
+        {"uid": "old-tab-entry-01", "meal": "dinner", "kind": "food", "id": "ciqual-20532", "grams": 150, "name": "Lentils", "kcal": 174}]}}
+    assert client.put("/me/state", headers=h, json={"data": doc}).status_code == 200
+    assert "diary" not in client.get("/me/state", headers=h).json()["data"]
+    assert [e["id"] for e in _get(client, h, "2026-10-06", "2026-10-06").json()["entries"]] == ["old-tab-entry-01"]
+
+
+def test_same_entry_arriving_twice_at_once_is_one_row(client, monkeypatch):
+    """Two requests with one id racing past the existence check: the second answers like the first, not 500."""
+    h = _bearer(client, "rows-lea")
+    assert client.post("/diary/entries", headers=h, json={"entries": [_entry("racing-entry-01", "2026-10-07")]}).status_code == 200
+    from sqlalchemy.orm import Session
+    original = Session.get
+    calls = {"n": 0}
+
+    def blind_first(self, entity, ident, *a, **kw):           # the first lookup misses, as in a race
+        if entity is DiaryEntryRow and ident == "racing-entry-01" and calls["n"] == 0:
+            calls["n"] += 1
+            return None
+        return original(self, entity, ident, *a, **kw)
+    monkeypatch.setattr(Session, "get", blind_first)
+    res = client.post("/diary/entries", headers=h, json={"entries": [_entry("racing-entry-01", "2026-10-07")]})
+    assert res.status_code == 200, res.text
+    assert [e["id"] for e in res.json()["entries"]] == ["racing-entry-01"]
+    monkeypatch.setattr(Session, "get", original)
+    assert len(_get(client, h, "2026-10-07", "2026-10-07").json()["entries"]) == 1
