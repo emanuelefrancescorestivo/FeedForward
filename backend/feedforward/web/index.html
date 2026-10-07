@@ -557,6 +557,7 @@ dialog.closing::backdrop { animation: fade-out .18s ease forwards; }
 
 /* v6: accounts. A sign-in page, getting to know you, the day as a diary, ideas per meal */
 body.gated header, body.gated main, body.gated .tabbar, body.gated footer { display: none !important; }
+body.first-run .tabbar, body.first-run nav.top-tabs { display: none !important; }   /* two screens, nothing to wander off to */
 body.gated { padding-left: 0 !important; }
 #gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32px 16px; }
 .gate-card { width: min(440px, 100%); }
@@ -1036,18 +1037,23 @@ const STEPS = [
   { id: "food", title: "Your food", lead: "Optional. So suggestions are food you'd eat and can make.", optional: true },
   { id: "plan", title: "Your plan", lead: "What your answers turn on. Each comes with its evidence; switch off any you don't want." },
 ];
+// A new account answers two screens (about you, the goal and the diet) and reaches Today; the other
+// questions come later, one at a time. Profile reopens any screen of STEPS.
+const FIRST_RUN = ["you", "goal"];
+const flow = () => onb.edit ? STEPS : STEPS.filter(s => FIRST_RUN.includes(s.id));
 const onb = { step: 0, draft: null, edit: false, box: "today", info: null };
 const clone = (x) => JSON.parse(JSON.stringify(x));
 
 function startOnboarding(stepId = "you", edit = false) {
-  onb.step = Math.max(0, STEPS.findIndex(s => s.id === stepId));
   onb.edit = edit; onb.box = edit ? "profile" : "today"; onb.info = null;
+  onb.step = Math.max(0, flow().findIndex(s => s.id === stepId));
+  document.body.classList.toggle("first-run", !edit);
   onb.draft = clone({ setup: app.setup, answers: app.answers, declined: app.declined, avoid: app.avoid });
   showTab(onb.box);
 }
 
 async function renderOnboarding() {
-  const box = $(`tab-${onb.box}`), st = STEPS[onb.step], d = onb.draft, v = d.setup, a = d.answers;
+  const box = $(`tab-${onb.box}`), st = flow()[onb.step], d = onb.draft, v = d.setup, a = d.answers;
   const chip = (name, value, label, checked, type = "radio") =>
     `<label><input type="${type}" name="${name}" value="${esc(value)}" ${checked ? "checked" : ""}><span>${esc(label)}</span></label>`;
   const qChips = (id) => `<div class="field q" data-q="${id}"><span class="flabel">${esc(Q[id][0])}</span><div class="choice">${
@@ -1066,14 +1072,16 @@ async function renderOnboarding() {
         <p class="hint" id="act-hint">${ACTIVITY_HINT[act]}</p></div></fieldset>`;
   } else if (st.id === "goal") {
     body = `<div class="tiles">${MAIN_GOALS.map(([id, ic, title, sub]) => `<label class="tile pick"><input type="radio" name="goal" value="${id}" ${(v.goal || "") === id ? "checked" : ""}>
-      <span class="ic">${icon(ic)}</span><b>${title}</b><small>${sub}</small></label>`).join("")}</div>`;
+      <span class="ic">${icon(ic)}</span><b>${title}</b><small>${sub}</small></label>`).join("")}</div>
+      ${onb.edit ? "" : `<div class="field"><span class="flabel">Diet</span><div class="choice">${chip("diet", "", "Anything", !v.diet)}${
+        chip("diet", "vegetarian", "Vegetarian", v.diet === "vegetarian")}${chip("diet", "vegan", "Vegan", v.diet === "vegan")}</div></div>`}`;
   } else if (st.id === "energy") {
     if (!onb.info) {
       box.innerHTML = loading("One moment…");
       try { onb.info = await api("/plan/strategies", { ...personReq(d), ...prefsReq(d), answers: null, declined: null }); }
       catch (e) { box.innerHTML = `<h1>${st.title}</h1><div class="note">Could not load the choices (${esc(e.message)}).</div>
         <div class="actions"><button class="ghost" data-onb-back>Back</button></div>`; return; }
-      if (STEPS[onb.step].id !== "energy") return;
+      if (flow()[onb.step].id !== "energy") return;
     }
     const closed = onb.info.unavailable || {}, cur = a.energy_goal || "maintain";
     body = `<div class="options">${ENERGY_CHOICES.map(([k, ic, title, sub]) => {
@@ -1097,7 +1105,7 @@ async function renderOnboarding() {
     try { p = await api("/plan/strategies", { ...personReq(d), ...prefsReq(d) }); }
     catch (e) { box.innerHTML = `<h1>${st.title}</h1><div class="note">Could not load your plan (${esc(e.message)}).</div>
       <div class="actions"><button class="ghost" data-onb-back>Back</button></div>`; return; }
-    if (STEPS[onb.step].id !== "plan") return;
+    if (flow()[onb.step].id !== "plan") return;
     const declined = new Set(d.declined || []);
     const energy = ENERGY_CHOICES.find(c => c[0] === (a.energy_goal || "maintain"));
     const because = (b) => b && Q[b.question] ? `You said “${Q[b.question][1][b.answer] || b.answer}” to “${Q[b.question][0]}”` : "";
@@ -1115,11 +1123,11 @@ async function renderOnboarding() {
         <p class="src">Evidence grades: A strong, B good, C limited. Only strategies graded A to C are offered.</p>`
       : `<div class="note soft">Nothing extra: your suggestions follow your goal and your daily needs.</div>`}`;
   }
-  const n = STEPS.length, last = onb.step === n - 1;
+  const n = flow().length, last = onb.step === n - 1;
   box.innerHTML = `
     ${onb.edit ? `<button class="back" data-onb-cancel>← Profile</button>` : ""}
     <h1>${esc(st.title)}</h1><p class="lead">${esc(st.lead)}</p>
-    ${onb.edit ? "" : `<div class="steps" role="progressbar" aria-valuemin="1" aria-valuemax="${n}" aria-valuenow="${onb.step + 1}" aria-label="Step ${onb.step + 1} of ${n}">${STEPS.map((_, i) => `<i class="${i <= onb.step ? "on" : ""}"></i>`).join("")}</div>`}
+    ${onb.edit ? "" : `<div class="steps" role="progressbar" aria-valuemin="1" aria-valuemax="${n}" aria-valuenow="${onb.step + 1}" aria-label="Step ${onb.step + 1} of ${n}">${flow().map((_, i) => `<i class="${i <= onb.step ? "on" : ""}"></i>`).join("")}</div>`}
     <form class="setup" id="onb-form" novalidate>${body}
       <div class="actions wizard">
         ${onb.edit ? `<button type="button" class="ghost" data-onb-cancel>Cancel</button>` : onb.step > 0 ? `<button type="button" class="ghost" data-onb-back>Back</button>` : ""}
@@ -1154,6 +1162,7 @@ function collectStep(form, id) {
   } else if (id === "goal") {
     if (!f.get("goal")) { form.querySelector(".tiles").classList.add("shake"); return false; }
     d.setup.goal = f.get("goal");
+    if (!onb.edit) d.setup.diet = f.get("diet") || "";
   } else if (id === "energy") {
     d.answers.energy_goal = f.get("energy_goal") || "maintain";
   } else if (id === "day") {
@@ -1173,7 +1182,7 @@ function collectStep(form, id) {
   return true;
 }
 function nextStep() {
-  if (onb.edit || onb.step === STEPS.length - 1) return finishOnboarding();
+  if (onb.edit || onb.step === flow().length - 1) return finishOnboarding();
   onb.step++; renderOnboarding(); window.scrollTo(0, 0);
 }
 function finishOnboarding() {
@@ -1181,6 +1190,7 @@ function finishOnboarding() {
   Object.assign(app, { setup: d.setup, answers: d.answers, declined: d.declined, avoid: d.avoid });
   const first = !app.onboarded;
   app.onboarded = true; onb.draft = null;
+  document.body.classList.remove("first-run");
   save(); syncProfile(); dayView = null; weekPlan = null; recipeCache.clear();
   if ($("tab-find").innerHTML) refreshViews();
   showTab(first ? "today" : "profile");

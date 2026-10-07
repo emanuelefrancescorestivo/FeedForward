@@ -102,18 +102,8 @@ def finish_first_run(page, *, goal: str = "Focus", diet: str = "Anything") -> No
     page.get_by_text("Moderate", exact=True).click()
     _next(page)
     page.get_by_text(goal, exact=True).first.click()
-    _next(page)
-    sync_api.expect(page.get_by_role("heading", name="Your energy")).to_be_visible(timeout=30_000)
-    _next(page)
-    sync_api.expect(page.get_by_role("heading", name="Your day")).to_be_visible()
-    _next(page, "Skip")
-    sync_api.expect(page.get_by_role("heading", name="Your food")).to_be_visible()
     if diet != "Anything":
         page.get_by_text(diet, exact=True).click()
-        _next(page)
-    else:
-        _next(page, "Skip")
-    sync_api.expect(page.get_by_role("heading", name="Your plan")).to_be_visible(timeout=30_000)
     with page.expect_response(lambda r: r.url.endswith("/me/state") and r.request.method == "PUT"):
         _next(page, "Start")                            # the answers are saved a moment after Start
     sync_api.expect(page.locator(".energy-card")).to_be_visible(timeout=30_000)
